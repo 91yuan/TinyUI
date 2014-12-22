@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{58903BE2-BB4F-4983-B8B7-905D2DB5393D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>TinyUI</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TinyListBox.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="TinyAnimate.h" />
+    <ClInclude Include="TinyApplication.h" />
+    <ClInclude Include="TinyButton.h" />
+    <ClInclude Include="TinyCollection.h" />
+    <ClInclude Include="TinyCommon.h" />
+    <ClInclude Include="TinyControl.h" />
+    <ClInclude Include="TinyDelegate.h" />
+    <ClInclude Include="TinyDialog.h" />
+    <ClInclude Include="TinyEvent.h" />
+    <ClInclude Include="TinyFrameUI.h" />
+    <ClInclude Include="TinyGraphics.h" />
+    <ClInclude Include="TinyHandleMap.h" />
+    <ClInclude Include="TinyHotKey.h" />
+    <ClInclude Include="TinyImageList.h" />
+    <ClInclude Include="TinyIO.h" />
+    <ClInclude Include="TinyIPAddress.h" />
+    <ClInclude Include="TinyLabel.h" />
+    <ClInclude Include="TinyMsg.h" />
+    <ClInclude Include="TinyObject.h" />
+    <ClInclude Include="TinyProgressBar.h" />
+    <ClInclude Include="TinyRebar.h" />
+    <ClInclude Include="TinyScrollBar.h" />
+    <ClInclude Include="TinyShell.h" />
+    <ClInclude Include="TinySingle.h" />
+    <ClInclude Include="TinyString.h" />
+    <ClInclude Include="TinyThunk.h" />
+    <ClInclude Include="TinyTime.h" />
+    <ClInclude Include="TinyTrackBar.h" />
+    <ClInclude Include="TinyWave.h" />
+    <ClInclude Include="TinyWindow.h" />
+    <ClInclude Include="TinyWindowMsg.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TinyListBox.cpp" />
+    <ClCompile Include="TinyAnimate.cpp" />
+    <ClCompile Include="TinyApplication.cpp" />
+    <ClCompile Include="TinyButton.cpp" />
+    <ClCompile Include="TinyCollection.cpp" />
+    <ClCompile Include="TinyCommon.cpp" />
+    <ClCompile Include="TinyControl.cpp" />
+    <ClCompile Include="TinyDelegate.cpp" />
+    <ClCompile Include="TinyDialog.cpp" />
+    <ClCompile Include="TinyEvent.cpp" />
+    <ClCompile Include="TinyFrameUI.cpp" />
+    <ClCompile Include="TinyGraphics.cpp" />
+    <ClCompile Include="TinyHandleMap.cpp" />
+    <ClCompile Include="TinyHotKey.cpp" />
+    <ClCompile Include="TinyImageList.cpp" />
+    <ClCompile Include="TinyIO.cpp" />
+    <ClCompile Include="TinyIPAddress.cpp" />
+    <ClCompile Include="TinyLabel.cpp" />
+    <ClCompile Include="TinyMsg.cpp" />
+    <ClCompile Include="TinyObject.cpp" />
+    <ClCompile Include="TinyProgressBar.cpp" />
+    <ClCompile Include="TinyRebar.cpp" />
+    <ClCompile Include="TinyScrollBar.cpp" />
+    <ClCompile Include="TinyShell.cpp" />
+    <ClCompile Include="TinySingle.cpp" />
+    <ClCompile Include="TinyString.cpp" />
+    <ClCompile Include="TinyThunk.cpp" />
+    <ClCompile Include="TinyTime.cpp" />
+    <ClCompile Include="TinyTrackBar.cpp" />
+    <ClCompile Include="TinyWave.cpp" />
+    <ClCompile Include="TinyWindow.cpp" />
+    <ClCompile Include="TinyWindowMsg.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

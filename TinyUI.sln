@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyUI", "TinyUI\TinyUI.vcxproj", "{58903BE2-BB4F-4983-B8B7-905D2DB5393D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyApp", "TinyApp\TinyApp.vcxproj", "{9CBF16D3-CE0C-4378-8C36-384C061E0F64}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{58903BE2-BB4F-4983-B8B7-905D2DB5393D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{58903BE2-BB4F-4983-B8B7-905D2DB5393D}.Debug|Win32.Build.0 = Debug|Win32
+		{58903BE2-BB4F-4983-B8B7-905D2DB5393D}.Release|Win32.ActiveCfg = Release|Win32
+		{58903BE2-BB4F-4983-B8B7-905D2DB5393D}.Release|Win32.Build.0 = Release|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Debug|Win32.Build.0 = Debug|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release|Win32.ActiveCfg = Release|Win32
+		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
