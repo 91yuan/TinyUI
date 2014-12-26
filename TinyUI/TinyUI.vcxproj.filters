@@ -43,6 +43,12 @@
     <Filter Include="源文件\Media">
       <UniqueIdentifier>{1e8032d1-2f19-4993-b78e-a5f97f2fd69b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\XML">
+      <UniqueIdentifier>{e08652e1-9ed1-43b7-a12d-c3805ed74177}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\XML">
+      <UniqueIdentifier>{76d9aa03-1393-4abe-a455-49aa1d246187}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -64,9 +70,6 @@
       <Filter>头文件\Control</Filter>
     </ClInclude>
     <ClInclude Include="TinyControl.h">
-      <Filter>头文件\Control</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyDialog.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
     <ClInclude Include="TinyFrameUI.h">
@@ -153,6 +156,18 @@
     <ClInclude Include="TinyWindowMsg.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
+    <ClInclude Include="TinyColumn.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyDialog.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyxml\tinystr.h">
+      <Filter>头文件\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyxml\tinyxml.h">
+      <Filter>头文件\XML</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -181,9 +196,6 @@
     </ClCompile>
     <ClCompile Include="TinyApplication.cpp">
       <Filter>源文件\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyDialog.cpp">
-      <Filter>源文件\Control</Filter>
     </ClCompile>
     <ClCompile Include="TinyEvent.cpp">
       <Filter>源文件\Common</Filter>
@@ -253,6 +265,24 @@
     </ClCompile>
     <ClCompile Include="TinyWindowMsg.cpp">
       <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyColumn.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyDialog.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml\tinystr.cpp">
+      <Filter>源文件\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml\tinyxml.cpp">
+      <Filter>源文件\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml\tinyxmlerror.cpp">
+      <Filter>源文件\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml\tinyxmlparser.cpp">
+      <Filter>源文件\XML</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
