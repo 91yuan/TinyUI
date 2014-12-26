@@ -33,5 +33,12 @@ namespace TinyUI
 		return (WS_EX_LEFT | WS_EX_LTRREADING);
 	}
 
+	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		btn.Create(m_hWND, 10, 10, 200, 23);
+		return TRUE;
+	}
+
 }
 

@@ -24,6 +24,7 @@
 #pragma comment(lib, "msimg32.lib")
 #pragma comment(lib, "Psapi.lib")
 #pragma comment(lib, "Winmm.lib")
+#pragma comment(lib, "Comctl32.lib")
 
 using namespace Gdiplus;
 
