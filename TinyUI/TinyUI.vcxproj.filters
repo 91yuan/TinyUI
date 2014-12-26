@@ -13,6 +13,36 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\Control">
+      <UniqueIdentifier>{a37cbf09-4e3b-44c4-b0ac-45f91d97f9de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Common">
+      <UniqueIdentifier>{923831f8-b959-4977-8df3-0e432f786d08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Render">
+      <UniqueIdentifier>{a3d9494f-0408-477a-97fb-3047b0385c80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\IO">
+      <UniqueIdentifier>{699ffe7e-b484-45b9-90b4-0710d2caba16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Media">
+      <UniqueIdentifier>{d48aa7fd-f42b-434b-82a0-3995c577501c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Control">
+      <UniqueIdentifier>{93194930-9478-4e08-bc0a-8905388668fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Common">
+      <UniqueIdentifier>{74733db4-1830-4686-aba4-7824e977f9bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\IO">
+      <UniqueIdentifier>{96530135-0d89-4ed2-bdd7-53fb3bf386d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Render">
+      <UniqueIdentifier>{680b17e6-f10a-432f-893a-f03d7e870db8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Media">
+      <UniqueIdentifier>{1e8032d1-2f19-4993-b78e-a5f97f2fd69b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -24,202 +54,210 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="TinyCommon.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyObject.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyGraphics.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyMsg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinySingle.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyCollection.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyApplication.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyHandleMap.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyThunk.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyWindowMsg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyWindow.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyControl.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyDialog.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyIO.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyTime.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyString.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyFrameUI.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyShell.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyDelegate.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyEvent.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyWave.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyLabel.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyButton.h">
+    <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="TinyAnimate.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Control</Filter>
     </ClInclude>
-    <ClInclude Include="TinyProgressBar.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="TinyButton.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyControl.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyDialog.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyFrameUI.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyApplication.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyCollection.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyCommon.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyDelegate.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEvent.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyHandleMap.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyGraphics.h">
+      <Filter>头文件\Render</Filter>
     </ClInclude>
     <ClInclude Include="TinyHotKey.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyScrollBar.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyIPAddress.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyTrackBar.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Control</Filter>
     </ClInclude>
     <ClInclude Include="TinyImageList.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyIO.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyIPAddress.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyLabel.h">
+      <Filter>头文件\Control</Filter>
     </ClInclude>
     <ClInclude Include="TinyListBox.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyProgressBar.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyMsg.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyObject.h">
+      <Filter>头文件\Common</Filter>
     </ClInclude>
     <ClInclude Include="TinyRebar.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyScrollBar.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyShell.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinySingle.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyString.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyThunk.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyTime.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyTrackBar.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyWave.h">
+      <Filter>头文件\Media</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyWindow.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyWindowMsg.h">
+      <Filter>头文件\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="TinyCommon.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyObject.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyMsg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyGraphics.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinySingle.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyCollection.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyApplication.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyHandleMap.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyThunk.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyWindowMsg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyWindow.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyControl.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyDialog.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyIO.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyTime.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyString.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyFrameUI.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyShell.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyDelegate.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyEvent.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyWave.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyLabel.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="TinyAnimate.cpp">
+      <Filter>源文件\Control</Filter>
     </ClCompile>
     <ClCompile Include="TinyButton.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Control</Filter>
     </ClCompile>
-    <ClCompile Include="TinyAnimate.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="TinyControl.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyIO.cpp">
+      <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyDelegate.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyCommon.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyCollection.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyApplication.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyDialog.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyEvent.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyFrameUI.cpp">
+      <Filter>源文件\Control</Filter>
     </ClCompile>
     <ClCompile Include="TinyProgressBar.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyHotKey.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyScrollBar.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyIPAddress.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyTrackBar.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyImageList.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyListBox.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Control</Filter>
     </ClCompile>
     <ClCompile Include="TinyRebar.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\Control</Filter>
     </ClCompile>
+    <ClCompile Include="TinyScrollBar.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyHotKey.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyImageList.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyIPAddress.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyLabel.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyListBox.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyTrackBar.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyObject.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyMsg.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyHandleMap.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyGraphics.cpp">
+      <Filter>源文件\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyShell.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinySingle.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyString.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyThunk.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyTime.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyWave.cpp">
+      <Filter>源文件\Media</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyWindow.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyWindowMsg.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TinyUI.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

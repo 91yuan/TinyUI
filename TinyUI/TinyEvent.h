@@ -76,6 +76,9 @@ namespace TinyUI
 		/// 告诉编译器这是个类型按照类型的方式处理
 		/// </summary>
 		typedef typename Delegate<R(P1)> DelegateType;
+		/// <summary>
+		/// 重载+=
+		/// </summary>
 		void operator+= (DelegateType* ps)
 		{
 			if (m_array.GetSize() >= 1 && IsVoidType<R>::Result == 0)
@@ -87,6 +90,9 @@ namespace TinyUI
 				m_array.Add(ps);
 			}
 		}
+		/// <summary>
+		/// 重载-=
+		/// </summary>
 		void operator-= (DelegateType* ps)
 		{
 			INT index = m_array.Lookup(ps);

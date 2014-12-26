@@ -54,7 +54,7 @@ namespace TinyUI
 	}
 	LPCTSTR TinyWindow::RetrieveTitle()
 	{
-		return TEXT("TinyWindowTitle");
+		return TEXT("TinyWindow");
 	}
 	DWORD TinyWindow::RetrieveStyle()
 	{
