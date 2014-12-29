@@ -8,6 +8,7 @@ namespace TinyUI
 	/// </summary>
 	class TinyListBox :public TinyControl
 	{
+		DECLARE_DYNAMIC(TinyListBox)
 	public:
 		TinyListBox();
 		virtual ~TinyListBox();

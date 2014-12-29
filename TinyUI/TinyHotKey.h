@@ -8,6 +8,7 @@ namespace TinyUI
 	/// </summary>
 	class TinyHotKey :public TinyControl
 	{
+		DECLARE_DYNAMIC(TinyHotKey)
 	public:
 		TinyHotKey();
 		virtual ~TinyHotKey();

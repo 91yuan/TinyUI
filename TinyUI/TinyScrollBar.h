@@ -8,6 +8,7 @@ namespace TinyUI
 	/// </summary>
 	class TinyScrollBar :public TinyControl
 	{
+		DECLARE_DYNAMIC(TinyScrollBar)
 	public:
 		TinyScrollBar();
 		virtual ~TinyScrollBar();

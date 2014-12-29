@@ -5,6 +5,7 @@ namespace TinyUI
 {
 	class TinyProgressBar :public TinyControl
 	{
+		DECLARE_DYNAMIC(TinyProgressBar)
 	public:
 		TinyProgressBar();
 		virtual ~TinyProgressBar();

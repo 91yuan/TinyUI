@@ -5,6 +5,7 @@ namespace TinyUI
 {
 	class TinyIPAddress :public TinyControl
 	{
+		DECLARE_DYNAMIC(TinyIPAddress)
 	public:
 		TinyIPAddress();
 		virtual ~TinyIPAddress();

@@ -9,6 +9,7 @@ namespace TinyUI
 	/// </summary>
 	class TinyFrameUI : public TinyControl
 	{
+		DECLARE_DYNAMIC(TinyFrameUI)
 	public:
 		TinyFrameUI();
 		virtual ~TinyFrameUI();
