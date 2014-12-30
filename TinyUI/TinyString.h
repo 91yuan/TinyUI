@@ -4,42 +4,68 @@
 
 namespace TinyUI
 {
-	//template<typename T>
-	//struct IsCharType
-	//{
-	//	enum{ Result = 0 };
-	//};
-	//template<>
-	//struct IsCharType<CHAR>
-	//{
-	//	enum{ Result = 1 };
-	//};
-	///// <summary>
-	///// 字符串操作类
-	///// </summary>
-	//class TinyString : public TinyObject
-	//{
-	//public:
-	//	TinyString();
-	//	explicit TinyString(const CHAR* s);
-	//	TinyString(const TinyString& s);
-	//	virtual ~TinyString();
-	//public:
-	//	TinyString &operator=(const TinyString &s);
-	//	TinyString& Assign(const CHAR* s);
-	//	TinyString& Assign(const CHAR* s, INT n);
-	//	TinyString& Assign(const TinyString& s);
-	//	TinyString& Assign(const TinyString& s, INT start, INT n);
-	//	TinyString &operator+=(const TinyString &s);
-	//	TinyString &Append(const CHAR* s);
-	//	TinyString &Append(const CHAR* s, INT n);
-	//	TinyString &Append(const TinyString &s);
-	//	TinyString &Append(const TinyString &s, INT pos, INT n);
-	//	CHAR operator [](INT pos) const;
-	//private:
-	//	CHAR*	m_ps;
-	//	size_t	m_size;
-	//};
+	
+	class TinyString : public TinyObject
+	{
+		DECLARE_DYNAMIC(TinyString)
+	public:
+		TinyString();
+		explicit TinyString(const CHAR* s);
+		TinyString(const TinyString& s);
+		~TinyString();
+	public:
+		TinyString& Assign(const CHAR* s, INT size);
+	private:
+		enum
+		{
+			_BUF_SIZE = 16,
+			_ALLOC_MASK = 15
+		};
+	private:
+		INT		_Mysize;
+		INT		_Myres;
+		CHAR*	_Mystr;
+	};
+	/*/// <summary>
+	/// 字符串操作类
+	/// </summary>
+	class TinyString : public TinyObject
+	{
+		/// <summary>
+		/// 定义个string柔性数组
+		/// </summary>
+		struct StringRep
+		{
+			INT		size;
+			INT		capacity;
+			CHAR	str[0];
+		};
+		DECLARE_DYNAMIC(TinyString)
+	public:
+		TinyString();
+		explicit TinyString(const CHAR* s);
+		TinyString(const TinyString& s);
+		~TinyString();
+	public:
+		INT			GetSize() const;
+		BOOL		IsEmpty() const;
+		const CHAR&	Lookup(INT index) const;
+		INT			Find(CHAR s) const;
+		INT			Find(CHAR s, INT offset) const;
+		INT			Find(const CHAR* s); 
+		TinyString& Assign(const CHAR* s);
+		TinyString& Assign(const CHAR* s, INT size);
+		CHAR*		GetData() const;
+		CHAR& operator[](INT index) const;
+		operator CHAR*() const;
+	private:
+		void Initialize(INT size, INT capacity);
+		void Initialize(INT size);
+	private:
+		StringRep* m_ps;
+		static StringRep	NULLREP;
+		const static INT	NPOS;
+	};*/
 }
 
 

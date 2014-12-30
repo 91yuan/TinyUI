@@ -382,6 +382,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	//evl1 -= &del2;
 	//evl1 -= &del1;
 
+	std::string base = "The quick brown fox jumps over a lazy dog.";
+	std::string str;
+	str.assign("pangrams are cool", 7);
+	str.assign("c-string");
+
 	HRESULT hRes = OleInitialize(NULL);
 
 	::DefWindowProc(NULL, 0, 0, 0L);
