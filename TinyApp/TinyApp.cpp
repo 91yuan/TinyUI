@@ -5,6 +5,7 @@
 #include "TinyApp.h"
 #include "TinyFrameUI.h"
 #include "TinyEvent.h"
+#include "TinyString.h"
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
 
@@ -381,11 +382,25 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	//INT b = evl1(a);
 	//evl1 -= &del2;
 	//evl1 -= &del1;
+	/*std::string base = "The quick brown fox jumps over a lazy dog.";*/
+	/*std::string base = "The quick brown fox jumps over a lazy dog.";
+	std::string base1 = "ansdaskdas.";
+	base.append(base, 17, 6);*/
+	//base.assign("The quick brown fox jumps 1123123123123123123123123123123123123");
+	//std::string str = "The quick brown fox jumps 1123123123123123123123123123123123123";
+	//base.assign(base, 20, 10);
+	//base.assign(str, 17, 20);
+	//base.append("abcdefghijk", 6);
+	//base.insert(10, "that is cool", 8);
+	//base.append("pangrams");
+	//base.assign("pangrams are cool", 7);
+	//std::string base = "The quick brown fox jumps over a lazy dog.";
+	//base.assign("123");
 
-	std::string base = "The quick brown fox jumps over a lazy dog.";
-	std::string str;
-	str.assign("pangrams are cool", 7);
-	str.assign("c-string");
+	TinyString str;
+	str.Assign("The quick");
+	str.Assign("The quick brown fox jumps over a lazy dog.");
+	//TinyString str1(str);
 
 	HRESULT hRes = OleInitialize(NULL);
 
