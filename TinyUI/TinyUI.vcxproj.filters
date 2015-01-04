@@ -144,9 +144,6 @@
     <ClInclude Include="TinyTime.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
-    <ClInclude Include="TinyTrackBar.h">
-      <Filter>头文件\Common</Filter>
-    </ClInclude>
     <ClInclude Include="TinyWave.h">
       <Filter>头文件\Media</Filter>
     </ClInclude>
@@ -167,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="tinyxml\tinyxml.h">
       <Filter>头文件\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyTrackBar.h">
+      <Filter>头文件\Control</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

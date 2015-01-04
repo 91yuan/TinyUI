@@ -8,7 +8,7 @@ namespace TinyUI
 	/// <summary>
 	/// 句柄对象映射类,std::map效率高点
 	/// </summary>
-	template<class T>
+	template<class T = HANDLE>
 	class TinyHandleMap
 	{
 	public:

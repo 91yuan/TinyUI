@@ -397,10 +397,40 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	//std::string base = "The quick brown fox jumps over a lazy dog.";
 	//base.assign("123");
 
-	TinyString str;
-	str.Assign("The quick");
-	str.Assign("The quick brown fox jumps over a lazy dog.");
+	/*std::string base = "The quick";
+	std::string base1 = "1234567890-1234567890-1234567890";
+	base.insert(1, base1, 1, 18);*/
+	//TinyString str;
+	//str.Assign("The quick");
+	//str.Assign("The quick brown fox jumps over a lazy dog.");
+	//TinyString str1("The quick brown fox jumps over a lazy dog.");
+	//str1.Insert(1, "12345", 4);
+	//str1.Insert(1, "1234567890-1234567890-1234567890", 18);
+	//str.Append(str1, 10, 10);
 	//TinyString str1(str);
+	/*TinyString base("The quick");
+	TinyString base1("1234567890-1234567890-1234567890");
+	base.Insert(1, base1, 1, 18);*/
+	//std::string base1 = "1234567890-1234567890-1234567890";
+	//INT s = base1.find("The");
+	//std::string base1 = "1234567890-1234567890-1234567890";
+	//base1.compare("123");
+	//TinyString base("The quick brown fox jumps over a lazy dog.");
+	//INT s = base.Find("jumps");
+	//BOOL b = base.Compare(5, 10, "The quick brown fox jumps over a lazy dog.", 3);
+	//std::string base2 = "";
+	//std::string base1 = "1234567890-1234567890-1234567890";
+	//base2 += base1;
+	//std::string str1("The quick brown fox jumps over a lazy dog.");
+	//std::string base = "this is a test string.";
+	//base.replace(8, 6, str1, 0, 30);
+	/*TinyString str1("The quick brown fox jumps over a lazy dog.");
+	TinyString base = "this is a test string.";
+	base.Replace(8, 6, str1, 0, 30);*/
+	TinyString str = TinyString::Format("Msg:%d", 10);
+	//TinyString base1 = "this is a test string.";
+	//base1.Replace(8, 6, "The quick brown fox jumps over a lazy dog.", 30);
+	//base.substr(2, 10);
 
 	HRESULT hRes = OleInitialize(NULL);
 
