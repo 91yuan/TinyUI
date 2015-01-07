@@ -4,7 +4,7 @@
 
 namespace TinyUI
 {
-	struct SysFileStatus
+	struct FileStatus
 	{
 		TinyTime m_ctime;
 		TinyTime m_mtime;
@@ -69,7 +69,7 @@ namespace TinyUI
 		TinyFile(HANDLE hFile);
 		virtual ~TinyFile();
 		HANDLE Handle() const;
-		BOOL GetStatus(SysFileStatus& rStatus) const;
+		BOOL GetStatus(FileStatus& rStatus) const;
 		virtual BOOL Create(LPCTSTR lpszFileName, DWORD dwFlagsAndAttributes);
 		virtual BOOL Open(LPCTSTR lpszFileName, DWORD dwDesiredAccess, DWORD dwShareMode, DWORD dwFlagsAndAttributes);
 		virtual LONGLONG GetPosition() const;
@@ -89,8 +89,8 @@ namespace TinyUI
 		virtual BOOL Flush();
 		virtual BOOL Close();
 		//////////////////////////////////////////////////////////////////////////
-		static BOOL PASCAL GetStatus(LPCTSTR lpszFileName, SysFileStatus& rStatus);
-		static void PASCAL SetStatus(LPCTSTR lpszFileName, const SysFileStatus& status);
+		static BOOL PASCAL GetStatus(LPCTSTR lpszFileName, FileStatus& rStatus);
+		static void PASCAL SetStatus(LPCTSTR lpszFileName, const FileStatus& status);
 		static BOOL Exists(LPCSTR pszPath);
 		static BOOL Rename(LPCSTR lpszOldName, LPCTSTR lpszNewName);
 		static BOOL Remove(LPCSTR lpszFileName);

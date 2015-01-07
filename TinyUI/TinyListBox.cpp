@@ -129,7 +129,7 @@ namespace TinyUI
 	{
 		ASSERT(::IsWindow(m_hWND));
 		RECT rect = { 0 };
-		GetClientRect(m_hWND, &rect);
+		GetClientRect(&rect);
 		if (::PtInRect(&rect, pos))
 		{
 			DWORD dwItem = (DWORD)::SendMessage(m_hWND, LB_ITEMFROMPOINT, NULL, MAKELPARAM(pos.x, pos.y));

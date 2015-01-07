@@ -1,6 +1,5 @@
 #pragma once
 #include "TinyControl.h"
-#include "TinyImageList.h"
 
 namespace TinyUI
 {

@@ -108,6 +108,7 @@
     <ClInclude Include="TinyThunk.h" />
     <ClInclude Include="TinyTime.h" />
     <ClInclude Include="TinyTrackBar.h" />
+    <ClInclude Include="TinyTreeView.h" />
     <ClInclude Include="TinyWave.h" />
     <ClInclude Include="TinyWindow.h" />
     <ClInclude Include="TinyWindowMsg.h" />
@@ -150,6 +151,7 @@
     <ClCompile Include="TinyThunk.cpp" />
     <ClCompile Include="TinyTime.cpp" />
     <ClCompile Include="TinyTrackBar.cpp" />
+    <ClCompile Include="TinyTreeView.cpp" />
     <ClCompile Include="TinyWave.cpp" />
     <ClCompile Include="TinyWindow.cpp" />
     <ClCompile Include="TinyWindowMsg.cpp" />

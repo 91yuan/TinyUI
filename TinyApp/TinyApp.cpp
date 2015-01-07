@@ -427,10 +427,12 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	/*TinyString str1("The quick brown fox jumps over a lazy dog.");
 	TinyString base = "this is a test string.";
 	base.Replace(8, 6, str1, 0, 30);*/
+	std::string base = "this is a test string.";
 	TinyString str = TinyString::Format("Msg:%d", 10);
 	//TinyString base1 = "this is a test string.";
 	//base1.Replace(8, 6, "The quick brown fox jumps over a lazy dog.", 30);
 	//base.substr(2, 10);
+
 
 	HRESULT hRes = OleInitialize(NULL);
 

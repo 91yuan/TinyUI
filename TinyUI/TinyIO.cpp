@@ -206,9 +206,9 @@ namespace TinyUI
 		}
 		return bResult;
 	};
-	BOOL TinyFile::GetStatus(SysFileStatus& rStatus) const
+	BOOL TinyFile::GetStatus(FileStatus& rStatus) const
 	{
-		memset(&rStatus, 0, sizeof(SysFileStatus));
+		memset(&rStatus, 0, sizeof(FileStatus));
 		_tcsncpy_s(rStatus.m_szFullName, _countof(rStatus.m_szFullName), m_pzFileName, _TRUNCATE);
 		if (m_hFile != hFileNull)
 		{
@@ -271,7 +271,7 @@ namespace TinyUI
 		}
 		return TRUE;
 	}
-	BOOL PASCAL TinyFile::GetStatus(LPCTSTR lpszFileName, SysFileStatus& rStatus)
+	BOOL PASCAL TinyFile::GetStatus(LPCTSTR lpszFileName, FileStatus& rStatus)
 	{
 		ASSERT(lpszFileName != NULL);
 		if (lpszFileName == NULL)

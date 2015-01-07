@@ -4,6 +4,29 @@
 
 namespace TinyUI
 {
+	TinyHandleMap<HDC>* TinyDC::GetMap() const
+	{
+		return &(TinyApplication::Instance()->GetMapHDC());
+	}
+	TinyHandleMap<HBRUSH>* TinyBrush::GetMap() const
+	{
+		return &(TinyApplication::Instance()->GetMapHBRUSH());
+	}
+	TinyHandleMap<HBITMAP>* TinyBitmap::GetMap() const
+	{
+		return &(TinyApplication::Instance()->GetMapHBITMAP());
+	}
+	TinyHandleMap<HPALETTE>* TinyPalette::GetMap() const
+	{
+		return &(TinyApplication::Instance()->GetMapHPALETTE());
+	}
+	TinyHandleMap<HRGN>* TinyRgn::GetMap() const
+	{
+		return &(TinyApplication::Instance()->GetMapHRGN());
+	}
+	/************************************************************************/
+	/* DC                                                                   */
+	/************************************************************************/
 	BOOL TinyDC::CreateDC(LPCTSTR lpszDriverName, LPCTSTR lpszDeviceName, LPCTSTR lpszOutput, const void* lpInitData)
 	{
 		HDC hDC = ::CreateDC(lpszDriverName, lpszDeviceName, lpszOutput, (const DEVMODE*)lpInitData);
@@ -32,7 +55,9 @@ namespace TinyUI
 			::DeleteDC(Detach());
 		}
 	}
-	//////////////////////////////////////////////////////////////////////////
+	/************************************************************************/
+	/* PEN                                                                  */
+	/************************************************************************/
 	BOOL TinyPen::CreatePen(INT nPenStyle, INT nWidth, COLORREF crColor)
 	{
 		HPEN hPen = ::CreatePen(nPenStyle, nWidth, crColor);
@@ -69,7 +94,9 @@ namespace TinyUI
 	{
 		return &(TinyApplication::Instance()->GetMapHPEN());
 	}
-	//////////////////////////////////////////////////////////////////////////
+	/************************************************************************/
+	/* BRUSH                                                                */
+	/************************************************************************/
 	BOOL TinyBrush::CreateBrush(COLORREF crColor)
 	{
 		HBRUSH hBrush = ::CreateSolidBrush(crColor);
@@ -110,7 +137,9 @@ namespace TinyUI
 			::DeleteObject(Detach());
 		}
 	}
-	//////////////////////////////////////////////////////////////////////////
+	/************************************************************************/
+	/* BITMAP                                                                */
+	/************************************************************************/
 	BOOL TinyBitmap::CreateBitmap(INT nWidth, INT nHeight, UINT nPlanes, UINT nBitcount, const void* lpBits)
 	{
 		HBITMAP hBitmap = ::CreateBitmap(nWidth, nHeight, nPlanes, nBitcount, lpBits);
@@ -246,7 +275,9 @@ namespace TinyUI
 		}
 	}
 	
-	//////////////////////////////////////////////////////////////////////////
+	/************************************************************************/
+	/* PALETTE                                                              */
+	/************************************************************************/
 	BOOL TinyPalette::CreatePalette(LPLOGPALETTE lpLogPalette)
 	{
 		HPALETTE hP = ::CreatePalette(lpLogPalette);
@@ -297,7 +328,9 @@ namespace TinyUI
 		}
 	}
 	
-	//////////////////////////////////////////////////////////////////////////
+	/************************************************************************/
+	/* RGN																	*/
+	/************************************************************************/
 	BOOL TinyRgn::CreateRgn(INT x1, INT y1, INT x2, INT y2)
 	{
 		HRGN hRgn = ::CreateRectRgn(x1, y1, x2, y2);
@@ -351,7 +384,9 @@ namespace TinyUI
 			::DeleteObject(Detach());
 		}
 	}
-	//////////////////////////////////////////////////////////////////////////
+	/************************************************************************/
+	/* SIZE																	*/
+	/************************************************************************/
 	TinySize::TinySize() throw()
 	{
 		cx = cy = 0;
@@ -421,7 +456,9 @@ namespace TinyUI
 	{
 		return TinyRectangle(lpRect) - *this;
 	}
-	//////////////////////////////////////////////////////////////////////////
+	/************************************************************************/
+	/* POINT															    */
+	/************************************************************************/
 	TinyPoint::TinyPoint() throw()
 	{  }
 	TinyPoint::TinyPoint(int initX, int initY) throw()
@@ -510,7 +547,9 @@ namespace TinyUI
 		return TinyRectangle(lpRect) - *this;
 	}
 
-	// SysRect
+	/************************************************************************/
+	/* RECTANGLE															*/
+	/************************************************************************/
 	TinyRectangle::TinyRectangle() throw()
 	{	}
 	TinyRectangle::TinyRectangle(int l, int t, int r, int b) throw()

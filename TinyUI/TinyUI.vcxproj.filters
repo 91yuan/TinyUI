@@ -171,6 +171,9 @@
     <ClInclude Include="TinyListView.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
+    <ClInclude Include="TinyTreeView.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -288,6 +291,9 @@
       <Filter>源文件\XML</Filter>
     </ClCompile>
     <ClCompile Include="TinyListView.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyTreeView.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>

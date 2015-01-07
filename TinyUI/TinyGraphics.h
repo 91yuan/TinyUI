@@ -91,7 +91,11 @@ namespace TinyUI
 			pMap->RemoveHandle(m_value);
 		}
 		m_value = NULL;
+#pragma warning(push)
+#pragma warning(disable : 4172)
 		return _value;
+#pragma warning(pop)
+		
 	}
 	template<class T>
 	void TinyGDIHandle<T>::Destory()
@@ -143,10 +147,7 @@ namespace TinyUI
 		virtual void Destory();
 		virtual TinyHandleMap<HPEN>* GetMap() const;
 	};
-	TinyHandleMap<HDC>* TinyDC::GetMap() const
-	{
-		return &(TinyApplication::Instance()->GetMapHDC());
-	}
+
 	/// <summary>
 	/// Brush¿‡
 	/// </summary>
@@ -166,10 +167,7 @@ namespace TinyUI
 		virtual void Destory();
 		virtual TinyHandleMap<HBRUSH>* GetMap() const;
 	};
-	TinyHandleMap<HBRUSH>* TinyBrush::GetMap() const
-	{
-		return &(TinyApplication::Instance()->GetMapHBRUSH());
-	}
+	
 	/// <summary>
 	/// Bitmap¿‡
 	/// </summary>
@@ -197,10 +195,6 @@ namespace TinyUI
 		virtual void Destory();
 		virtual TinyHandleMap<HBITMAP>* GetMap() const;
 	};
-	TinyHandleMap<HBITMAP>* TinyBitmap::GetMap() const
-	{
-		return &(TinyApplication::Instance()->GetMapHBITMAP());
-	}
 	/// <summary>
 	/// TinyPalette
 	/// </summary>
@@ -222,10 +216,6 @@ namespace TinyUI
 		virtual void Destory();
 		virtual TinyHandleMap<HPALETTE>* GetMap() const;
 	};
-	TinyHandleMap<HPALETTE>* TinyPalette::GetMap() const
-	{
-		return &(TinyApplication::Instance()->GetMapHPALETTE());
-	}
 	/// <summary>
 	/// TinyRgn
 	/// </summary>
@@ -248,10 +238,6 @@ namespace TinyUI
 		virtual void Destory();
 		virtual TinyHandleMap<HRGN>* GetMap() const;
 	};
-	TinyHandleMap<HRGN>* TinyRgn::GetMap() const
-	{
-		return &(TinyApplication::Instance()->GetMapHRGN());
-	}
 
 	class TinySize;
 	class TinyPoint;

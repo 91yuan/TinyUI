@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include <Shellapi.h>
 #include <Commdlg.h>
 #include <comdef.h>
 #include <Mmsystem.h>
