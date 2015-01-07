@@ -21,5 +21,6 @@ namespace TinyUI
 		BOOL Create(HWND hParent, int x, int y, int cx, int cy);
 	private:
 		TinyButton btn;
+
 	};
 }

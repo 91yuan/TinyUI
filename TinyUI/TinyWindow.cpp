@@ -303,4 +303,262 @@ namespace TinyUI
 		ASSERT(::IsWindow(m_hWND));
 		return ::UpdateWindow(m_hWND);
 	}
+	DWORD TinyWindow::GetStyle() const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return (DWORD)::GetWindowLong(m_hWND, GWL_STYLE);
+	}
+	DWORD TinyWindow::SetStyle(LONG dwNewLong) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return (DWORD)::SetWindowLong(m_hWND, GWL_STYLE, dwNewLong);
+	}
+	DWORD TinyWindow::GetExStyle() const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return (DWORD)::GetWindowLong(m_hWND, GWL_EXSTYLE);
+	}
+
+	LONG TinyWindow::GetWindowLong(int nIndex) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::GetWindowLong(m_hWND, nIndex);
+	}
+
+	LONG TinyWindow::SetWindowLong(int nIndex, LONG dwNewLong) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetWindowLong(m_hWND, nIndex, dwNewLong);
+	}
+
+	WORD TinyWindow::GetWindowWord(int nIndex) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::GetWindowWord(m_hWND, nIndex);
+	}
+
+	WORD TinyWindow::SetWindowWord(int nIndex, WORD wNewWord) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetWindowWord(m_hWND, nIndex, wNewWord);
+	}
+
+	DWORD TinyWindow::GetWindowStyle() throw()
+	{
+		return ((DWORD)GetWindowLong(GWL_STYLE));
+	}
+
+	DWORD TinyWindow::GetWindowExStyle() throw()
+	{
+		return ((DWORD)GetWindowLong(GWL_EXSTYLE));
+	}
+
+	DWORD TinyWindow::SetWindowStyle(DWORD dwNewStyle) throw()
+	{
+		return ((DWORD)SetWindowLong(GWL_STYLE, dwNewStyle));
+	}
+
+	DWORD TinyWindow::SetWindowExStyle(DWORD dwNewStyle) throw()
+	{
+		return ((DWORD)SetWindowLong(GWL_EXSTYLE, dwNewStyle));
+	}
+
+	HMODULE TinyWindow::GetWindowInstance()  throw()
+	{
+		return ((HMODULE)GetWindowLongPtr(GWLP_HINSTANCE));
+	}
+	BOOL TinyWindow::SetWindowText(LPCTSTR lpszString) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetWindowText(m_hWND, lpszString);
+	}
+
+	INT TinyWindow::GetWindowText(_Out_z_cap_post_count_(nMaxCount, return +1) LPTSTR lpszStringBuf, _In_ int nMaxCount) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::GetWindowText(m_hWND, lpszStringBuf, nMaxCount);
+	}
+	INT TinyWindow::GetWindowTextLength() const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::GetWindowTextLength(m_hWND);
+	}
+	void TinyWindow::SetFont(HFONT hFont, BOOL bRedraw) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		::SendMessage(m_hWND, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(bRedraw, 0));
+	}
+	void TinyWindow::SetText(LPCSTR lpszText) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		::SendMessage(m_hWND, WM_SETTEXT, 0, (LPARAM)lpszText);
+	}
+
+	INT TinyWindow::GetText(LPCSTR lpszText, INT cchTextMax) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return (INT)::SendMessage(m_hWND, WM_GETTEXT, cchTextMax, (LPARAM)lpszText);
+	}
+
+	HFONT TinyWindow::GetFont() const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return (HFONT)::SendMessage(m_hWND, WM_GETFONT, 0, 0);
+	}
+	HMENU TinyWindow::GetMenu() const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return (HMENU)::GetMenu(m_hWND);
+	}
+
+	BOOL TinyWindow::SetMenu(HMENU hMenu) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetMenu(m_hWND, hMenu);
+	}
+	HMENU TinyWindow::GetSystemMenu(BOOL bRevert) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return (HMENU)::GetSystemMenu(m_hWND, bRevert);
+	}
+
+	BOOL TinyWindow::HiliteMenuItem(HMENU hMenu, UINT uItemHilite, UINT uHilite) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::HiliteMenuItem(m_hWND, hMenu, uItemHilite, uHilite);
+	}
+	BOOL TinyWindow::IsIconic() const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::IsIconic(m_hWND);
+	}
+
+	BOOL TinyWindow::IsZoomed() const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::IsZoomed(m_hWND);
+	}
+
+	BOOL TinyWindow::MoveWindow(INT x, INT y, INT cx, INT cy, BOOL bRepaint) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::MoveWindow(m_hWND, x, y, cx, cy, bRepaint);
+	}
+	INT TinyWindow::MapWindowPoints(HWND hWndFrom, POINT& pos)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return MapWindowPoints(hWndFrom, &pos, 1);
+	}
+	INT TinyWindow::MapWindowPoints(POINT& pos)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return MapWindowPoints(NULL, &pos, 1);
+	}
+	BOOL TinyWindow::MoveWindow(LPCRECT lpRect, BOOL bRepaint) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return MoveWindow(lpRect->left, lpRect->top, lpRect->right - lpRect->left, lpRect->bottom - lpRect->top, bRepaint);
+	}
+	BOOL TinyWindow::SetForegroundWindow()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetForegroundWindow(m_hWND);
+	}
+	BOOL TinyWindow::SetWindowPos(HWND hWndInsertAfter, INT x, INT y, INT cx, INT cy, UINT nFlags) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetWindowPos(m_hWND, hWndInsertAfter, x, y, cx, cy, nFlags);
+	}
+
+	BOOL TinyWindow::SetWindowPos(HWND hWndInsertAfter, LPCRECT lpRect, UINT nFlags) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetWindowPos(m_hWND, hWndInsertAfter, lpRect->left, lpRect->top, lpRect->right - lpRect->left, lpRect->bottom - lpRect->top, nFlags);
+	}
+
+	UINT TinyWindow::ArrangeIconicWindows() throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::ArrangeIconicWindows(m_hWND);
+	}
+
+	BOOL TinyWindow::BringWindowToTop() throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::BringWindowToTop(m_hWND);
+	}
+
+	BOOL TinyWindow::GetWindowRect(LPRECT lpRect) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::GetWindowRect(m_hWND, lpRect);
+	}
+
+	BOOL TinyWindow::GetClientRect(LPRECT lpRect) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::GetClientRect(m_hWND, lpRect);
+	}
+
+	BOOL TinyWindow::GetWindowPlacement(WINDOWPLACEMENT FAR* lpwndpl) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::GetWindowPlacement(m_hWND, lpwndpl);
+	}
+
+	BOOL TinyWindow::SetWindowPlacement(const WINDOWPLACEMENT FAR* lpwndpl) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetWindowPlacement(m_hWND, lpwndpl);
+	}
+	BOOL TinyWindow::ClientToScreen(LPPOINT lpPoint) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::ClientToScreen(m_hWND, lpPoint);
+	}
+
+	BOOL TinyWindow::ClientToScreen(LPRECT lpRect) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		if (!::ClientToScreen(m_hWND, (LPPOINT)lpRect))
+			return FALSE;
+		return ::ClientToScreen(m_hWND, ((LPPOINT)lpRect) + 1);
+	}
+
+	BOOL TinyWindow::ScreenToClient(LPPOINT lpPoint) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::ScreenToClient(m_hWND, lpPoint);
+	}
+
+	BOOL TinyWindow::ScreenToClient(LPRECT lpRect) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		if (!::ScreenToClient(m_hWND, (LPPOINT)lpRect))
+			return FALSE;
+		return ::ScreenToClient(m_hWND, ((LPPOINT)lpRect) + 1);
+	}
+
+	INT TinyWindow::MapWindowPoints(HWND hWndTo, LPPOINT lpPoint, UINT nCount) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::MapWindowPoints(m_hWND, hWndTo, lpPoint, nCount);
+	}
+
+	INT TinyWindow::MapWindowPoints(HWND hWndTo, LPRECT lpRect) const throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::MapWindowPoints(m_hWND, hWndTo, (LPPOINT)lpRect, 2);
+	}
+	HDC TinyWindow::BeginPaint(LPPAINTSTRUCT lpPaint) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::BeginPaint(m_hWND, lpPaint);
+	}
+
+	void TinyWindow::EndPaint(LPPAINTSTRUCT lpPaint) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		::EndPaint(m_hWND, lpPaint);
+	}
 }

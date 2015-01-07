@@ -168,6 +168,9 @@
     <ClInclude Include="TinyTrackBar.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
+    <ClInclude Include="TinyListView.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -283,6 +286,9 @@
     </ClCompile>
     <ClCompile Include="tinyxml\tinyxmlparser.cpp">
       <Filter>源文件\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyListView.cpp">
+      <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

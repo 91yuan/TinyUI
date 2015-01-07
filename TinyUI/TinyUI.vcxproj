@@ -96,6 +96,7 @@
     <ClInclude Include="TinyIO.h" />
     <ClInclude Include="TinyIPAddress.h" />
     <ClInclude Include="TinyLabel.h" />
+    <ClInclude Include="TinyListView.h" />
     <ClInclude Include="TinyMsg.h" />
     <ClInclude Include="TinyObject.h" />
     <ClInclude Include="TinyProgressBar.h" />
@@ -137,6 +138,7 @@
     <ClCompile Include="TinyIO.cpp" />
     <ClCompile Include="TinyIPAddress.cpp" />
     <ClCompile Include="TinyLabel.cpp" />
+    <ClCompile Include="TinyListView.cpp" />
     <ClCompile Include="TinyMsg.cpp" />
     <ClCompile Include="TinyObject.cpp" />
     <ClCompile Include="TinyProgressBar.cpp" />
