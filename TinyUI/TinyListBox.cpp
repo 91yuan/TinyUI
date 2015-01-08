@@ -48,7 +48,7 @@ namespace TinyUI
 	}
 	INT TinyListBox::SetCurSel(INT nSelect)
 	{
-		return (int)SendMessage(m_hWND, LB_SETCURSEL, (WPARAM)nSelect, (LPARAM)0);
+		return (int)SendMessage(LB_SETCURSEL, (WPARAM)nSelect, (LPARAM)0);
 	}
 	INT TinyListBox::GetHorizontalExtent() const
 	{
@@ -57,7 +57,7 @@ namespace TinyUI
 	}
 	void TinyListBox::SetHorizontalExtent(INT cxExtent)
 	{
-		SendMessage(m_hWND, LB_SETHORIZONTALEXTENT, cxExtent, 0);
+		SendMessage(LB_SETHORIZONTALEXTENT, cxExtent, 0);
 	}
 	INT TinyListBox::GetSelCount() const
 	{
@@ -76,7 +76,7 @@ namespace TinyUI
 	}
 	INT TinyListBox::SetTopIndex(INT nIndex)
 	{
-		return (int)SendMessage(m_hWND, LB_SETTOPINDEX, nIndex, 0);
+		return (int)SendMessage(LB_SETTOPINDEX, nIndex, 0);
 	}
 	DWORD_PTR TinyListBox::GetItemData(int nIndex) const
 	{
@@ -85,7 +85,7 @@ namespace TinyUI
 	}
 	INT TinyListBox::SetItemData(INT nIndex, LPARAM dwItemData)
 	{
-		return (int)SendMessage(m_hWND, LB_SETITEMDATA, nIndex, dwItemData);
+		return (int)SendMessage(LB_SETITEMDATA, nIndex, dwItemData);
 	}
 	void* TinyListBox::GetItemDataPtr(INT nIndex) const
 	{
@@ -104,11 +104,11 @@ namespace TinyUI
 	INT TinyListBox::GetSel(INT nIndex) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_GETSEL, nIndex, 0);
+		return (INT)::SendMessage(m_hWND, LB_GETSEL, (WPARAM)nIndex, 0);
 	}
 	INT TinyListBox::SetSel(INT nIndex, BOOL bSelect)
 	{
-		return (INT)SendMessage(m_hWND, LB_SETSEL, bSelect, nIndex);
+		return (INT)SendMessage(LB_SETSEL, bSelect, nIndex);
 	}
 	INT TinyListBox::GetText(INT nIndex, LPTSTR lpszBuffer) const
 	{

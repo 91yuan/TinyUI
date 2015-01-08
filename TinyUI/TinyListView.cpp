@@ -414,10 +414,10 @@ namespace TinyUI
 	}
 	void TinyListView::RemoveImageList(INT nImageList)
 	{
-		HIMAGELIST h = (HIMAGELIST)SendMessage(m_hWND, LVM_GETIMAGELIST, (WPARAM)nImageList, NULL);
+		HIMAGELIST h = (HIMAGELIST)SendMessage( LVM_GETIMAGELIST, (WPARAM)nImageList, NULL);
 		if (h != NULL)
 		{
-			SendMessage(m_hWND, LVM_SETIMAGELIST, (WPARAM)h, NULL);
+			SendMessage(LVM_SETIMAGELIST, (WPARAM)h, NULL);
 		}
 	}
 	HIMAGELIST TinyListView::CreateDragImage(INT nItem, LPPOINT lpPoint)

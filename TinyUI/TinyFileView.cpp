@@ -6,13 +6,13 @@ namespace TinyUI
 {
 	UINT WM_CHANGE_CURRENT_FOLDER = ::RegisterWindowMessage(_T("WM_CHANGE_CURRENT_FOLDER"));
 	TinyFileView::TinyFileView()
+		:m_psfCurrent(NULL),
+		m_currentAbsPIDL(NULL),
+		m_bIsDesktop(NULL),
+		m_bNoNotify(FALSE),
+		m_pView(NULL)
 	{
 		m_pShellManager = new TinyShellManager();
-		m_psfCurrent = NULL;
-		m_currentAbsPIDL = NULL;
-		m_bIsDesktop = FALSE;
-		m_bNoNotify = FALSE;
-		m_pView = NULL;
 	}
 
 	TinyFileView::~TinyFileView()
@@ -86,43 +86,14 @@ namespace TinyUI
 	}
 	void TinyFileView::OnFormatFileDate(const TinyTime& tmFile, TinyString& str)
 	{
-		TinyOleDateTime dateFile(tmFile.GetTime());
-		str = dateFile.Format();
+
 	}
 	void TinyFileView::OnFormatFileSize(__int64 lFileSize, TinyString& str)
 	{
-		str.Empty();
 
-		if (lFileSize == 0)
-		{
-			str = _T("0");
-		}
-		else
-		{
-			lFileSize = lFileSize / 1024 + 1;
-			str.Format(_T("%I64d"), lFileSize);
-			TCHAR szNumOut[256];
-			GetNumberFormat(LOCALE_USER_DEFAULT, LOCALE_NOUSEROVERRIDE, str, NULL, szNumOut, 255);
-			str = szNumOut;
-			TCHAR szDec[10];
-			GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SDECIMAL, szDec, 10);
-			INT nDecLen = lstrlen(szDec);
-			if (nDecLen > 0)
-			{
-				for (INT i = str.GetLength() - nDecLen - 1; i >= 0; i--)
-				{
-					if (str.Mid(i, nDecLen) == szDec)
-					{
-						str = str.Left(i);
-						break;
-					}
-				}
-			}
-		}
-		str += _T(" KB");
 	}
 
-	TinyString TinyFileView::OnGetItemText(INT /*iItem*/, INT iColumn, LPSHELLITEMINFO pItem, CHAR* pz, INT size)
+	TinyString TinyFileView::OnGetItemText(INT iItem, INT iColumn, LPSHELLITEMINFO pItem, CHAR* pz, INT size)
 	{
 		ASSERT(pItem != NULL);
 		SHFILEINFO	sfi;
@@ -149,21 +120,21 @@ namespace TinyUI
 				FileStatus fs;
 				if (TinyFile::GetStatus(szPath, fs))
 				{
-					SysString str;
+					/*TinyString str;
 
 					if (iColumn == 1)
 					{
-						if ((fs.m_attribute & (SysFile::directory | SysFile::volume)) == 0)
-						{
-							OnFormatFileSize((long)fs.m_size, str);
-						}
+					if ((fs.m_attribute & (SysFile::directory | SysFile::volume)) == 0)
+					{
+					OnFormatFileSize((LONG)fs.m_size, str);
+					}
 					}
 					else
 					{
-						OnFormatFileDate(fs.m_mtime, str);
+					OnFormatFileDate(fs.m_mtime, str);
 					}
 
-					return str;
+					return str;*/
 				}
 			}
 			break;
@@ -172,7 +143,6 @@ namespace TinyUI
 			ASSERT(FALSE);
 			break;
 		}
-
 		return _T("");
 	}
 	INT TinyFileView::OnGetItemIcon(INT /*iItem*/, LPSHELLITEMINFO pItem)
@@ -235,11 +205,11 @@ namespace TinyUI
 
 		case ColumnSize:
 		case ColumnModified:
-			if (SHGetPathFromIDList(pItem1->absolutePIDL, szPath1) &&
-				SysFile::GetStatus(szPath1, fs1))
+			if (SHGetPathFromIDList(pItem1->absolutePIDL, szPath1)
+				&& TinyFile::GetStatus(szPath1, fs1))
 			{
-				if (SHGetPathFromIDList(pItem2->absolutePIDL, szPath2) &&
-					SysFile::GetStatus(szPath2, fs2))
+				if (SHGetPathFromIDList(pItem2->absolutePIDL, szPath2)
+					&& TinyFile::GetStatus(szPath2, fs2))
 				{
 					if (iColumn == ColumnSize)
 					{
@@ -322,7 +292,9 @@ namespace TinyUI
 					const INT nColumns = (INT)::SendMessage(GetHeaderCtrl(), HDM_GETITEMCOUNT, 0, 0L);
 					for (INT iColumn = 0; iColumn < nColumns; iColumn++)
 					{
-						SetItemText(iItem, iColumn, OnGetItemText(iItem, iColumn, shellItemPtr));
+						/*CHAR strs[MAX_PATH];
+						OnGetItemText(iItem, iColumn, shellItemPtr, strs, MAX_PATH);
+						SetItemText(iItem, iColumn, strs);*/
 					}
 				}
 				dwFetched = 0;
@@ -394,14 +366,14 @@ namespace TinyUI
 		}
 		if (SUCCEEDED(hRes) && shellItemPtr != NULL)
 		{
-			if (m_pView != NULL && !m_bNoNotify)
+			/*if (m_pView != NULL && !m_bNoNotify)
 			{
-				m_pView->SelectPath(m_currentAbsPIDL);
+			m_pView->SelectPath(m_currentAbsPIDL);
 			}
 			if (GetParent() != NULL)
 			{
-				::SendMessage(GetParent()->Handle(), WM_CHANGE_CURRENT_FOLDER, 0, 0);
-			}
+			::SendMessage(GetParent()->Handle(), WM_CHANGE_CURRENT_FOLDER, 0, 0);
+			}*/
 		}
 		return hRes;
 	}

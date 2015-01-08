@@ -11,6 +11,15 @@ namespace TinyUI
 	{
 		TRACE("调用构造函数TinyString()\n");
 	}
+	TinyString::TinyString(size_t size)
+		:_Myres(size),
+		_Mysize(size),
+		_Mystr(NULL)
+	{
+
+		_Mystr = new CHAR[_Mysize];
+		TRACE("调用构造函数TinyString(INT size)\n");
+	}
 	TinyString::TinyString(const CHAR* s)
 		: _Myres(0),
 		_Mysize(0),
@@ -26,7 +35,7 @@ namespace TinyUI
 		_Mystr(NULL)
 	{
 		TRACE("调用拷贝构造函数TinyString(const TinyString& s)\n");
-		size_t _Maxsize = (size_t)((size_t)-1 / sizeof (CHAR));
+		size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
 		Assign(s, 0, _Maxsize);
 	}
 	TinyString::TinyString(const TinyString& s, size_t pos, size_t size)
@@ -56,7 +65,7 @@ namespace TinyUI
 			//容量不足扩充
 			if (this->_Myres < Newsize)
 			{
-				size_t _Maxsize = (size_t)((size_t)-1 / sizeof (CHAR));
+				size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
 				size_t _Newres = Newsize | this->_ALLOC_MASK;
 				size_t _size = (_Myres * 3) / 2;//扩充一半
 				if (_Maxsize < _Newres)
@@ -97,7 +106,7 @@ namespace TinyUI
 			//容量不足扩充
 			if (this->_Myres < Newsize)
 			{
-				size_t _Maxsize = (size_t)((size_t)-1 / sizeof (CHAR));
+				size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
 				size_t _Newres = Newsize | this->_ALLOC_MASK;
 				size_t _size = (_Myres * 3) / 2;//扩充一半
 				if (_Maxsize < _Newres)
@@ -164,7 +173,7 @@ namespace TinyUI
 		//容量不足扩充
 		if (this->_Myres < _Newsize)
 		{
-			size_t _Maxsize = (size_t)((size_t)-1 / sizeof (CHAR));
+			size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
 			size_t _Newres = _Newsize | this->_ALLOC_MASK;
 			size_t _size = (_Myres * 3) / 2;//扩充一半
 			if (_Maxsize < _Newres)
@@ -205,7 +214,7 @@ namespace TinyUI
 			//容量不足扩充
 			if (this->_Myres < _Num)
 			{
-				size_t _Maxsize = (size_t)((size_t)-1 / sizeof (CHAR));
+				size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
 				size_t _Newres = _Num | this->_ALLOC_MASK;
 				size_t _size = (_Myres * 3) / 2;//扩充一半
 				if (_Maxsize < _Newres)
@@ -274,7 +283,7 @@ namespace TinyUI
 			//容量不足扩充
 			if (this->_Myres < _Num)
 			{
-				size_t _Maxsize = (size_t)((size_t)-1 / sizeof (CHAR));
+				size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
 				size_t _Newres = _Num | this->_ALLOC_MASK;
 				size_t _size = (_Myres * 3) / 2;//扩充一半
 				if (_Maxsize < _Newres)
@@ -323,7 +332,7 @@ namespace TinyUI
 			//容量不足扩充
 			if (this->_Myres < _Num)
 			{
-				size_t _Maxsize = (size_t)((size_t)-1 / sizeof (CHAR));
+				size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
 				size_t _Newres = _Num | this->_ALLOC_MASK;
 				size_t _size = (_Myres * 3) / 2;//扩充一半
 				if (_Maxsize < _Newres)
@@ -391,7 +400,7 @@ namespace TinyUI
 		size = _vsntprintf_s(szBuffer, 512, s, args);
 		ASSERT(size >= 0);
 		va_end(args);
-		return TinyString(szBuffer, 0, size);
+		return TinyString(szBuffer, 0, size);//一个构造函数代价
 	}
 	INT	TinyString::Find(const CHAR* s, size_t pos) const
 	{
@@ -496,7 +505,7 @@ namespace TinyUI
 				//容量不足扩充
 				if (this->_Myres < Newsize)
 				{
-					size_t _Maxsize = (size_t)((size_t)-1 / sizeof (CHAR));
+					size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
 					size_t _Newres = Newsize | this->_ALLOC_MASK;
 					size_t _size = (_Myres * 3) / 2;//扩充一半
 					if (_Maxsize < _Newres)
@@ -559,7 +568,7 @@ namespace TinyUI
 			//容量不足扩充
 			if (this->_Myres < _Newsize)
 			{
-				size_t _Maxsize = (size_t)((size_t)-1 / sizeof (CHAR));
+				size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
 				size_t _Newres = _Newsize | this->_ALLOC_MASK;
 				size_t _size = (_Myres * 3) / 2;//扩充一半
 				if (_Maxsize < _Newres)
@@ -615,6 +624,30 @@ namespace TinyUI
 	BOOL TinyString::IsEmpty() const throw()
 	{
 		return (this->_Mysize == 0);
+	}
+	INT __cdecl TinyString::A2W(CHAR* mbstr, const WCHAR* wcstr, size_t count)
+	{
+		if (count == 0 && mbstr != NULL)
+			return 0;
+		INT result = ::WideCharToMultiByte(CP_ACP, 0, wcstr, -1, mbstr, (INT)count, NULL, NULL);
+		ASSERT(mbstr == NULL || result <= (INT)count);
+		if (result > 0)
+		{
+			mbstr[result - 1] = 0;
+		}
+		return result;
+	}
+	INT __cdecl TinyString::W2A(WCHAR* wcstr, const CHAR* mbstr, size_t count)
+	{
+		if (count == 0 && wcstr != NULL)
+			return 0;
+		INT result = ::MultiByteToWideChar(CP_ACP, 0, mbstr, -1, wcstr, (INT)count);
+		ASSERT(wcstr == NULL || result <= (INT)count);
+		if (result > 0)
+		{
+			wcstr[result - 1] = 0;
+		}
+		return result;
 	}
 }
 

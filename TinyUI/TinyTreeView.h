@@ -15,10 +15,10 @@ namespace TinyUI
 		virtual LPCSTR RetrieveTitle();
 		virtual DWORD RetrieveStyle();
 		virtual DWORD RetrieveExStyle();
-		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 	private:
 		LRESULT		TvnExpanding(NMTREEVIEW* nmtv);
 		void		TvnExpanded(NMTREEVIEW* nmtv);
@@ -26,7 +26,7 @@ namespace TinyUI
 		void		TvnSelected(NMTREEVIEW* nmtv);
 		void		TvnDeleteItem(NMTREEVIEW* nmtv);
 	public:
-		void UpdateCursor(HCURSOR hNew);
+		void		UpdateCursor(HCURSOR hNew);
 		virtual void OnNodeExpanding(HTREEITEM hItem, BOOL& bCancel);
 		virtual void OnNodeCollapsing(HTREEITEM hItem, BOOL& bCancel);
 		virtual void OnNodeExpanded(HTREEITEM hItem);

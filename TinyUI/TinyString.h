@@ -12,6 +12,7 @@ namespace TinyUI
 		DECLARE_DYNAMIC(TinyString)
 	public:
 		TinyString();
+		explicit TinyString(size_t size);
 		TinyString(const CHAR* s);
 		TinyString(const TinyString& s);
 		TinyString(const TinyString& s, size_t pos, size_t size);
@@ -57,6 +58,8 @@ namespace TinyUI
 		size_t		GetSize() const;
 		CHAR*		STR() const;
 		static TinyString _cdecl Format(const CHAR* s, ...);
+		static INT __cdecl A2W(CHAR* mbstr, const WCHAR* wcstr, size_t count);
+		static INT __cdecl W2A(WCHAR* wcstr, const CHAR* mbstr, size_t count);
 	private:
 		enum
 		{

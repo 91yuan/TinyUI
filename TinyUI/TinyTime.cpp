@@ -949,6 +949,7 @@ namespace TinyUI
 			SetStatus(invalid);
 		}
 	}
+
 	TinyString TinyOleDateTime::Format(LPCTSTR pFormat) const
 	{
 		if (GetStatus() == null)

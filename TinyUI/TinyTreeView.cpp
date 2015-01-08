@@ -40,7 +40,7 @@ namespace TinyUI
 	LRESULT TinyTreeView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		SendMessage(m_hWND, TVM_SETEXTENDEDSTYLE, TVS_EX_MULTISELECT, TVS_EX_MULTISELECT);
+		::SendMessage(m_hWND, TVM_SETEXTENDEDSTYLE, TVS_EX_MULTISELECT, (LPARAM)TVS_EX_MULTISELECT);
 		return FALSE;
 	}
 	LRESULT TinyTreeView::OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -119,7 +119,7 @@ namespace TinyUI
 		RECT rect = { 0 };
 		if (nmtv->itemOld.hItem != NULL)
 		{
-			if ((INT)SendMessage(m_hWND, TVM_GETITEMRECT, 1, (LPARAM)&rect) != 0)
+			if ((INT)SendMessage(TVM_GETITEMRECT, 1, (LPARAM)&rect) != 0)
 			{
 				InvalidateRect(m_hWND, &rect, TRUE);
 			}
@@ -158,7 +158,6 @@ namespace TinyUI
 	{
 		EVENT_NodeSelected(this, hItem);
 	}
-	//////////////////////////////////////////////////////////////////////////
 	HTREEITEM TinyTreeView::InsertItem(LPTVINSERTSTRUCT lpInsertStruct)
 	{
 		ASSERT(::IsWindow(m_hWND));
@@ -574,10 +573,10 @@ namespace TinyUI
 
 	void TinyTreeView::RemoveImageList(INT nImageList)
 	{
-		HIMAGELIST h = (HIMAGELIST)SendMessage(m_hWND, TVM_GETIMAGELIST, (WPARAM)nImageList, NULL);
+		HIMAGELIST h = (HIMAGELIST)SendMessage(TVM_GETIMAGELIST, (WPARAM)nImageList, NULL);
 		if (h != NULL)
 		{
-			SendMessage(m_hWND, TVM_SETIMAGELIST, (WPARAM)h, NULL);
+			SendMessage(TVM_SETIMAGELIST, (WPARAM)h, NULL);
 		}
 	}
 

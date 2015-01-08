@@ -14,8 +14,9 @@ namespace TinyUI
 		ColumnType = 2,
 		ColumnModified = 3,
 	};
-	//////////////////////////////////////////////////////////////////////////
-	//文件View
+	/// <summary>
+	/// 文件View
+	/// </summary>
 	class TinyFileView :public TinyListView
 	{
 		DECLARE_DYNAMIC(TinyFileView)
@@ -23,22 +24,22 @@ namespace TinyUI
 		TinyFileView();
 		virtual ~TinyFileView();
 	public:
-		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual INT OnGetItemText(INT iItem, INT iColumn, LPSHELLITEMINFO pItem, CHAR* pz, INT size);
-		virtual INT OnGetItemIcon(INT iItem, LPSHELLITEMINFO pItem);
-		virtual void OnSetColumns();
-		virtual void OnFormatFileDate(const TinyTime& tmFile, TinyString& str);
-		virtual void OnFormatFileSize(__int64 lFileSize, TinyString& str);
-		virtual void OnDeleteItem(INT iItem);
+		virtual LRESULT		OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual TinyString	OnGetItemText(INT iItem, INT iColumn, LPSHELLITEMINFO pItem, CHAR* pz, INT size);
+		virtual INT			OnGetItemIcon(INT iItem, LPSHELLITEMINFO pItem);
+		virtual void		OnSetColumns();
+		virtual void		OnFormatFileDate(const TinyTime& tmFile, TinyString& str);
+		virtual void		OnFormatFileSize(__int64 lFileSize, TinyString& str);
+		virtual void		OnDeleteItem(INT iItem);
 		void SetFolderView(TinyFolderView* pNewView);
 		INT OnCompareItems(LPARAM lParam1, LPARAM lParam2, INT iColumn);
 	private:
 		void InitializeFileView();
 		void ReleaseItem();
-		HRESULT EnumObjects(LPSHELLFOLDER pParentFolder, LPITEMIDLIST parentPIDL);
-		HIMAGELIST GetShellImageList(BOOL bLarge);
-		HRESULT LockItem(LPSHELLITEMINFO shellItemPtr);
-		HRESULT DisplayItem(LPSHELLITEMINFO shellItemPtr);
+		HRESULT		EnumObjects(LPSHELLFOLDER pParentFolder, LPITEMIDLIST parentPIDL);
+		HIMAGELIST	GetShellImageList(BOOL bLarge);
+		HRESULT		LockItem(LPSHELLITEMINFO shellItemPtr);
+		HRESULT		DisplayItem(LPSHELLITEMINFO shellItemPtr);
 	private:
 		IShellFolder*		m_psfCurrent;//当前项的PIDL
 		LPITEMIDLIST		m_currentAbsPIDL;//当前的绝对PIDL

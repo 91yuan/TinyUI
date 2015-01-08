@@ -77,6 +77,8 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TinyColumn.h" />
+    <ClInclude Include="TinyFileView.h" />
+    <ClInclude Include="TinyFolderView.h" />
     <ClInclude Include="TinyListBox.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TinyAnimate.h" />
@@ -101,10 +103,13 @@
     <ClInclude Include="TinyObject.h" />
     <ClInclude Include="TinyProgressBar.h" />
     <ClInclude Include="TinyRebar.h" />
+    <ClInclude Include="TinyRichTextBox.h" />
     <ClInclude Include="TinyScrollBar.h" />
     <ClInclude Include="TinyShell.h" />
     <ClInclude Include="TinySingle.h" />
     <ClInclude Include="TinyString.h" />
+    <ClInclude Include="TinyTabControl.h" />
+    <ClInclude Include="TinyTextBox.h" />
     <ClInclude Include="TinyThunk.h" />
     <ClInclude Include="TinyTime.h" />
     <ClInclude Include="TinyTrackBar.h" />
@@ -121,6 +126,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TinyColumn.cpp" />
+    <ClCompile Include="TinyFileView.cpp" />
+    <ClCompile Include="TinyFolderView.cpp" />
     <ClCompile Include="TinyListBox.cpp" />
     <ClCompile Include="TinyAnimate.cpp" />
     <ClCompile Include="TinyApplication.cpp" />
@@ -144,10 +151,13 @@
     <ClCompile Include="TinyObject.cpp" />
     <ClCompile Include="TinyProgressBar.cpp" />
     <ClCompile Include="TinyRebar.cpp" />
+    <ClCompile Include="TinyRichTextBox.cpp" />
     <ClCompile Include="TinyScrollBar.cpp" />
     <ClCompile Include="TinyShell.cpp" />
     <ClCompile Include="TinySingle.cpp" />
     <ClCompile Include="TinyString.cpp" />
+    <ClCompile Include="TinyTabControl.cpp" />
+    <ClCompile Include="TinyTextBox.cpp" />
     <ClCompile Include="TinyThunk.cpp" />
     <ClCompile Include="TinyTime.cpp" />
     <ClCompile Include="TinyTrackBar.cpp" />

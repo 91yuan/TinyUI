@@ -9,7 +9,7 @@ typedef tagDBTIMESTAMP DBTIMESTAMP;
 namespace TinyUI
 {
 	const INT maxTimeBufferSize = 128;
-	const long maxDaysInSpan = 3615897L;
+	const LONG maxDaysInSpan = 3615897L;
 	inline BOOL ConvertSystemTimeToVariantTime(const SYSTEMTIME& systimeSrc, double* pVarDtTm);
 	extern __declspec(selectany) const TCHAR * const szInvalidDateTime = _T("Invalid DateTime");
 
