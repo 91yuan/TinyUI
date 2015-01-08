@@ -23,22 +23,22 @@ namespace TinyUI
 		TinyFileView();
 		virtual ~TinyFileView();
 	public:
-		virtual void OnSetColumns();
+		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual INT OnGetItemText(INT iItem, INT iColumn, LPSHELLITEMINFO pItem, CHAR* pz, INT size);
-		INT OnCompareItems(LPARAM lParam1, LPARAM lParam2, INT iColumn);
 		virtual INT OnGetItemIcon(INT iItem, LPSHELLITEMINFO pItem);
+		virtual void OnSetColumns();
 		virtual void OnFormatFileDate(const TinyTime& tmFile, TinyString& str);
 		virtual void OnFormatFileSize(__int64 lFileSize, TinyString& str);
-		void SetFolderView(TinyFolderView* pNewView);
-		virtual void OnCreate();
 		virtual void OnDeleteItem(INT iItem);
+		void SetFolderView(TinyFolderView* pNewView);
+		INT OnCompareItems(LPARAM lParam1, LPARAM lParam2, INT iColumn);
 	private:
 		void InitializeFileView();
+		void ReleaseItem();
 		HRESULT EnumObjects(LPSHELLFOLDER pParentFolder, LPITEMIDLIST parentPIDL);
 		HIMAGELIST GetShellImageList(BOOL bLarge);
 		HRESULT LockItem(LPSHELLITEMINFO shellItemPtr);
 		HRESULT DisplayItem(LPSHELLITEMINFO shellItemPtr);
-		void ReleaseItem();
 	private:
 		IShellFolder*		m_psfCurrent;//当前项的PIDL
 		LPITEMIDLIST		m_currentAbsPIDL;//当前的绝对PIDL

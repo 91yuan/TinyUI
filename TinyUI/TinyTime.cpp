@@ -1,15 +1,35 @@
 #include "stdafx.h"
 #include "TinyTime.h"
+#pragma comment(lib, "comsupp.lib") 
 
 namespace TinyUI
 {
+	inline BOOL _ConvertSystemTimeToVariantTime(const SYSTEMTIME& systimeSrc, double* pVarDtTm)
+	{
+		BOOL ok = ::SystemTimeToVariantTime(const_cast<SYSTEMTIME*>(&systimeSrc), pVarDtTm);
+		SYSTEMTIME sysTime;
+		::ZeroMemory(&sysTime, sizeof(SYSTEMTIME));
+
+		ok = ok && ::VariantTimeToSystemTime(*pVarDtTm, &sysTime);
+		ok = ok && (systimeSrc.wYear == sysTime.wYear &&
+			systimeSrc.wMonth == sysTime.wMonth &&
+			systimeSrc.wDay == sysTime.wDay &&
+			systimeSrc.wHour == sysTime.wHour &&
+			systimeSrc.wMinute == sysTime.wMinute &&
+			systimeSrc.wSecond == sysTime.wSecond);
+
+		return ok;
+	}
+	/************************************************************************/
+	/* TinyTimeSpan                                                         */
+	/************************************************************************/
 	TinyTimeSpan::TinyTimeSpan() throw() :m_timeSpan(0)
 	{
 	}
 	TinyTimeSpan::TinyTimeSpan(__time64_t time) throw() :m_timeSpan(time)
 	{
 	}
-	TinyTimeSpan::TinyTimeSpan(LONG lDays, int nHours, int nMins, int nSecs) throw()
+	TinyTimeSpan::TinyTimeSpan(LONG lDays, INT nHours, INT nMins, INT nSecs) throw()
 	{
 		m_timeSpan = nSecs + 60 * (nMins + 60 * (nHours + __int64(24) * lDays));
 	}
@@ -87,7 +107,9 @@ namespace TinyUI
 	{
 		return(m_timeSpan >= span.m_timeSpan);
 	}
-	//////////////////////////////////////////////////////////////////////////
+	/************************************************************************/
+	/* TinyTime																*/
+	/************************************************************************/
 	TinyTime WINAPI TinyTime::GetCurrentTime() throw()
 	{
 		return(TinyTime(::_time64(NULL)));
@@ -160,12 +182,12 @@ namespace TinyUI
 		else
 		{
 			TinyTime timeT(
-				(int)sysTime.wYear,
-				(int)sysTime.wMonth,
-				(int)sysTime.wDay,
-				(int)sysTime.wHour,
-				(int)sysTime.wMinute,
-				(int)sysTime.wSecond,
+				(INT)sysTime.wYear,
+				(INT)sysTime.wMonth,
+				(INT)sysTime.wDay,
+				(INT)sysTime.wHour,
+				(INT)sysTime.wMinute,
+				(INT)sysTime.wSecond,
 				nDST);
 			*this = timeT;
 		}
@@ -363,5 +385,601 @@ namespace TinyUI
 
 		ptm = GetLocalTm(&ttm);
 		return ptm ? ptm->tm_wday + 1 : 0;
+	}
+
+	/************************************************************************/
+	/* TinyOleDateTimeSpan													*/
+	/************************************************************************/
+	TinyOleDateTimeSpan::TinyOleDateTimeSpan() throw() : m_span(0), m_status(valid)
+	{
+	}
+
+	TinyOleDateTimeSpan::TinyOleDateTimeSpan(double dblSpanSrc) throw() : m_span(dblSpanSrc), m_status(valid)
+	{
+		CheckRange();
+	}
+
+	TinyOleDateTimeSpan::TinyOleDateTimeSpan(LONG lDays, INT nHours, INT nMins, INT nSecs) throw()
+	{
+		SetDateTimeSpan(lDays, nHours, nMins, nSecs);
+	}
+
+	void TinyOleDateTimeSpan::SetStatus(DateTimeSpanStatus status) throw()
+	{
+		m_status = status;
+	}
+
+	TinyOleDateTimeSpan::DateTimeSpanStatus TinyOleDateTimeSpan::GetStatus() const throw()
+	{
+		return m_status;
+	}
+
+	__declspec(selectany) const double
+		TinyOleDateTimeSpan::OLE_DATETIME_HALFSECOND =
+		1.0 / (2.0 * (60.0 * 60.0 * 24.0));
+
+	double TinyOleDateTimeSpan::GetTotalDays() const throw()
+	{
+		ASSERT(GetStatus() == valid);
+		return (double)LONGLONG(m_span + (m_span < 0 ?
+			-OLE_DATETIME_HALFSECOND : OLE_DATETIME_HALFSECOND));
+	}
+
+	double TinyOleDateTimeSpan::GetTotalHours() const throw()
+	{
+		ASSERT(GetStatus() == valid);
+		return (double)LONGLONG((m_span + (m_span < 0 ?
+			-OLE_DATETIME_HALFSECOND : OLE_DATETIME_HALFSECOND)) * 24);
+	}
+
+	double TinyOleDateTimeSpan::GetTotalMinutes() const throw()
+	{
+		ASSERT(GetStatus() == valid);
+		return (double)LONGLONG((m_span + (m_span < 0 ?
+			-OLE_DATETIME_HALFSECOND : OLE_DATETIME_HALFSECOND)) * (24 * 60));
+	}
+
+	double TinyOleDateTimeSpan::GetTotalSeconds() const throw()
+	{
+		ASSERT(GetStatus() == valid);
+		return (double)LONGLONG((m_span + (m_span < 0 ?
+			-OLE_DATETIME_HALFSECOND : OLE_DATETIME_HALFSECOND)) * (24 * 60 * 60));
+	}
+
+	LONG TinyOleDateTimeSpan::GetDays() const throw()
+	{
+		ASSERT(GetStatus() == valid);
+		return LONG(GetTotalDays());
+	}
+
+	LONG TinyOleDateTimeSpan::GetHours() const throw()
+	{
+		return LONG(GetTotalHours()) % 24;
+	}
+
+	LONG TinyOleDateTimeSpan::GetMinutes() const throw()
+	{
+		return LONG(GetTotalMinutes()) % 60;
+	}
+
+	LONG TinyOleDateTimeSpan::GetSeconds() const throw()
+	{
+		return LONG(GetTotalSeconds()) % 60;
+	}
+
+	TinyOleDateTimeSpan& TinyOleDateTimeSpan::operator=(double dblSpanSrc) throw()
+	{
+		m_span = dblSpanSrc;
+		m_status = valid;
+		CheckRange();
+		return *this;
+	}
+
+	bool TinyOleDateTimeSpan::operator==(const TinyOleDateTimeSpan& dateSpan) const throw()
+	{
+		if (GetStatus() == dateSpan.GetStatus())
+		{
+			if (GetStatus() == valid)
+				return (m_span == dateSpan.m_span);
+
+			return (GetStatus() == null);
+		}
+
+		return false;
+	}
+
+	bool TinyOleDateTimeSpan::operator!=(const TinyOleDateTimeSpan& dateSpan) const throw()
+	{
+		return !operator==(dateSpan);
+	}
+
+	bool TinyOleDateTimeSpan::operator<(const TinyOleDateTimeSpan& dateSpan) const throw()
+	{
+		ASSERT(GetStatus() == valid);
+		ASSERT(dateSpan.GetStatus() == valid);
+		if ((GetStatus() == valid) && (GetStatus() == dateSpan.GetStatus()))
+			return m_span < dateSpan.m_span;
+
+		return false;
+	}
+
+	bool TinyOleDateTimeSpan::operator>(const TinyOleDateTimeSpan& dateSpan) const throw()
+	{
+		ASSERT(GetStatus() == valid);
+		ASSERT(dateSpan.GetStatus() == valid);
+		if ((GetStatus() == valid) && (GetStatus() == dateSpan.GetStatus()))
+			return m_span > dateSpan.m_span;
+
+		return false;
+	}
+
+	bool TinyOleDateTimeSpan::operator<=(const TinyOleDateTimeSpan& dateSpan) const throw()
+	{
+		return operator<(dateSpan) || operator==(dateSpan);
+	}
+
+	bool TinyOleDateTimeSpan::operator>=(const TinyOleDateTimeSpan& dateSpan) const throw()
+	{
+		return operator>(dateSpan) || operator==(dateSpan);
+	}
+
+	TinyOleDateTimeSpan TinyOleDateTimeSpan::operator+(const TinyOleDateTimeSpan& dateSpan) const throw()
+	{
+		TinyOleDateTimeSpan dateSpanTemp;
+		if (GetStatus() == null || dateSpan.GetStatus() == null)
+		{
+			dateSpanTemp.SetStatus(null);
+			return dateSpanTemp;
+		}
+		if (GetStatus() == invalid || dateSpan.GetStatus() == invalid)
+		{
+			dateSpanTemp.SetStatus(invalid);
+			return dateSpanTemp;
+		}
+		dateSpanTemp.m_span = m_span + dateSpan.m_span;
+		dateSpanTemp.CheckRange();
+
+		return dateSpanTemp;
+	}
+
+	TinyOleDateTimeSpan TinyOleDateTimeSpan::operator-(const TinyOleDateTimeSpan& dateSpan) const throw()
+	{
+		TinyOleDateTimeSpan dateSpanTemp;
+		if (GetStatus() == null || dateSpan.GetStatus() == null)
+		{
+			dateSpanTemp.SetStatus(null);
+			return dateSpanTemp;
+		}
+		if (GetStatus() == invalid || dateSpan.GetStatus() == invalid)
+		{
+			dateSpanTemp.SetStatus(invalid);
+			return dateSpanTemp;
+		}
+		dateSpanTemp.m_span = m_span - dateSpan.m_span;
+		dateSpanTemp.CheckRange();
+
+		return dateSpanTemp;
+	}
+
+	TinyOleDateTimeSpan& TinyOleDateTimeSpan::operator+=(const TinyOleDateTimeSpan dateSpan) throw()
+	{
+		ASSERT(GetStatus() == valid);
+		ASSERT(dateSpan.GetStatus() == valid);
+		*this = *this + dateSpan;
+		CheckRange();
+		return *this;
+	}
+
+	TinyOleDateTimeSpan& TinyOleDateTimeSpan::operator-=(const TinyOleDateTimeSpan dateSpan) throw()
+	{
+		ASSERT(GetStatus() == valid);
+		ASSERT(dateSpan.GetStatus() == valid);
+		*this = *this - dateSpan;
+		CheckRange();
+		return *this;
+	}
+
+	TinyOleDateTimeSpan TinyOleDateTimeSpan::operator-() const throw()
+	{
+		return -this->m_span;
+	}
+
+	TinyOleDateTimeSpan::operator double() const throw()
+	{
+		return m_span;
+	}
+
+	void TinyOleDateTimeSpan::SetDateTimeSpan(LONG lDays, INT nHours, INT nMins, INT nSecs) throw()
+	{
+		m_span = lDays + ((double)nHours) / 24 + ((double)nMins) / (24 * 60) + ((double)nSecs) / (24 * 60 * 60);
+		m_status = valid;
+		CheckRange();
+	}
+
+	void TinyOleDateTimeSpan::CheckRange()
+	{
+		if (m_span < -maxDaysInSpan || m_span > maxDaysInSpan)
+			m_status = invalid;
+	}
+
+	/************************************************************************/
+	/* TinyOleDateTime														*/
+	/************************************************************************/
+	TinyOleDateTime WINAPI TinyOleDateTime::GetCurrentTime() throw()
+	{
+		return TinyOleDateTime(::_time64(NULL));
+	}
+
+	TinyOleDateTime::TinyOleDateTime() throw() :
+		m_dt(0), m_status(valid)
+	{
+	}
+
+	TinyOleDateTime::TinyOleDateTime(const VARIANT& varSrc) throw() :
+		m_dt(0), m_status(valid)
+	{
+		*this = varSrc;
+	}
+
+	TinyOleDateTime::TinyOleDateTime(DATE dtSrc) throw() :
+		m_dt(dtSrc), m_status(valid)
+	{
+	}
+
+	TinyOleDateTime::TinyOleDateTime(__time32_t timeSrc) throw() :
+		m_dt(0), m_status(valid)
+	{
+		*this = timeSrc;
+	}
+
+	TinyOleDateTime::TinyOleDateTime(__time64_t timeSrc) throw() :
+		m_dt(0), m_status(valid)
+	{
+		*this = timeSrc;
+	}
+
+	TinyOleDateTime::TinyOleDateTime(const SYSTEMTIME& systimeSrc) throw() :
+		m_dt(0), m_status(valid)
+	{
+		*this = systimeSrc;
+	}
+
+	TinyOleDateTime::TinyOleDateTime(const FILETIME& filetimeSrc) throw() :
+		m_dt(0), m_status(valid)
+	{
+		*this = filetimeSrc;
+	}
+
+	TinyOleDateTime::TinyOleDateTime(INT nYear, INT nMonth, INT nDay,
+		INT nHour, INT nMin, INT nSec) throw()
+	{
+		SetDateTime(nYear, nMonth, nDay, nHour, nMin, nSec);
+	}
+
+	TinyOleDateTime::TinyOleDateTime(WORD wDosDate, WORD wDosTime) throw()
+	{
+		m_status = ::DosDateTimeToVariantTime(wDosDate, wDosTime, &m_dt) ?
+		valid : invalid;
+	}
+
+	void TinyOleDateTime::SetStatus(DateTimeStatus status) throw()
+	{
+		m_status = status;
+	}
+
+	TinyOleDateTime::DateTimeStatus TinyOleDateTime::GetStatus() const throw()
+	{
+		return m_status;
+	}
+
+	bool TinyOleDateTime::GetAsSystemTime(SYSTEMTIME& sysTime) const throw()
+	{
+		return GetStatus() == valid && ::VariantTimeToSystemTime(m_dt, &sysTime);
+	}
+
+	bool TinyOleDateTime::GetAsUDATE(UDATE &udate) const throw()
+	{
+		return SUCCEEDED(::VarUdateFromDate(m_dt, 0, &udate));
+	}
+
+	INT TinyOleDateTime::GetYear() const throw()
+	{
+		SYSTEMTIME st;
+		return GetAsSystemTime(st) ? st.wYear : error;
+	}
+
+	INT TinyOleDateTime::GetMonth() const throw()
+	{
+		SYSTEMTIME st;
+		return GetAsSystemTime(st) ? st.wMonth : error;
+	}
+
+	INT TinyOleDateTime::GetDay() const throw()
+	{
+		SYSTEMTIME st;
+		return GetAsSystemTime(st) ? st.wDay : error;
+	}
+
+	INT TinyOleDateTime::GetHour() const throw()
+	{
+		SYSTEMTIME st;
+		return GetAsSystemTime(st) ? st.wHour : error;
+	}
+
+	INT TinyOleDateTime::GetMinute() const throw()
+	{
+		SYSTEMTIME st;
+		return GetAsSystemTime(st) ? st.wMinute : error;
+	}
+
+	INT TinyOleDateTime::GetSecond() const throw()
+	{
+		SYSTEMTIME st;
+		return GetAsSystemTime(st) ? st.wSecond : error;
+	}
+
+	INT TinyOleDateTime::GetDayOfWeek() const throw()
+	{
+		SYSTEMTIME st;
+		return GetAsSystemTime(st) ? st.wDayOfWeek + 1 : error;
+	}
+
+	INT TinyOleDateTime::GetDayOfYear() const throw()
+	{
+		UDATE udate;
+		return GetAsUDATE(udate) ? udate.wDayOfYear : error;
+	}
+
+	TinyOleDateTime& TinyOleDateTime::operator=(const VARIANT& varSrc) throw()
+	{
+		if (varSrc.vt != VT_DATE)
+		{
+			VARIANT varDest;
+			varDest.vt = VT_EMPTY;
+			if (SUCCEEDED(::VariantChangeType(&varDest, const_cast<VARIANT *>(&varSrc), 0, VT_DATE)))
+			{
+				m_dt = varDest.date;
+				m_status = valid;
+			}
+			else
+				m_status = invalid;
+		}
+		else
+		{
+			m_dt = varSrc.date;
+			m_status = valid;
+		}
+
+		return *this;
+	}
+
+	TinyOleDateTime& TinyOleDateTime::operator=(DATE dtSrc) throw()
+	{
+		m_dt = dtSrc;
+		m_status = valid;
+		return *this;
+	}
+
+	TinyOleDateTime& TinyOleDateTime::operator=(const __time32_t& timeSrc) throw()
+	{
+		return operator=(static_cast<__time64_t>(timeSrc));
+	}
+
+	TinyOleDateTime& TinyOleDateTime::operator=(const __time64_t& timeSrc) throw()
+	{
+		SYSTEMTIME st;
+		TinyTime tmp(timeSrc);
+		m_status = tmp.GetAsSystemTime(st) && ConvertSystemTimeToVariantTime(st) ? valid : invalid;
+		return *this;
+	}
+
+	TinyOleDateTime &TinyOleDateTime::operator=(const SYSTEMTIME &systimeSrc) throw()
+	{
+		m_status = ConvertSystemTimeToVariantTime(systimeSrc) ? valid : invalid;
+		return *this;
+	}
+
+	TinyOleDateTime &TinyOleDateTime::operator=(const FILETIME &filetimeSrc) throw()
+	{
+		FILETIME ftl;
+		SYSTEMTIME st;
+
+		m_status = ::FileTimeToLocalFileTime(&filetimeSrc, &ftl) &&
+			::FileTimeToSystemTime(&ftl, &st) &&
+			ConvertSystemTimeToVariantTime(st) ? valid : invalid;
+
+		return *this;
+	}
+
+	BOOL TinyOleDateTime::ConvertSystemTimeToVariantTime(const SYSTEMTIME& systimeSrc)
+	{
+		return _ConvertSystemTimeToVariantTime(systimeSrc, &m_dt);
+	}
+	TinyOleDateTime &TinyOleDateTime::operator=(const UDATE &udate) throw()
+	{
+		m_status = (S_OK == VarDateFromUdate((UDATE*)&udate, 0, &m_dt)) ? valid : invalid;
+
+		return *this;
+	}
+
+	bool TinyOleDateTime::operator==(const TinyOleDateTime& date) const throw()
+	{
+		if (GetStatus() == date.GetStatus())
+		{
+			if (GetStatus() == valid)
+				return(m_dt == date.m_dt);
+
+			return (GetStatus() == null);
+		}
+		return false;
+
+	}
+
+	bool TinyOleDateTime::operator!=(const TinyOleDateTime& date) const throw()
+	{
+		return !operator==(date);
+	}
+
+	bool TinyOleDateTime::operator<(const TinyOleDateTime& date) const throw()
+	{
+		ASSERT(GetStatus() == valid);
+		ASSERT(date.GetStatus() == valid);
+		if ((GetStatus() == valid) && (GetStatus() == date.GetStatus()))
+			return(DoubleFromDate(m_dt) < DoubleFromDate(date.m_dt));
+		return false;
+	}
+
+	bool TinyOleDateTime::operator>(const TinyOleDateTime& date) const throw()
+	{
+		ASSERT(GetStatus() == valid);
+		ASSERT(date.GetStatus() == valid);
+		if ((GetStatus() == valid) && (GetStatus() == date.GetStatus()))
+			return(DoubleFromDate(m_dt) > DoubleFromDate(date.m_dt));
+
+		return false;
+	}
+
+	bool TinyOleDateTime::operator<=(const TinyOleDateTime& date) const throw()
+	{
+		return operator<(date) || operator==(date);
+	}
+
+	bool TinyOleDateTime::operator>=(const TinyOleDateTime& date) const throw()
+	{
+		return operator>(date) || operator==(date);
+	}
+
+	TinyOleDateTime TinyOleDateTime::operator+(TinyOleDateTimeSpan dateSpan) const throw()
+	{
+		ASSERT(GetStatus() == valid);
+		ASSERT(dateSpan.GetStatus() == valid);
+		return(TinyOleDateTime(DateFromDouble(DoubleFromDate(m_dt) + (double)dateSpan)));
+	}
+
+	TinyOleDateTime TinyOleDateTime::operator-(TinyOleDateTimeSpan dateSpan) const throw()
+	{
+		ASSERT(GetStatus() == valid);
+		ASSERT(dateSpan.GetStatus() == valid);
+		return(TinyOleDateTime(DateFromDouble(DoubleFromDate(m_dt) - (double)dateSpan)));
+	}
+
+	TinyOleDateTime& TinyOleDateTime::operator+=(TinyOleDateTimeSpan dateSpan) throw()
+	{
+		ASSERT(GetStatus() == valid);
+		ASSERT(dateSpan.GetStatus() == valid);
+		m_dt = DateFromDouble(DoubleFromDate(m_dt) + (double)dateSpan);
+		return(*this);
+	}
+
+	TinyOleDateTime& TinyOleDateTime::operator-=(TinyOleDateTimeSpan dateSpan) throw()
+	{
+		ASSERT(GetStatus() == valid);
+		ASSERT(dateSpan.GetStatus() == valid);
+		m_dt = DateFromDouble(DoubleFromDate(m_dt) - (double)dateSpan);
+		return(*this);
+	}
+
+	TinyOleDateTimeSpan TinyOleDateTime::operator-(const TinyOleDateTime& date) const throw()
+	{
+		ASSERT(GetStatus() == valid);
+		ASSERT(date.GetStatus() == valid);
+		return DoubleFromDate(m_dt) - DoubleFromDate(date.m_dt);
+	}
+
+	TinyOleDateTime::operator DATE() const throw()
+	{
+		ASSERT(GetStatus() == valid);
+		return(m_dt);
+	}
+
+	INT TinyOleDateTime::SetDateTime(INT nYear, INT nMonth, INT nDay, INT nHour, INT nMin, INT nSec) throw()
+	{
+		SYSTEMTIME st;
+		::ZeroMemory(&st, sizeof(SYSTEMTIME));
+
+		st.wYear = WORD(nYear);
+		st.wMonth = WORD(nMonth);
+		st.wDay = WORD(nDay);
+		st.wHour = WORD(nHour);
+		st.wMinute = WORD(nMin);
+		st.wSecond = WORD(nSec);
+
+		m_status = ConvertSystemTimeToVariantTime(st) ? valid : invalid;
+		return m_status;
+	}
+
+	INT TinyOleDateTime::SetDate(INT nYear, INT nMonth, INT nDay) throw()
+	{
+		return SetDateTime(nYear, nMonth, nDay, 0, 0, 0);
+	}
+
+	INT TinyOleDateTime::SetTime(INT nHour, INT nMin, INT nSec) throw()
+	{
+		return SetDateTime(1899, 12, 30, nHour, nMin, nSec);
+	}
+
+	double WINAPI TinyOleDateTime::DoubleFromDate(DATE date) throw()
+	{
+		double fTemp;
+		if (date >= 0)
+		{
+			return(date);
+		}
+		fTemp = ceil(date);
+
+		return(fTemp - (date - fTemp));
+	}
+
+	DATE WINAPI TinyOleDateTime::DateFromDouble(double f) throw()
+	{
+		double fTemp;
+		if (f >= 0)
+		{
+			return(f);
+		}
+		fTemp = floor(f);
+
+		return(fTemp + (fTemp - f));
+	}
+
+	void TinyOleDateTime::CheckRange()
+	{
+		if (m_dt > VTDATEGRE_MAX || m_dt < VTDATEGRE_MIN)
+		{
+			SetStatus(invalid);
+		}
+	}
+	TinyString TinyOleDateTime::Format(LPCTSTR pFormat) const
+	{
+		if (GetStatus() == null)
+			return _T("");
+
+		if (GetStatus() == invalid)
+		{
+			return szInvalidDateTime;
+		}
+
+		UDATE ud;
+		if (S_OK != VarUdateFromDate(m_dt, 0, &ud))
+		{
+			return szInvalidDateTime;
+		}
+
+		struct tm tmTemp;
+		tmTemp.tm_sec = ud.st.wSecond;
+		tmTemp.tm_min = ud.st.wMinute;
+		tmTemp.tm_hour = ud.st.wHour;
+		tmTemp.tm_mday = ud.st.wDay;
+		tmTemp.tm_mon = ud.st.wMonth - 1;
+		tmTemp.tm_year = ud.st.wYear - 1900;
+		tmTemp.tm_wday = ud.st.wDayOfWeek;
+		tmTemp.tm_yday = ud.wDayOfYear - 1;
+		tmTemp.tm_isdst = 0;
+
+		CHAR* lpszTemp = new CHAR[256];
+		_tcsftime(lpszTemp, 256, pFormat, &tmTemp);
+		TinyString str(lpszTemp);
+		SAFE_DELETE_ARRAY(lpszTemp);
+		return str;//一个构造和拷贝的代价
 	}
 }

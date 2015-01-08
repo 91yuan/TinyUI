@@ -39,10 +39,13 @@ namespace TinyUI
 			}
 		}
 	}
-	void TinyFileView::OnCreate()
+
+	LRESULT TinyFileView::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		InitializeFileView();
+		return TinyListView::OnCreate(uMsg, wParam, lParam, bHandled);
 	}
+
 	void TinyFileView::OnDeleteItem(INT iItem)
 	{
 		LVITEM lvItem = { 0 };
@@ -79,8 +82,7 @@ namespace TinyUI
 			return NULL;
 		}
 		SHFILEINFO sfi;
-		HIMAGELIST hImageList = (HIMAGELIST)SHGetFileInfo(szWinDir, 0, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | (bLarge ? 0 : SHGFI_SMALLICON));
-		return hImageList;
+		return (HIMAGELIST)SHGetFileInfo(szWinDir, 0, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | (bLarge ? 0 : SHGFI_SMALLICON));
 	}
 	void TinyFileView::OnFormatFileDate(const TinyTime& tmFile, TinyString& str)
 	{
@@ -104,10 +106,10 @@ namespace TinyUI
 			str = szNumOut;
 			TCHAR szDec[10];
 			GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SDECIMAL, szDec, 10);
-			int nDecLen = lstrlen(szDec);
+			INT nDecLen = lstrlen(szDec);
 			if (nDecLen > 0)
 			{
-				for (int i = str.GetLength() - nDecLen - 1; i >= 0; i--)
+				for (INT i = str.GetLength() - nDecLen - 1; i >= 0; i--)
 				{
 					if (str.Mid(i, nDecLen) == szDec)
 					{
@@ -173,12 +175,12 @@ namespace TinyUI
 
 		return _T("");
 	}
-	INT TinyFileView::OnGetItemIcon(int /*iItem*/, LPSHELLITEMINFO pItem)
+	INT TinyFileView::OnGetItemIcon(INT /*iItem*/, LPSHELLITEMINFO pItem)
 	{
 		ASSERT(pItem != NULL);
 
 		SHFILEINFO	sfi;
-		int			iIcon = -1;
+		INT			iIcon = -1;
 
 		if (SHGetFileInfo((LPCTSTR)pItem->absolutePIDL, 0, &sfi, sizeof(sfi),
 			SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_LINKOVERLAY))
@@ -188,7 +190,7 @@ namespace TinyUI
 
 		return iIcon;
 	}
-	INT TinyFileView::OnCompareItems(LPARAM lParam1, LPARAM lParam2, int iColumn)
+	INT TinyFileView::OnCompareItems(LPARAM lParam1, LPARAM lParam2, INT iColumn)
 	{
 		LPSHELLITEMINFO pItem1 = (LPSHELLITEMINFO)lParam1;
 		LPSHELLITEMINFO	pItem2 = (LPSHELLITEMINFO)lParam2;
@@ -204,7 +206,7 @@ namespace TinyUI
 		FileStatus fs1;
 		FileStatus fs2;
 
-		int nRes = 0;
+		INT nRes = 0;
 
 		switch (iColumn)
 		{
@@ -270,9 +272,9 @@ namespace TinyUI
 		{
 			_T("名字"), _T("大小"), _T("类型"), _T("修改时间"),
 		};
-		for (int iColumn = 0; iColumn < 4; iColumn++)
+		for (INT iColumn = 0; iColumn < 4; iColumn++)
 		{
-			int nFormat = (iColumn == 1) ? LVCFMT_RIGHT : LVCFMT_LEFT;
+			INT nFormat = (iColumn == 1) ? LVCFMT_RIGHT : LVCFMT_LEFT;
 			InsertColumn(iColumn, szName[iColumn], nFormat, 100, iColumn);
 		}
 	}
@@ -314,11 +316,11 @@ namespace TinyUI
 					lvItem.stateMask |= LVIS_CUT;
 					lvItem.state |= LVIS_CUT;
 				}
-				int iItem = InsertItem(&lvItem);
+				INT iItem = InsertItem(&lvItem);
 				if (iItem >= 0)
 				{
-					const int nColumns = (int)::SendMessage(GetHeaderCtrl(), HDM_GETITEMCOUNT, 0, 0L);
-					for (int iColumn = 0; iColumn < nColumns; iColumn++)
+					const INT nColumns = (INT)::SendMessage(GetHeaderCtrl(), HDM_GETITEMCOUNT, 0, 0L);
+					for (INT iColumn = 0; iColumn < nColumns; iColumn++)
 					{
 						SetItemText(iItem, iColumn, OnGetItemText(iItem, iColumn, shellItemPtr));
 					}
