@@ -277,7 +277,7 @@ namespace TinyUI
 		if (GetPIDLSize(newPIDL) != 0)//²»ÊÇ×ÀÃæ
 		{
 			LPCITEMIDLIST currentPIDL = newPIDL;
-			LPITEMIDLIST parentPIDL;
+			LPITEMIDLIST parentPIDL = NULL;
 
 			/*TinyList<LPITEMIDLIST, LPITEMIDLIST> lstItems;
 			lstItems.AddHead(pShellManager->Clone(newPIDL));

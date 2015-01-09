@@ -134,6 +134,10 @@ namespace TinyUI
 	{
 		return m_MapHIMAGELIST;
 	}
+	TinyHandleMap<HMENU>&	TinyApplication::GetMapHMENU()
+	{
+		return m_MapHMENU;
+	}
 	TinyApplication::~TinyApplication()
 	{
 	}

@@ -4,6 +4,7 @@
 
 namespace TinyUI
 {
+#define SIZEINCR    0x1000
 	struct FileStatus
 	{
 		TinyTime m_ctime;
@@ -27,7 +28,9 @@ namespace TinyUI
 		virtual BOOL Flush() = 0;
 		virtual BOOL Close() = 0;
 	};
-	//////////////////////////////////////////////////////////////////////////
+	/// <summary>
+	/// 文件操作类
+	/// </summary>
 	class TinyFile : public TinyIO
 	{
 		DECLARE_DYNAMIC(TinyFile)
@@ -101,7 +104,9 @@ namespace TinyUI
 		TCHAR	m_pzFileTitle[MAX_PATH];
 		TCHAR	m_pzPath[MAX_PATH];
 	};
-	//////////////////////////////////////////////////////////////////////////
+	/// <summary>
+	/// 内存文件
+	/// </summary>
 	class TinyMemoryFile : public TinyIO
 	{
 		DECLARE_DYNAMIC(TinyMemoryFile)
@@ -126,7 +131,9 @@ namespace TinyUI
 		LONGLONG	m_dwBufferSize;
 		LONGLONG	m_dwPosition;
 	};
-	//////////////////////////////////////////////////////////////////////////
+	/// <summary>
+	/// 文件流
+	/// </summary>
 	class TinyFileStream : public IStream
 	{
 	public:
@@ -134,7 +141,6 @@ namespace TinyUI
 		STDMETHOD(QueryInterface) (REFIID riid, void **ppvObj);
 		STDMETHOD_(ULONG, AddRef) ();
 		STDMETHOD_(ULONG, Release) ();
-
 		// *** IStream methods ***
 		STDMETHOD(Read) (VOID *pv, ULONG cb, ULONG *pcbRead);
 		STDMETHOD(Write) (VOID const *pv, ULONG cb, ULONG *pcbWritten);
@@ -147,23 +153,24 @@ namespace TinyUI
 		STDMETHOD(UnlockRegion) (ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType);
 		STDMETHOD(Stat) (STATSTG *pstatstg, DWORD grfStatFlag);
 		STDMETHOD(Clone)(IStream **ppstm);
-
 	public:
 		TinyFileStream(HANDLE hf, DWORD grfMode);
-		~TinyFileStream();
-
+		virtual~TinyFileStream();
 	private:
-		LONG        cRef;
-		HANDLE      hFile;
+		LONG        m_cRef;
+		HANDLE      m_hFile;
 	};
-#define SIZEINCR    0x1000
+	/// <summary>
+	/// 内存流
+	/// </summary>
 	class TinyMemoryStream : public IStream
 	{
 	public:
+		// *** IUnknown methods ***
 		STDMETHOD(QueryInterface)(REFIID riid, void **ppvObj);
 		STDMETHOD_(ULONG, AddRef)();
 		STDMETHOD_(ULONG, Release)();
-		//////////////////////////////////////////////////////////////////////////
+		// *** IStream methods ***
 		STDMETHOD(Read)(void *pv, ULONG cb, ULONG *pcbRead);
 		STDMETHOD(Write)(void const *pv, ULONG cb, ULONG *pcbWritten);
 		STDMETHOD(Seek)(LARGE_INTEGER dlibMove, DWORD dwOrigin, ULARGE_INTEGER *plibNewPosition);
@@ -175,14 +182,16 @@ namespace TinyUI
 		STDMETHOD(UnlockRegion)(ULARGE_INTEGER, ULARGE_INTEGER, DWORD);
 		STDMETHOD(Stat)(STATSTG *, DWORD);
 		STDMETHOD(Clone)(IStream **);
-		//////////////////////////////////////////////////////////////////////////
 		LPBYTE ReAlloc(ULONG cbNew);
 	public:
-		LONG        cRef;
-		LPBYTE      pData;
-		UINT        cbAlloc;
-		UINT        cbData;
-		UINT        iSeek;
+		TinyMemoryStream();
+		virtual~TinyMemoryStream();
+	public:
+		LONG        m_cRef;
+		LPBYTE      m_pData;
+		UINT        m_cbAlloc;
+		UINT        m_cbData;
+		UINT        m_iSeek;
 	};
 }
 

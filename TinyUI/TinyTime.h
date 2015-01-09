@@ -221,7 +221,9 @@ namespace TinyUI
 		INT SetDateTime(INT nYear, INT nMonth, INT nDay, INT nHour, INT nMin, INT nSec) throw();
 		INT SetDate(INT nYear, INT nMonth, INT nDay) throw();
 		INT SetTime(INT nHour, INT nMin, INT nSec) throw();
+
 		TinyString Format(LPCTSTR lpszFormat) const;
+
 	protected:
 		static double WINAPI DoubleFromDate(DATE date) throw();
 		static DATE WINAPI DateFromDouble(double f) throw();

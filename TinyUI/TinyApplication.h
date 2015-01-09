@@ -23,6 +23,7 @@ namespace TinyUI
 		//µ¥Àý
 		static TinyApplication*	m_pInstance;
 		//¾ä±úÓ³Éä
+		TinyHandleMap<HMENU>		m_MapHMENU;
 		TinyHandleMap<HDC>			m_MapHDC;
 		TinyHandleMap<HWND>			m_MapHWND;
 		TinyHandleMap<HPEN>			m_MapHPEN;
@@ -42,6 +43,7 @@ namespace TinyUI
 		BOOL Initialize(HINSTANCE m_hInstance, LPTSTR m_lpCmdLine, INT m_nCmdShow, LPCTSTR lpTableName);
 		BOOL Uninitialize();
 		//Map³ÉÔ±
+		TinyHandleMap<HMENU>&		GetMapHMENU();
 		TinyHandleMap<HDC>&			GetMapHDC();
 		TinyHandleMap<HRGN>&		GetMapHRGN();
 		TinyHandleMap<HWND>&		GetMapHWND();

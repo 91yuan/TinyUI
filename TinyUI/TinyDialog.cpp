@@ -113,6 +113,18 @@ namespace TinyUI
 		}
 		return (INT_PTR)bRet;
 	}
+	TinyDialog::operator HWND() const
+	{
+		return this == NULL ? NULL : m_hWND;
+	}
+	BOOL TinyDialog::operator == (const TinyDialog& wnd) const
+	{
+		return ((HWND)wnd) == m_hWND;
+	}
+	BOOL TinyDialog::operator != (const TinyDialog& wnd) const
+	{
+		return ((HWND)wnd) != m_hWND;
+	}
 	BOOL TinyDialog::Create(HWND hParent, LPCTSTR lpTemplateName)
 	{
 		this->m_pTemplateName = lpTemplateName;

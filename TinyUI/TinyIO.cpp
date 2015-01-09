@@ -388,15 +388,15 @@ namespace TinyUI
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyFileStream::TinyFileStream(HANDLE hf, DWORD grfMode)
+		:m_cRef(1),
+		m_hFile(hf)
 	{
-		this->cRef = 1;
-		this->hFile = hf;
 	}
 
 	TinyFileStream::~TinyFileStream()
 	{
-		ASSERT(this->hFile != INVALID_HANDLE_VALUE);
-		CloseHandle(hFile);
+		ASSERT(this->m_hFile != INVALID_HANDLE_VALUE);
+		CloseHandle(m_hFile);
 	}
 
 	STDMETHODIMP TinyFileStream::QueryInterface(REFIID riid, void **ppvObj)
@@ -416,14 +416,14 @@ namespace TinyUI
 
 	STDMETHODIMP_(ULONG) TinyFileStream::AddRef()
 	{
-		return InterlockedIncrement(&this->cRef);
+		return InterlockedIncrement(&this->m_cRef);
 	}
 
 	STDMETHODIMP_(ULONG) TinyFileStream::Release()
 	{
-		if (InterlockedDecrement(&this->cRef))
+		if (InterlockedDecrement(&this->m_cRef))
 		{
-			return this->cRef;
+			return this->m_cRef;
 		}
 		delete this;
 		return NOERROR;
@@ -438,7 +438,7 @@ namespace TinyUI
 		{
 			pcbRead = &cbRead;
 		}
-		hRes = (::ReadFile(hFile, pv, cb, pcbRead, NULL) ? S_OK : S_FALSE);
+		hRes = (::ReadFile(m_hFile, pv, cb, pcbRead, NULL) ? S_OK : S_FALSE);
 		return hRes;
 	}
 
@@ -451,7 +451,7 @@ namespace TinyUI
 		{
 			pcbWritten = &cbWritten;
 		}
-		hRes = (::WriteFile(hFile, pv, cb, pcbWritten, NULL) ? S_OK : S_FALSE);
+		hRes = (::WriteFile(m_hFile, pv, cb, pcbWritten, NULL) ? S_OK : S_FALSE);
 		return hRes;
 	}
 
@@ -466,7 +466,7 @@ namespace TinyUI
 		default:
 			return E_INVALIDARG;
 		}
-		DWORD dwCurrent = ::SetFilePointer(hFile, dlibMove.LowPart, NULL, dwMoveMethod);
+		DWORD dwCurrent = ::SetFilePointer(m_hFile, dlibMove.LowPart, NULL, dwMoveMethod);
 		if (plibNewPosition)
 		{
 			plibNewPosition->LowPart = dwCurrent;
@@ -539,9 +539,10 @@ namespace TinyUI
 		return E_NOTIMPL;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
 	TinyMemoryFile::TinyMemoryFile(BYTE* pBuffer, LONGLONG dwBufferSize)
-		:m_pBuffer(pBuffer), m_dwBufferSize(dwBufferSize), m_dwPosition(0)
+		:m_pBuffer(pBuffer),
+		m_dwBufferSize(dwBufferSize),
+		m_dwPosition(0)
 	{
 	}
 	TinyMemoryFile::~TinyMemoryFile()
@@ -768,6 +769,19 @@ namespace TinyUI
 	}
 
 	//////////////////////////////////////////////////////////////////////////
+	TinyMemoryStream::TinyMemoryStream()
+		:m_cRef(1),
+		m_pData(NULL),
+		m_cbAlloc(0),
+		m_cbData(0),
+		m_iSeek(0)
+	{
+
+	}
+	TinyMemoryStream::~TinyMemoryStream()
+	{
+
+	}
 	STDMETHODIMP TinyMemoryStream::QueryInterface(REFIID riid, void **ppvObj)
 	{
 		if (IsEqualIID(riid, IID_IStream) || IsEqualIID(riid, IID_IUnknown))
@@ -784,16 +798,20 @@ namespace TinyUI
 	}
 	STDMETHODIMP_(ULONG) TinyMemoryStream::AddRef()
 	{
-		return InterlockedIncrement(&this->cRef);
+		return InterlockedIncrement(&this->m_cRef);
 	}
 	STDMETHODIMP_(ULONG) TinyMemoryStream::Release()
 	{
-		if (InterlockedDecrement(&this->cRef))
+		if (InterlockedDecrement(&this->m_cRef))
 		{
-			return this->cRef;
+			return this->m_cRef;
 		}
-		if (this->pData) LocalFree(this->pData);
-		LocalFree((HLOCAL)this);
+		if (this->m_pData)
+		{
+			LocalFree(this->m_pData);
+			this->m_pData = NULL;
+		}
+		delete this;
 		return NOERROR;
 	}
 	STDMETHODIMP TinyMemoryStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
@@ -801,21 +819,32 @@ namespace TinyUI
 		ASSERT(pv);
 		if (!cb)
 		{
-			if (pcbRead != NULL) *pcbRead = 0;
+			if (pcbRead != NULL)
+			{
+				*pcbRead = 0;
+			}
 			return NOERROR;
 		}
-		if (this->iSeek >= this->cbData)
+		if (this->m_iSeek >= this->m_cbData)
 		{
-			if (pcbRead != NULL) *pcbRead = 0;
+			if (pcbRead != NULL)
+			{
+				*pcbRead = 0;
+			}
 		}
 		else
 		{
-			if ((this->iSeek + cb) > this->cbData)
-				cb = this->cbData - this->iSeek;
-			ASSERT(this->pData);
-			CopyMemory(pv, this->pData + this->iSeek, cb);
-			this->iSeek += (UINT)cb;
-			if (pcbRead != NULL)	*pcbRead = cb;
+			if ((this->m_iSeek + cb) > this->m_cbData)
+			{
+				cb = this->m_cbData - this->m_iSeek;
+			}
+			ASSERT(this->m_pData);
+			CopyMemory(pv, this->m_pData + this->m_iSeek, cb);
+			this->m_iSeek += (UINT)cb;
+			if (pcbRead != NULL)
+			{
+				*pcbRead = cb;
+			}
 		}
 		return NOERROR;
 	}
@@ -826,19 +855,19 @@ namespace TinyUI
 			if (pcbWritten != NULL)	*pcbWritten = 0;
 			return NOERROR;
 		}
-		if ((this->iSeek + cb) > this->cbAlloc)
+		if ((this->m_iSeek + cb) > this->m_cbAlloc)
 		{
-			if (ReAlloc(this->iSeek + (UINT)cb + SIZEINCR) == NULL)
+			if (ReAlloc(this->m_iSeek + (UINT)cb + SIZEINCR) == NULL)
 				return STG_E_INSUFFICIENTMEMORY;
 		}
-		ASSERT(this->pData);
-		if (this->iSeek > this->cbData)
+		ASSERT(this->m_pData);
+		if (this->m_iSeek > this->m_cbData)
 		{
-			ZeroMemory(this->pData + this->cbData, this->iSeek - this->cbData);
+			ZeroMemory(this->m_pData + this->m_cbData, this->m_iSeek - this->m_cbData);
 		}
-		CopyMemory(this->pData + this->iSeek, pv, cb);
-		this->iSeek += (UINT)cb;
-		if (this->iSeek > this->cbData) this->cbData = this->iSeek;
+		CopyMemory(this->m_pData + this->m_iSeek, pv, cb);
+		this->m_iSeek += (UINT)cb;
+		if (this->m_iSeek > this->m_cbData) this->m_cbData = this->m_iSeek;
 		if (pcbWritten != NULL)	*pcbWritten = cb;
 		return NOERROR;
 	}
@@ -851,16 +880,16 @@ namespace TinyUI
 			lNewSeek = (LONG)dlibMove.LowPart;
 			break;
 		case STREAM_SEEK_CUR:
-			lNewSeek = (LONG)this->iSeek + (LONG)dlibMove.LowPart;
+			lNewSeek = (LONG)this->m_iSeek + (LONG)dlibMove.LowPart;
 			break;
 		case STREAM_SEEK_END:
-			lNewSeek = (LONG)this->cbData + (LONG)dlibMove.LowPart;
+			lNewSeek = (LONG)this->m_cbData + (LONG)dlibMove.LowPart;
 			break;
 		default:
 			return STG_E_INVALIDPARAMETER;
 		}
 		if (lNewSeek < 0)	return STG_E_INVALIDFUNCTION;
-		this->iSeek = (UINT)lNewSeek;
+		this->m_iSeek = (UINT)lNewSeek;
 		if (plibNewPosition != NULL)
 		{
 			plibNewPosition->LowPart = (DWORD)lNewSeek;
@@ -871,22 +900,22 @@ namespace TinyUI
 	STDMETHODIMP TinyMemoryStream::SetSize(ULARGE_INTEGER libNewSize)
 	{
 		UINT cbNew = (UINT)libNewSize.LowPart;
-		if (cbNew > this->cbData)
+		if (cbNew > this->m_cbData)
 		{
-			if (cbNew > this->cbAlloc)
+			if (cbNew > this->m_cbAlloc)
 			{
 				if (ReAlloc(cbNew) == NULL)	return STG_E_INSUFFICIENTMEMORY;
 			}
-			ZeroMemory(this->pData + this->cbData, cbNew - this->cbData);
+			ZeroMemory(this->m_pData + this->m_cbData, cbNew - this->m_cbData);
 		}
-		this->cbData = cbNew;
+		this->m_cbData = cbNew;
 		return NOERROR;
 	}
 
 	STDMETHODIMP TinyMemoryStream::CopyTo(IStream *pstmTo, ULARGE_INTEGER cb, ULARGE_INTEGER *pcbRead, ULARGE_INTEGER *pcbWritten)
 	{
 		HRESULT hRes = NOERROR;
-		UINT cbRead = this->cbData - this->iSeek;
+		UINT cbRead = this->m_cbData - this->m_iSeek;
 		ULONG cbWritten = 0;
 		if (cb.HighPart == 0 && cb.LowPart < cbRead)
 		{
@@ -894,8 +923,8 @@ namespace TinyUI
 		}
 		if (cbRead > 0)
 		{
-			hRes = pstmTo->Write(this->pData + this->iSeek, cbRead, &cbWritten);
-			this->iSeek += cbRead;
+			hRes = pstmTo->Write(this->m_pData + this->m_iSeek, cbRead, &cbWritten);
+			this->m_iSeek += cbRead;
 		}
 		if (pcbRead)
 		{
@@ -933,7 +962,7 @@ namespace TinyUI
 	{
 		ZeroMemory(pstatstg, sizeof(*pstatstg));
 		pstatstg->type = STGTY_STREAM;
-		pstatstg->cbSize.LowPart = this->cbData;
+		pstatstg->cbSize.LowPart = this->m_cbData;
 		pstatstg->grfMode = STGM_READWRITE;
 		return S_OK;
 	}
@@ -945,16 +974,16 @@ namespace TinyUI
 	}
 	LPBYTE TinyMemoryStream::ReAlloc(ULONG cbNew)
 	{
-		if (this->pData == NULL)
+		if (this->m_pData == NULL)
 		{
-			this->pData = (LPBYTE)LocalAlloc(LPTR, cbNew);
+			this->m_pData = (LPBYTE)LocalAlloc(LPTR, cbNew);
 		}
 		else
 		{
-			LPBYTE pTemp = (LPBYTE)LocalReAlloc(this->pData, cbNew, LMEM_MOVEABLE | LMEM_ZEROINIT);
-			if (pTemp)
+			LPBYTE ps = (LPBYTE)LocalReAlloc(this->m_pData, cbNew, LMEM_MOVEABLE | LMEM_ZEROINIT);
+			if (ps)
 			{
-				this->pData = pTemp;
+				this->m_pData = ps;
 			}
 			else
 			{
@@ -962,9 +991,11 @@ namespace TinyUI
 				return NULL;
 			}
 		}
-		if (this->pData)
-			this->cbAlloc = cbNew;
-		return this->pData;
+		if (this->m_pData)
+		{
+			this->m_cbAlloc = cbNew;
+		}
+		return this->m_pData;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	STDAPI CreateStreamOnMemory(LPBYTE pInit, UINT cbInit, IStream **ppstm)
@@ -974,7 +1005,7 @@ namespace TinyUI
 		if (localthis)
 		{
 			new (localthis)TinyMemoryStream;//Place New
-			localthis->cRef = 1;
+			localthis->m_cRef = 1;
 			if ((pInit != NULL) && (cbInit > 0))
 			{
 				if (localthis->ReAlloc(cbInit) == NULL)
@@ -982,8 +1013,8 @@ namespace TinyUI
 					LocalFree((HLOCAL)localthis);
 					return NULL;
 				}
-				localthis->cbData = cbInit;
-				CopyMemory(localthis->pData, pInit, cbInit);
+				localthis->m_cbData = cbInit;
+				CopyMemory(localthis->m_pData, pInit, cbInit);
 			}
 			*ppstm = (IStream *)localthis;
 			return S_OK;

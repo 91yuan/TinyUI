@@ -10,7 +10,7 @@ namespace TinyUI
 	class TinyDialog : public TinyWindowMsg, public TinyMessageFilter
 	{
 		DECLARE_DYNAMIC(TinyDialog)
-	private:
+	protected:
 		HWND			m_hWND;//窗口句柄
 		TinyLoopThunk	m_thunk;// Thunk类
 		INT_PTR			m_iDlgResult;
@@ -18,8 +18,6 @@ namespace TinyUI
 		DLGPROC			m_hPrimaryProc;//原始对话框过程
 		WORD			m_wInteger;
 		LPCTSTR			m_pTemplateName;
-		static INT_PTR CALLBACK BeginLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-		static INT_PTR CALLBACK EndLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	protected:
 		virtual void PreSubclassDialog();
 		virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -27,15 +25,20 @@ namespace TinyUI
 		virtual BOOL DestroyWindow();
 	private:
 		BOOL IsDialogMessage(LPMSG lpMsg) throw();
+		static INT_PTR CALLBACK BeginLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		static INT_PTR CALLBACK EndLoop(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
 		TinyDialog();
 		virtual ~TinyDialog();
-		BOOL SubclassDialog(HWND hWnd);
-		LRESULT DefWindowProc();
+		operator HWND() const;
+		BOOL operator==(const TinyDialog& wnd) const;
+		BOOL operator!=(const TinyDialog& wnd) const;
 		virtual BOOL Create(HWND hParent, WORD wInteger);
 		virtual BOOL Create(HWND hParent, LPCTSTR lpTemplateName);
 		virtual INT_PTR DoModal(HWND hParent = ::GetActiveWindow(), WORD wInteger = 0);
 		virtual INT_PTR DoModal(HWND hParent = ::GetActiveWindow(), LPCTSTR lpTemplateName = NULL);
+		BOOL SubclassDialog(HWND hWnd);
+		LRESULT DefWindowProc();
 		BOOL MapDialogRect(LPRECT lpRect);
 		BOOL EndDialog();
 		BOOL EndDialog(INT_PTR m_DlgResult);
