@@ -10,7 +10,7 @@ namespace TinyUI
 	{
 
 	};
-	BOOL TinyButton::Create(HWND hParent, int x, int y, int cx, int cy)
+	BOOL TinyButton::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
 		INITCOMMONCONTROLSEX initCtrls = { sizeof(INITCOMMONCONTROLSEX), ICC_STANDARD_CLASSES };
 		if (InitCommonControlsEx(&initCtrls))
@@ -45,12 +45,12 @@ namespace TinyUI
 	{
 		::SendMessage(m_hWND, BM_SETSTATE, bHighlight, 0);
 	}
-	int TinyButton::GetCheck() const
+	INT TinyButton::GetCheck() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, BM_GETCHECK, 0, 0);
+		return (INT)::SendMessage(m_hWND, BM_GETCHECK, 0, 0);
 	}
-	void TinyButton::SetCheck(int nCheck)
+	void TinyButton::SetCheck(INT nCheck)
 	{
 		ASSERT(::IsWindow(m_hWND));
 		::SendMessage(m_hWND, BM_SETCHECK, nCheck, 0);
@@ -96,7 +96,7 @@ namespace TinyUI
 		ASSERT(::IsWindow(m_hWND));
 		return (HCURSOR)::SendMessage(m_hWND, BM_GETIMAGE, IMAGE_CURSOR, 0L);
 	}
-	BOOL TinyButton::GetIdealSize(_Out_ SIZE* psize) const
+	BOOL TinyButton::GetIdealSize(SIZE* psize) const
 	{
 		ASSERT(::IsWindow(m_hWND));
 		ASSERT(psize != NULL);
@@ -131,7 +131,7 @@ namespace TinyUI
 		return Button_GetTextMargin(m_hWND, pmargin); // BCM_GETTEXTMARGIN
 	}
 
-	BOOL TinyButton::GetNote(_Out_z_cap_(*pcchNote) LPTSTR lpszNote, _Inout_ UINT* pcchNote) const
+	BOOL TinyButton::GetNote(LPTSTR lpszNote, UINT* pcchNote) const
 	{
 		ASSERT(::IsWindow(m_hWND));
 		ASSERT(lpszNote != NULL);
@@ -139,7 +139,7 @@ namespace TinyUI
 		return Button_GetNote(m_hWND, lpszNote, pcchNote); // BCM_GETNOTE
 	}
 
-	BOOL TinyButton::SetNote(_In_z_ LPCTSTR lpszNote)
+	BOOL TinyButton::SetNote(LPCTSTR lpszNote)
 	{
 		ASSERT(::IsWindow(m_hWND));
 		return Button_SetNote(m_hWND, lpszNote); // BCM_SETNOTE
@@ -151,13 +151,13 @@ namespace TinyUI
 		return (UINT)Button_GetNoteLength(m_hWND); // BCM_GETNOTELENGTH
 	}
 
-	BOOL TinyButton::GetSplitInfo(_Out_ PBUTTON_SPLITINFO pInfo) const
+	BOOL TinyButton::GetSplitInfo(PBUTTON_SPLITINFO pInfo) const
 	{
 		ASSERT(::IsWindow(m_hWND));
 		return Button_GetSplitInfo(m_hWND, pInfo); // BCM_GETSPLITINFO
 	}
 
-	BOOL TinyButton::SetSplitInfo(_In_ PBUTTON_SPLITINFO pInfo)
+	BOOL TinyButton::SetSplitInfo(PBUTTON_SPLITINFO pInfo)
 	{
 		ASSERT(::IsWindow(m_hWND));
 		return Button_SetSplitInfo(m_hWND, pInfo); // BCM_SETSPLITINFO
@@ -172,7 +172,7 @@ namespace TinyUI
 		return buttonSplitInfo.uSplitStyle;
 	}
 
-	BOOL TinyButton::SetSplitStyle(_In_ UINT nStyle)
+	BOOL TinyButton::SetSplitStyle(UINT nStyle)
 	{
 		ASSERT(::IsWindow(m_hWND));
 		BUTTON_SPLITINFO buttonSplitInfo = { 0 };
@@ -181,7 +181,7 @@ namespace TinyUI
 		return Button_SetSplitInfo(m_hWND, &buttonSplitInfo);
 	}
 
-	BOOL TinyButton::GetSplitSize(_Out_ LPSIZE pSize) const
+	BOOL TinyButton::GetSplitSize(LPSIZE pSize) const
 	{
 		ASSERT(::IsWindow(m_hWND));
 		BUTTON_SPLITINFO buttonSplitInfo = { 0 };
@@ -192,7 +192,7 @@ namespace TinyUI
 		return fRet;
 	}
 
-	BOOL TinyButton::SetSplitSize(_In_ LPSIZE pSize)
+	BOOL TinyButton::SetSplitSize(LPSIZE pSize)
 	{
 		ASSERT(::IsWindow(m_hWND));
 		BUTTON_SPLITINFO buttonSplitInfo = { 0 };
@@ -211,7 +211,7 @@ namespace TinyUI
 		return (TCHAR)buttonSplitInfo.himlGlyph;
 	}
 
-	BOOL TinyButton::SetSplitGlyph(_In_ TCHAR chGlyph)
+	BOOL TinyButton::SetSplitGlyph(TCHAR chGlyph)
 	{
 		ASSERT(::IsWindow(m_hWND));
 		BUTTON_SPLITINFO buttonSplitInfo = { 0 };
@@ -220,13 +220,13 @@ namespace TinyUI
 		return Button_SetSplitInfo(m_hWND, &buttonSplitInfo);
 	}
 
-	BOOL TinyButton::SetDropDownState(_In_ BOOL fDropDown)
+	BOOL TinyButton::SetDropDownState(BOOL fDropDown)
 	{
 		ASSERT(::IsWindow(m_hWND));
 		return Button_SetDropDownState(m_hWND, fDropDown); // BCM_SETDROPDOWNSTATE
 	}
 
-	HICON TinyButton::SetShield(_In_ BOOL fElevationRequired)
+	HICON TinyButton::SetShield(BOOL fElevationRequired)
 	{
 		ASSERT(::IsWindow(m_hWND));
 		return (HICON)(Button_SetElevationRequiredState(m_hWND, fElevationRequired)); // BCM_SETSHIELD

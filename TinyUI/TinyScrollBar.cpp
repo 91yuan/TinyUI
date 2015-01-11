@@ -76,7 +76,7 @@ namespace TinyUI
 	}
 	INT TinyScrollBar::GetScrollLimit(INT fnBar)
 	{
-		int nMin, nMax;
+		INT nMin, nMax;
 		GetScrollRange(&nMin, &nMax);
 		SCROLLINFO info;
 		info.fMask = SIF_PAGE;

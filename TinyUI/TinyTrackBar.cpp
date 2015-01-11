@@ -68,32 +68,32 @@ namespace TinyUI
 	INT TinyTrackBar::GetLineSize() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, TBM_GETLINESIZE, 0, 0l);
+		return (INT) ::SendMessage(m_hWND, TBM_GETLINESIZE, 0, 0l);
 	}
 	INT TinyTrackBar::SetLineSize(INT nSize)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, TBM_SETLINESIZE, 0, nSize);
+		return (INT) ::SendMessage(m_hWND, TBM_SETLINESIZE, 0, nSize);
 	}
 	INT TinyTrackBar::GetPageSize() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, TBM_GETPAGESIZE, 0, 0l);
+		return (INT) ::SendMessage(m_hWND, TBM_GETPAGESIZE, 0, 0l);
 	}
 	INT TinyTrackBar::SetPageSize(INT nSize)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, TBM_SETPAGESIZE, 0, nSize);
+		return (INT) ::SendMessage(m_hWND, TBM_SETPAGESIZE, 0, nSize);
 	}
 	INT TinyTrackBar::GetRangeMax() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, TBM_GETRANGEMAX, 0, 0l);
+		return (INT) ::SendMessage(m_hWND, TBM_GETRANGEMAX, 0, 0l);
 	}
 	INT TinyTrackBar::GetRangeMin() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, TBM_GETRANGEMIN, 0, 0l);
+		return (INT) ::SendMessage(m_hWND, TBM_GETRANGEMIN, 0, 0l);
 	}
 	void TinyTrackBar::SetRange(INT nMin, INT nMax, BOOL bRedraw)
 	{
@@ -130,7 +130,7 @@ namespace TinyUI
 		ASSERT(::IsWindow(m_hWND));
 		return (INT) ::SendMessage(m_hWND, TBM_GETPOS, 0, 0l);
 	}
-	void TinyTrackBar::SetPos(int nPos)
+	void TinyTrackBar::SetPos(INT nPos)
 	{
 		ASSERT(::IsWindow(m_hWND));
 		::SendMessage(m_hWND, TBM_SETPOS, TRUE, nPos);
@@ -153,12 +153,12 @@ namespace TinyUI
 	INT TinyTrackBar::GetTic(INT nTic) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, TBM_GETTIC, nTic, 0L);
+		return (INT) ::SendMessage(m_hWND, TBM_GETTIC, nTic, 0L);
 	}
 	INT TinyTrackBar::GetTicPos(INT nTic) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, TBM_GETTICPOS, nTic, 0L);
+		return (INT) ::SendMessage(m_hWND, TBM_GETTICPOS, nTic, 0L);
 	}
 	BOOL TinyTrackBar::SetTic(INT nTic)
 	{
@@ -193,7 +193,7 @@ namespace TinyUI
 	INT TinyTrackBar::SetTipSide(INT nLocation)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, TBM_SETTIPSIDE, nLocation, 0L);
+		return (INT)::SendMessage(m_hWND, TBM_SETTIPSIDE, nLocation, 0L);
 	}
 	void TinyTrackBar::SetThumbLength(INT nLength)
 	{
@@ -203,7 +203,7 @@ namespace TinyUI
 	INT TinyTrackBar::GetThumbLength() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, TBM_GETTHUMBLENGTH, 0, 0L);
+		return (INT) ::SendMessage(m_hWND, TBM_GETTHUMBLENGTH, 0, 0L);
 	}
 }
 

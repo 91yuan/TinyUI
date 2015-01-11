@@ -13,13 +13,13 @@ namespace TinyUI
 		virtual LPCSTR RetrieveTitle();
 		virtual DWORD RetrieveStyle();
 		virtual DWORD RetrieveExStyle();
-		BOOL Create(HWND hParent, int x, int y, int cx, int cy);
-		BOOL Open(_In_z_ LPCTSTR lpszFileName);
-		BOOL Open(_In_ UINT nID);
-		BOOL Play(_In_ UINT nFrom, _In_ UINT nTo, _In_ UINT nRep);
+		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+		BOOL Open( LPCTSTR lpszFileName);
+		BOOL Open( UINT nID);
+		BOOL Play( UINT nFrom,  UINT nTo,  UINT nRep);
 		BOOL Stop();
 		BOOL Close();
-		BOOL Seek(_In_ UINT nTo);
+		BOOL Seek( UINT nTo);
 		BOOL IsPlaying() const;
 	};
 }

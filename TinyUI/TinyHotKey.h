@@ -17,9 +17,9 @@ namespace TinyUI
 		virtual DWORD RetrieveStyle();
 		virtual DWORD RetrieveExStyle();
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-		void SetHotKey(_In_ WORD wVirtualKeyCode, _In_ WORD wModifiers);
+		void SetHotKey(WORD wVirtualKeyCode, WORD wModifiers);
 		DWORD GetHotKey() const;
-		void GetHotKey(_Out_ WORD &wVirtualKeyCode, _In_ WORD &wModifiers) const;
-		void SetRules(_In_ WORD wInvalidComb, _In_ WORD wModifiers);
+		void GetHotKey(WORD &wVirtualKeyCode, WORD &wModifiers) const;
+		void SetRules(WORD wInvalidComb, WORD wModifiers);
 	};
 }

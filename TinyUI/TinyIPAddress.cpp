@@ -27,7 +27,7 @@ namespace TinyUI
 	{
 		return (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
 	}
-	BOOL TinyIPAddress::Create(HWND hParent, int x, int y, int cx, int cy)
+	BOOL TinyIPAddress::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
 		INITCOMMONCONTROLSEX initCtrls = { sizeof(INITCOMMONCONTROLSEX), ICC_INTERNET_CLASSES };
 		if (InitCommonControlsEx(&initCtrls))
@@ -46,10 +46,10 @@ namespace TinyUI
 		ASSERT(::IsWindow(m_hWND));
 		return (BOOL) ::SendMessage(m_hWND, IPM_ISBLANK, 0, 0L);
 	}
-	int TinyIPAddress::GetAddress(DWORD& dwAddress) const
+	INT TinyIPAddress::GetAddress(DWORD& dwAddress) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, IPM_GETADDRESS, 0, (LPARAM)&dwAddress);
+		return (INT) ::SendMessage(m_hWND, IPM_GETADDRESS, 0, (LPARAM)&dwAddress);
 	}
 	void TinyIPAddress::SetAddress(DWORD dwAddress)
 	{

@@ -28,7 +28,7 @@ namespace TinyUI
 	{
 		return  (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
 	}
-	BOOL TinyAnimate::Create(HWND hParent, int x, int y, int cx, int cy)
+	BOOL TinyAnimate::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
 		INITCOMMONCONTROLSEX initCtrls = { sizeof(INITCOMMONCONTROLSEX), ICC_ANIMATE_CLASS };
 		if (InitCommonControlsEx(&initCtrls))

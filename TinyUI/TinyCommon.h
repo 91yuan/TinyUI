@@ -85,15 +85,16 @@ namespace TinyUI
 #endif
 
 #ifndef GET_X_LPARAM
-#define GET_X_LPARAM(lParam)    ((int)(short)LOWORD(lParam))
+#define GET_X_LPARAM(lParam)    ((INT)(short)LOWORD(lParam))
 #endif
 
 #ifndef GET_Y_LPARAM
-#define GET_Y_LPARAM(lParam)    ((int)(short)HIWORD(lParam))
+#define GET_Y_LPARAM(lParam)    ((INT)(short)HIWORD(lParam))
 #endif
 
 #define IS_VALID_STRING_PTR(ptr, type) \
 	(!IsBadStringPtr((ptr), (UINT)-1))
+
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
 	/// ÷«ƒ‹÷∏’Î

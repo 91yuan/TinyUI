@@ -8,7 +8,7 @@
 #include "TinyString.h"
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
-
+#include <vector>
 #pragma region old
 //template <typename R>
 //class FunctionBase0
@@ -142,7 +142,7 @@ using namespace TinyUI;
 //}
 //
 //template <class FuncType>
-//int doMath(int x, int y, FuncType func)
+//INT doMath(INT x, INT y, FuncType func)
 //{
 //	return func(x, y);
 //}
@@ -207,7 +207,7 @@ public:
 		TRACE(m_pzName);
 		TRACE("Address:%d\n", this);
 	}
-	Point1(int x, int y, LPTSTR pzName)
+	Point1(INT x, INT y, LPTSTR pzName)
 		:m_x(x), m_y(y), m_pzName(pzName)
 	{
 		TRACE("调用Point自定义构造函数!");
@@ -273,15 +273,264 @@ public:
 		return Point1(m_x, m_y, "临时P2");
 	}
 private:
-	int m_x;
-	int m_y;
+	INT m_x;
+	INT m_y;
 	LPTSTR m_pzName;
 };
 
-int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
+/// <summary>
+/// T是对象调用拷贝构造函数,否则直接赋值
+/// </summary>
+template<class T>
+class TinyPlaceNew1
+{
+public:
+	TinyPlaceNew1(T& _myT) :
+		m_myT(_myT)
+	{
+	};
+	template <class _Ty>
+	void * __cdecl operator new(size_t, _Ty* p)
+	{
+		return p;
+	};
+	template <class _Ty>
+	void __cdecl operator delete(void*, _Ty*)
+	{
+	};
+	T& m_myT;
+};
+
+template<class T>
+class TinyArray1
+{
+public:
+	TinyArray1();
+	TinyArray1(const TinyArray1<T>& myT);
+	TinyArray1<T>& operator=(const TinyArray1<T>& myT);
+	~TinyArray1();
+	BOOL	Add(T& myT);
+	BOOL	Insert(INT index, T& myT);
+	BOOL	Remove(const T& myT);
+	BOOL	RemoveAt(INT index);
+	void	RemoveAll();
+	INT		Lookup(const T& myT) const;
+	T*		GetDate() const;
+	INT		GetSize() const;
+	const T& operator[](INT index) const;
+	T&	operator[](INT index);
+	T*	m_value;
+	INT m_size;
+	INT m_alloc_size;
+};
+template<class T>
+TinyArray1<T>::TinyArray1()
+	:m_value(NULL),
+	m_size(0),
+	m_alloc_size(0)
+{
+
+}
+template<class T>
+TinyArray1<T>::TinyArray1(const TinyArray1<T>& myT)
+	:m_value(NULL),
+	m_size(0),
+	m_alloc_size(0)
+{
+	INT size = myT.GetSize();
+	if (size > 0)
+	{
+		m_value = (T*)calloc(size, sizeof(T));
+		if (m_value != NULL)
+		{
+			m_alloc_size = size;
+			for (INT i = 0; i < size; i++)
+			{
+				Add(myT[i]);
+			}
+		}
+	}
+}
+template<class T>
+TinyArray1<T>& TinyArray1<T>::operator=(const TinyArray1<T>& myT)
+{
+	INT size = myT.GetSize();
+	if (m_size != size)
+	{
+		RemoveAll();
+		m_value = (T*)calloc(size, sizeof(T));
+		if (m_value != NULL)
+		{
+			m_alloc_size = m_size;
+		}
+	}
+	else
+	{
+		for (INT i = m_size; i > 0; i--)
+		{
+			RemoveAt(i - 1);
+		}
+	}
+	for (INT i = 0; i < size; i++)
+	{
+		Add(myT[i]);
+	}
+	return *this;
+}
+template<class T>
+TinyArray1<T>::~TinyArray1()
+{
+	RemoveAll();
+}
+template<class T>
+T*	TinyArray1<T>::GetDate() const
+{
+	return m_value;
+}
+template<class T>
+INT	TinyArray1<T>::GetSize() const
+{
+	return m_size;
+}
+template<class T>
+BOOL TinyArray1<T>::Add(T& myT)
+{
+	if (m_size == m_alloc_size)//需要重新分配内存
+	{
+		T* _myP = NULL;
+		INT size = (m_alloc_size == 0) ? 1 : (m_size * 2);
+		if (size < 0 || size >(INT_MAX / sizeof(T)))
+		{
+			return FALSE;
+		}
+		_myP = (T*)_recalloc(m_value, size, sizeof(T));
+		if (_myP == NULL)
+		{
+			return FALSE;
+		}
+		m_alloc_size = size;
+		m_value = _myP;
+	}
+#pragma push_macro("new")
+#undef new
+	::new(m_value + m_size) T;//TinyPlaceNew1<T>(myT);
+#pragma pop_macro("new")
+	m_size++;
+	TRACE("myT%d\n", &myT);
+	m_value[m_size - 1] = myT;
+	return TRUE;
+}
+template<class T>
+BOOL TinyArray1<T>::Remove(const T& myT)
+{
+	INT index = Lookup(myT);
+	if (index == -1)
+	{
+		return FALSE;
+	}
+	return RemoveAt(index);
+}
+template<class T>
+BOOL TinyArray1<T>::RemoveAt(INT index)
+{
+	if (index < 0 || index >= m_size)
+	{
+		return FALSE;
+	}
+	m_value[index].~T();
+	if (index != (m_size - 1))
+	{
+		//移动内存
+		memmove_s((void*)(m_value + index),
+			(m_size - index) * sizeof(T),
+			(void*)(m_value + index + 1),
+			(m_size - (index + 1)) * sizeof(T));
+	}
+	m_size--;
+	return TRUE;
+}
+template<class T>
+void TinyArray1<T>::RemoveAll()
+{
+	if (m_value != NULL)
+	{
+		for (INT i = 0; i < m_size; i++)
+		{
+			m_value[i].~T();
+		}
+		SAFE_FREE(m_value);
+	}
+	m_size = 0;
+	m_alloc_size = 0;
+}
+template<class T>
+BOOL TinyArray1<T>::Insert(INT index, T& myT)
+{
+	//Index超出范围
+	if (index < 0 || index > m_size)
+	{
+		return FALSE;
+	}
+	//需要重新分配内存
+	if (m_size == m_alloc_size)
+	{
+		T* _myP = NULL;
+		INT size = (m_alloc_size == 0) ? 1 : (m_size * 2);
+		if (size < 0 || size >(INT_MAX / sizeof(T)))
+		{
+			return FALSE;
+		}
+		_myP = (T*)_recalloc(m_value, size, sizeof(T));
+		if (_myP == NULL)
+		{
+			return FALSE;
+		}
+		m_alloc_size = size;
+		m_value = _myP;
+	}
+	//向后移动一个T大小内存
+	memmove_s((void*)(m_value + index + 1),
+		(m_size - index) * sizeof(T),
+		(void*)(m_value + index),
+		(m_size - index) * sizeof(T));
+#pragma push_macro("new")
+#undef new
+	::new(m_value + index) TinyPlaceNew1<T>(myT);
+#pragma pop_macro("new")
+	m_size++;
+	return TRUE;
+}
+template<class T>
+INT	TinyArray1<T>::Lookup(const T& myT) const
+{
+	for (INT i = 0; i < m_size; i++)
+	{
+		if (m_value[i] == myT)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+template<class T>
+const T& TinyArray1<T>::operator[](INT index) const
+{
+	if (index < 0 || index >= m_size)
+		throw("无效的index");
+	return m_value[index];
+}
+template<class T>
+T&	TinyArray1<T>::operator[](INT index)
+{
+	if (index < 0 || index >= m_size)
+		throw("无效的index");
+	return m_value[index];
+}
+
+INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPTSTR    lpCmdLine,
-	_In_ int       nCmdShow)
+	LPTSTR    lpCmdLine,
+	INT       nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
@@ -296,9 +545,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 #pragma region oldcode
 	//DelegateImplBase<INT, INT(*)(INT, INT), INT, INT> del1;
 	//TRACE(typeid(FunctionTraits<INT(INT)>::ParamType).name());
-	//int a = IsFunctionPointer<FunctionTraits<INT(*)(INT)>::ParamType>::result;
+	//INT a = IsFunctionPointer<FunctionTraits<INT(*)(INT)>::ParamType>::result;
 	//Function111<INT(INT)> _vals(&Test11);
-	//functor<int, int> cmd1(&Test11);
+	//functor<INT, INT> cmd1(&Test11);
 	//cmd1(1);
 	/*Function0<INT, INT(*)()> func(&Test11);
 	func.Invoke();*/
@@ -315,7 +564,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	map<INT, CHAR>::iterator pos = maps.find(10);
 	maps.erase(pos);
 	size1 = maps.size();*/
-	/*TinyArray<INT> arrays;
+	/*TinyArray1<INT> arrays;
 	for (INT i = 0; i < 10000; i++)
 	{
 	arrays.Add(i);
@@ -333,10 +582,10 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	{
 	TRACE("Value%d\n", arrays.Lookup(i));
 	}*/
-	/*const int count = 5;
-	int* pss3 = (int*)&count;
+	/*const INT count = 5;
+	INT* pss3 = (INT*)&count;
 	*pss3 = 6;
-	int var = count;
+	INT var = count;
 	TRACE("%d",var);*/
 	//qptrdiff offset;
 	//Test1 test1(10);
@@ -426,13 +675,100 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	//base.replace(8, 6, str1, 0, 30);
 	/*TinyString str1("The quick brown fox jumps over a lazy dog.");
 	TinyString base = "this is a test string.";
+
 	base.Replace(8, 6, str1, 0, 30);*/
-	std::string base = "this is a test string.";
-	TinyString str = TinyString::Format("Msg:%d", 10);
+	/*std::vector<INT> v;
+	v.push_back(1);
+	v.push_back(2);
+	v.push_back(3);
+	v.push_back(4);
+	v.push_back(5);
+	v.insert(v.begin() + 6, 7);*/
+	class Obj
+	{
+	public:
+		Obj()
+			:m_index(0)
+		{
+			TRACE("Obj默认构造函数:%d\n", m_index);
+		}
+		Obj(INT index)
+			:m_index(index)
+		{
+			TRACE("Obj构造函数:%d\n", m_index);
+		}
+		Obj(const Obj& obj)
+		{
+			this->m_index = obj.m_index;
+			TRACE("Obj拷贝构造函数:%d\n", m_index);
+		}
+		Obj& operator = (const Obj& obj)
+		{
+			m_index = obj.m_index;
+			TRACE("Obj赋值构造函数:%d\n", m_index);
+			return (*this);
+		}
+		~Obj()
+		{
+			TRACE("Obj析构函数:%d\n", m_index);
+		}
+		INT m_index;
+	};
+
+	class Object1
+	{
+	public:
+		Object1(Obj& obj)
+			:_obj(obj)
+		{
+
+		}
+	private:
+		Obj& _obj;
+	};
+
+	/*Obj obj0(0);
+	Obj obj1(1);
+	Obj obj2(2);
+	Obj obj3(3);
+	Obj obj4(4);*/
+	//char memory[sizeof(Obj)];     // Line #1
+	//void* place = memory;          // Line #2
+	//Obj* f = new(place)Obj;
+	//TinyArray1<Obj> _array;
+	//_array.Insert(0, Obj(0));
+	//TRACE("1:%d\n", &obj0);
+	//TRACE("2:%d\n", &_array[0]);
+	//_array.Add(obj1);
+	//_array.Add(obj2);
+	//_array.Add(obj3);
+	//_array.Add(obj4);
+	/*_array.Insert(0, 1);
+	_array.Insert(0, 2);
+	_array.Insert(0, 3);
+	_array.Insert(0, 4);
+	_array.Insert(0, 5);*/
+	/*for (INT i = 0; i < _array.GetSize(); i++)
+	{
+	TRACE("Value:%d\n", _array[i]);
+	}*/
+	//std::string base = "this is a test string.";
+	//TinyString str = TinyString::Format("Msg:%d", 10);
 	//TinyString base1 = "this is a test string.";
 	//base1.Replace(8, 6, "The quick brown fox jumps over a lazy dog.", 30);
 	//base.substr(2, 10);
-
+	/*vector<INT> _array;
+	_array.push_back(10);
+	_array.push_back(11);*/
+	/*Obj obj1(10);
+	Object1 obj(obj1);*/
+	/*Obj obj1(10);
+	Obj obj2(20);
+	TRACE("%d\n", &obj1);
+	TinyArray1<Obj> _array;
+	_array.Add(obj1);
+	_array.Add(obj2);
+	TRACE("%d\n", &_array[0]);*/
 
 	HRESULT hRes = OleInitialize(NULL);
 

@@ -37,23 +37,23 @@ namespace TinyUI
 	public:
 		enum OpenFlags
 		{
-			modeRead = (int)0x00000,
-			modeWrite = (int)0x00001,
-			modeReadWrite = (int)0x00002,
-			shareCompat = (int)0x00000,
-			shareExclusive = (int)0x00010,
-			shareDenyWrite = (int)0x00020,
-			shareDenyRead = (int)0x00030,
-			shareDenyNone = (int)0x00040,
-			modeNoInherit = (int)0x00080,
-			modeCreate = (int)0x01000,
-			modeNoTruncate = (int)0x02000,
-			typeText = (int)0x04000, // typeText and typeBinary are
-			typeBinary = (int)0x08000, // used in derived classes only
-			osNoBuffer = (int)0x10000,
-			osWriteThrough = (int)0x20000,
-			osRandomAccess = (int)0x40000,
-			osSequentialScan = (int)0x80000,
+			modeRead = (INT)0x00000,
+			modeWrite = (INT)0x00001,
+			modeReadWrite = (INT)0x00002,
+			shareCompat = (INT)0x00000,
+			shareExclusive = (INT)0x00010,
+			shareDenyWrite = (INT)0x00020,
+			shareDenyRead = (INT)0x00030,
+			shareDenyNone = (INT)0x00040,
+			modeNoInherit = (INT)0x00080,
+			modeCreate = (INT)0x01000,
+			modeNoTruncate = (INT)0x02000,
+			typeText = (INT)0x04000, // typeText and typeBinary are
+			typeBinary = (INT)0x08000, // used in derived classes only
+			osNoBuffer = (INT)0x10000,
+			osWriteThrough = (INT)0x20000,
+			osRandomAccess = (INT)0x40000,
+			osSequentialScan = (INT)0x80000,
 		};
 
 		enum Attribute

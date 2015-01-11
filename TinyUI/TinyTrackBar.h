@@ -15,7 +15,7 @@ namespace TinyUI
 		virtual LPCSTR RetrieveTitle();
 		virtual DWORD RetrieveStyle();
 		virtual DWORD RetrieveExStyle();
-		virtual BOOL Create(HWND hParent, int x, int y, int cx, int cy);
+		virtual BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		BEGIN_MSG_MAP(TinyTrackBar, TinyControl)
 			MESSAGE_HANDLER(WM_NOTIFY + WM_REFLECT, WmNotifyReflect)
 			MESSAGE_HANDLER(WM_HSCROLL + WM_REFLECT, WmHScrollReflect)
@@ -38,7 +38,7 @@ namespace TinyUI
 		void GetChannelRect(LPRECT lprc) const;
 		void GetThumbRect(LPRECT lprc) const;
 		INT GetPos() const;
-		void SetPos(int nPos);
+		void SetPos(INT nPos);
 		UINT GetNumTics() const;
 		DWORD* GetTicArray() const;
 		INT GetTic(INT nTic) const;
@@ -46,7 +46,7 @@ namespace TinyUI
 		BOOL SetTic(INT nTic);
 		void SetTicFreq(INT nFreq);
 		HWND GetBuddy(BOOL fLocation = TRUE) const;
-		HWND SetBuddy(HWND pWndBuddy, _In_ BOOL fLocation = TRUE);
+		HWND SetBuddy(HWND pWndBuddy,  BOOL fLocation = TRUE);
 		HWND GetToolTips() const;
 		void SetToolTips(HWND pWndTip);
 		INT SetTipSide(INT nLocation);

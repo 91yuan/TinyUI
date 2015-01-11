@@ -122,7 +122,7 @@ namespace TinyUI
 		ASSERT(hDC != NULL);
 		return ::ImageList_DrawEx(m_hImageList, nImage, hDC, pt.x, pt.y, sz.cx, sz.cy, clrBk, clrFg, nStyle);
 	}
-	BOOL TinyImageList::DrawEx(TinyDC& dc, int nImage, TinyPoint pt, TinySize sz, COLORREF clrBk, COLORREF clrFg, UINT nStyle)
+	BOOL TinyImageList::DrawEx(TinyDC& dc, INT nImage, TinyPoint pt, TinySize sz, COLORREF clrBk, COLORREF clrFg, UINT nStyle)
 	{
 		ASSERT(m_hImageList != NULL);
 		ASSERT(dc != NULL);
@@ -138,17 +138,17 @@ namespace TinyUI
 		ASSERT(m_hImageList != NULL);
 		return ::ImageList_GetBkColor(m_hImageList);
 	}
-	BOOL TinyImageList::SetOverlayImage(int nImage, int nOverlay)
+	BOOL TinyImageList::SetOverlayImage(INT nImage, INT nOverlay)
 	{
 		ASSERT(m_hImageList != NULL);
 		return ::ImageList_SetOverlayImage(m_hImageList, nImage, nOverlay);
 	}
-	BOOL TinyImageList::GetImageInfo(int nImage, IMAGEINFO* pImageInfo) const
+	BOOL TinyImageList::GetImageInfo(INT nImage, IMAGEINFO* pImageInfo) const
 	{
 		ASSERT(m_hImageList != NULL);
 		return ::ImageList_GetImageInfo(m_hImageList, nImage, pImageInfo);
 	}
-	BOOL TinyImageList::BeginDrag(int nImage, TinyPoint ptHotSpot)
+	BOOL TinyImageList::BeginDrag(INT nImage, TinyPoint ptHotSpot)
 	{
 		ASSERT(m_hImageList != NULL);
 		return ::ImageList_BeginDrag(m_hImageList, nImage, ptHotSpot.x, ptHotSpot.y);
@@ -202,7 +202,7 @@ namespace TinyUI
 		return ::ImageList_DrawIndirect(pimldp);
 	}
 
-	BOOL TinyImageList::DrawIndirect(HDC hDC, int nImage, POINT pt,
+	BOOL TinyImageList::DrawIndirect(HDC hDC, INT nImage, POINT pt,
 		SIZE sz, POINT ptOrigin, UINT fStyle /* = ILD_NORMAL */,
 		DWORD dwRop /* = SRCCOPY */, COLORREF rgbBack /* = CLR_DEFAULT */,
 		COLORREF rgbFore /* = CLR_DEFAULT */,
@@ -250,13 +250,13 @@ namespace TinyUI
 		return ::ImageList_SetImageCount(m_hImageList, uNewCount);
 	}
 
-	BOOL TinyImageList::Copy(int iDst, int iSrc, UINT uFlags /* = ILCF_MOVE */)
+	BOOL TinyImageList::Copy(INT iDst, INT iSrc, UINT uFlags /* = ILCF_MOVE */)
 	{
 		ASSERT(m_hImageList != NULL);
 		return ::ImageList_Copy(m_hImageList, iDst, m_hImageList, iSrc, uFlags);
 	}
 
-	BOOL TinyImageList::Copy(int iDst, TinyImageList* pSrc, int iSrc, UINT uFlags /* = ILCF_MOVE */)
+	BOOL TinyImageList::Copy(INT iDst, TinyImageList* pSrc, INT iSrc, UINT uFlags /* = ILCF_MOVE */)
 	{
 		ASSERT(m_hImageList != NULL);
 		ASSERT(pSrc != NULL && (HIMAGELIST)*pSrc != NULL);

@@ -42,18 +42,1173 @@ namespace TinyUI
 		HDC hAttribDC = ::CreateCompatibleDC(hDC);
 		return Attach(hAttribDC);
 	}
-	BOOL TinyDC::ResetDC(const DEVMODE* lpDevMode)
-	{
-		if (m_value == NULL)
-			return FALSE;
-		return ::ResetDC(m_value, lpDevMode) != NULL;
-	}
+
 	void TinyDC::Destory()
 	{
 		if (m_value != NULL)
 		{
 			::DeleteDC(Detach());
 		}
+	}
+	INT TinyDC::ExcludeUpdateRgn(HWND hWnd)
+	{
+		ASSERT(m_value != NULL);
+		return ::ExcludeUpdateRgn(m_value, hWnd);
+	}
+	INT TinyDC::GetDeviceCaps(INT nIndex) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetDeviceCaps(m_value, nIndex);
+	}
+	TinyPoint TinyDC::GetBrushOrg() const
+	{
+		ASSERT(m_value != NULL);
+		POINT point;
+		::GetBrushOrgEx(m_value, &point);
+		return point;
+	}
+	TinyPoint TinyDC::SetBrushOrg(INT x, INT y)
+	{
+		ASSERT(m_value != NULL);
+		POINT point;
+		::SetBrushOrgEx(m_value, x, y, &point);
+		return point;
+	}
+	TinyPoint TinyDC::SetBrushOrg(POINT point)
+	{
+		ASSERT(m_value != NULL);
+		::SetBrushOrgEx(m_value, point.x, point.y, &point);
+		return point;
+	}
+
+	INT TinyDC::EnumObjects(INT nObjectType, INT(CALLBACK* lpfn)(LPVOID, LPARAM), LPARAM lpData)
+	{
+		ASSERT(m_value != NULL);
+		return ::EnumObjects(m_value, nObjectType, (GOBJENUMPROC)lpfn, lpData);
+	}
+
+	HGDIOBJ TinyDC::SelectObject(HGDIOBJ hObject)
+	{
+		ASSERT(m_value != NULL);
+		return (hObject != NULL) ? ::SelectObject(m_value, hObject) : NULL;
+	}
+	COLORREF TinyDC::GetNearestColor(COLORREF crColor) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetNearestColor(m_value, crColor);
+	}
+	UINT TinyDC::RealizePalette()
+	{
+		ASSERT(m_value != NULL);
+		return ::RealizePalette(m_value);
+	}
+	void TinyDC::UpdateColors()
+	{
+		ASSERT(m_value != NULL);
+		::UpdateColors(m_value);
+	}
+	COLORREF TinyDC::GetBkColor() const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetBkColor(m_value);
+	}
+	INT TinyDC::GetBkMode() const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetBkMode(m_value);
+	}
+	INT TinyDC::GetPolyFillMode() const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetPolyFillMode(m_value);
+	}
+	INT TinyDC::GetROP2() const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetROP2(m_value);
+	}
+	INT TinyDC::GetStretchBltMode() const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetStretchBltMode(m_value);
+	}
+	COLORREF TinyDC::GetTextColor() const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetTextColor(m_value);
+	}
+	INT TinyDC::GetMapMode() const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetMapMode(m_value);
+	}
+	INT TinyDC::GetGraphicsMode() const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetGraphicsMode(m_value);
+	}
+	BOOL TinyDC::GetWorldTransform(XFORM* pXform) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetWorldTransform(m_value, pXform);
+	}
+
+	TinyPoint TinyDC::GetViewportOrg() const
+	{
+		ASSERT(m_value != NULL);
+		POINT point;
+		::GetViewportOrgEx(m_value, &point);
+		return point;
+	}
+	TinySize TinyDC::GetViewportExt() const
+	{
+		ASSERT(m_value != NULL);
+		SIZE size;
+		::GetViewportExtEx(m_value, &size);
+		return size;
+	}
+	TinyPoint TinyDC::GetWindowOrg() const
+	{
+		ASSERT(m_value != NULL);
+		POINT point;
+		::GetWindowOrgEx(m_value, &point);
+		return point;
+	}
+	TinySize TinyDC::GetWindowExt() const
+	{
+		ASSERT(m_value != NULL);
+		SIZE size;
+		::GetWindowExtEx(m_value, &size);
+		return size;
+	}
+
+	TinyPoint TinyDC::SetViewportOrg(POINT point)
+	{
+		ASSERT(m_value != NULL);
+		return SetViewportOrg(point.x, point.y);
+	}
+	TinySize TinyDC::SetViewportExt(SIZE size)
+	{
+		ASSERT(m_value != NULL);
+		return SetViewportExt(size.cx, size.cy);
+	}
+	TinyPoint TinyDC::SetWindowOrg(POINT point)
+	{
+		ASSERT(m_value != NULL);
+		return SetWindowOrg(point.x, point.y);
+	}
+	TinySize TinyDC::SetWindowExt(SIZE size)
+	{
+		ASSERT(m_value != NULL);
+		return SetWindowExt(size.cx, size.cy);
+	}
+
+	void TinyDC::DPtoLP(LPPOINT lpPoints, INT nCount) const
+	{
+		ASSERT(m_value != NULL);
+		(::DPtoLP(m_value, lpPoints, nCount));
+	}
+	void TinyDC::DPtoLP(LPRECT lpRect) const
+	{
+		ASSERT(m_value != NULL);
+		(::DPtoLP(m_value, (LPPOINT)lpRect, 2));
+	}
+	void TinyDC::LPtoDP(LPPOINT lpPoints, INT nCount) const
+	{
+		ASSERT(m_value != NULL);
+		(::LPtoDP(m_value, lpPoints, nCount));
+	}
+	void TinyDC::LPtoDP(LPRECT lpRect) const
+	{
+		ASSERT(m_value != NULL);
+		(::LPtoDP(m_value, (LPPOINT)lpRect, 2));
+	}
+
+	BOOL TinyDC::FillRgn(TinyRgn* pRgn, TinyBrush* pBrush)
+	{
+		ASSERT(m_value != NULL);
+		return ::FillRgn(m_value, (HRGN)pRgn->Handle(), (HBRUSH)pBrush->Handle());
+	}
+	BOOL TinyDC::FrameRgn(TinyRgn* pRgn, TinyBrush* pBrush, INT nWidth, INT nHeight)
+	{
+		ASSERT(m_value != NULL);
+		return ::FrameRgn(m_value, (HRGN)pRgn->Handle(), (HBRUSH)pBrush->Handle(), nWidth, nHeight);
+	}
+	BOOL TinyDC::InvertRgn(TinyRgn* pRgn)
+	{
+		ASSERT(m_value != NULL);
+		return ::InvertRgn(m_value, (HRGN)pRgn->Handle());
+	}
+	BOOL TinyDC::PaintRgn(TinyRgn* pRgn)
+	{
+		ASSERT(m_value != NULL);
+		return ::PaintRgn(m_value, (HRGN)pRgn->Handle());
+	}
+	BOOL TinyDC::PtVisible(INT x, INT y) const
+	{
+		ASSERT(m_value != NULL);
+		return ::PtVisible(m_value, x, y);
+	}
+	BOOL TinyDC::PtVisible(POINT point) const
+	{
+		ASSERT(m_value != NULL);
+		return PtVisible(point.x, point.y);
+	}
+	BOOL TinyDC::RectVisible(LPCRECT lpRect) const
+	{
+		ASSERT(m_value != NULL);
+		return ::RectVisible(m_value, lpRect);
+	}
+	TinyPoint TinyDC::GetCurrentPosition() const
+	{
+		ASSERT(m_value != NULL);
+		POINT point;
+		(::GetCurrentPositionEx(m_value, &point));
+		return point;
+	}
+
+	TinyPoint TinyDC::MoveTo(POINT point)
+	{
+		ASSERT(m_value != NULL);
+		return MoveTo(point.x, point.y);
+	}
+	BOOL TinyDC::LineTo(POINT point)
+	{
+		ASSERT(m_value != NULL);
+		return LineTo(point.x, point.y);
+	}
+	BOOL TinyDC::Arc(INT x1, INT y1, INT x2, INT y2, INT x3, INT y3, INT x4, INT y4)
+	{
+		ASSERT(m_value != NULL);
+		return ::Arc(m_value, x1, y1, x2, y2, x3, y3, x4, y4);
+	}
+	BOOL TinyDC::Arc(LPCRECT lpRect, POINT ptStart, POINT ptEnd)
+	{
+		ASSERT(m_value != NULL);
+		return ::Arc(m_value, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom, ptStart.x, ptStart.y, ptEnd.x, ptEnd.y);
+	}
+	BOOL TinyDC::Polyline(const POINT* lpPoints, INT nCount)
+	{
+		ASSERT(m_value != NULL);
+		return ::Polyline(m_value, lpPoints, nCount);
+	}
+	void TinyDC::FillRect(LPCRECT lpRect, TinyBrush* pBrush)
+	{
+		ASSERT(m_value != NULL);
+		::FillRect(m_value, lpRect, (HBRUSH)pBrush->Handle());
+	}
+	void TinyDC::FrameRect(LPCRECT lpRect, TinyBrush* pBrush)
+	{
+		ASSERT(m_value != NULL);
+		::FrameRect(m_value, lpRect, (HBRUSH)pBrush->Handle());
+	}
+	void TinyDC::InvertRect(LPCRECT lpRect)
+	{
+		ASSERT(m_value != NULL);
+		::InvertRect(m_value, lpRect);
+	}
+	BOOL TinyDC::DrawIcon(INT x, INT y, HICON hIcon)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawIcon(m_value, x, y, hIcon);
+	}
+	BOOL TinyDC::DrawIcon(POINT point, HICON hIcon)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawIcon(m_value, point.x, point.y, hIcon);
+	}
+	BOOL TinyDC::DrawState(TinyPoint pt, TinySize size, HBITMAP hBitmap, UINT nFlags, HBRUSH hBrush)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawState(m_value, hBrush, NULL, (LPARAM)hBitmap, 0, pt.x, pt.y, size.cx, size.cy, nFlags | DST_BITMAP);
+	}
+	BOOL TinyDC::DrawState(TinyPoint pt, TinySize size, TinyBitmap* pBitmap, UINT nFlags, TinyBrush* pBrush)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawState(m_value, (HBRUSH)pBrush->Handle(), NULL, (LPARAM)pBitmap->Handle(), 0, pt.x, pt.y, size.cx, size.cy, nFlags | DST_BITMAP);
+	}
+	BOOL TinyDC::DrawState(TinyPoint pt, TinySize size, HICON hIcon, UINT nFlags, HBRUSH hBrush)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawState(m_value, hBrush, NULL, (LPARAM)hIcon, 0, pt.x, pt.y, size.cx, size.cy, nFlags | DST_ICON);
+	}
+	BOOL TinyDC::DrawState(TinyPoint pt, TinySize size, HICON hIcon, UINT nFlags, TinyBrush* pBrush)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawState(m_value, (HBRUSH)pBrush->Handle(), NULL, (LPARAM)hIcon, 0, pt.x, pt.y, size.cx, size.cy, nFlags | DST_ICON);
+	}
+	BOOL TinyDC::DrawState(TinyPoint pt, TinySize size, LPCTSTR lpszText, UINT nFlags, BOOL bPrefixText, INT nTextLen, HBRUSH hBrush)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawState(m_value, hBrush, NULL, (LPARAM)lpszText, (WPARAM)nTextLen, pt.x, pt.y, size.cx, size.cy, nFlags | (bPrefixText ? DST_PREFIXTEXT : DST_TEXT));
+	}
+	BOOL TinyDC::DrawState(TinyPoint pt, TinySize size, LPCTSTR lpszText, UINT nFlags, BOOL bPrefixText, INT nTextLen, TinyBrush* pBrush)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawState(m_value, (HBRUSH)pBrush->Handle(), NULL, (LPARAM)lpszText, (WPARAM)nTextLen, pt.x, pt.y, size.cx, size.cy, nFlags | (bPrefixText ? DST_PREFIXTEXT : DST_TEXT));
+	}
+	BOOL TinyDC::DrawState(TinyPoint pt, TinySize size, DRAWSTATEPROC lpDrawProc, LPARAM lData, UINT nFlags, HBRUSH hBrush)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawState(m_value, hBrush, lpDrawProc, lData, 0, pt.x, pt.y, size.cx, size.cy, nFlags | DST_COMPLEX);
+	}
+
+	BOOL TinyDC::DrawState(TinyPoint pt, TinySize size, DRAWSTATEPROC lpDrawProc, LPARAM lData, UINT nFlags, TinyBrush* pBrush)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawState(m_value, (HBRUSH)pBrush->Handle(), lpDrawProc, lData, 0, pt.x, pt.y, size.cx, size.cy, nFlags | DST_COMPLEX);
+	}
+
+	BOOL TinyDC::DrawEdge(LPRECT lpRect, UINT nEdge, UINT nFlags)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawEdge(m_value, lpRect, nEdge, nFlags);
+	}
+	BOOL TinyDC::DrawFrameControl(LPRECT lpRect, UINT nType, UINT nState)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawFrameControl(m_value, lpRect, nType, nState);
+	}
+
+	BOOL TinyDC::Chord(INT x1, INT y1, INT x2, INT y2, INT x3, INT y3, INT x4, INT y4)
+	{
+		ASSERT(m_value != NULL);
+		return ::Chord(m_value, x1, y1, x2, y2, x3, y3, x4, y4);
+	}
+
+	BOOL TinyDC::Chord(LPCRECT lpRect, POINT ptStart, POINT ptEnd)
+	{
+		ASSERT(m_value != NULL); return ::Chord(m_value, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom, ptStart.x, ptStart.y, ptEnd.x, ptEnd.y);
+	}
+	void TinyDC::DrawFocusRect(LPCRECT lpRect)
+	{
+		ASSERT(m_value != NULL);
+		::DrawFocusRect(m_value, lpRect);
+	}
+	BOOL TinyDC::Ellipse(INT x1, INT y1, INT x2, INT y2)
+	{
+		ASSERT(m_value != NULL);
+		return ::Ellipse(m_value, x1, y1, x2, y2);
+	}
+	BOOL TinyDC::Ellipse(LPCRECT lpRect)
+	{
+		ASSERT(m_value != NULL);
+		return ::Ellipse(m_value, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom);
+	}
+	BOOL TinyDC::Pie(INT x1, INT y1, INT x2, INT y2, INT x3, INT y3, INT x4, INT y4)
+	{
+		ASSERT(m_value != NULL);
+		return ::Pie(m_value, x1, y1, x2, y2, x3, y3, x4, y4);
+	}
+	BOOL TinyDC::Pie(LPCRECT lpRect, POINT ptStart, POINT ptEnd)
+	{
+		ASSERT(m_value != NULL);
+		return ::Pie(m_value, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom, ptStart.x, ptStart.y, ptEnd.x, ptEnd.y);
+	}
+	BOOL TinyDC::Polygon(const POINT* lpPoints, INT nCount)
+	{
+		ASSERT(m_value != NULL);
+		return ::Polygon(m_value, lpPoints, nCount);
+	}
+	BOOL TinyDC::PolyPolygon(const POINT* lpPoints, const INT* lpPolyCounts, INT nCount)
+	{
+		ASSERT(m_value != NULL);
+		return ::PolyPolygon(m_value, lpPoints, lpPolyCounts, nCount);
+	}
+	BOOL TinyDC::Rectangle(INT x1, INT y1, INT x2, INT y2)
+	{
+		ASSERT(m_value != NULL);
+		return ::Rectangle(m_value, x1, y1, x2, y2);
+	}
+
+	BOOL TinyDC::Rectangle(LPCRECT lpRect)
+	{
+		ASSERT(m_value != NULL);
+		return ::Rectangle(m_value, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom);
+	}
+
+	BOOL TinyDC::RoundRect(INT x1, INT y1, INT x2, INT y2, INT x3, INT y3)
+	{
+		ASSERT(m_value != NULL);
+		return ::RoundRect(m_value, x1, y1, x2, y2, x3, y3);
+	}
+
+	BOOL TinyDC::RoundRect(LPCRECT lpRect, POINT point)
+	{
+		ASSERT(m_value != NULL);
+		return ::RoundRect(m_value, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom, point.x, point.y);
+
+	}
+	BOOL TinyDC::PatBlt(INT x, INT y, INT nWidth, INT nHeight, DWORD dwRop)
+	{
+		ASSERT(m_value != NULL); return ::PatBlt(m_value, x, y, nWidth, nHeight, dwRop);
+	}
+	BOOL TinyDC::BitBlt(INT x, INT y, INT nWidth, INT nHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, DWORD dwRop)
+	{
+		ASSERT(m_value != NULL); return ::BitBlt(m_value, x, y, nWidth, nHeight, pSrcDC->Handle(), xSrc, ySrc, dwRop);
+	}
+	BOOL TinyDC::StretchBlt(INT x, INT y, INT nWidth, INT nHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, DWORD dwRop)
+	{
+		ASSERT(m_value != NULL);
+		return ::StretchBlt(m_value, x, y, nWidth, nHeight, pSrcDC->Handle(), xSrc, ySrc, nSrcWidth, nSrcHeight, dwRop);
+	}
+	COLORREF TinyDC::GetPixel(INT x, INT y) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetPixel(m_value, x, y);
+	}
+	COLORREF TinyDC::GetPixel(POINT point) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetPixel(m_value, point.x, point.y);
+	}
+	COLORREF TinyDC::SetPixel(INT x, INT y, COLORREF crColor)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetPixel(m_value, x, y, crColor);
+	}
+	COLORREF TinyDC::SetPixel(POINT point, COLORREF crColor)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetPixel(m_value, point.x, point.y, crColor);
+	}
+	BOOL TinyDC::FloodFill(INT x, INT y, COLORREF crColor)
+	{
+		ASSERT(m_value != NULL);
+		return ::FloodFill(m_value, x, y, crColor);
+	}
+	BOOL TinyDC::ExtFloodFill(INT x, INT y, COLORREF crColor, UINT nFillType)
+	{
+		ASSERT(m_value != NULL);
+		return ::ExtFloodFill(m_value, x, y, crColor, nFillType);
+	}
+	BOOL TinyDC::TextOut(INT x, INT y, LPCTSTR lpszString, INT nCount)
+	{
+		ASSERT(m_value != NULL);
+		return ::TextOut(m_value, x, y, lpszString, nCount);
+	}
+	BOOL TinyDC::ExtTextOut(INT x, INT y, UINT nOptions, LPCRECT lpRect, LPCTSTR lpszString, UINT nCount, LPINT lpDxWidths)
+	{
+		ASSERT(m_value != NULL);
+		return ::ExtTextOut(m_value, x, y, nOptions, lpRect, lpszString, nCount, lpDxWidths);
+	}
+	TinySize TinyDC::TabbedTextOut(INT x, INT y, LPCTSTR lpszString, INT nCount, INT nTabPositions, LPINT lpnTabStopPositions, INT nTabOrigin)
+	{
+		ASSERT(m_value != NULL);
+		return ::TabbedTextOut(m_value, x, y, lpszString, nCount, nTabPositions, lpnTabStopPositions, nTabOrigin);
+	}
+
+	INT TinyDC::DrawText(LPCTSTR lpszString, INT nCount, LPRECT lpRect, UINT nFormat)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawText(m_value, lpszString, nCount, lpRect, nFormat);
+	}
+
+	INT TinyDC::DrawTextEx(LPTSTR lpszString, INT nCount, LPRECT lpRect, UINT nFormat, LPDRAWTEXTPARAMS lpDTParams)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawTextEx(m_value, lpszString, nCount, lpRect, nFormat, lpDTParams);
+	}
+
+	TinySize TinyDC::GetTextExtent(LPCTSTR lpszString, INT nCount) const
+	{
+		ASSERT(m_value != NULL);
+		SIZE size;
+		(::GetTextExtentPoint32(m_value, lpszString, nCount, &size));
+		return size;
+	}
+
+	TinySize TinyDC::GetOutputTextExtent(LPCTSTR lpszString, INT nCount) const
+	{
+		ASSERT(m_value != NULL);
+		SIZE size;
+		(::GetTextExtentPoint32(m_value, lpszString, nCount, &size));
+		return size;
+	}
+
+	TinySize TinyDC::GetTabbedTextExtent(LPCTSTR lpszString, INT nCount, INT nTabPositions, LPINT lpnTabStopPositions) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetTabbedTextExtent(m_value, lpszString, nCount, nTabPositions, lpnTabStopPositions);
+	}
+
+	TinySize TinyDC::GetOutputTabbedTextExtent(LPCTSTR lpszString, INT nCount, INT nTabPositions, LPINT lpnTabStopPositions) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetTabbedTextExtent(m_value, lpszString, nCount, nTabPositions, lpnTabStopPositions);
+	}
+
+	BOOL TinyDC::GrayString(TinyBrush* pBrush, BOOL(CALLBACK* lpfnOutput)(HDC, LPARAM, INT), LPARAM lpData, INT nCount, INT x, INT y, INT nWidth, INT nHeight)
+	{
+		ASSERT(m_value != NULL);
+		return ::GrayString(m_value, (HBRUSH)pBrush->Handle(), (GRAYSTRINGPROC)lpfnOutput, lpData, nCount, x, y, nWidth, nHeight);
+	}
+
+	UINT TinyDC::GetTextAlign() const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetTextAlign(m_value);
+	}
+
+	INT TinyDC::GetTextFace(INT nCount, _Out_z_cap_post_count_(nCount, return) LPTSTR lpszFacename) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetTextFace(m_value, nCount, lpszFacename);
+	}
+
+	BOOL TinyDC::GetOutputTextMetrics(LPTEXTMETRIC lpMetrics) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetTextMetrics(m_value, lpMetrics);
+	}
+	INT TinyDC::GetTextCharacterExtra() const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetTextCharacterExtra(m_value);
+	}
+	BOOL TinyDC::GetCharWidth(UINT nFirstChar, UINT nLastChar, LPINT lpBuffer) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetCharWidth(m_value, nFirstChar, nLastChar, lpBuffer);
+	}
+
+	BOOL TinyDC::GetOutputCharWidth(UINT nFirstChar, UINT nLastChar, LPINT lpBuffer) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetCharWidth(m_value, nFirstChar, nLastChar, lpBuffer);
+	}
+	DWORD TinyDC::GetFontLanguageInfo() const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetFontLanguageInfo(m_value);
+	}
+
+	DWORD TinyDC::GetCharacterPlacement(LPCTSTR lpString, INT nCount, INT nMaxExtent, LPGCP_RESULTS lpResults, DWORD dwFlags) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetCharacterPlacement(m_value, lpString, nCount, nMaxExtent, lpResults, dwFlags);
+	}
+
+	TinySize TinyDC::GetAspectRatioFilter() const
+	{
+		ASSERT(m_value != NULL);
+		SIZE size;
+		::GetAspectRatioFilterEx(m_value, &size);
+		return size;
+	}
+
+	BOOL TinyDC::ScrollDC(INT dx, INT dy, LPCRECT lpRectScroll, LPCRECT lpRectClip, TinyRgn* pRgnUpdate, LPRECT lpRectUpdate)
+	{
+		ASSERT(m_value != NULL);
+		return ::ScrollDC(m_value, dx, dy, lpRectScroll, lpRectClip, (HRGN)pRgnUpdate->Handle(), lpRectUpdate);
+	}
+
+	INT TinyDC::Escape(INT nEscape, INT nCount, LPCSTR lpszInData, LPVOID lpOutData)
+	{
+		ASSERT(m_value != NULL);
+		return ::Escape(m_value, nEscape, nCount, lpszInData, lpOutData);
+	}
+
+	UINT TinyDC::SetBoundsRect(LPCRECT lpRectBounds, UINT flags)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetBoundsRect(m_value, lpRectBounds, flags);
+	}
+	UINT TinyDC::GetBoundsRect(LPRECT lpRectBounds, UINT flags)
+	{
+		ASSERT(m_value != NULL);
+		return ::GetBoundsRect(m_value, lpRectBounds, flags);
+	}
+	BOOL TinyDC::ResetDC(const DEVMODE* lpDevMode)
+	{
+		ASSERT(m_value != NULL);
+		return ::ResetDC(m_value, lpDevMode) != NULL;
+	}
+	UINT TinyDC::GetOutlineTextMetrics(UINT cbData, LPOUTLINETEXTMETRIC lpotm) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetOutlineTextMetrics(m_value, cbData, lpotm);
+	}
+	BOOL TinyDC::GetCharABCWidths(UINT nFirstChar, UINT nLastChar, LPABC lpabc) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetCharABCWidths(m_value, nFirstChar, nLastChar, lpabc);
+	}
+	DWORD TinyDC::GetFontData(DWORD dwTable, DWORD dwOffset, LPVOID lpData,
+		DWORD cbData) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetFontData(m_value, dwTable, dwOffset, lpData, cbData);
+	}
+
+	INT TinyDC::GetKerningPairs(INT nPairs, LPKERNINGPAIR lpkrnpair) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetKerningPairs(m_value, nPairs, lpkrnpair);
+	}
+
+	DWORD TinyDC::GetGlyphOutline(UINT nChar, UINT nFormat, LPGLYPHMETRICS lpgm, DWORD cbBuffer, LPVOID lpBuffer, const MAT2* lpmat2) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetGlyphOutline(m_value, nChar, nFormat, lpgm, cbBuffer, lpBuffer, lpmat2);
+	}
+	void TinyDC::Draw3dRect(LPCRECT lpRect,
+		COLORREF clrTopLeft, COLORREF clrBottomRight)
+	{
+		Draw3dRect(lpRect->left, lpRect->top, lpRect->right - lpRect->left,
+			lpRect->bottom - lpRect->top, clrTopLeft, clrBottomRight);
+	}
+	void TinyDC::FillSolidRect(LPCRECT lpRect, COLORREF clr)
+	{
+		ASSERT(m_value != NULL);
+		ASSERT(lpRect != NULL);
+		::SetBkColor(m_value, clr);
+		::ExtTextOut(m_value, 0, 0, ETO_OPAQUE, lpRect, NULL, 0, NULL);
+	}
+
+	void TinyDC::FillSolidRect(INT x, INT y, INT cx, INT cy, COLORREF clr)
+	{
+		ASSERT(m_value != NULL);
+		::SetBkColor(m_value, clr);
+		TinyRectangle rect(x, y, x + cx, y + cy);
+		::ExtTextOut(m_value, 0, 0, ETO_OPAQUE, &rect, NULL, 0, NULL);
+	}
+
+	void TinyDC::Draw3dRect(INT x, INT y, INT cx, INT cy,
+		COLORREF clrTopLeft, COLORREF clrBottomRight)
+	{
+		FillSolidRect(x, y, cx - 1, 1, clrTopLeft);
+		FillSolidRect(x, y, 1, cy - 1, clrTopLeft);
+		FillSolidRect(x + cx, y, -1, cy, clrBottomRight);
+		FillSolidRect(x, y + cy, cx, -1, clrBottomRight);
+	}
+	INT TinyDC::StartDoc(LPDOCINFO lpDocInfo)
+	{
+		ASSERT(m_value != NULL);
+		return ::StartDoc(m_value, lpDocInfo);
+	}
+	INT TinyDC::StartPage()
+	{
+		ASSERT(m_value != NULL);
+		return ::StartPage(m_value);
+	}
+	INT TinyDC::EndPage()
+	{
+		ASSERT(m_value != NULL);
+		return ::EndPage(m_value);
+	}
+	INT TinyDC::SetAbortProc(BOOL(CALLBACK* lpfn)(HDC, INT))
+	{
+		ASSERT(m_value != NULL);
+		return ::SetAbortProc(m_value, (ABORTPROC)lpfn);
+	}
+	INT TinyDC::AbortDoc()
+	{
+		ASSERT(m_value != NULL);
+		return ::AbortDoc(m_value);
+	}
+	INT TinyDC::EndDoc()
+	{
+		ASSERT(m_value != NULL);
+		return ::EndDoc(m_value);
+	}
+
+	BOOL TinyDC::MaskBlt(INT x, INT y, INT nWidth, INT nHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, TinyBitmap& maskBitmap, INT xMask, INT yMask, DWORD dwRop)
+	{
+		ASSERT(m_value != NULL);
+		return ::MaskBlt(m_value, x, y, nWidth, nHeight, pSrcDC->Handle(), xSrc, ySrc, (HBITMAP)maskBitmap.m_value, xMask, yMask, dwRop);
+	}
+	BOOL TinyDC::PlgBlt(LPPOINT lpPoint, TinyDC* pSrcDC, INT xSrc, INT ySrc,
+		INT nWidth, INT nHeight, TinyBitmap& maskBitmap, INT xMask, INT yMask)
+	{
+		ASSERT(m_value != NULL);
+		return ::PlgBlt(m_value, lpPoint, pSrcDC->Handle(), xSrc, ySrc, nWidth, nHeight, (HBITMAP)maskBitmap.m_value, xMask, yMask);
+	}
+	BOOL TinyDC::SetPixelV(INT x, INT y, COLORREF crColor)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetPixelV(m_value, x, y, crColor);
+	}
+	BOOL TinyDC::SetPixelV(POINT point, COLORREF crColor)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetPixelV(m_value, point.x, point.y, crColor);
+	}
+	BOOL TinyDC::AngleArc(INT x, INT y, INT nRadius, float fStartAngle, float fSweepAngle)
+	{
+		ASSERT(m_value != NULL);
+		return ::AngleArc(m_value, x, y, nRadius, fStartAngle, fSweepAngle);
+	}
+	BOOL TinyDC::ArcTo(LPCRECT lpRect, POINT ptStart, POINT ptEnd)
+	{
+		ASSERT(m_value != NULL); return ArcTo(lpRect->left, lpRect->top, lpRect->right, lpRect->bottom, ptStart.x, ptStart.y, ptEnd.x, ptEnd.y);
+	}
+	INT TinyDC::GetArcDirection() const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetArcDirection(m_value);
+	}
+	BOOL TinyDC::PolyPolyline(const POINT* lpPoints, const DWORD* lpPolyPoints,
+		INT nCount)
+	{
+		ASSERT(m_value != NULL);
+		return ::PolyPolyline(m_value, lpPoints, lpPolyPoints, nCount);
+	}
+	BOOL TinyDC::GetColorAdjustment(LPCOLORADJUSTMENT lpColorAdjust) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetColorAdjustment(m_value, lpColorAdjust);
+	}
+
+	BOOL TinyDC::PolyBezier(const POINT* lpPoints, INT nCount)
+	{
+		ASSERT(m_value != NULL);
+		return ::PolyBezier(m_value, lpPoints, nCount);
+	}
+
+	INT TinyDC::DrawEscape(INT nEscape, INT nInputSize, LPCSTR lpszInputData)
+	{
+		ASSERT(m_value != NULL);
+		return ::DrawEscape(m_value, nEscape, nInputSize, lpszInputData);
+	}
+
+	INT TinyDC::Escape(INT nEscape, INT nInputSize, _In_bytecount_(nInputSize) LPCSTR lpszInputData, INT nOutputSize, _Out_bytecap_(nOutputSize) LPSTR lpszOutputData)
+	{
+		ASSERT(m_value != NULL);
+		return ::ExtEscape(m_value, nEscape, nInputSize, lpszInputData, nOutputSize, lpszOutputData);
+	}
+
+	BOOL TinyDC::GetCharABCWidths(UINT nFirstChar, UINT nLastChar, LPABCFLOAT lpABCF) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetCharABCWidthsFloat(m_value, nFirstChar, nLastChar, lpABCF);
+	}
+	BOOL TinyDC::GetCharWidth(UINT nFirstChar, UINT nLastChar, float* lpFloatBuffer) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetCharWidthFloat(m_value, nFirstChar, nLastChar, lpFloatBuffer);
+	}
+
+	BOOL TinyDC::AbortPath()
+	{
+		ASSERT(m_value != NULL);
+		return ::AbortPath(m_value);
+	}
+	BOOL TinyDC::BeginPath()
+	{
+		ASSERT(m_value != NULL);
+		return ::BeginPath(m_value);
+	}
+	BOOL TinyDC::CloseFigure()
+	{
+		ASSERT(m_value != NULL);
+		return ::CloseFigure(m_value);
+	}
+	BOOL TinyDC::EndPath()
+	{
+		ASSERT(m_value != NULL);
+		return ::EndPath(m_value);
+	}
+	BOOL TinyDC::FillPath()
+	{
+		ASSERT(m_value != NULL);
+		return ::FillPath(m_value);
+	}
+	BOOL TinyDC::FlattenPath()
+	{
+		ASSERT(m_value != NULL);
+		return ::FlattenPath(m_value);
+	}
+	float TinyDC::GetMiterLimit() const
+	{
+		ASSERT(m_value != NULL); float fMiterLimit;
+		(::GetMiterLimit(m_value, &fMiterLimit)); return fMiterLimit;
+	}
+	INT TinyDC::GetPath(LPPOINT lpPoints, LPBYTE lpTypes, INT nCount) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetPath(m_value, lpPoints, lpTypes, nCount);
+	}
+	BOOL TinyDC::SetMiterLimit(float fMiterLimit)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetMiterLimit(m_value, fMiterLimit, NULL);
+	}
+	BOOL TinyDC::StrokeAndFillPath()
+	{
+		ASSERT(m_value != NULL);
+		return ::StrokeAndFillPath(m_value);
+	}
+	BOOL TinyDC::StrokePath()
+	{
+		ASSERT(m_value != NULL);
+		return ::StrokePath(m_value);
+	}
+	BOOL TinyDC::WidenPath()
+	{
+		ASSERT(m_value != NULL);
+		return ::WidenPath(m_value);
+	}
+
+	BOOL TinyDC::AddMetaFileComment(UINT nDataSize, const BYTE* pCommentData)
+	{
+		ASSERT(m_value != NULL);
+		return ::GdiComment(m_value, nDataSize, pCommentData);
+	}
+	BOOL TinyDC::PlayMetaFile(HENHMETAFILE hEnhMF, LPCRECT lpBounds)
+	{
+		ASSERT(m_value != NULL);
+		return ::PlayEnhMetaFile(m_value, hEnhMF, lpBounds);
+	}
+
+	TinyDC::~TinyDC()
+	{
+		if (m_value != NULL)
+		{
+			::DeleteDC(Detach());
+		}
+	}
+
+	INT TinyDC::StartDoc(LPCTSTR lpszDocName)
+	{
+		DOCINFO di;
+		memset(&di, 0, sizeof(DOCINFO));
+		di.cbSize = sizeof(DOCINFO);
+		di.lpszDocName = lpszDocName;
+		return StartDoc(&di);
+	}
+
+	INT TinyDC::SaveDC()
+	{
+		ASSERT(m_value != NULL);
+		return ::SaveDC(m_value);
+	}
+
+	BOOL TinyDC::RestoreDC(INT nSavedDC)
+	{
+		ASSERT(m_value != NULL);
+		return ::RestoreDC(m_value, nSavedDC);
+	}
+
+	HPEN TinyDC::SelectObject(TinyPen* ps)
+	{
+		ASSERT(m_value != NULL);
+		return (HPEN)::SelectObject(m_value, ps->Handle());
+	}
+
+	HBRUSH TinyDC::SelectObject(TinyBrush* ps)
+	{
+		ASSERT(m_value != NULL);
+		return (HBRUSH)::SelectObject(m_value, ps->Handle());
+	}
+
+	INT TinyDC::SelectObject(TinyRgn* ps)
+	{
+		ASSERT(m_value != NULL);
+		return (INT)(INT_PTR)::SelectObject(m_value, ps->Handle());
+	}
+
+	HPALETTE TinyDC::SelectPalette(TinyPalette* ps, BOOL bForceBackground)
+	{
+		ASSERT(m_value != NULL);
+		return (HPALETTE)::SelectPalette(m_value, (HPALETTE)ps->Handle(), bForceBackground);
+	}
+
+	COLORREF TinyDC::SetBkColor(COLORREF crColor)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetBkColor(m_value, crColor);
+	}
+
+	INT TinyDC::SetBkMode(INT nBkMode)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetBkMode(m_value, nBkMode);
+	}
+
+	INT TinyDC::SetPolyFillMode(INT nPolyFillMode)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetPolyFillMode(m_value, nPolyFillMode);
+	}
+
+	INT TinyDC::SetROP2(INT nDrawMode)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetROP2(m_value, nDrawMode);
+	}
+
+	INT TinyDC::SetStretchBltMode(INT nStretchMode)
+	{
+		ASSERT(m_value != NULL);
+		return  ::SetStretchBltMode(m_value, nStretchMode);
+	}
+
+	COLORREF TinyDC::SetTextColor(COLORREF crColor)
+	{
+		ASSERT(m_value != NULL);
+		return  ::SetTextColor(m_value, crColor);
+	}
+
+	INT TinyDC::SetGraphicsMode(INT iMode)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetGraphicsMode(m_value, iMode);
+	}
+
+	BOOL TinyDC::SetWorldTransform(const XFORM* pXform)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetWorldTransform(m_value, pXform);
+	}
+
+	BOOL TinyDC::ModifyWorldTransform(const XFORM* pXform, DWORD iMode)
+	{
+		ASSERT(m_value != NULL);
+		return ::ModifyWorldTransform(m_value, pXform, iMode);
+	}
+
+	INT TinyDC::SetMapMode(INT nMapMode)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetMapMode(m_value, nMapMode);
+	}
+
+	TinyPoint TinyDC::SetViewportOrg(INT x, INT y)
+	{
+		ASSERT(m_value != NULL);
+		TinyPoint point;
+		::SetViewportOrgEx(m_value, x, y, &point);
+		return point;
+	}
+
+	TinyPoint TinyDC::OffsetViewportOrg(INT nWidth, INT nHeight)
+	{
+		ASSERT(m_value != NULL);
+		TinyPoint point;
+		::OffsetViewportOrgEx(m_value, nWidth, nHeight, &point);
+		return point;
+	}
+
+	TinySize TinyDC::SetViewportExt(INT x, INT y)
+	{
+		ASSERT(m_value != NULL);
+		TinySize size;
+		::SetViewportExtEx(m_value, x, y, &size);
+		return size;
+	}
+
+	TinySize TinyDC::ScaleViewportExt(INT xNum, INT xDenom, INT yNum, INT yDenom)
+	{
+		ASSERT(m_value != NULL);
+		TinySize size;
+		::ScaleViewportExtEx(m_value, xNum, xDenom, yNum, yDenom, &size);
+		return size;
+	}
+
+	TinyPoint TinyDC::SetWindowOrg(INT x, INT y)
+	{
+		ASSERT(m_value != NULL);
+		TinyPoint point;
+		::SetWindowOrgEx(m_value, x, y, &point);
+		return point;
+	}
+
+	TinyPoint TinyDC::OffsetWindowOrg(INT nWidth, INT nHeight)
+	{
+		ASSERT(m_value != NULL);
+		TinyPoint point;
+		::OffsetWindowOrgEx(m_value, nWidth, nHeight, &point);
+		return point;
+	}
+
+	TinySize TinyDC::SetWindowExt(INT x, INT y)
+	{
+		ASSERT(m_value != NULL);
+		TinySize size;
+		::SetWindowExtEx(m_value, x, y, &size);
+		return size;
+	}
+
+	TinySize TinyDC::ScaleWindowExt(INT xNum, INT xDenom, INT yNum, INT yDenom)
+	{
+		ASSERT(m_value != NULL);
+		TinySize size;
+		::ScaleWindowExtEx(m_value, xNum, xDenom, yNum, yDenom, &size);
+		return size;
+	}
+
+	INT TinyDC::GetClipBox(LPRECT lpRect) const
+	{
+		ASSERT(m_value != NULL);
+		return ::GetClipBox(m_value, lpRect);
+	}
+
+	INT TinyDC::SelectClipRgn(TinyRgn* pRgn)
+	{
+		ASSERT(m_value != NULL);
+		return  ::SelectClipRgn(m_value, (HRGN)pRgn->Handle());
+	}
+
+	INT TinyDC::ExcludeClipRect(INT x1, INT y1, INT x2, INT y2)
+	{
+		ASSERT(m_value != NULL);
+		return  ::ExcludeClipRect(m_value, x1, y1, x2, y2);
+	}
+
+	INT TinyDC::ExcludeClipRect(LPCRECT lpRect)
+	{
+		ASSERT(m_value != NULL);
+		return ::ExcludeClipRect(m_value, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom);
+	}
+
+	INT TinyDC::IntersectClipRect(INT x1, INT y1, INT x2, INT y2)
+	{
+		ASSERT(m_value != NULL);
+		return::IntersectClipRect(m_value, x1, y1, x2, y2);
+	}
+
+	INT TinyDC::IntersectClipRect(LPCRECT lpRect)
+	{
+		ASSERT(m_value != NULL);
+		return ::IntersectClipRect(m_value, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom);
+	}
+
+	INT TinyDC::OffsetClipRgn(INT x, INT y)
+	{
+		ASSERT(m_value != NULL);
+		return ::OffsetClipRgn(m_value, x, y);
+	}
+
+	INT TinyDC::OffsetClipRgn(SIZE size)
+	{
+		ASSERT(m_value != NULL);
+		return ::OffsetClipRgn(m_value, size.cx, size.cy);
+	}
+
+	TinyPoint TinyDC::MoveTo(INT x, INT y)
+	{
+		ASSERT(m_value != NULL);
+		TinyPoint point;
+		::MoveToEx(m_value, x, y, &point);
+		return point;
+	}
+
+	BOOL TinyDC::LineTo(INT x, INT y)
+	{
+		ASSERT(m_value != NULL);
+		return ::LineTo(m_value, x, y);
+	}
+
+	UINT TinyDC::SetTextAlign(UINT nFlags)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetTextAlign(m_value, nFlags);
+	}
+
+	INT TinyDC::SetTextJustification(INT nBreakExtra, INT nBreakCount)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetTextJustification(m_value, nBreakExtra, nBreakCount);
+	}
+
+	INT TinyDC::SetTextCharacterExtra(INT nCharExtra)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetTextCharacterExtra(m_value, nCharExtra);
+	}
+
+	DWORD TinyDC::SetMapperFlags(DWORD dwFlag)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetMapperFlags(m_value, dwFlag);
+	}
+
+	BOOL TinyDC::ArcTo(INT x1, INT y1, INT x2, INT y2, INT x3, INT y3, INT x4, INT y4)
+	{
+		ASSERT(m_value != NULL);
+		return ::ArcTo(m_value, x1, y1, x2, y2, x3, y3, x4, y4);
+	}
+
+	INT TinyDC::SetArcDirection(INT nArcDirection)
+	{
+		ASSERT(m_value != NULL);
+		return  ::SetArcDirection(m_value, nArcDirection);
+	}
+
+	BOOL TinyDC::PolyDraw(const POINT* lpPoints, const BYTE* lpTypes, INT nCount)
+	{
+		ASSERT(m_value != NULL);
+		return ::PolyDraw(m_value, lpPoints, lpTypes, nCount);
+	}
+
+	BOOL TinyDC::PolylineTo(const POINT* lpPoints, INT nCount)
+	{
+		ASSERT(m_value != NULL);
+		return ::PolylineTo(m_value, lpPoints, nCount);
+	}
+
+	BOOL TinyDC::SetColorAdjustment(const COLORADJUSTMENT* lpColorAdjust)
+	{
+		ASSERT(m_value != NULL);
+		return ::SetColorAdjustment(m_value, lpColorAdjust);
+	}
+
+	BOOL TinyDC::PolyBezierTo(const POINT* lpPoints, INT nCount)
+	{
+		ASSERT(m_value != NULL);
+		return ::PolyBezierTo(m_value, lpPoints, nCount);
+	}
+
+	BOOL TinyDC::SelectClipPath(INT nMode)
+	{
+		ASSERT(m_value != NULL);
+		return ::SelectClipPath(m_value, nMode);
+	}
+
+	INT TinyDC::SelectClipRgn(TinyRgn* pRgn, INT nMode)
+	{
+		ASSERT(m_value != NULL);
+		return ::ExtSelectClipRgn(m_value, (HRGN)pRgn->Handle(), nMode);
+	}
+
+	void TinyDC::LPtoDP(LPSIZE lpSize) const
+	{
+		ASSERT(lpSize);
+
+		TinySize sizeWinExt = GetWindowExt();
+		TinySize sizeVpExt = GetViewportExt();
+		lpSize->cx = MulDiv(lpSize->cx, abs(sizeVpExt.cx), abs(sizeWinExt.cx));
+		lpSize->cy = MulDiv(lpSize->cy, abs(sizeVpExt.cy), abs(sizeWinExt.cy));
+	}
+
+	void TinyDC::DPtoLP(LPSIZE lpSize) const
+	{
+		ASSERT(lpSize);
+
+		TinySize sizeWinExt = GetWindowExt();
+		TinySize sizeVpExt = GetViewportExt();
+		lpSize->cx = MulDiv(lpSize->cx, abs(sizeWinExt.cx), abs(sizeVpExt.cx));
+		lpSize->cy = MulDiv(lpSize->cy, abs(sizeWinExt.cy), abs(sizeVpExt.cy));
+	}
+	BOOL TinyDC::AlphaBlend(INT xDest, INT yDest, INT nDestWidth, INT nDestHeight,
+		TinyDC* pSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, BLENDFUNCTION blend)
+	{
+		return ::AlphaBlend(m_value, xDest, yDest, nDestWidth, nDestHeight, pSrcDC->Handle(),
+			xSrc, ySrc, nSrcWidth, nSrcHeight, blend);
+	}
+	BOOL TinyDC::TransparentBlt(INT xDest, INT yDest, INT nDestWidth,
+		INT nDestHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, INT nSrcWidth,
+		INT nSrcHeight, UINT crTransparent)
+	{
+		return ::TransparentBlt(m_value, xDest, yDest, nDestWidth, nDestHeight, pSrcDC->Handle(),
+			xSrc, ySrc, nSrcWidth, nSrcHeight, crTransparent);
+	}
+	BOOL TinyDC::GradientFill(TRIVERTEX* pVertices, ULONG nVertices,
+		void* pMesh, ULONG nMeshElements, DWORD dwMode)
+	{
+		ASSERT(m_value != NULL);
+		return ::GradientFill(m_value, pVertices, nVertices, pMesh, nMeshElements, dwMode);
 	}
 	/************************************************************************/
 	/* PEN                                                                  */
@@ -199,7 +1354,7 @@ namespace TinyUI
 		HBITMAP hBitmap = ::LoadBitmap(NULL, MAKEINTRESOURCE(nIDBitmap));
 		return Attach(hBitmap);
 	}
-	BOOL TinyBitmap::LoadMappedBitmap(HINSTANCE hInstance, UINT nIDBitmap, UINT nFlags, LPCOLORMAP lpColorMap, int nMapSize)
+	BOOL TinyBitmap::LoadMappedBitmap(HINSTANCE hInstance, UINT nIDBitmap, UINT nFlags, LPCOLORMAP lpColorMap, INT nMapSize)
 	{
 		HBITMAP hBitmap = ::CreateMappedBitmap(hInstance, nIDBitmap, (WORD)nFlags, lpColorMap, nMapSize);
 		return Attach(hBitmap);
@@ -208,7 +1363,7 @@ namespace TinyUI
 	{
 		ASSERT(pzFile != NULL);
 		HDC hDC = NULL;
-		int iBits;
+		INT iBits;
 		WORD wBitCount;
 		DWORD dwPaletteSize = 0, dwBmBitsSize = 0, dwDIBSize = 0, dwWritten = 0;
 		BITMAP bitmap;
@@ -246,7 +1401,7 @@ namespace TinyUI
 			hOldPalette = ::SelectPalette(hDC, (HPALETTE)hPalette, FALSE);
 			RealizePalette(hDC);
 		}
-		GetDIBits(hDC, (HBITMAP)m_value, 0, (UINT)bitmap.bmHeight, (LPSTR)lpbi + sizeof(BITMAPINFOHEADER)+dwPaletteSize, (BITMAPINFO *)lpbi, DIB_RGB_COLORS);
+		GetDIBits(hDC, (HBITMAP)m_value, 0, (UINT)bitmap.bmHeight, (LPSTR)lpbi + sizeof(BITMAPINFOHEADER) + dwPaletteSize, (BITMAPINFO *)lpbi, DIB_RGB_COLORS);
 		if (hOldPalette)
 		{
 			::SelectPalette(hDC, (HPALETTE)hOldPalette, TRUE);
@@ -256,11 +1411,11 @@ namespace TinyUI
 		hFile = CreateFile(pzFile, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 		if (hFile == INVALID_HANDLE_VALUE) return FALSE;
 		bmfHdr.bfType = 0x4D42; // "BM" 
-		dwDIBSize = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+dwPaletteSize + dwBmBitsSize;
+		dwDIBSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + dwPaletteSize + dwBmBitsSize;
 		bmfHdr.bfSize = dwDIBSize;
 		bmfHdr.bfReserved1 = 0;
 		bmfHdr.bfReserved2 = 0;
-		bmfHdr.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER)+(DWORD)sizeof(BITMAPINFOHEADER)+dwPaletteSize;
+		bmfHdr.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) + (DWORD)sizeof(BITMAPINFOHEADER) + dwPaletteSize;
 		WriteFile(hFile, (LPSTR)&bmfHdr, sizeof(BITMAPFILEHEADER), &dwWritten, NULL);
 		GlobalUnlock(hDib);
 		GlobalFree(hDib);
@@ -274,7 +1429,7 @@ namespace TinyUI
 			::DeleteObject(Detach());
 		}
 	}
-	
+
 	/************************************************************************/
 	/* PALETTE                                                              */
 	/************************************************************************/
@@ -290,9 +1445,9 @@ namespace TinyUI
 	}
 	INT	 TinyPalette::GetEntryCount()
 	{
-		ASSERT(m_value != NULL); 
+		ASSERT(m_value != NULL);
 		WORD nEntries = 0;
-		::GetObject(m_value, sizeof(WORD), &nEntries); 
+		::GetObject(m_value, sizeof(WORD), &nEntries);
 		return (INT)nEntries;
 	}
 	UINT TinyPalette::GetPaletteEntries(UINT nStartIndex, UINT nNumEntries, LPPALETTEENTRY lpPaletteColors) const
@@ -327,7 +1482,7 @@ namespace TinyUI
 			::DeleteObject(Detach());
 		}
 	}
-	
+
 	/************************************************************************/
 	/* RGN																	*/
 	/************************************************************************/
@@ -384,6 +1539,54 @@ namespace TinyUI
 			::DeleteObject(Detach());
 		}
 	}
+	INT TinyRgn::GetRegionData(LPRGNDATA lpRgnData, INT nDataSize) const
+	{
+		return (INT)::GetRegionData((HRGN)m_value, nDataSize, lpRgnData);
+	}
+	INT TinyRgn::CombineRgn(const TinyRgn* pRgn1, const TinyRgn* pRgn2, INT nCombineMode)
+	{
+		return ::CombineRgn((HRGN)m_value, (HRGN)pRgn1->Handle(), (HRGN)pRgn2->Handle(), nCombineMode);
+	}
+	INT TinyRgn::CopyRgn(const TinyRgn* pRgnSrc)
+	{
+		return ::CombineRgn((HRGN)m_value, (HRGN)pRgnSrc->Handle(), NULL, RGN_COPY);
+	}
+	BOOL TinyRgn::EqualRgn(const TinyRgn* pRgn) const
+	{
+		return ::EqualRgn((HRGN)m_value, (HRGN)pRgn->Handle());
+	}
+	INT TinyRgn::OffsetRgn(INT x, INT y)
+	{
+		return ::OffsetRgn((HRGN)m_value, x, y);
+	}
+	INT TinyRgn::OffsetRgn(POINT point)
+	{
+		return ::OffsetRgn((HRGN)m_value, point.x, point.y);
+	}
+	INT TinyRgn::GetRgnBox(LPRECT lpRect) const
+	{
+		return ::GetRgnBox((HRGN)m_value, lpRect);
+	}
+	BOOL TinyRgn::PtInRegion(INT x, INT y) const
+	{
+		return ::PtInRegion((HRGN)m_value, x, y);
+	}
+	BOOL TinyRgn::PtInRegion(POINT point) const
+	{
+		return ::PtInRegion((HRGN)m_value, point.x, point.y);
+	}
+	BOOL TinyRgn::RectInRegion(LPCRECT lpRect) const
+	{
+		return ::RectInRegion((HRGN)m_value, lpRect);
+	}
+	void TinyRgn::SetRectRgn(INT x1, INT y1, INT x2, INT y2)
+	{
+		::SetRectRgn((HRGN)m_value, x1, y1, x2, y2);
+	}
+	void TinyRgn::SetRectRgn(LPCRECT lpRect)
+	{
+		::SetRectRgn((HRGN)m_value, lpRect->left, lpRect->top, lpRect->right, lpRect->bottom);
+	}
 	/************************************************************************/
 	/* SIZE																	*/
 	/************************************************************************/
@@ -391,7 +1594,7 @@ namespace TinyUI
 	{
 		cx = cy = 0;
 	}
-	TinySize::TinySize(int initCX, int initCY) throw()
+	TinySize::TinySize(INT initCX, INT initCY) throw()
 	{
 		cx = initCX; cy = initCY;
 	}
@@ -424,7 +1627,7 @@ namespace TinyUI
 	{
 		cx -= size.cx; cy -= size.cy;
 	}
-	void TinySize::SetSize(int CX, int CY) throw()
+	void TinySize::SetSize(INT CX, INT CY) throw()
 	{
 		cx = CX; cy = CY;
 	}
@@ -461,7 +1664,7 @@ namespace TinyUI
 	/************************************************************************/
 	TinyPoint::TinyPoint() throw()
 	{  }
-	TinyPoint::TinyPoint(int initX, int initY) throw()
+	TinyPoint::TinyPoint(INT initX, INT initY) throw()
 	{
 		x = initX; y = initY;
 	}
@@ -478,7 +1681,7 @@ namespace TinyUI
 		x = (short)GET_X_LPARAM(dwPoint);
 		y = (short)GET_Y_LPARAM(dwPoint);
 	}
-	void TinyPoint::Offset(int xOffset, int yOffset) throw()
+	void TinyPoint::Offset(INT xOffset, INT yOffset) throw()
 	{
 		x += xOffset; y += yOffset;
 	}
@@ -490,7 +1693,7 @@ namespace TinyUI
 	{
 		x += size.cx; y += size.cy;
 	}
-	void TinyPoint::SetPoint(int X, int Y) throw()
+	void TinyPoint::SetPoint(INT X, INT Y) throw()
 	{
 		x = X; y = Y;
 	}
@@ -552,7 +1755,7 @@ namespace TinyUI
 	/************************************************************************/
 	TinyRectangle::TinyRectangle() throw()
 	{	}
-	TinyRectangle::TinyRectangle(int l, int t, int r, int b) throw()
+	TinyRectangle::TinyRectangle(INT l, INT t, INT r, INT b) throw()
 	{
 		left = l; top = t; right = r; bottom = b;
 	}
@@ -573,11 +1776,11 @@ namespace TinyUI
 		left = topLeft.x; top = topLeft.y;
 		right = bottomRight.x; bottom = bottomRight.y;
 	}
-	int TinyRectangle::Width() const throw()
+	INT TinyRectangle::Width() const throw()
 	{
 		return right - left;
 	}
-	int TinyRectangle::Height() const throw()
+	INT TinyRectangle::Height() const throw()
 	{
 		return bottom - top;
 	}
@@ -633,7 +1836,7 @@ namespace TinyUI
 	{
 		return ::PtInRect(this, point);
 	}
-	void TinyRectangle::SetRect(int x1, int y1, int x2, int y2) throw()
+	void TinyRectangle::SetRect(INT x1, INT y1, INT x2, INT y2) throw()
 	{
 		::SetRect(this, x1, y1, x2, y2);
 	}
@@ -653,7 +1856,7 @@ namespace TinyUI
 	{
 		return ::EqualRect(this, lpRect);
 	}
-	void TinyRectangle::InflateRect(int x, int y) throw()
+	void TinyRectangle::InflateRect(INT x, INT y) throw()
 	{
 		::InflateRect(this, x, y);
 	}
@@ -661,7 +1864,7 @@ namespace TinyUI
 	{
 		::InflateRect(this, size.cx, size.cy);
 	}
-	void TinyRectangle::DeflateRect(int x, int y) throw()
+	void TinyRectangle::DeflateRect(INT x, INT y) throw()
 	{
 		::InflateRect(this, -x, -y);
 	}
@@ -669,7 +1872,7 @@ namespace TinyUI
 	{
 		::InflateRect(this, -size.cx, -size.cy);
 	}
-	void TinyRectangle::OffsetRect(int x, int y) throw()
+	void TinyRectangle::OffsetRect(INT x, INT y) throw()
 	{
 		::OffsetRect(this, x, y);
 	}
@@ -681,15 +1884,15 @@ namespace TinyUI
 	{
 		::OffsetRect(this, size.cx, size.cy);
 	}
-	void TinyRectangle::MoveToY(int y) throw()
+	void TinyRectangle::MoveToY(INT y) throw()
 	{
 		bottom = Height() + y; top = y;
 	}
-	void TinyRectangle::MoveToX(int x) throw()
+	void TinyRectangle::MoveToX(INT x) throw()
 	{
 		right = Width() + x; left = x;
 	}
-	void TinyRectangle::MoveToXY(int x, int y) throw()
+	void TinyRectangle::MoveToXY(INT x, INT y) throw()
 	{
 		MoveToX(x); MoveToY(y);
 	}
@@ -790,7 +1993,7 @@ namespace TinyUI
 
 	void TinyRectangle::NormalizeRect() throw()
 	{
-		int nTemp;
+		INT nTemp;
 		if (left > right)
 		{
 			nTemp = left;
@@ -811,7 +2014,7 @@ namespace TinyUI
 		right += lpRect->right;		bottom += lpRect->bottom;
 	}
 
-	void TinyRectangle::InflateRect(int l, int t, int r, int b) throw()
+	void TinyRectangle::InflateRect(INT l, INT t, INT r, INT b) throw()
 	{
 		left -= l;			top -= t;
 		right += r;			bottom += b;
@@ -823,13 +2026,13 @@ namespace TinyUI
 		right -= lpRect->right;	bottom -= lpRect->bottom;
 	}
 
-	void TinyRectangle::DeflateRect(int l, int t, int r, int b) throw()
+	void TinyRectangle::DeflateRect(INT l, INT t, INT r, INT b) throw()
 	{
 		left += l;		top += t;
 		right -= r;		bottom -= b;
 	}
 
-	TinyRectangle TinyRectangle::MulDiv(int nMultiplier, int nDivisor) const throw()
+	TinyRectangle TinyRectangle::MulDiv(INT nMultiplier, INT nDivisor) const throw()
 	{
 		return TinyRectangle(
 			::MulDiv(left, nMultiplier, nDivisor),

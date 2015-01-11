@@ -27,7 +27,7 @@ namespace TinyUI
 	{
 		return (WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER);
 	}
-	BOOL TinyLabel::Create(HWND hParent, int x, int y, int cx, int cy)
+	BOOL TinyLabel::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
 		INITCOMMONCONTROLSEX initCtrls = { sizeof(INITCOMMONCONTROLSEX), ICC_STANDARD_CLASSES };
 		if (InitCommonControlsEx(&initCtrls))

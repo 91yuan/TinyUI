@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "TinyColumn.h"
-#include "TinyRichRender.h"
+#include "TinyRichUI.h"
 
 namespace TinyUI
 {
@@ -180,7 +180,7 @@ namespace TinyUI
 		throw std::exception("The method or operation is not implemented.");
 	}
 
-	COLORREF TinyRichUI::TxGetSysColor(int nIndex)
+	COLORREF TinyRichUI::TxGetSysColor(INT nIndex)
 	{
 		throw std::exception("The method or operation is not implemented.");
 	}
@@ -200,7 +200,7 @@ namespace TinyUI
 		throw std::exception("The method or operation is not implemented.");
 	}
 
-	HRESULT TinyRichUI::TxGetPasswordChar(_Out_ TCHAR *pch)
+	HRESULT TinyRichUI::TxGetPasswordChar( TCHAR *pch)
 	{
 		throw std::exception("The method or operation is not implemented.");
 	}

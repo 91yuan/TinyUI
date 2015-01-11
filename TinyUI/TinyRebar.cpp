@@ -28,7 +28,7 @@ namespace TinyUI
 		return (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY);
 	}
 
-	BOOL TinyRebar::Create(HWND hParent, int x, int y, int cx, int cy)
+	BOOL TinyRebar::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
 		INITCOMMONCONTROLSEX initCtrls = { sizeof(INITCOMMONCONTROLSEX), ICC_COOL_CLASSES | ICC_BAR_CLASSES };
 		if (InitCommonControlsEx(&initCtrls))
@@ -96,7 +96,7 @@ namespace TinyUI
 	INT TinyRebar::IDToIndex(UINT uBandID) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, RB_IDTOINDEX, uBandID, 0L);
+		return (INT) ::SendMessage(m_hWND, RB_IDTOINDEX, uBandID, 0L);
 	}
 	BOOL TinyRebar::SetBandInfo(UINT uBand, REBARBANDINFO* prbbi)
 	{
@@ -151,7 +151,7 @@ namespace TinyUI
 	INT TinyRebar::HitTest(RBHITTESTINFO* prbht)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, RB_HITTEST, 0, (LPARAM)prbht);
+		return (INT) ::SendMessage(m_hWND, RB_HITTEST, 0, (LPARAM)prbht);
 	}
 	BOOL TinyRebar::InsertBand(UINT uIndex, REBARBANDINFO* prbbi)
 	{

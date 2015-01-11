@@ -39,53 +39,53 @@ namespace TinyUI
 	INT TinyListBox::GetCount() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_GETCOUNT, (WPARAM)0, (LPARAM)0);
+		return (INT)::SendMessage(m_hWND, LB_GETCOUNT, (WPARAM)0, (LPARAM)0);
 	}
 	INT TinyListBox::GetCurSel() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_GETCURSEL, (WPARAM)0, (LPARAM)0);
+		return (INT)::SendMessage(m_hWND, LB_GETCURSEL, (WPARAM)0, (LPARAM)0);
 	}
 	INT TinyListBox::SetCurSel(INT nSelect)
 	{
-		return (int)SendMessage(LB_SETCURSEL, (WPARAM)nSelect, (LPARAM)0);
+		return (INT)SendMessage(m_hWND, LB_SETCURSEL, (WPARAM)nSelect, (LPARAM)0);
 	}
 	INT TinyListBox::GetHorizontalExtent() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_GETHORIZONTALEXTENT, (WPARAM)0, (LPARAM)0);
+		return (INT)::SendMessage(m_hWND, LB_GETHORIZONTALEXTENT, (WPARAM)0, (LPARAM)0);
 	}
 	void TinyListBox::SetHorizontalExtent(INT cxExtent)
 	{
-		SendMessage(LB_SETHORIZONTALEXTENT, cxExtent, 0);
+		SendMessage(m_hWND, LB_SETHORIZONTALEXTENT, cxExtent, 0);
 	}
 	INT TinyListBox::GetSelCount() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_GETSELCOUNT, 0, 0);
+		return (INT)::SendMessage(m_hWND, LB_GETSELCOUNT, 0, 0);
 	}
 	INT TinyListBox::GetSelItems(INT nMaxItems, LPINT rgIndex) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_GETSELITEMS, nMaxItems, (LPARAM)rgIndex);
+		return (INT)::SendMessage(m_hWND, LB_GETSELITEMS, nMaxItems, (LPARAM)rgIndex);
 	}
 	INT TinyListBox::GetTopIndex() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_GETTOPINDEX, 0, 0);
+		return (INT)::SendMessage(m_hWND, LB_GETTOPINDEX, 0, 0);
 	}
 	INT TinyListBox::SetTopIndex(INT nIndex)
 	{
-		return (int)SendMessage(LB_SETTOPINDEX, nIndex, 0);
+		return (INT)SendMessage(m_hWND, LB_SETTOPINDEX, nIndex, 0);
 	}
-	DWORD_PTR TinyListBox::GetItemData(int nIndex) const
+	DWORD_PTR TinyListBox::GetItemData(INT nIndex) const
 	{
 		ASSERT(::IsWindow(m_hWND));
 		return ::SendMessage(m_hWND, LB_GETITEMDATA, nIndex, 0);
 	}
 	INT TinyListBox::SetItemData(INT nIndex, LPARAM dwItemData)
 	{
-		return (int)SendMessage(LB_SETITEMDATA, nIndex, dwItemData);
+		return (INT)SendMessage(m_hWND, LB_SETITEMDATA, nIndex, dwItemData);
 	}
 	void* TinyListBox::GetItemDataPtr(INT nIndex) const
 	{
@@ -99,7 +99,7 @@ namespace TinyUI
 	INT TinyListBox::GetItemRect(INT nIndex, LPRECT lpRect) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_GETITEMRECT, nIndex, (LPARAM)lpRect);
+		return (INT)::SendMessage(m_hWND, LB_GETITEMRECT, nIndex, (LPARAM)lpRect);
 	}
 	INT TinyListBox::GetSel(INT nIndex) const
 	{
@@ -108,19 +108,19 @@ namespace TinyUI
 	}
 	INT TinyListBox::SetSel(INT nIndex, BOOL bSelect)
 	{
-		return (INT)SendMessage(LB_SETSEL, bSelect, nIndex);
+		return (INT)SendMessage(m_hWND, LB_SETSEL, bSelect, nIndex);
 	}
 	INT TinyListBox::GetText(INT nIndex, LPTSTR lpszBuffer) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_GETTEXT, nIndex, (LPARAM)lpszBuffer);
+		return (INT)::SendMessage(m_hWND, LB_GETTEXT, nIndex, (LPARAM)lpszBuffer);
 	}
 	INT TinyListBox::GetTextLen(INT nIndex) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_GETTEXTLEN, nIndex, 0);
+		return (INT)::SendMessage(m_hWND, LB_GETTEXTLEN, nIndex, 0);
 	}
-	void TinyListBox::SetColumnWidth(int cxWidth)
+	void TinyListBox::SetColumnWidth(INT cxWidth)
 	{
 		ASSERT(::IsWindow(m_hWND));
 		::SendMessage(m_hWND, LB_SETCOLUMNWIDTH, cxWidth, 0);
@@ -129,7 +129,7 @@ namespace TinyUI
 	{
 		ASSERT(::IsWindow(m_hWND));
 		RECT rect = { 0 };
-		GetClientRect(&rect);
+		GetClientRect(m_hWND, &rect);
 		if (::PtInRect(&rect, pos))
 		{
 			DWORD dwItem = (DWORD)::SendMessage(m_hWND, LB_ITEMFROMPOINT, NULL, MAKELPARAM(pos.x, pos.y));
@@ -161,42 +161,42 @@ namespace TinyUI
 	INT TinyListBox::SetItemHeight(INT nIndex, UINT cyItemHeight)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_SETITEMHEIGHT, nIndex, MAKELONG(cyItemHeight, 0));
+		return (INT)::SendMessage(m_hWND, LB_SETITEMHEIGHT, nIndex, MAKELONG(cyItemHeight, 0));
 	}
 	INT TinyListBox::GetItemHeight(INT nIndex) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_GETITEMHEIGHT, nIndex, 0L);
+		return (INT)::SendMessage(m_hWND, LB_GETITEMHEIGHT, nIndex, 0L);
 	}
 	INT TinyListBox::FindStringExact(INT nIndexStart, LPCTSTR lpszFind) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_FINDSTRINGEXACT, nIndexStart, (LPARAM)lpszFind);
+		return (INT)::SendMessage(m_hWND, LB_FINDSTRINGEXACT, nIndexStart, (LPARAM)lpszFind);
 	}
 	INT TinyListBox::GetCaretIndex() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_GETCARETINDEX, 0, 0L);
+		return (INT)::SendMessage(m_hWND, LB_GETCARETINDEX, 0, 0L);
 	}
-	INT TinyListBox::SetCaretIndex(int nIndex, BOOL bScroll)
+	INT TinyListBox::SetCaretIndex(INT nIndex, BOOL bScroll)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_SETCARETINDEX, nIndex, MAKELONG(bScroll, 0));
+		return (INT)::SendMessage(m_hWND, LB_SETCARETINDEX, nIndex, MAKELONG(bScroll, 0));
 	}
 	INT TinyListBox::AddString(LPCTSTR lpszItem)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_ADDSTRING, 0, (LPARAM)lpszItem);
+		return (INT)::SendMessage(m_hWND, LB_ADDSTRING, 0, (LPARAM)lpszItem);
 	}
 	INT TinyListBox::DeleteString(UINT nIndex)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_DELETESTRING, nIndex, 0);
+		return (INT)::SendMessage(m_hWND, LB_DELETESTRING, nIndex, 0);
 	}
 	INT TinyListBox::InsertString(INT nIndex, LPCTSTR lpszItem)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_INSERTSTRING, nIndex, (LPARAM)lpszItem);
+		return (INT)::SendMessage(m_hWND, LB_INSERTSTRING, nIndex, (LPARAM)lpszItem);
 	}
 	void TinyListBox::ResetContent()
 	{
@@ -206,23 +206,23 @@ namespace TinyUI
 	INT TinyListBox::Dir(UINT attr, LPCTSTR lpszWildCard)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_DIR, attr, (LPARAM)lpszWildCard);
+		return (INT)::SendMessage(m_hWND, LB_DIR, attr, (LPARAM)lpszWildCard);
 	}
 	INT TinyListBox::FindString(INT nStartAfter, LPCTSTR lpszItem) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_FINDSTRING, nStartAfter, (LPARAM)lpszItem);
+		return (INT)::SendMessage(m_hWND, LB_FINDSTRING, nStartAfter, (LPARAM)lpszItem);
 	}
 	INT TinyListBox::SelectString(INT nStartAfter, LPCTSTR lpszItem)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_SELECTSTRING, nStartAfter, (LPARAM)lpszItem);
+		return (INT)::SendMessage(m_hWND, LB_SELECTSTRING, nStartAfter, (LPARAM)lpszItem);
 	}
 	INT TinyListBox::SelItemRange(BOOL bSelect, INT nFirstItem, INT nLastItem)
 	{
 		ASSERT(::IsWindow(m_hWND)); return bSelect ?
-			(int)::SendMessage(m_hWND, LB_SELITEMRANGEEX, nFirstItem, nLastItem) :
-			(int)::SendMessage(m_hWND, LB_SELITEMRANGEEX, nLastItem, nFirstItem);
+			(INT)::SendMessage(m_hWND, LB_SELITEMRANGEEX, nFirstItem, nLastItem) :
+			(INT)::SendMessage(m_hWND, LB_SELITEMRANGEEX, nLastItem, nFirstItem);
 	}
 	void TinyListBox::SetAnchorIndex(INT nIndex)
 	{
@@ -232,7 +232,7 @@ namespace TinyUI
 	INT TinyListBox::GetAnchorIndex() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, LB_GETANCHORINDEX, 0, 0);
+		return (INT)::SendMessage(m_hWND, LB_GETANCHORINDEX, 0, 0);
 	}
 	LCID TinyListBox::GetLocale() const
 	{

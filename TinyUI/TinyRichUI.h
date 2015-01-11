@@ -59,11 +59,11 @@ namespace TinyUI
 		virtual HRESULT TxGetViewInset(LPRECT prc);
 		virtual HRESULT TxGetCharFormat(const CHARFORMATW **ppCF);
 		virtual HRESULT TxGetParaFormat(const PARAFORMAT **ppPF);
-		virtual COLORREF TxGetSysColor(int nIndex);
+		virtual COLORREF TxGetSysColor(INT nIndex);
 		virtual HRESULT TxGetBackStyle(TXTBACKSTYLE *pstyle);
 		virtual HRESULT TxGetMaxLength(DWORD *plength);
 		virtual HRESULT TxGetScrollBars(DWORD *pdwScrollBar);
-		virtual HRESULT TxGetPasswordChar(_Out_ TCHAR *pch);
+		virtual HRESULT TxGetPasswordChar( TCHAR *pch);
 		virtual HRESULT TxGetAcceleratorPos(LONG *pcp);
 		virtual HRESULT TxGetExtent(LPSIZEL lpExtent);
 		virtual HRESULT OnTxCharFormatChange(const CHARFORMATW * pCF);

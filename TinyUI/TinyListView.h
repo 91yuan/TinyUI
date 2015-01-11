@@ -19,7 +19,6 @@ namespace TinyUI
 		virtual DWORD RetrieveExStyle();
 		virtual DWORD RetrieveStyle();
 		virtual BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-		virtual LRESULT OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	private:
 		void	LvnDeleteItem(INT iItem);
 		void	LvnColumnClick(INT iSubItem);
@@ -30,6 +29,7 @@ namespace TinyUI
 		void	LvnItemActivate(NMITEMACTIVATE* nmActivate);
 	public:
 		void UpdateCursor(HCURSOR hNew);
+		virtual LRESULT OnNotifyReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual void OnDeleteItem(INT iItem);
 		virtual void OnDeleteAllItems();
 		virtual void OnInsertItem(INT iItem);
@@ -62,7 +62,7 @@ namespace TinyUI
 		BOOL SetCallbackMask(UINT nMask);
 		INT GetNextItem(INT nItem, INT nFlags) const;
 		INT GetFirstSelectedItemPosition() const;
-		INT GetNextSelectedItem(_Inout_ INT& pos) const;
+		INT GetNextSelectedItem(INT& pos) const;
 		BOOL GetItemRect(INT nItem, LPRECT lpRect, UINT nCode) const;
 		BOOL SetItemPosition(INT nItem, POINT pt);
 		BOOL GetItemPosition(INT nItem, LPPOINT lpPoint) const;
@@ -125,7 +125,7 @@ namespace TinyUI
 		BOOL DeleteAllItems();
 		INT FindItem(LVFINDINFO* pFindInfo, INT nStart = -1) const;
 		INT HitTest(LVHITTESTINFO* pHitTestInfo) const;
-		INT HitTest(TinyPoint pt,  UINT* pFlags = NULL) const;
+		INT HitTest(TinyPoint pt, UINT* pFlags = NULL) const;
 		BOOL EnsureVisible(INT nItem, BOOL bPartialOK);
 		BOOL Scroll(TinySize size);
 		BOOL RedrawItems(INT nFirst, INT nLast);

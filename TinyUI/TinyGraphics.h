@@ -7,6 +7,16 @@
 /// </summary>
 namespace TinyUI
 {
+	//GDI对象
+	class TinySize;
+	class TinyPoint;
+	class TinyRectangle;
+	class TinyRgn;
+	class TinyPen;
+	class TinyBrush;
+	class TinyDC;
+	class TinyBitmap;
+	class TinyPalette;
 	/// <summary>
 	/// GDI对象类 T是句柄类型
 	/// </summary>
@@ -15,8 +25,8 @@ namespace TinyUI
 	{
 	public:
 		TinyGDIHandle();
-		operator T() const;
 		T Handle() const;
+		operator T() const;
 		virtual BOOL Attach(T& val);
 		virtual T& Detach();
 		BOOL operator==(const TinyGDIHandle& obj) const;
@@ -95,7 +105,7 @@ namespace TinyUI
 #pragma warning(disable : 4172)
 		return _value;
 #pragma warning(pop)
-		
+
 	}
 	template<class T>
 	void TinyGDIHandle<T>::Destory()
@@ -113,7 +123,7 @@ namespace TinyUI
 	/// <summary>
 	/// DC类
 	/// </summary>
-	class TinyDC : public TinyGDIHandle<HDC>
+	class TinyDC : public TinyGDIHandle < HDC >
 	{
 		DECLARE_DYNAMIC(TinyDC)
 	public:
@@ -124,6 +134,259 @@ namespace TinyUI
 		BOOL		CreateIC(LPCTSTR lpszDriverName, LPCTSTR lpszDeviceName, LPCTSTR lpszOutput, const void* lpInitData);
 		BOOL		CreateCompatibleDC(HDC hDC);
 		BOOL		ResetDC(const DEVMODE* lpDevMode);
+		INT			SaveDC();
+		BOOL		RestoreDC(INT nSavedDC);
+		INT			GetDeviceCaps(INT nIndex) const;
+		UINT		SetBoundsRect(LPCRECT lpRectBounds, UINT flags);
+		UINT		GetBoundsRect(LPRECT lpRectBounds, UINT flags);
+
+		TinyPoint	GetBrushOrg() const;
+		TinyPoint	SetBrushOrg(INT x, INT y);
+		TinyPoint	SetBrushOrg(POINT point);
+		INT			EnumObjects(INT nObjectType, INT(CALLBACK* lpfn)(LPVOID, LPARAM), LPARAM lpData);
+		HPEN		SelectObject(TinyPen* pPen);
+		HBRUSH		SelectObject(TinyBrush* pBrush);
+		HBITMAP		SelectObject(TinyBitmap* pBitmap);
+		INT			SelectObject(TinyRgn* pRgn);
+		HGDIOBJ		SelectObject(HGDIOBJ hObject);
+		COLORREF	GetNearestColor(COLORREF crColor) const;
+		HPALETTE	SelectPalette(TinyPalette* pPalette, BOOL bForceBackground);
+		UINT		RealizePalette();
+		void		UpdateColors();
+
+		COLORREF GetBkColor() const;
+		INT GetBkMode() const;
+		INT GetPolyFillMode() const;
+		INT GetROP2() const;
+		INT GetStretchBltMode() const;
+		COLORREF GetTextColor() const;
+
+		COLORREF SetBkColor(COLORREF crColor);
+		INT SetBkMode(INT nBkMode);
+		INT SetPolyFillMode(INT nPolyFillMode);
+		INT SetROP2(INT nDrawMode);
+		INT SetStretchBltMode(INT nStretchMode);
+		COLORREF SetTextColor(COLORREF crColor);
+
+		BOOL GetColorAdjustment(LPCOLORADJUSTMENT lpColorAdjust) const;
+		BOOL SetColorAdjustment(const COLORADJUSTMENT* lpColorAdjust);
+
+		COLORREF GetDCBrushColor() const;
+		COLORREF SetDCBrushColor(COLORREF crColor);
+
+		COLORREF GetDCPenColor() const;
+		COLORREF SetDCPenColor(COLORREF crColor);
+
+		INT SetGraphicsMode(INT iMode);
+		INT GetGraphicsMode() const;
+
+		BOOL SetWorldTransform(const XFORM* pXform);
+		BOOL ModifyWorldTransform(const XFORM* pXform, DWORD iMode);
+		BOOL GetWorldTransform(XFORM* pXform) const;
+
+		INT GetMapMode() const;
+		TinyPoint GetViewportOrg() const;
+		INT SetMapMode(INT nMapMode);
+
+		TinyPoint SetViewportOrg(INT x, INT y);
+		TinyPoint SetViewportOrg(POINT point);
+		TinyPoint OffsetViewportOrg(INT nWidth, INT nHeight);
+
+		TinySize GetViewportExt() const;
+		TinySize SetViewportExt(INT cx, INT cy);
+		TinySize SetViewportExt(SIZE size);
+		TinySize ScaleViewportExt(INT xNum, INT xDenom, INT yNum, INT yDenom);
+
+		TinyPoint GetWindowOrg() const;
+		TinyPoint SetWindowOrg(INT x, INT y);
+		TinyPoint SetWindowOrg(POINT point);
+		TinyPoint OffsetWindowOrg(INT nWidth, INT nHeight);
+
+		TinySize GetWindowExt() const;
+		TinySize SetWindowExt(INT cx, INT cy);
+		TinySize SetWindowExt(SIZE size);
+		TinySize ScaleWindowExt(INT xNum, INT xDenom, INT yNum, INT yDenom);
+
+		void DPtoLP(LPPOINT lpPoints, INT nCount = 1) const;
+		void DPtoLP(LPRECT lpRect) const;
+		void DPtoLP(LPSIZE lpSize) const;
+		void LPtoDP(LPPOINT lpPoints, INT nCount = 1) const;
+		void LPtoDP(LPRECT lpRect) const;
+		void LPtoDP(LPSIZE lpSize) const;
+
+		void DPtoHIMETRIC(LPSIZE lpSize) const;
+		void LPtoHIMETRIC(LPSIZE lpSize) const;
+		void HIMETRICtoDP(LPSIZE lpSize) const;
+		void HIMETRICtoLP(LPSIZE lpSize) const;
+
+		BOOL FillRgn(TinyRgn* pRgn, TinyBrush* pBrush);
+		BOOL FrameRgn(TinyRgn* pRgn, TinyBrush* pBrush, INT nWidth, INT nHeight);
+		BOOL InvertRgn(TinyRgn* pRgn);
+		BOOL PaintRgn(TinyRgn* pRgn);
+
+		INT GetClipBox(LPRECT lpRect) const;
+		BOOL PtVisible(INT x, INT y) const;
+		BOOL PtVisible(POINT point) const;
+		BOOL RectVisible(LPCRECT lpRect) const;
+		INT SelectClipRgn(TinyRgn* pRgn);
+		INT ExcludeClipRect(INT x1, INT y1, INT x2, INT y2);
+		INT ExcludeClipRect(LPCRECT lpRect);
+		INT ExcludeUpdateRgn(HWND pWnd);
+		INT IntersectClipRect(INT x1, INT y1, INT x2, INT y2);
+		INT IntersectClipRect(LPCRECT lpRect);
+		INT OffsetClipRgn(INT x, INT y);
+		INT OffsetClipRgn(SIZE size);
+		INT SelectClipRgn(TinyRgn* pRgn, INT nMode);
+
+		TinyPoint GetCurrentPosition() const;
+		TinyPoint MoveTo(INT x, INT y);
+		TinyPoint MoveTo(POINT point);
+		BOOL LineTo(INT x, INT y);
+		BOOL LineTo(POINT point);
+		BOOL Arc(INT x1, INT y1, INT x2, INT y2, INT x3, INT y3, INT x4, INT y4);
+		BOOL Arc(LPCRECT lpRect, POINT ptStart, POINT ptEnd);
+		BOOL Polyline(const POINT* lpPoints, INT nCount);
+
+		BOOL AngleArc(INT x, INT y, INT nRadius, float fStartAngle, float fSweepAngle);
+		BOOL ArcTo(INT x1, INT y1, INT x2, INT y2, INT x3, INT y3, INT x4, INT y4);
+		BOOL ArcTo(LPCRECT lpRect, POINT ptStart, POINT ptEnd);
+		INT GetArcDirection() const;
+		INT SetArcDirection(INT nArcDirection);
+
+		BOOL PolyDraw(const POINT* lpPoints, const BYTE* lpTypes, INT nCount);
+		BOOL PolylineTo(const POINT* lpPoints, INT nCount);
+		BOOL PolyPolyline(const POINT* lpPoints, const DWORD* lpPolyPoints, INT nCount);
+
+		BOOL PolyBezier(const POINT* lpPoints, INT nCount);
+		BOOL PolyBezierTo(const POINT* lpPoints, INT nCount);
+
+		void FillRect(LPCRECT lpRect, TinyBrush* pBrush);
+		void FrameRect(LPCRECT lpRect, TinyBrush* pBrush);
+		void InvertRect(LPCRECT lpRect);
+		BOOL DrawIcon(INT x, INT y, HICON hIcon);
+		BOOL DrawIcon(POINT point, HICON hIcon);
+		BOOL DrawState(TinyPoint pt, TinySize size, HBITMAP hBitmap, UINT nFlags, HBRUSH hBrush = NULL);
+		BOOL DrawState(TinyPoint pt, TinySize size, TinyBitmap* pBitmap, UINT nFlags, TinyBrush* pBrush = NULL);
+		BOOL DrawState(TinyPoint pt, TinySize size, HICON hIcon, UINT nFlags, HBRUSH hBrush = NULL);
+		BOOL DrawState(TinyPoint pt, TinySize size, HICON hIcon, UINT nFlags, TinyBrush* pBrush = NULL);
+		BOOL DrawState(TinyPoint pt, TinySize size, LPCTSTR lpszText, UINT nFlags, BOOL bPrefixText = TRUE, INT nTextLen = 0, HBRUSH hBrush = NULL);
+		BOOL DrawState(TinyPoint pt, TinySize size, LPCTSTR lpszText, UINT nFlags, BOOL bPrefixText = TRUE, INT nTextLen = 0, TinyBrush* pBrush = NULL);
+		BOOL DrawState(TinyPoint pt, TinySize size, DRAWSTATEPROC lpDrawProc, LPARAM lData, UINT nFlags, HBRUSH hBrush = NULL);
+		BOOL DrawState(TinyPoint pt, TinySize size, DRAWSTATEPROC lpDrawProc, LPARAM lData, UINT nFlags, TinyBrush* pBrush = NULL);
+
+		BOOL Chord(INT x1, INT y1, INT x2, INT y2, INT x3, INT y3, INT x4, INT y4);
+		BOOL Chord(LPCRECT lpRect, POINT ptStart, POINT ptEnd);
+		void DrawFocusRect(LPCRECT lpRect);
+		BOOL Ellipse(INT x1, INT y1, INT x2, INT y2);
+		BOOL Ellipse(LPCRECT lpRect);
+		BOOL Pie(INT x1, INT y1, INT x2, INT y2, INT x3, INT y3, INT x4, INT y4);
+		BOOL Pie(LPCRECT lpRect, POINT ptStart, POINT ptEnd);
+		BOOL Polygon(const POINT* lpPoints, INT nCount);
+		BOOL PolyPolygon(const POINT* lpPoints, const INT* lpPolyCounts, INT nCount);
+		BOOL Rectangle(INT x1, INT y1, INT x2, INT y2);
+		BOOL Rectangle(LPCRECT lpRect);
+		BOOL RoundRect(INT x1, INT y1, INT x2, INT y2, INT x3, INT y3);
+		BOOL RoundRect(LPCRECT lpRect, POINT point);
+
+		BOOL PatBlt(INT x, INT y, INT nWidth, INT nHeight, DWORD dwRop);
+		BOOL BitBlt(INT x, INT y, INT nWidth, INT nHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, DWORD dwRop);
+		BOOL StretchBlt(INT x, INT y, INT nWidth, INT nHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, DWORD dwRop);
+		COLORREF GetPixel(INT x, INT y) const;
+		COLORREF GetPixel(POINT point) const;
+		COLORREF SetPixel(INT x, INT y, COLORREF crColor);
+		COLORREF SetPixel(POINT point, COLORREF crColor);
+		BOOL FloodFill(INT x, INT y, COLORREF crColor);
+		BOOL ExtFloodFill(INT x, INT y, COLORREF crColor, UINT nFillType);
+		BOOL MaskBlt(INT x, INT y, INT nWidth, INT nHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, TinyBitmap& maskBitmap, INT xMask, INT yMask, DWORD dwRop);
+		BOOL PlgBlt(LPPOINT lpPoint, TinyDC* pSrcDC, INT xSrc, INT ySrc, INT nWidth, INT nHeight, TinyBitmap& maskBitmap, INT xMask, INT yMask);
+		BOOL SetPixelV(INT x, INT y, COLORREF crColor);
+		BOOL SetPixelV(POINT point, COLORREF crColor);
+		BOOL GradientFill(TRIVERTEX* pVertices, ULONG nVertices, void* pMesh, ULONG nMeshElements, DWORD dwMode);
+		BOOL TransparentBlt(INT xDest, INT yDest, INT nDestWidth, INT nDestHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, UINT clrTransparent);
+		BOOL AlphaBlend(INT xDest, INT yDest, INT nDestWidth, INT nDestHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, BLENDFUNCTION blend);
+
+		BOOL TextOut(INT x, INT y, LPCTSTR lpszString, INT nCount);
+		BOOL ExtTextOut(INT x, INT y, UINT nOptions, LPCRECT lpRect, LPCTSTR lpszString, UINT nCount, LPINT lpDxWidths);
+		TinySize TabbedTextOut(INT x, INT y, LPCTSTR lpszString, INT nCount, INT nTabPositions, LPINT lpnTabStopPositions, INT nTabOrigin);
+
+		INT DrawText(LPCTSTR lpszString, INT nCount, LPRECT lpRect, UINT nFormat);
+		INT DrawTextEx(LPTSTR lpszString, INT nCount, LPRECT lpRect, UINT nFormat, LPDRAWTEXTPARAMS lpDTParams);
+
+		TinySize GetTextExtent(LPCTSTR lpszString, INT nCount) const;
+		TinySize GetOutputTextExtent(LPCTSTR lpszString, INT nCount) const;
+		TinySize GetTabbedTextExtent(LPCTSTR lpszString, INT nCount, INT nTabPositions, LPINT lpnTabStopPositions) const;
+		TinySize GetOutputTabbedTextExtent(LPCTSTR lpszString, INT nCount, INT nTabPositions, LPINT lpnTabStopPositions) const;
+		BOOL GrayString(TinyBrush* pBrush, BOOL(CALLBACK* lpfnOutput)(HDC, LPARAM, INT), LPARAM lpData, INT nCount, INT x, INT y, INT nWidth, INT nHeight);
+		UINT GetTextAlign() const;
+		UINT SetTextAlign(UINT nFlags);
+		INT GetTextFace(INT nCount, LPTSTR lpszFacename) const;
+
+		BOOL GetOutputTextMetrics(LPTEXTMETRIC lpMetrics) const;
+		INT SetTextJustification(INT nBreakExtra, INT nBreakCount);
+		INT GetTextCharacterExtra() const;
+		INT SetTextCharacterExtra(INT nCharExtra);
+
+		DWORD GetCharacterPlacement(LPCTSTR lpString, INT nCount, INT nMaxExtent, LPGCP_RESULTS lpResults, DWORD dwFlags) const;
+
+		BOOL GetTextExtentExPointI(LPWORD pgiIn, INT cgi, INT nMaxExtent, LPINT lpnFit, LPINT alpDx, _Out_opt_ LPSIZE lpSize) const;
+		BOOL GetTextExtentPointI(LPWORD pgiIn, INT cgi, _Out_opt_ LPSIZE lpSize) const;
+
+		BOOL DrawEdge(LPRECT lpRect, UINT nEdge, UINT nFlags);
+		BOOL DrawFrameControl(LPRECT lpRect, UINT nType, UINT nState);
+
+		BOOL ScrollDC(INT dx, INT dy, LPCRECT lpRectScroll, LPCRECT lpRectClip, TinyRgn* pRgnUpdate, LPRECT lpRectUpdate);
+
+		BOOL GetCharWidth(UINT nFirstChar, UINT nLastChar, LPINT lpBuffer) const;
+		BOOL GetOutputCharWidth(UINT nFirstChar, UINT nLastChar, LPINT lpBuffer) const;
+		DWORD SetMapperFlags(DWORD dwFlag);
+		TinySize GetAspectRatioFilter() const;
+
+		BOOL GetCharABCWidths(UINT nFirstChar, UINT nLastChar, LPABC lpabc) const;
+		DWORD GetFontData(DWORD dwTable, DWORD dwOffset, LPVOID lpData, DWORD cbData) const;
+		INT GetKerningPairs(INT nPairs, LPKERNINGPAIR lpkrnpair) const;
+		UINT GetOutlineTextMetrics(UINT cbData, LPOUTLINETEXTMETRIC lpotm) const;
+		DWORD GetGlyphOutline(UINT nChar, UINT nFormat, LPGLYPHMETRICS lpgm, DWORD cbBuffer, LPVOID lpBuffer, const MAT2* lpmat2) const;
+
+		BOOL GetCharABCWidths(UINT nFirstChar, UINT nLastChar, LPABCFLOAT lpABCF) const;
+		BOOL GetCharWidth(UINT nFirstChar, UINT nLastChar, float* lpFloatBuffer) const;
+
+		DWORD GetFontLanguageInfo() const;
+		BOOL GetCharABCWidthsI(UINT giFirst, UINT cgi, LPWORD pgi, LPABC lpabc) const;
+
+		BOOL GetCharWidthI(UINT giFirst, UINT cgi, LPWORD pgi, LPINT lpBuffer) const;
+		virtual INT Escape(INT nEscape, INT nCount, LPCSTR lpszInData, LPVOID lpOutData);
+		INT Escape(INT nEscape, INT nInputSize, LPCSTR lpszInputData, INT nOutputSize, _Out_bytecap_(nOutputSize) LPSTR lpszOutputData);
+		INT DrawEscape(INT nEscape, INT nInputSize, LPCSTR lpszInputData);
+
+		INT StartDoc(LPCTSTR lpszDocName);
+		INT StartDoc(LPDOCINFO lpDocInfo);
+		INT StartPage();
+		INT EndPage();
+		INT SetAbortProc(BOOL(CALLBACK* lpfn)(HDC, INT));
+		INT AbortDoc();
+		INT EndDoc();
+
+		BOOL PlayMetaFile(HENHMETAFILE hEnhMetaFile, LPCRECT lpBounds);
+		BOOL AddMetaFileComment(UINT nDataSize, const BYTE* pCommentData);
+		BOOL AbortPath();
+		BOOL BeginPath();
+		BOOL CloseFigure();
+		BOOL EndPath();
+		BOOL FillPath();
+		BOOL FlattenPath();
+		BOOL StrokeAndFillPath();
+		BOOL StrokePath();
+		BOOL WidenPath();
+		float GetMiterLimit() const;
+		BOOL SetMiterLimit(float fMiterLimit);
+		INT GetPath(LPPOINT lpPoints, LPBYTE lpTypes, INT nCount) const;
+		BOOL SelectClipPath(INT nMode);
+		static TinyBrush* PASCAL GetHalftoneBrush();
+		void DrawDragRect(LPCRECT lpRect, SIZE size, LPCRECT lpRectLast, SIZE sizeLast, TinyBrush* pBrush = NULL, TinyBrush* pBrushLast = NULL);
+		void FillSolidRect(LPCRECT lpRect, COLORREF clr);
+		void FillSolidRect(INT x, INT y, INT cx, INT cy, COLORREF clr);
+		void Draw3dRect(LPCRECT lpRect, COLORREF clrTopLeft, COLORREF clrBottomRight);
+		void Draw3dRect(INT x, INT y, INT cx, INT cy, COLORREF clrTopLeft, COLORREF clrBottomRight);
 	public:
 		virtual void Destory();
 		virtual TinyHandleMap<HDC>* GetMap() const;
@@ -131,7 +394,7 @@ namespace TinyUI
 	/// <summary>
 	/// Pen类
 	/// </summary>
-	class TinyPen : public TinyGDIHandle<HPEN>
+	class TinyPen : public TinyGDIHandle < HPEN >
 	{
 		DECLARE_DYNAMIC(TinyPen)
 	public:
@@ -151,7 +414,7 @@ namespace TinyUI
 	/// <summary>
 	/// Brush类
 	/// </summary>
-	class TinyBrush : public TinyGDIHandle<HBRUSH>
+	class TinyBrush : public TinyGDIHandle < HBRUSH >
 	{
 		DECLARE_DYNAMIC(TinyBrush)
 	public:
@@ -167,11 +430,11 @@ namespace TinyUI
 		virtual void Destory();
 		virtual TinyHandleMap<HBRUSH>* GetMap() const;
 	};
-	
+
 	/// <summary>
 	/// Bitmap类
 	/// </summary>
-	class TinyBitmap : public TinyGDIHandle<HBITMAP>
+	class TinyBitmap : public TinyGDIHandle < HBITMAP >
 	{
 		DECLARE_DYNAMIC(TinyBitmap)
 	public:
@@ -181,7 +444,6 @@ namespace TinyUI
 		BOOL	CreateBitmap(LPBITMAP lpBitmap);
 		BOOL	CreateCompatibleBitmap(HDC hDC, INT nWidth, INT nHeight);
 		BOOL	CreateDiscardableBitmap(HDC hDC, INT nWidth, INT nHeight);
-		INT		GetBitmap(BITMAP* pBitMap);
 		DWORD	SetBitmapBits(DWORD dwCount, const void* lpBits);
 		DWORD	GetBitmapBits(DWORD dwCount, LPVOID lpBits) const;
 		BOOL	SetBitmapDimension(INT nWidth, INT nHeight, SIZE& size);
@@ -189,7 +451,8 @@ namespace TinyUI
 		BOOL	LoadBitmap(HINSTANCE hInstance, UINT nIDResource);
 		BOOL	LoadBitmap(HINSTANCE hInstance, LPCTSTR lpszResourceName);
 		BOOL	LoadOEMBitmap(UINT nIDBitmap);
-		BOOL	LoadMappedBitmap(HINSTANCE hInstance, UINT nIDBitmap, UINT nFlags, LPCOLORMAP lpColorMap, int nMapSize);
+		BOOL	LoadMappedBitmap(HINSTANCE hInstance, UINT nIDBitmap, UINT nFlags, LPCOLORMAP lpColorMap, INT nMapSize);
+		INT		GetBitmap(BITMAP* pBitMap);
 		BOOL	Save(LPCTSTR pzSaveFile);
 	public:
 		virtual void Destory();
@@ -198,7 +461,7 @@ namespace TinyUI
 	/// <summary>
 	/// TinyPalette
 	/// </summary>
-	class TinyPalette : public TinyGDIHandle<HPALETTE>
+	class TinyPalette : public TinyGDIHandle < HPALETTE >
 	{
 		DECLARE_DYNAMIC(TinyPalette)
 	public:
@@ -219,7 +482,7 @@ namespace TinyUI
 	/// <summary>
 	/// TinyRgn
 	/// </summary>
-	class TinyRgn : public TinyGDIHandle<HRGN>
+	class TinyRgn : public TinyGDIHandle < HRGN >
 	{
 		DECLARE_DYNAMIC(TinyRgn)
 	public:
@@ -234,14 +497,22 @@ namespace TinyUI
 		BOOL CreatePolygonRgn(LPPOINT lpPoints, INT nCount, INT nMode);
 		BOOL CreatePolyPolygonRgn(LPPOINT lpPoints, LPINT lpPolyCounts, INT nCount, INT nPolyFillMode);
 		BOOL CreateRoundRectRgn(INT x1, INT y1, INT x2, INT y2, INT x3, INT y3);
+		INT CombineRgn(const TinyRgn* pRgn1, const TinyRgn* pRgn2, INT nCombineMode);
+		INT CopyRgn(const TinyRgn* pRgnSrc);
+		BOOL EqualRgn(const TinyRgn* pRgn) const;
+		INT OffsetRgn(INT x, INT y);
+		INT OffsetRgn(POINT point);
+		INT GetRgnBox(LPRECT lpRect) const;
+		BOOL PtInRegion(INT x, INT y) const;
+		BOOL PtInRegion(POINT point) const;
+		BOOL RectInRegion(LPCRECT lpRect) const;
+		INT GetRegionData(LPRGNDATA lpRgnData, INT nCount) const;
+		void SetRectRgn(INT x1, INT y1, INT x2, INT y2);
+		void SetRectRgn(LPCRECT lpRect);
 	public:
 		virtual void Destory();
 		virtual TinyHandleMap<HRGN>* GetMap() const;
 	};
-
-	class TinySize;
-	class TinyPoint;
-	class TinyRectangle;
 	/// <summary>
 	/// Size类
 	/// </summary>
@@ -249,7 +520,7 @@ namespace TinyUI
 	{
 	public:
 		TinySize() throw();
-		TinySize(int initCX, int initCY) throw();
+		TinySize(INT initCX, INT initCY) throw();
 		TinySize(SIZE initSize) throw();
 		TinySize(POINT initPt) throw();
 		TinySize(DWORD dwSize) throw();
@@ -257,7 +528,7 @@ namespace TinyUI
 		BOOL operator!=(SIZE size) const throw();
 		void operator+=(SIZE size) throw();
 		void operator-=(SIZE size) throw();
-		void SetSize(int CX, int CY) throw();
+		void SetSize(INT CX, INT CY) throw();
 		TinySize operator+(SIZE size) const throw();
 		TinySize operator-(SIZE size) const throw();
 		TinySize operator-() const throw();
@@ -273,15 +544,15 @@ namespace TinyUI
 	{
 	public:
 		TinyPoint() throw();
-		TinyPoint(int initX, int initY) throw();
+		TinyPoint(INT initX, INT initY) throw();
 		TinyPoint(POINT initPt) throw();
 		TinyPoint(SIZE initSize) throw();
 		TinyPoint(LPARAM dwPoint) throw();
 
-		void Offset(int xOffset, int yOffset) throw();
+		void Offset(INT xOffset, INT yOffset) throw();
 		void Offset(POINT point) throw();
 		void Offset(SIZE size) throw();
-		void SetPoint(int X, int Y) throw();
+		void SetPoint(INT X, INT Y) throw();
 
 		BOOL operator==(POINT point) const throw();
 		BOOL operator!=(POINT point) const throw();
@@ -307,13 +578,13 @@ namespace TinyUI
 	{
 	public:
 		TinyRectangle() throw();
-		TinyRectangle(int l, int t, int r, int b) throw();
+		TinyRectangle(INT l, INT t, INT r, INT b) throw();
 		TinyRectangle(const RECT& srcRect) throw();
 		TinyRectangle(LPCRECT lpSrcRect) throw();
 		TinyRectangle(POINT point, SIZE size) throw();
 		TinyRectangle(POINT topLeft, POINT bottomRight) throw();
-		int Width() const throw();
-		int Height() const throw();
+		INT Width() const throw();
+		INT Height() const throw();
 		TinySize Size() const throw();
 		TinyPoint& TopLeft() throw();
 		TinyPoint& BottomRight() throw();
@@ -327,26 +598,26 @@ namespace TinyUI
 		BOOL IsRectEmpty() const throw();
 		BOOL IsRectNull() const throw();
 		BOOL PtInRect(POINT point) const throw();
-		void SetRect(int x1, int y1, int x2, int y2) throw();
+		void SetRect(INT x1, INT y1, INT x2, INT y2) throw();
 		void SetRect(POINT topLeft, POINT bottomRight) throw();
 		void SetRectEmpty() throw();
 		void CopyRect(LPCRECT lpSrcRect) throw();
 		BOOL EqualRect(LPCRECT lpRect) const throw();
-		void InflateRect(int x, int y) throw();
+		void InflateRect(INT x, INT y) throw();
 		void InflateRect(SIZE size) throw();
 		void InflateRect(LPCRECT lpRect) throw();
-		void InflateRect(int l, int t, int r, int b) throw();
-		void DeflateRect(int x, int y) throw();
+		void InflateRect(INT l, INT t, INT r, INT b) throw();
+		void DeflateRect(INT x, INT y) throw();
 		void DeflateRect(SIZE size) throw();
 		void DeflateRect(LPCRECT lpRect) throw();
-		void DeflateRect(int l, int t, int r, int b) throw();
-		void OffsetRect(int x, int y) throw();
+		void DeflateRect(INT l, INT t, INT r, INT b) throw();
+		void OffsetRect(INT x, INT y) throw();
 		void OffsetRect(SIZE size) throw();
 		void OffsetRect(POINT point) throw();
 		void NormalizeRect() throw();
-		void MoveToY(int y) throw();
-		void MoveToX(int x) throw();
-		void MoveToXY(int x, int y) throw();
+		void MoveToY(INT y) throw();
+		void MoveToX(INT x) throw();
+		void MoveToXY(INT x, INT y) throw();
 		void MoveToXY(POINT point) throw();
 		BOOL IntersectRect(LPCRECT lpRect1, LPCRECT lpRect2) throw();
 		BOOL UnionRect(LPCRECT lpRect1, LPCRECT lpRect2) throw();
@@ -370,7 +641,7 @@ namespace TinyUI
 		TinyRectangle operator-(LPCRECT lpRect) const throw();
 		TinyRectangle operator&(const RECT& rect2) const throw();
 		TinyRectangle operator|(const RECT& rect2) const throw();
-		TinyRectangle MulDiv(int nMultiplier, int nDivisor) const throw();
+		TinyRectangle MulDiv(INT nMultiplier, INT nDivisor) const throw();
 	};
 
 }

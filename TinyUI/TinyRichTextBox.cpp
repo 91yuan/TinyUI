@@ -568,7 +568,7 @@ namespace TinyUI
 	{
 		HRESULT hRes = S_OK;
 		LPRICHEDITOLE pRichEditOle = NULL;
-		SendMessage(EM_GETOLEINTERFACE, 0, (LPARAM)&pRichEditOle);
+		SendMessage(m_hWND, EM_GETOLEINTERFACE, 0, (LPARAM)&pRichEditOle);
 		if (pRichEditOle == NULL)
 		{
 			return FALSE;
@@ -666,11 +666,11 @@ namespace TinyUI
 		reobject.pstg = pStorage;
 		SIZEL sizel = { 0 };
 		reobject.sizel = sizel;
-		SendMessage(EM_SETSEL, 0, -1);
+		SendMessage(m_hWND, EM_SETSEL, 0, -1);
 		DWORD dwStart, dwEnd;
-		SendMessage(EM_GETSEL, (WPARAM)&dwStart, (LPARAM)&dwEnd);
-		SendMessage(EM_SETSEL, dwEnd + 1, dwEnd + 1);
-		SendMessage(EM_REPLACESEL, TRUE, (WPARAM)L"\n");
+		SendMessage(m_hWND, EM_GETSEL, (WPARAM)&dwStart, (LPARAM)&dwEnd);
+		SendMessage(m_hWND, EM_SETSEL, dwEnd + 1, dwEnd + 1);
+		SendMessage(m_hWND, EM_REPLACESEL, TRUE, (WPARAM)L"\n");
 		hRes = pRichEditOle->InsertObject(&reobject);
 		pObject->Release();
 		pObject = NULL;

@@ -158,7 +158,7 @@ namespace TinyUI
 		if (result == FALSE) return FALSE;
 		DLGPROC hProc = (DLGPROC)m_thunk.GetWNDPROC();
 		DLGPROC hDlgProc = (DLGPROC)::SetWindowLongPtr(hWND, DWLP_DLGPROC, (LONG_PTR)hProc);
-		if (hDlgProc == NULL) 
+		if (hDlgProc == NULL)
 			return FALSE;
 		m_hPrimaryProc = hDlgProc;
 		m_hWND = hWND;

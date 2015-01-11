@@ -13,7 +13,7 @@ namespace TinyUI
 	class TinyMsg : public MSG
 	{
 	public:
-		int cbSize;
+		INT cbSize;
 		BOOL bHandled;
 		TinyMsg();
 		TinyMsg(HWND hWnd, UINT uMsg, WPARAM wParamIn, LPARAM lParamIn, DWORD dwTime, POINT ptIn, BOOL bHandledIn);

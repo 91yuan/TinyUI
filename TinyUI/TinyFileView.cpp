@@ -359,10 +359,10 @@ namespace TinyUI
 		DeleteAllItems();
 		if (m_psfCurrent != NULL)
 		{
-			SetRedraw(FALSE);
+			SendMessage(m_hWND, WM_SETREDRAW, (WPARAM)FALSE, 0);
 			hRes = EnumObjects(m_psfCurrent, m_currentAbsPIDL);
-			SetRedraw(TRUE);
-			RedrawWindow();
+			SendMessage(m_hWND, WM_SETREDRAW, (WPARAM)TRUE, 0);
+			RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE);
 		}
 		if (SUCCEEDED(hRes) && shellItemPtr != NULL)
 		{

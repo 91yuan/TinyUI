@@ -26,7 +26,7 @@ namespace TinyUI
 	{
 		return (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_NOPARENTNOTIFY | WS_EX_CLIENTEDGE);
 	}
-	BOOL TinyProgressBar::Create(HWND hParent, int x, int y, int cx, int cy)
+	BOOL TinyProgressBar::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
 		INITCOMMONCONTROLSEX initCtrls = { sizeof(INITCOMMONCONTROLSEX), ICC_INTERNET_CLASSES };
 		if (InitCommonControlsEx(&initCtrls))
@@ -53,27 +53,27 @@ namespace TinyUI
 	INT TinyProgressBar::GetPos() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, PBM_GETPOS, 0, 0);
+		return (INT) ::SendMessage(m_hWND, PBM_GETPOS, 0, 0);
 	}
 	INT TinyProgressBar::OffsetPos(INT nPos)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, PBM_DELTAPOS, nPos, 0L);
+		return (INT) ::SendMessage(m_hWND, PBM_DELTAPOS, nPos, 0L);
 	}
 	INT TinyProgressBar::SetStep(INT nStep)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, PBM_SETSTEP, nStep, 0L);
+		return (INT) ::SendMessage(m_hWND, PBM_SETSTEP, nStep, 0L);
 	}
 	INT TinyProgressBar::StepIt()
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, PBM_STEPIT, 0, 0L);
+		return (INT) ::SendMessage(m_hWND, PBM_STEPIT, 0, 0L);
 	}
 	INT TinyProgressBar::SetPos(INT nPos)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, PBM_SETPOS, nPos, 0L);
+		return (INT) ::SendMessage(m_hWND, PBM_SETPOS, nPos, 0L);
 	}
 
 	COLORREF TinyProgressBar::SetBarColor(COLORREF clrBar)
@@ -91,7 +91,7 @@ namespace TinyUI
 	INT TinyProgressBar::GetStep() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, PBM_GETSTEP, 0, 0L);
+		return (INT) ::SendMessage(m_hWND, PBM_GETSTEP, 0, 0L);
 	}
 	COLORREF TinyProgressBar::GetBkColor() const
 	{
@@ -106,11 +106,11 @@ namespace TinyUI
 	INT TinyProgressBar::SetState(INT iState)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, PBM_SETSTATE, (WPARAM)iState, 0L);
+		return (INT) ::SendMessage(m_hWND, PBM_SETSTATE, (WPARAM)iState, 0L);
 	}
 	INT TinyProgressBar::GetState() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, PBM_GETSTATE, 0, 0L);
+		return (INT) ::SendMessage(m_hWND, PBM_GETSTATE, 0, 0L);
 	}
 }

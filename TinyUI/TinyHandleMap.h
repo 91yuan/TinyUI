@@ -18,6 +18,7 @@ namespace TinyUI
 		TinyObject* operator[](T& _value);
 		void AddHandle(T& _value, TinyObject* ps);
 		void RemoveHandle(T& _value);
+		void RemoveAll();
 		INT GetSize() const;
 	private:
 		map<T, TinyObject*> m_handleMap;
@@ -64,6 +65,11 @@ namespace TinyUI
 		{
 			m_handleMap.erase(pos);
 		}
+	}
+	template<class T>
+	void TinyHandleMap<T>::RemoveAll()
+	{
+		m_handleMap.clear();
 	}
 	template<class T>
 	INT TinyHandleMap<T>::GetSize() const

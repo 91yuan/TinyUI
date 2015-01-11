@@ -14,7 +14,7 @@ namespace TinyUI
 		virtual LPCSTR RetrieveTitle();
 		virtual DWORD RetrieveStyle();
 		virtual DWORD RetrieveExStyle();
-		BOOL Create(HWND hParent, int x, int y, int cx, int cy);
+		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		//////////////////////////////////////////////////////////////////////////
 		virtual HRESULT OnCommand(void* sender, UINT code, UINT ctlID, BOOL& bHandled);
 		virtual void OnClick(void*, INT ctrlID);
@@ -30,8 +30,8 @@ namespace TinyUI
 		//////////////////////////////////////////////////////////////////////////
 		UINT GetState() const;
 		void SetState(BOOL bHighlight);
-		int GetCheck() const;
-		void SetCheck(int nCheck);
+		INT GetCheck() const;
+		void SetCheck(INT nCheck);
 		UINT GetButtonStyle() const;
 		void SetButtonStyle(UINT nStyle, BOOL bRedraw = TRUE);
 		HICON SetIcon(HICON hIcon);
@@ -40,24 +40,24 @@ namespace TinyUI
 		HBITMAP GetBitmap() const;
 		HCURSOR SetCursor(HCURSOR hCursor);
 		HCURSOR GetCursor();
-		BOOL GetIdealSize(_Out_ LPSIZE psize) const;
-		BOOL SetImageList(_In_ PBUTTON_IMAGELIST pbuttonImagelist);
-		BOOL GetImageList(_In_ PBUTTON_IMAGELIST pbuttonImagelist) const;
-		BOOL SetTextMargin(_In_ LPRECT pmargin);
-		BOOL GetTextMargin(_Out_ LPRECT pmargin) const;
-		BOOL GetNote(_Out_z_cap_(*pcchNote) LPTSTR lpszNote, _Inout_ UINT* pcchNote) const;
-		BOOL SetNote(_In_z_ LPCTSTR lpszNote);
+		BOOL GetIdealSize(LPSIZE psize) const;
+		BOOL SetImageList(PBUTTON_IMAGELIST pbuttonImagelist);
+		BOOL GetImageList(PBUTTON_IMAGELIST pbuttonImagelist) const;
+		BOOL SetTextMargin(LPRECT pmargin);
+		BOOL GetTextMargin(LPRECT pmargin) const;
+		BOOL GetNote(LPTSTR lpszNote, UINT* pcchNote) const;
+		BOOL SetNote(LPCTSTR lpszNote);
 		UINT GetNoteLength() const;
-		BOOL GetSplitInfo(_Out_ PBUTTON_SPLITINFO pInfo) const;
-		BOOL SetSplitInfo(_In_ PBUTTON_SPLITINFO pInfo);
+		BOOL GetSplitInfo(PBUTTON_SPLITINFO pInfo) const;
+		BOOL SetSplitInfo(PBUTTON_SPLITINFO pInfo);
 		UINT GetSplitStyle() const;
-		BOOL SetSplitStyle(_In_ UINT nStyle);
-		BOOL GetSplitSize(_Out_ LPSIZE pSize) const;
-		BOOL SetSplitSize(_In_ LPSIZE pSize);
+		BOOL SetSplitStyle(UINT nStyle);
+		BOOL GetSplitSize(LPSIZE pSize) const;
+		BOOL SetSplitSize(LPSIZE pSize);
 		TCHAR GetSplitGlyph() const;
-		BOOL SetSplitGlyph(_In_ TCHAR chGlyph);
-		BOOL SetDropDownState(_In_ BOOL fDropDown);
-		HICON SetShield(_In_ BOOL fElevationRequired);
+		BOOL SetSplitGlyph(TCHAR chGlyph);
+		BOOL SetDropDownState(BOOL fDropDown);
+		HICON SetShield(BOOL fElevationRequired);
 	};
 }
 

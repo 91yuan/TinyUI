@@ -271,7 +271,7 @@ namespace TinyUI
 	BOOL TinyListView::SetItemCountEx(INT iCount, DWORD dwFlags /* = LVSICF_NOINVALIDATEALL */)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		ASSERT(dwFlags == 0 || (GetStyle() & LVS_OWNERDATA));
+		ASSERT(dwFlags == 0 || ((DWORD)::GetWindowLong(m_hWND, GWL_STYLE) & LVS_OWNERDATA));
 		return (BOOL) ::SendMessage(m_hWND, LVM_SETITEMCOUNT, (WPARAM)iCount, (LPARAM)dwFlags);
 	}
 	TinySize TinyListView::SetIconSpacing(INT cx, INT cy)
@@ -357,7 +357,7 @@ namespace TinyUI
 		INT nImage, UINT nState, UINT nStateMask, LPARAM lParam, INT nIndent)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		ASSERT((GetStyle() & LVS_OWNERDATA) == 0);
+		ASSERT(((DWORD)::GetWindowLong(m_hWND, GWL_STYLE) & LVS_OWNERDATA) == 0);
 		LVITEM lvi;
 		lvi.mask = nMask;
 		lvi.iItem = nItem;
@@ -384,14 +384,14 @@ namespace TinyUI
 	BOOL TinyListView::SetItemText(INT nItem, INT nSubItem, LPCTSTR lpszText)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		ASSERT((GetStyle() & LVS_OWNERDATA) == 0);
+		ASSERT(((DWORD)::GetWindowLong(m_hWND, GWL_STYLE) & LVS_OWNERDATA) == 0);
 		LVITEM lvi;
 		lvi.iSubItem = nSubItem;
 		lvi.pszText = (LPTSTR)lpszText;
 		return (BOOL) ::SendMessage(m_hWND, LVM_SETITEMTEXT, nItem, (LPARAM)&lvi);
 	}
 
-	INT TinyListView::GetItemText(_In_ INT nItem, _In_ INT nSubItem, _Out_z_cap_post_count_(nLen, return +1) LPTSTR lpszText, _In_ INT nLen) const
+	INT TinyListView::GetItemText(INT nItem, INT nSubItem, _Out_z_cap_post_count_(nLen, return +1) LPTSTR lpszText, INT nLen) const
 	{
 		ASSERT(::IsWindow(m_hWND));
 		LVITEM lvi;
@@ -414,10 +414,10 @@ namespace TinyUI
 	}
 	void TinyListView::RemoveImageList(INT nImageList)
 	{
-		HIMAGELIST h = (HIMAGELIST)SendMessage( LVM_GETIMAGELIST, (WPARAM)nImageList, NULL);
+		HIMAGELIST h = (HIMAGELIST)SendMessage(m_hWND, LVM_GETIMAGELIST, (WPARAM)nImageList, NULL);
 		if (h != NULL)
 		{
-			SendMessage(LVM_SETIMAGELIST, (WPARAM)h, NULL);
+			SendMessage(m_hWND, LVM_SETIMAGELIST, (WPARAM)h, NULL);
 		}
 	}
 	HIMAGELIST TinyListView::CreateDragImage(INT nItem, LPPOINT lpPoint)
@@ -540,7 +540,7 @@ namespace TinyUI
 	BOOL TinyListView::SetItemPosition(INT nItem, POINT pt)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		ASSERT((GetStyle() & LVS_OWNERDATA) == 0);
+		ASSERT(((DWORD)::GetWindowLong(m_hWND, GWL_STYLE) & LVS_OWNERDATA) == 0);
 		return (BOOL) ::SendMessage(m_hWND, LVM_SETITEMPOSITION32, nItem, (LPARAM)&pt);
 	}
 	BOOL TinyListView::GetItemPosition(INT nItem, LPPOINT lpPoint) const
@@ -676,13 +676,13 @@ namespace TinyUI
 	BOOL TinyListView::SortItems(PFNLVCOMPARE pfnCompare, DWORD_PTR dwData)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		ASSERT((GetStyle() & LVS_OWNERDATA) == 0);
+		ASSERT(((DWORD)::GetWindowLong(m_hWND, GWL_STYLE) & LVS_OWNERDATA) == 0);
 		return (BOOL) ::SendMessage(m_hWND, LVM_SORTITEMS, dwData, (LPARAM)pfnCompare);
 	}
 	BOOL TinyListView::SortItemsEx(PFNLVCOMPARE pfnCompare, DWORD_PTR dwData)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		ASSERT((GetStyle() & LVS_OWNERDATA) == 0);
+		ASSERT(((DWORD)::GetWindowLong(m_hWND, GWL_STYLE) & LVS_OWNERDATA) == 0);
 		return (BOOL) ::SendMessage(m_hWND, LVM_SORTITEMSEX, dwData, (LPARAM)pfnCompare);
 	}
 	UINT TinyListView::GetSelectedCount() const

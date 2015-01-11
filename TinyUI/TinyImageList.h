@@ -25,7 +25,7 @@ namespace TinyUI
 		INT GetImageCount() const;
 		COLORREF SetBkColor(COLORREF cr);
 		COLORREF GetBkColor() const;
-		BOOL GetImageInfo(int nImage, IMAGEINFO* pImageInfo) const;
+		BOOL GetImageInfo(INT nImage, IMAGEINFO* pImageInfo) const;
 
 		BOOL DeleteImageList();
 		BOOL SetImageCount(UINT uNewCount);
@@ -51,8 +51,8 @@ namespace TinyUI
 			COLORREF rgbBack = CLR_DEFAULT, COLORREF rgbFore = CLR_DEFAULT,
 			DWORD fState = ILS_NORMAL, DWORD Frame = 0, COLORREF crEffect = CLR_DEFAULT);
 
-		BOOL BeginDrag(int nImage, TinyPoint ptHotSpot);
-		BOOL SetDragCursorImage(int nDrag, TinyPoint ptHotSpot);
+		BOOL BeginDrag(INT nImage, TinyPoint ptHotSpot);
+		BOOL SetDragCursorImage(INT nDrag, TinyPoint ptHotSpot);
 		static void PASCAL EndDrag();
 		static BOOL PASCAL DragMove(TinyPoint pt);
 		static BOOL PASCAL DragShowNolock(BOOL bShow);

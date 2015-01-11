@@ -8,7 +8,7 @@ namespace TinyUI
 		va_list args;
 		va_start(args, lpszFormat);
 
-		int nBuf;
+		INT nBuf;
 		TCHAR szBuffer[512];
 
 #pragma warning(push)//保存当前的编译器警告状态

@@ -67,7 +67,7 @@ namespace TinyUI
 		{
 			return FALSE;
 		}
-		SetRedraw(FALSE);
+		SendMessage(m_hWND, WM_SETREDRAW, (WPARAM)FALSE, 0);
 		LPSHELLITEMINFO shellItemPtr = (LPSHELLITEMINFO)tvItem.lParam;
 		ASSERT(shellItemPtr != NULL);
 		LPSHELLFOLDER pParentFolder = NULL;
@@ -86,7 +86,7 @@ namespace TinyUI
 		}
 		if (FAILED(hRes))
 		{
-			SetRedraw(TRUE);
+			SendMessage(m_hWND, WM_SETREDRAW, (WPARAM)TRUE, 0);
 			return FALSE;
 		}
 		EnumObjects(hParentItem, pParentFolder, shellItemPtr->absolutePIDL);
@@ -95,9 +95,8 @@ namespace TinyUI
 		tvSort.lpfnCompare = CompareProc;
 		tvSort.lParam = 0;
 		SortChildrenCB(&tvSort);
-		SetRedraw();
-		RedrawWindow();
-
+		SendMessage(m_hWND, WM_SETREDRAW, (WPARAM)TRUE, 0);
+		RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE);
 		pParentFolder->Release();
 		return TRUE;
 	}
@@ -273,7 +272,7 @@ namespace TinyUI
 			return FALSE;
 		}
 		HTREEITEM hTreeItem = GetRootItem();
-		SetRedraw(FALSE);
+		SendMessage(m_hWND, WM_SETREDRAW, (WPARAM)FALSE, 0);
 		if (GetPIDLSize(newPIDL) != 0)//²»ÊÇ×ÀÃæ
 		{
 			LPCITEMIDLIST currentPIDL = newPIDL;
@@ -333,8 +332,8 @@ namespace TinyUI
 			m_bNoNotify = FALSE;
 			bRes = TRUE;
 		}
-		SetRedraw();
-		RedrawWindow();
+		SendMessage(m_hWND, WM_SETREDRAW, (WPARAM)TRUE, 0);
+		RedrawWindow(m_hWND, NULL, NULL, RDW_INVALIDATE);
 		return bRes;
 	}
 

@@ -189,10 +189,16 @@
     <ClInclude Include="TinyTextBox.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
-    <ClInclude Include="TinyRichRender.h">
+    <ClInclude Include="TinyCommonDialog.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyRichUI.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
-    <ClInclude Include="TinyCommonDialog.h">
+    <ClInclude Include="TinyGraphicsRender.h">
+      <Filter>头文件\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyMenu.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
   </ItemGroup>
@@ -332,10 +338,16 @@
     <ClCompile Include="TinyTextBox.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
-    <ClCompile Include="TinyRichRender.cpp">
+    <ClCompile Include="TinyCommonDialog.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyRichUI.cpp">
       <Filter>源文件\Render</Filter>
     </ClCompile>
-    <ClCompile Include="TinyCommonDialog.cpp">
+    <ClCompile Include="TinyGraphicsRender.cpp">
+      <Filter>源文件\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyMenu.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>

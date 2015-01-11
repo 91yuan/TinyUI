@@ -119,7 +119,7 @@ namespace TinyUI
 		RECT rect = { 0 };
 		if (nmtv->itemOld.hItem != NULL)
 		{
-			if ((INT)SendMessage(TVM_GETITEMRECT, 1, (LPARAM)&rect) != 0)
+			if ((INT)SendMessage(m_hWND, TVM_GETITEMRECT, 1, (LPARAM)&rect) != 0)
 			{
 				InvalidateRect(m_hWND, &rect, TRUE);
 			}
@@ -573,10 +573,10 @@ namespace TinyUI
 
 	void TinyTreeView::RemoveImageList(INT nImageList)
 	{
-		HIMAGELIST h = (HIMAGELIST)SendMessage(TVM_GETIMAGELIST, (WPARAM)nImageList, NULL);
+		HIMAGELIST h = (HIMAGELIST)SendMessage(m_hWND, TVM_GETIMAGELIST, (WPARAM)nImageList, NULL);
 		if (h != NULL)
 		{
-			SendMessage(TVM_SETIMAGELIST, (WPARAM)h, NULL);
+			SendMessage(m_hWND, TVM_SETIMAGELIST, (WPARAM)h, NULL);
 		}
 	}
 

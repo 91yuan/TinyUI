@@ -16,12 +16,12 @@ namespace TinyUI
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		BOOL IsBlank() const;
 		void ClearAddress();
-		INT GetAddress(_Out_ BYTE& nField0, _Out_ BYTE& nField1, _Out_ BYTE& nField2, _Out_ BYTE& nField3) const;
-		INT GetAddress(_Out_ DWORD& dwAddress) const;
-		void SetAddress(_In_ DWORD dwAddress);
-		void SetAddress(_In_ BYTE nField0, _In_ BYTE nField1, _In_ BYTE nField2, _In_ BYTE nField3);
-		void SetFieldFocus(_In_ WORD nField);
-		void SetFieldRange(_In_ INT nField, _In_ BYTE nLower, _In_ BYTE nUpper);
+		INT GetAddress( BYTE& nField0,  BYTE& nField1,  BYTE& nField2,  BYTE& nField3) const;
+		INT GetAddress( DWORD& dwAddress) const;
+		void SetAddress( DWORD dwAddress);
+		void SetAddress( BYTE nField0,  BYTE nField1,  BYTE nField2,  BYTE nField3);
+		void SetFieldFocus( WORD nField);
+		void SetFieldRange( INT nField,  BYTE nLower,  BYTE nUpper);
 	};
 }
 

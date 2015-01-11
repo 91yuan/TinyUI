@@ -18,11 +18,21 @@ namespace TinyUI
 		return FALSE;
 	}
 
-	BOOL TinyFrameUI::Create(HWND hParent, int x, int y, int cx, int cy)
+	BOOL TinyFrameUI::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
 		return TinyControl::Create(hParent, x, y, cx, cy, FALSE);
 	}
+	BOOL TinyFrameUI::ShowWindow(int nCmdShow) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::ShowWindow(m_hWND, nCmdShow);
+	}
 
+	BOOL TinyFrameUI::UpdateWindow() throw()
+	{
+		ASSERT(m_hWND != NULL);
+		return ::UpdateWindow(m_hWND);
+	}
 	DWORD TinyFrameUI::RetrieveStyle()
 	{
 		return (WS_VISIBLE | WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU);

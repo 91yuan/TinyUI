@@ -19,9 +19,9 @@ namespace TinyUI
 		virtual BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		INT GetCount() const;
 		INT GetCurSel() const;
-		INT SetCurSel(int nSelect);
+		INT SetCurSel(INT nSelect);
 		INT GetHorizontalExtent() const;
-		void SetHorizontalExtent(int cxExtent);
+		void SetHorizontalExtent(INT cxExtent);
 		INT GetSelCount() const;
 		INT GetSelItems(INT nMaxItems, LPINT rgIndex) const;
 		INT GetTopIndex() const;
@@ -37,9 +37,9 @@ namespace TinyUI
 		INT GetTextLen(INT nIndex) const;
 		void SetColumnWidth(INT cxWidth);
 		INT GetItemAt(POINT pos);
-		BOOL SetTabStops(int nTabStops, LPINT rgTabStops);
+		BOOL SetTabStops(INT nTabStops, LPINT rgTabStops);
 		void SetTabStops();
-		BOOL SetTabStops(const int& cxEachStop);
+		BOOL SetTabStops(const INT& cxEachStop);
 		INT SetItemHeight(INT nIndex, UINT cyItemHeight);
 		INT GetItemHeight(INT nIndex) const;
 		INT FindStringExact(INT nIndexStart, LPCTSTR lpszFind) const;
@@ -50,9 +50,9 @@ namespace TinyUI
 		INT InsertString(INT nIndex, LPCTSTR lpszItem);
 		void ResetContent();
 		INT Dir(UINT attr, LPCTSTR lpszWildCard);
-		INT FindString(int nStartAfter, LPCTSTR lpszItem) const;
-		INT SelectString(int nStartAfter, LPCTSTR lpszItem);
-		INT SelItemRange(BOOL bSelect, int nFirstItem, int nLastItem);
+		INT FindString(INT nStartAfter, LPCTSTR lpszItem) const;
+		INT SelectString(INT nStartAfter, LPCTSTR lpszItem);
+		INT SelItemRange(BOOL bSelect, INT nFirstItem, INT nLastItem);
 		LCID GetLocale() const;
 		LCID SetLocale(LCID nNewLocale);
 		INT InitStorage(INT nItems, UINT nBytes);

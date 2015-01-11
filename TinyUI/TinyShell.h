@@ -51,7 +51,7 @@ namespace TinyUI
 		LPITEMIDLIST Resize(LPITEMIDLIST oldPIDL, UINT cbRequired, UINT cbExtra);
 		LPITEMIDLIST AppendID(LPITEMIDLIST appendPIDL, LPCSHITEMID pmkid, BOOL fAppend);
 	protected:
-		static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
+		static INT CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 	protected:
 		LPMALLOC	m_pMalloc;
 		LPCTSTR		m_lpszInitialPath;

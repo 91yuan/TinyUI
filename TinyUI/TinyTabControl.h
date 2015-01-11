@@ -47,7 +47,7 @@ namespace TinyUI
 		LONG InsertItem(UINT nMask, INT nItem, LPCTSTR lpszItem, INT nImage, LPARAM lParam, DWORD dwState, DWORD dwStateMask);
 		BOOL DeleteItem(INT nItem);
 		BOOL DeleteAllItems();
-		void AdjustRect(BOOL bLarger, _Inout_ LPRECT lpRect);
+		void AdjustRect(BOOL bLarger,  LPRECT lpRect);
 		void RemoveImage(INT nImage);
 		INT HitTest(TCHITTESTINFO* pHitTestInfo) const;
 		void DeselectAll(BOOL fExcludeFocus);

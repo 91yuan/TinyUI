@@ -45,7 +45,7 @@ namespace TinyUI
 	BOOL TinyColumn::GetOrderArray(LPINT piArray, INT iCount) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		int nCount = iCount;
+		INT nCount = iCount;
 		if (nCount < 0)
 		{
 			ASSERT(FALSE);
@@ -56,12 +56,12 @@ namespace TinyUI
 	INT TinyColumn::GetItemCount() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, HDM_GETITEMCOUNT, 0, 0L);
+		return (INT) ::SendMessage(m_hWND, HDM_GETITEMCOUNT, 0, 0L);
 	}
 	INT TinyColumn::InsertItem(INT nPos, HDITEM* phdi)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, HDM_INSERTITEM, nPos, (LPARAM)phdi);
+		return (INT)::SendMessage(m_hWND, HDM_INSERTITEM, nPos, (LPARAM)phdi);
 	}
 	BOOL TinyColumn::DeleteItem(INT nPos)
 	{
@@ -88,7 +88,7 @@ namespace TinyUI
 	INT TinyColumn::HitTest(LPHDHITTESTINFO pHeaderHitTestInfo)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int) ::SendMessage(m_hWND, HDM_HITTEST, 0, (LPARAM)pHeaderHitTestInfo);
+		return (INT) ::SendMessage(m_hWND, HDM_HITTEST, 0, (LPARAM)pHeaderHitTestInfo);
 	}
 
 	BOOL TinyColumn::GetItemRect(INT nIndex, LPRECT lpRect) const
@@ -100,17 +100,17 @@ namespace TinyUI
 	INT TinyColumn::OrderToIndex(INT nOrder) const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, HDM_ORDERTOINDEX, nOrder, 0);
+		return (INT)::SendMessage(m_hWND, HDM_ORDERTOINDEX, nOrder, 0);
 	}
 	INT TinyColumn::SetHotDivider(TinyPoint pt)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, HDM_SETHOTDIVIDER, TRUE, MAKELPARAM(pt.x, pt.y));
+		return (INT)::SendMessage(m_hWND, HDM_SETHOTDIVIDER, TRUE, MAKELPARAM(pt.x, pt.y));
 	}
 	INT TinyColumn::SetHotDivider(INT nIndex)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, HDM_SETHOTDIVIDER, FALSE, nIndex);
+		return (INT)::SendMessage(m_hWND, HDM_SETHOTDIVIDER, FALSE, nIndex);
 	}
 	HIMAGELIST TinyColumn::CreateDragImage(INT nIndex)
 	{
@@ -121,24 +121,24 @@ namespace TinyUI
 	INT TinyColumn::GetBitmapMargin() const
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, HDM_GETBITMAPMARGIN, 0, 0L);
+		return (INT)::SendMessage(m_hWND, HDM_GETBITMAPMARGIN, 0, 0L);
 	}
-	INT TinyColumn::SetBitmapMargin(int nWidth)
+	INT TinyColumn::SetBitmapMargin(INT nWidth)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, HDM_SETBITMAPMARGIN, nWidth, 0L);
+		return (INT)::SendMessage(m_hWND, HDM_SETBITMAPMARGIN, nWidth, 0L);
 	}
 	INT TinyColumn::SetFilterChangeTimeout(DWORD dwTimeOut)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, HDM_SETFILTERCHANGETIMEOUT, 0, dwTimeOut);
+		return (INT)::SendMessage(m_hWND, HDM_SETFILTERCHANGETIMEOUT, 0, dwTimeOut);
 	}
-	INT TinyColumn::EditFilter(int nColumn, BOOL bDiscardChanges)
+	INT TinyColumn::EditFilter(INT nColumn, BOOL bDiscardChanges)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (int)::SendMessage(m_hWND, HDM_EDITFILTER, nColumn, MAKELPARAM(bDiscardChanges, 0));
+		return (INT)::SendMessage(m_hWND, HDM_EDITFILTER, nColumn, MAKELPARAM(bDiscardChanges, 0));
 	}
-	BOOL TinyColumn::ClearFilter(int nColumn)
+	BOOL TinyColumn::ClearFilter(INT nColumn)
 	{
 		ASSERT(::IsWindow(m_hWND));
 		return (BOOL)::SendMessage(m_hWND, HDM_CLEARFILTER, nColumn, 0L);

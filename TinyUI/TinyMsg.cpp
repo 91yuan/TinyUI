@@ -110,7 +110,7 @@ namespace TinyUI
 				::DispatchMessage(&msg);
 			}
 		}
-		return (int)msg.wParam;
+		return (INT)msg.wParam;
 	}
 	BOOL TinyMessageLoop::PreTranslateMessage(MSG* pMsg)
 	{

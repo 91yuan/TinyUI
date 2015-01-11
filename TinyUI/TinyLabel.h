@@ -13,7 +13,7 @@ namespace TinyUI
 		virtual LPCSTR RetrieveTitle();
 		virtual DWORD RetrieveStyle();
 		virtual DWORD RetrieveExStyle();
-		virtual BOOL Create(HWND hParent, int x, int y, int cx, int cy);
+		virtual BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		HICON SetIcon(HICON hIcon);
 		HICON GetIcon() const;
 		HENHMETAFILE SetEnhMetaFile(HENHMETAFILE hMetaFile);

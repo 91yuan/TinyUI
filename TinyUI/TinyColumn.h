@@ -30,7 +30,7 @@ namespace TinyUI
 		INT SetBitmapMargin(INT nWidth);
 		INT InsertItem(INT nPos, HDITEM* phdi);
 		BOOL DeleteItem(INT nPos);
-		BOOL Layout(_In_ HDLAYOUT* pHeaderLayout);
+		BOOL Layout( HDLAYOUT* pHeaderLayout);
 		HIMAGELIST CreateDragImage(INT nIndex);
 		INT SetHotDivider(TinyPoint pt);
 		INT SetHotDivider(INT nIndex);
