@@ -40,8 +40,6 @@ namespace TinyUI
 		HWND SetOwner(HWND pWnd);
 		COLORREF SetTextColor(COLORREF clr);
 		void SetToolTips(HWND pToolTip);
-		TinyImageList* GetImageList() const;
-		BOOL SetImageList(TinyImageList* pImageList);
 		void GetBandBorders(UINT uBand, LPRECT prc) const;
 		HPALETTE GetPalette() const;
 		HPALETTE SetPalette(HPALETTE hPal);

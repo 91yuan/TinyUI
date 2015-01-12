@@ -1,6 +1,6 @@
 #pragma once
-#include "TinyCommon.h"
-#include "TinyTime.h"
+#include "../Common/TinyCommon.h"
+#include "../Common/TinyTime.h"
 
 namespace TinyUI
 {

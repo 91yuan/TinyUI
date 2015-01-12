@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "TinyListBox.h"
 
 namespace TinyUI

@@ -1,6 +1,7 @@
 #pragma once
 #include "TinyControl.h"
 #include "TinyButton.h"
+#include "../Render/TinyImage.h"
 #include "TinyListBox.h"
 
 namespace TinyUI
@@ -24,11 +25,14 @@ namespace TinyUI
 		//ÊÂ¼þ
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	public:
 		BOOL ShowWindow(int nCmdShow) throw();
 		BOOL UpdateWindow() throw();
 	private:
 		TinyButton button;
 		TinyListBox listBox;
+		TinyImage image;
 	};
 }

@@ -1,6 +1,5 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "TinyGraphics.h"
-#include "TinyApplication.h"
 
 namespace TinyUI
 {
@@ -27,6 +26,7 @@ namespace TinyUI
 	/************************************************************************/
 	/* DC                                                                   */
 	/************************************************************************/
+#pragma region  TinyDC
 	BOOL TinyDC::CreateDC(LPCTSTR lpszDriverName, LPCTSTR lpszDeviceName, LPCTSTR lpszOutput, const void* lpInitData)
 	{
 		HDC hDC = ::CreateDC(lpszDriverName, lpszDeviceName, lpszOutput, (const DEVMODE*)lpInitData);
@@ -443,14 +443,14 @@ namespace TinyUI
 	{
 		ASSERT(m_value != NULL); return ::PatBlt(m_value, x, y, nWidth, nHeight, dwRop);
 	}
-	BOOL TinyDC::BitBlt(INT x, INT y, INT nWidth, INT nHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, DWORD dwRop)
+	BOOL TinyDC::BitBlt(INT x, INT y, INT nWidth, INT nHeight, HDC hSrcDC, INT xSrc, INT ySrc, DWORD dwRop)
 	{
-		ASSERT(m_value != NULL); return ::BitBlt(m_value, x, y, nWidth, nHeight, pSrcDC->Handle(), xSrc, ySrc, dwRop);
+		ASSERT(m_value != NULL); return ::BitBlt(m_value, x, y, nWidth, nHeight, hSrcDC, xSrc, ySrc, dwRop);
 	}
-	BOOL TinyDC::StretchBlt(INT x, INT y, INT nWidth, INT nHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, DWORD dwRop)
+	BOOL TinyDC::StretchBlt(INT x, INT y, INT nWidth, INT nHeight, HDC hSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, DWORD dwRop)
 	{
 		ASSERT(m_value != NULL);
-		return ::StretchBlt(m_value, x, y, nWidth, nHeight, pSrcDC->Handle(), xSrc, ySrc, nSrcWidth, nSrcHeight, dwRop);
+		return ::StretchBlt(m_value, x, y, nWidth, nHeight, hSrcDC, xSrc, ySrc, nSrcWidth, nSrcHeight, dwRop);
 	}
 	COLORREF TinyDC::GetPixel(INT x, INT y) const
 	{
@@ -860,7 +860,10 @@ namespace TinyUI
 		ASSERT(m_value != NULL);
 		return ::PlayEnhMetaFile(m_value, hEnhMF, lpBounds);
 	}
+	TinyDC::TinyDC()
+	{
 
+	}
 	TinyDC::~TinyDC()
 	{
 		if (m_value != NULL)
@@ -1209,6 +1212,32 @@ namespace TinyUI
 	{
 		ASSERT(m_value != NULL);
 		return ::GradientFill(m_value, pVertices, nVertices, pMesh, nMeshElements, dwMode);
+	}
+#pragma endregion
+	/************************************************************************/
+	/* MenDC                                                                */
+	/************************************************************************/
+	TinyMenDC::TinyMenDC(HDC hDC, INT cx, INT cy)
+		:m_hDC(NULL),
+		m_hOldBitmap(NULL)
+	{
+		ASSERT(hDC);
+		//´´½¨ÄÚ´æDC
+		HDC hMenDC = ::CreateCompatibleDC(hDC);
+		Attach(hMenDC);
+		HBITMAP hBitmap = ::CreateCompatibleBitmap(hDC, cx, cy);
+		m_hOldBitmap = (HBITMAP)::SelectObject(hMenDC, hBitmap);
+	}
+	TinyMenDC::~TinyMenDC()
+	{
+		if (m_hOldBitmap != NULL)
+		{
+			::SelectObject(m_value, m_hOldBitmap);
+		}
+	}
+	void TinyMenDC::Render(INT x, INT y, INT cx, INT cy)
+	{
+		this->BitBlt(x, y, cx, cy, m_hDC, x, y, SRCCOPY);
 	}
 	/************************************************************************/
 	/* PEN                                                                  */

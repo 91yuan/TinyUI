@@ -204,6 +204,9 @@
     <ClInclude Include="Control\TinyTreeView.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
+    <ClInclude Include="Render\TinyImage.h">
+      <Filter>头文件\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -355,6 +358,12 @@
     </ClCompile>
     <ClCompile Include="XML\tinyxmlparser.cpp">
       <Filter>源文件\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\stb_image.c">
+      <Filter>源文件\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\TinyImage.cpp">
+      <Filter>源文件\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

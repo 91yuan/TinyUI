@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "TinyTime.h"
 #pragma comment(lib, "comsupp.lib") 
 

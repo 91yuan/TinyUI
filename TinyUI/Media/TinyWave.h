@@ -1,5 +1,5 @@
 #pragma once
-#include "TinyEvent.h"
+#include "../Common/TinyEvent.h"
 #include <mmsystem.h>
 #pragma comment(lib, "winmm.lib")
 

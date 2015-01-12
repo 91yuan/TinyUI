@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#include "TinyColumn.h"
+#include "../stdafx.h"
 #include "TinyRichUI.h"
 
 namespace TinyUI
@@ -57,257 +56,257 @@ namespace TinyUI
 	}
 	HDC TinyRichUI::TxGetDC()
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	INT TinyRichUI::TxReleaseDC(HDC hdc)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	BOOL TinyRichUI::TxShowScrollBar(INT fnBar, BOOL fShow)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	BOOL TinyRichUI::TxEnableScrollBar(INT fuSBFlags, INT fuArrowflags)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	BOOL TinyRichUI::TxSetScrollRange(INT fnBar, LONG nMinPos, INT nMaxPos, BOOL fRedraw)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	BOOL TinyRichUI::TxSetScrollPos(INT fnBar, INT nPos, BOOL fRedraw)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	void TinyRichUI::TxInvalidateRect(LPCRECT prc, BOOL fMode)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		
 	}
 
 	void TinyRichUI::TxViewChange(BOOL fUpdate)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		
 	}
 
 	BOOL TinyRichUI::TxCreateCaret(HBITMAP hbmp, INT xWidth, INT yHeight)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	BOOL TinyRichUI::TxShowCaret(BOOL fShow)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	BOOL TinyRichUI::TxSetCaretPos(INT x, INT y)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	BOOL TinyRichUI::TxSetTimer(UINT idTimer, UINT uTimeout)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	void TinyRichUI::TxKillTimer(UINT idTimer)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		
 	}
 
 	void TinyRichUI::TxScrollWindowEx(INT dx, INT dy, LPCRECT lprcScroll, LPCRECT lprcClip, HRGN hrgnUpdate, LPRECT lprcUpdate, UINT fuScroll)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		
 	}
 
 	void TinyRichUI::TxSetCapture(BOOL fCapture)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		
 	}
 
 	void TinyRichUI::TxSetFocus()
 	{
-		throw std::exception("The method or operation is not implemented.");
+		
 	}
 
 	void TinyRichUI::TxSetCursor(HCURSOR hcur, BOOL fText)
 	{
-		throw std::exception("The method or operation is not implemented.");
+
 	}
 
 	BOOL TinyRichUI::TxScreenToClient(LPPOINT lppt)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	BOOL TinyRichUI::TxClientToScreen(LPPOINT lppt)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxActivate(LONG * plOldState)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxDeactivate(LONG lNewState)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetClientRect(LPRECT prc)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetViewInset(LPRECT prc)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetCharFormat(const CHARFORMATW **ppCF)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetParaFormat(const PARAFORMAT **ppPF)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	COLORREF TinyRichUI::TxGetSysColor(INT nIndex)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetBackStyle(TXTBACKSTYLE *pstyle)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetMaxLength(DWORD *plength)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetScrollBars(DWORD *pdwScrollBar)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetPasswordChar( TCHAR *pch)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetAcceleratorPos(LONG *pcp)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetExtent(LPSIZEL lpExtent)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::OnTxCharFormatChange(const CHARFORMATW * pCF)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::OnTxParaFormatChange(const PARAFORMAT * pPF)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetPropertyBits(DWORD dwMask, DWORD *pdwBits)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxNotify(DWORD iNotify, void *pv)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HIMC TinyRichUI::TxImmGetContext()
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return NULL;
 	}
 
 	void TinyRichUI::TxImmReleaseContext(HIMC himc)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		
 	}
 
 	HRESULT TinyRichUI::TxGetSelectionBarWidth(LONG *lSelBarWidth)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	BOOL TinyRichUI::TxIsDoubleClickPending()
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetWindow(HWND *phwnd)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxSetForegroundWindow()
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HPALETTE TinyRichUI::TxGetPalette()
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetEastAsianFlags(LONG *pFlags)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HCURSOR TinyRichUI::TxSetCursor2(HCURSOR hcur, BOOL bText)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	void TinyRichUI::TxFreeTextServicesNotification()
 	{
-		throw std::exception("The method or operation is not implemented.");
+		
 	}
 
 	HRESULT TinyRichUI::TxGetEditStyle(DWORD dwItem, DWORD *pdwData)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetWindowStyles(DWORD *pdwStyle, DWORD *pdwExStyle)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxShowDropCaret(BOOL fShow, HDC hdc, LPCRECT prc)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxDestroyCaret()
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 	HRESULT TinyRichUI::TxGetHorzExtent(LONG *plHorzExtent)
 	{
-		throw std::exception("The method or operation is not implemented.");
+		return FALSE;
 	}
 
 }

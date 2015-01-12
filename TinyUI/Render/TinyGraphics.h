@@ -74,19 +74,21 @@ namespace TinyUI
 	TinyGDIHandle<T>* TinyGDIHandle<T>::Lookup(T& _value)
 	{
 		TinyHandleMap<T>* pMap = GetMap();
-		ASSERT(pMap == NULL);
+		ASSERT(pMap != NULL);
 		TinyGDIHandle* ps = (TinyGDIHandle*)pMap->FromHandle(_value);
-		ASSERT(ps == NULL || ps->m_value == _value);
+		ASSERT(ps != NULL || ps->m_value != _value);
 		return ps;
 	}
 	template<class T>
 	BOOL TinyGDIHandle<T>::Attach(T& _value)
 	{
-		ASSERT(m_value == NULL);
-		if (_value == NULL) return FALSE;
+		if (_value == NULL)
+		{
+			return FALSE;
+		}
 		m_value = _value;
 		TinyHandleMap<T>* pMap = GetMap();
-		ASSERT(pMap == NULL);
+		ASSERT(pMap != NULL);
 		pMap->AddHandle(m_value, this);
 		return TRUE;
 	}
@@ -97,7 +99,7 @@ namespace TinyUI
 		if (_value != NULL)
 		{
 			TinyHandleMap<T>* pMap = GetMap();
-			ASSERT(pMap == NULL);
+			ASSERT(pMap != NULL);
 			pMap->RemoveHandle(m_value);
 		}
 		m_value = NULL;
@@ -289,8 +291,8 @@ namespace TinyUI
 		BOOL RoundRect(LPCRECT lpRect, POINT point);
 
 		BOOL PatBlt(INT x, INT y, INT nWidth, INT nHeight, DWORD dwRop);
-		BOOL BitBlt(INT x, INT y, INT nWidth, INT nHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, DWORD dwRop);
-		BOOL StretchBlt(INT x, INT y, INT nWidth, INT nHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, DWORD dwRop);
+		BOOL BitBlt(INT x, INT y, INT nWidth, INT nHeight, HDC hSrcDC, INT xSrc, INT ySrc, DWORD dwRop);
+		BOOL StretchBlt(INT x, INT y, INT nWidth, INT nHeight, HDC hSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, DWORD dwRop);
 		COLORREF GetPixel(INT x, INT y) const;
 		COLORREF GetPixel(POINT point) const;
 		COLORREF SetPixel(INT x, INT y, COLORREF crColor);
@@ -390,6 +392,20 @@ namespace TinyUI
 	public:
 		virtual void Destory();
 		virtual TinyHandleMap<HDC>* GetMap() const;
+	};
+	/// <summary>
+	/// ƒ⁄¥ÊDC
+	/// </summary>
+	class TinyMenDC : public TinyDC
+	{
+		DECLARE_DYNAMIC(TinyMenDC)
+	public:
+		TinyMenDC(HDC hDC, INT cx, INT cy);
+		void Render(INT x, INT y, INT cx, INT cy);
+		virtual ~TinyMenDC();
+	private:
+		HBITMAP m_hOldBitmap;
+		HDC		m_hDC;
 	};
 	/// <summary>
 	/// Pen¿‡

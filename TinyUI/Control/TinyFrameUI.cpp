@@ -1,6 +1,5 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "TinyFrameUI.h"
-#include "TinyString.h"
 
 namespace TinyUI
 {
@@ -47,7 +46,8 @@ namespace TinyUI
 	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		button.Create(m_hWND, 10, 10, 200, 23);
+		//button.Create(m_hWND, 10, 10, 200, 23);
+		image.Load("D:\\bianping.png", 4);
 		return TRUE;
 	}
 
@@ -64,6 +64,22 @@ namespace TinyUI
 	HICON TinyFrameUI::RetrieveIcon()
 	{
 		return NULL;
+	}
+
+	LRESULT TinyFrameUI::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		PAINTSTRUCT s = { 0 };
+		HDC hDC = BeginPaint(m_hWND, &s);
+		image.Render(hDC, 0, 0, 70, 90);
+		EndPaint(m_hWND, &s);
+		return FALSE;
+	}
+
+	LRESULT TinyFrameUI::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = TRUE;
+		return TRUE;
 	}
 
 }

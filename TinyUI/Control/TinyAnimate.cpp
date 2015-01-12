@@ -1,6 +1,5 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "TinyAnimate.h"
-#include "TinyApplication.h"
 
 namespace TinyUI
 {

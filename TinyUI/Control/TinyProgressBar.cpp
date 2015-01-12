@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "TinyProgressBar.h"
 
 namespace TinyUI

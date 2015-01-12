@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "TinyIPAddress.h"
 
 namespace TinyUI

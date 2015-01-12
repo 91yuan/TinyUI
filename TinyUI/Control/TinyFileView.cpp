@@ -1,6 +1,6 @@
-#include "stdafx.h"
+#include "../stdafx.h"
+#include "../IO/TinyIO.h"
 #include "TinyFileView.h"
-#include "TinyIO.h"
 
 namespace TinyUI
 {

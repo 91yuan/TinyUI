@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include <comdef.h>
 #include "TinyRichTextBox.h"
 

@@ -42,10 +42,10 @@
   <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -118,6 +118,7 @@
     <ClInclude Include="Media\TinyWave.h" />
     <ClInclude Include="Render\TinyGraphics.h" />
     <ClInclude Include="Render\TinyGraphicsRender.h" />
+    <ClInclude Include="Render\TinyImage.h" />
     <ClInclude Include="Render\TinyRichUI.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -168,17 +169,27 @@
     <ClCompile Include="Control\TinyTreeView.cpp" />
     <ClCompile Include="IO\TinyIO.cpp" />
     <ClCompile Include="Media\TinyWave.cpp" />
+    <ClCompile Include="Render\stb_image.c" />
     <ClCompile Include="Render\TinyGraphics.cpp" />
     <ClCompile Include="Render\TinyGraphicsRender.cpp" />
+    <ClCompile Include="Render\TinyImage.cpp" />
     <ClCompile Include="Render\TinyRichUI.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="XML\tinystr.cpp" />
-    <ClCompile Include="XML\tinyxml.cpp" />
-    <ClCompile Include="XML\tinyxmlerror.cpp" />
-    <ClCompile Include="XML\tinyxmlparser.cpp" />
+    <ClCompile Include="XML\tinystr.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="XML\tinyxml.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="XML\tinyxmlerror.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="XML\tinyxmlparser.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TinyUI.rc" />

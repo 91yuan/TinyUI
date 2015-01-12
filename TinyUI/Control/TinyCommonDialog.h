@@ -1,6 +1,6 @@
 #pragma once
 #include <Richedit.h>
-#include "TinyDialog.h"
+#include "../Common/TinyDialog.h"
 
 namespace TinyUI
 {

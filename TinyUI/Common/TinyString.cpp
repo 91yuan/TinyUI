@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include <stdarg.h>
 #include "TinyString.h"
 

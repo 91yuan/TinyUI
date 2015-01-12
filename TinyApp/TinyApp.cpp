@@ -3,9 +3,8 @@
 
 #include "stdafx.h"
 #include "TinyApp.h"
-#include "TinyFrameUI.h"
-#include "TinyEvent.h"
-#include "TinyString.h"
+#include "Control/TinyFrameUI.h"
+
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
 #include <vector>
