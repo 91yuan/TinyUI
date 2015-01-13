@@ -778,7 +778,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyMessageLoop theLoop;
 	TinyApplication::Instance()->AddMessageLoop(&theLoop);
 	TinyFrameUI uiImpl;
-	uiImpl.Create(NULL, 10, 10, 500, 400);
+	uiImpl.Create(NULL, 10, 10, 900, 900);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();
 

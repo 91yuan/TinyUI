@@ -33,6 +33,7 @@ namespace TinyUI
 		BOOL UpdateWindow() throw();
 	private:
 		TinyImage image;
+		TinyImage image1;
 		INT m_cx;
 		INT m_cy;
 	};

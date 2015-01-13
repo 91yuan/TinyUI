@@ -26,7 +26,6 @@ namespace TinyUI
 		HBITMAP		m_hBitmap;
 		INT			m_cx;
 		INT			m_cy;
-		INT			m_comp;//Î»Êý1.2.3.4
 	};
 
 }
