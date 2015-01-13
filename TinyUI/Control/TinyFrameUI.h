@@ -23,16 +23,17 @@ namespace TinyUI
 		virtual HICON RetrieveIcon();
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		//ÊÂ¼þ
+		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	public:
 		BOOL ShowWindow(int nCmdShow) throw();
 		BOOL UpdateWindow() throw();
 	private:
-		TinyButton button;
-		TinyListBox listBox;
 		TinyImage image;
+		INT m_cx;
+		INT m_cy;
 	};
 }

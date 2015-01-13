@@ -31,11 +31,14 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_CREATE, OnCreate)
 			MESSAGE_HANDLER(WM_DESTROY, OnDestory)
 			MESSAGE_HANDLER(WM_CLOSE, OnClose)
+			MESSAGE_HANDLER(WM_SIZE,OnSize)
 			MESSAGE_HANDLER(WM_SETCURSOR, OnSetCursor)
-			MESSAGE_HANDLER(WM_COMMAND, OnCommand)
-			MESSAGE_HANDLER(WM_NOTIFY, OnNotify)
+			MESSAGE_HANDLER(WM_NCPAINT,OnNCPaint)
 			MESSAGE_HANDLER(WM_PAINT, OnPaint)
 			MESSAGE_HANDLER(WM_ERASEBKGND, OnErasebkgnd)
+			MESSAGE_HANDLER(WM_MOUSEMOVE,OnMouseMove)
+			MESSAGE_HANDLER(WM_COMMAND, OnCommand)
+			MESSAGE_HANDLER(WM_NOTIFY, OnNotify)
 			MESSAGE_HANDLER(WM_COMMANDREFLECT, OnCommandReflect)
 			MESSAGE_HANDLER(WM_NOTIFYREFLECT, OnNotifyReflect)
 			MESSAGE_HANDLER(WM_DRAWITEMREFLECT, OnDrawItemReflect)
@@ -45,7 +48,10 @@ namespace TinyUI
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnNCPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

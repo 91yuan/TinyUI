@@ -106,7 +106,22 @@ namespace TinyUI
 		bHandled = FALSE;
 		return FALSE;
 	}
+	LRESULT TinyControl::OnNCPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
+	LRESULT TinyControl::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
 	LRESULT TinyControl::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;;
+		return FALSE;
+	}
+	LRESULT TinyControl::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;;
 		return FALSE;

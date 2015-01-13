@@ -262,8 +262,8 @@ namespace TinyUI
 		BOOL PolyBezier(const POINT* lpPoints, INT nCount);
 		BOOL PolyBezierTo(const POINT* lpPoints, INT nCount);
 
-		void FillRect(LPCRECT lpRect, TinyBrush* pBrush);
-		void FrameRect(LPCRECT lpRect, TinyBrush* pBrush);
+		void FillRect(LPCRECT lpRect, HBRUSH hBrush);
+		void FrameRect(LPCRECT lpRect, HBRUSH hBrush);
 		void InvertRect(LPCRECT lpRect);
 		BOOL DrawIcon(INT x, INT y, HICON hIcon);
 		BOOL DrawIcon(POINT point, HICON hIcon);
@@ -304,8 +304,8 @@ namespace TinyUI
 		BOOL SetPixelV(INT x, INT y, COLORREF crColor);
 		BOOL SetPixelV(POINT point, COLORREF crColor);
 		BOOL GradientFill(TRIVERTEX* pVertices, ULONG nVertices, void* pMesh, ULONG nMeshElements, DWORD dwMode);
-		BOOL TransparentBlt(INT xDest, INT yDest, INT nDestWidth, INT nDestHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, UINT clrTransparent);
-		BOOL AlphaBlend(INT xDest, INT yDest, INT nDestWidth, INT nDestHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, BLENDFUNCTION blend);
+		BOOL TransparentBlt(INT xDest, INT yDest, INT nDestWidth, INT nDestHeight, HDC hSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, UINT clrTransparent);
+		BOOL AlphaBlend(INT xDest, INT yDest, INT nDestWidth, INT nDestHeight, HDC hSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, BLENDFUNCTION blend);
 
 		BOOL TextOut(INT x, INT y, LPCTSTR lpszString, INT nCount);
 		BOOL ExtTextOut(INT x, INT y, UINT nOptions, LPCRECT lpRect, LPCTSTR lpszString, UINT nCount, LPINT lpDxWidths);
@@ -401,7 +401,8 @@ namespace TinyUI
 		DECLARE_DYNAMIC(TinyMenDC)
 	public:
 		TinyMenDC(HDC hDC, INT cx, INT cy);
-		void Render(INT x, INT y, INT cx, INT cy);
+		TinyMenDC(HDC hDC, HBITMAP hBitmap);
+		void Render(INT destX, INT destY, INT destCX, INT destCY, INT srcX, INT srcY, INT srcCX, INT srcCY, BOOL bAlpha = TRUE, BYTE Alpha = 0);
 		virtual ~TinyMenDC();
 	private:
 		HBITMAP m_hOldBitmap;

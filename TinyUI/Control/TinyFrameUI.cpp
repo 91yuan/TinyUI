@@ -46,8 +46,7 @@ namespace TinyUI
 	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		//button.Create(m_hWND, 10, 10, 200, 23);
-		image.Load("D:\\bianping.png", 4);
+		image.Load("E:\\1234.png");
 		return TRUE;
 	}
 
@@ -68,18 +67,65 @@ namespace TinyUI
 
 	LRESULT TinyFrameUI::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		bHandled = FALSE;
-		PAINTSTRUCT s = { 0 };
+		bHandled = TRUE;
+
+
+		PAINTSTRUCT s;
 		HDC hDC = BeginPaint(m_hWND, &s);
-		image.Render(hDC, 0, 0, 70, 90);
+		TinySize size = image.GetSize();
+		TinySize paintSize((s.rcPaint.right - s.rcPaint.left), (s.rcPaint.bottom - s.rcPaint.top));
+
+		HDC hMenDC = CreateCompatibleDC(hDC);
+		HBITMAP hBitmap = CreateCompatibleBitmap(hDC, m_cx, m_cy);
+		HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMenDC, hBitmap);
+		::FillRect(hMenDC, &s.rcPaint, (HBRUSH)GetStockObject(GRAY_BRUSH));
+
+		DeleteObject(hBitmap);
+		SelectObject(hMenDC, hOldBitmap);
+		DeleteDC(hMenDC);
+
+		/*HDC hMenDC1 = CreateCompatibleDC(hDC);
+		HBITMAP hBitmap1 = (HBITMAP)SelectObject(hMenDC1, image);
+
+		::BitBlt(hMenDC, 0, 0, size.cx, size.cy, hMenDC1, 0, 0, SRCCOPY);
+		::BitBlt(hDC, 0, 0, size.cx, size.cy, hMenDC, 0, 0, SRCCOPY);
+
+		DeleteObject(hBitmap);
+		DeleteDC(hMenDC1);
+		DeleteDC(hMenDC);*/
+
 		EndPaint(m_hWND, &s);
-		return FALSE;
+		/*HDC hMenDC = CreateCompatibleDC(hDC);
+		HBITMAP hBitmap = CreateCompatibleBitmap(hDC, m_cx, m_cy);
+		HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMenDC, hBitmap);
+		RECT rc = { 0, 0, m_cx, m_cy };
+		::FillRect(hMenDC, &rc, (HBRUSH)GetStockObject(WHITE_BRUSH));
+
+		TRACE("OnPaint: %d,%d\n", paintSize.cx, paintSize.cy);
+
+		BLENDFUNCTION bs = { AC_SRC_OVER, 0, 128, 1 };
+		::AlphaBlend(hDC, 10, 10, size.cx, size.cy, hMenDC, 0, 0, size.cx, size.cy, bs);
+
+		SelectObject(hMenDC, hOldBitmap);
+		DeleteDC(hMenDC);*/
+
+
+
+		return TRUE;
 	}
 
 	LRESULT TinyFrameUI::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = TRUE;
 		return TRUE;
+	}
+
+	LRESULT TinyFrameUI::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		m_cx = LOWORD(lParam);
+		m_cy = HIWORD(lParam);
+		return FALSE;
 	}
 
 }

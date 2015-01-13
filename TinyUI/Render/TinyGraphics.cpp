@@ -292,15 +292,15 @@ namespace TinyUI
 		ASSERT(m_value != NULL);
 		return ::Polyline(m_value, lpPoints, nCount);
 	}
-	void TinyDC::FillRect(LPCRECT lpRect, TinyBrush* pBrush)
+	void TinyDC::FillRect(LPCRECT lpRect, HBRUSH hBrush)
 	{
 		ASSERT(m_value != NULL);
-		::FillRect(m_value, lpRect, (HBRUSH)pBrush->Handle());
+		::FillRect(m_value, lpRect, hBrush);
 	}
-	void TinyDC::FrameRect(LPCRECT lpRect, TinyBrush* pBrush)
+	void TinyDC::FrameRect(LPCRECT lpRect, HBRUSH hBrush)
 	{
 		ASSERT(m_value != NULL);
-		::FrameRect(m_value, lpRect, (HBRUSH)pBrush->Handle());
+		::FrameRect(m_value, lpRect, hBrush);
 	}
 	void TinyDC::InvertRect(LPCRECT lpRect)
 	{
@@ -1195,16 +1195,16 @@ namespace TinyUI
 		lpSize->cy = MulDiv(lpSize->cy, abs(sizeWinExt.cy), abs(sizeVpExt.cy));
 	}
 	BOOL TinyDC::AlphaBlend(INT xDest, INT yDest, INT nDestWidth, INT nDestHeight,
-		TinyDC* pSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, BLENDFUNCTION blend)
+		HDC hSrcDC, INT xSrc, INT ySrc, INT nSrcWidth, INT nSrcHeight, BLENDFUNCTION blend)
 	{
-		return ::AlphaBlend(m_value, xDest, yDest, nDestWidth, nDestHeight, pSrcDC->Handle(),
+		return ::AlphaBlend(m_value, xDest, yDest, nDestWidth, nDestHeight, hSrcDC,
 			xSrc, ySrc, nSrcWidth, nSrcHeight, blend);
 	}
 	BOOL TinyDC::TransparentBlt(INT xDest, INT yDest, INT nDestWidth,
-		INT nDestHeight, TinyDC* pSrcDC, INT xSrc, INT ySrc, INT nSrcWidth,
+		INT nDestHeight, HDC hSrcDC, INT xSrc, INT ySrc, INT nSrcWidth,
 		INT nSrcHeight, UINT crTransparent)
 	{
-		return ::TransparentBlt(m_value, xDest, yDest, nDestWidth, nDestHeight, pSrcDC->Handle(),
+		return ::TransparentBlt(m_value, xDest, yDest, nDestWidth, nDestHeight, hSrcDC,
 			xSrc, ySrc, nSrcWidth, nSrcHeight, crTransparent);
 	}
 	BOOL TinyDC::GradientFill(TRIVERTEX* pVertices, ULONG nVertices,
@@ -1218,14 +1218,21 @@ namespace TinyUI
 	/* MenDC                                                                */
 	/************************************************************************/
 	TinyMenDC::TinyMenDC(HDC hDC, INT cx, INT cy)
-		:m_hDC(NULL),
-		m_hOldBitmap(NULL)
+		:m_hDC(NULL), m_hOldBitmap(NULL)
 	{
 		ASSERT(hDC);
 		//´´½¨ÄÚ´æDC
 		HDC hMenDC = ::CreateCompatibleDC(hDC);
 		Attach(hMenDC);
 		HBITMAP hBitmap = ::CreateCompatibleBitmap(hDC, cx, cy);
+		m_hOldBitmap = (HBITMAP)::SelectObject(hMenDC, hBitmap);
+	}
+	TinyMenDC::TinyMenDC(HDC hDC, HBITMAP hBitmap)
+		:m_hDC(hDC), m_hOldBitmap(NULL)
+	{
+		ASSERT(hDC);
+		HDC hMenDC = ::CreateCompatibleDC(hDC);
+		Attach(hMenDC);
 		m_hOldBitmap = (HBITMAP)::SelectObject(hMenDC, hBitmap);
 	}
 	TinyMenDC::~TinyMenDC()
@@ -1235,9 +1242,17 @@ namespace TinyUI
 			::SelectObject(m_value, m_hOldBitmap);
 		}
 	}
-	void TinyMenDC::Render(INT x, INT y, INT cx, INT cy)
+	void TinyMenDC::Render(INT destX, INT destY, INT destCX, INT destCY, INT srcX, INT srcY, INT srcCX, INT srcCY, BOOL bAlpha, BYTE Alpha)
 	{
-		this->BitBlt(x, y, cx, cy, m_hDC, x, y, SRCCOPY);
+		if (bAlpha)
+		{
+			BLENDFUNCTION s = { AC_SRC_OVER, 0, Alpha, 1 };
+			::AlphaBlend(m_hDC, destX, destY, destCX, destCY, m_value, srcX, srcY, srcCX, srcCY, s);
+		}
+		else
+		{
+			::StretchBlt(m_hDC, destX, destY, destCX, destCY, m_value, srcX, srcY, srcCX, srcCY, SRCCOPY);
+		}
 	}
 	/************************************************************************/
 	/* PEN                                                                  */
@@ -1430,7 +1445,7 @@ namespace TinyUI
 			hOldPalette = ::SelectPalette(hDC, (HPALETTE)hPalette, FALSE);
 			RealizePalette(hDC);
 		}
-		GetDIBits(hDC, (HBITMAP)m_value, 0, (UINT)bitmap.bmHeight, (LPSTR)lpbi + sizeof(BITMAPINFOHEADER) + dwPaletteSize, (BITMAPINFO *)lpbi, DIB_RGB_COLORS);
+		GetDIBits(hDC, (HBITMAP)m_value, 0, (UINT)bitmap.bmHeight, (LPSTR)lpbi + sizeof(BITMAPINFOHEADER)+dwPaletteSize, (BITMAPINFO *)lpbi, DIB_RGB_COLORS);
 		if (hOldPalette)
 		{
 			::SelectPalette(hDC, (HPALETTE)hOldPalette, TRUE);
@@ -1440,11 +1455,11 @@ namespace TinyUI
 		hFile = CreateFile(pzFile, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 		if (hFile == INVALID_HANDLE_VALUE) return FALSE;
 		bmfHdr.bfType = 0x4D42; // "BM" 
-		dwDIBSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + dwPaletteSize + dwBmBitsSize;
+		dwDIBSize = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+dwPaletteSize + dwBmBitsSize;
 		bmfHdr.bfSize = dwDIBSize;
 		bmfHdr.bfReserved1 = 0;
 		bmfHdr.bfReserved2 = 0;
-		bmfHdr.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) + (DWORD)sizeof(BITMAPINFOHEADER) + dwPaletteSize;
+		bmfHdr.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER)+(DWORD)sizeof(BITMAPINFOHEADER)+dwPaletteSize;
 		WriteFile(hFile, (LPSTR)&bmfHdr, sizeof(BITMAPFILEHEADER), &dwWritten, NULL);
 		GlobalUnlock(hDib);
 		GlobalFree(hDib);
