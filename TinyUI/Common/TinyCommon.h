@@ -109,6 +109,28 @@ namespace TinyUI
 
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
+	/// 引用计数类
+	/// </summary>
+	class TinyReference
+	{
+	public:
+		TinyReference();
+		/// <summary>
+		/// 获得当前的引用计数
+		/// </summary>
+		LONG GetReference();
+		/// <summary>
+		/// 引用+1
+		/// </summary>
+		void AddRef();
+		/// <summary>
+		/// 释放
+		/// </summary>
+		void Release();
+	private:
+		LONG	m_cRef;
+	};
+	/// <summary>
 	/// 智能指针
 	/// </summary>
 	template<class T>

@@ -23,4 +23,24 @@ namespace TinyUI
 		va_end(args);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	TinyReference::TinyReference()
+		:m_cRef(1)
+	{
+
+	}
+	void TinyReference::AddRef()
+	{
+		InterlockedIncrement(&m_cRef);
+	}
+	void TinyReference::Release()
+	{
+		if (!InterlockedDecrement(&m_cRef))
+		{
+			delete this;
+		}
+	}
+	LONG TinyReference::GetReference()
+	{
+		return this->m_cRef;
+	}
 };
