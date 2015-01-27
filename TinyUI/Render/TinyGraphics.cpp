@@ -1217,43 +1217,43 @@ namespace TinyUI
 	/************************************************************************/
 	/* MenDC                                                                */
 	/************************************************************************/
-	TinyMenDC::TinyMenDC(HDC hDC, INT cx, INT cy)
-		:m_hDC(NULL), m_hOldBitmap(NULL)
-	{
-		ASSERT(hDC);
-		//创建内存DC
-		HDC hMenDC = ::CreateCompatibleDC(hDC);
-		Attach(hMenDC);
-		HBITMAP hBitmap = ::CreateCompatibleBitmap(hDC, cx, cy);
-		m_hOldBitmap = (HBITMAP)::SelectObject(hMenDC, hBitmap);
-	}
-	TinyMenDC::TinyMenDC(HDC hDC, HBITMAP hBitmap)
-		:m_hDC(hDC), m_hOldBitmap(NULL)
-	{
-		ASSERT(hDC);
-		HDC hMenDC = ::CreateCompatibleDC(hDC);
-		Attach(hMenDC);
-		m_hOldBitmap = (HBITMAP)::SelectObject(hMenDC, hBitmap);
-	}
-	TinyMenDC::~TinyMenDC()
-	{
-		if (m_hOldBitmap != NULL)
-		{
-			::SelectObject(m_value, m_hOldBitmap);
-		}
-	}
-	void TinyMenDC::Render(INT destX, INT destY, INT destCX, INT destCY, INT srcX, INT srcY, INT srcCX, INT srcCY, BOOL bAlpha, BYTE Alpha)
-	{
-		if (bAlpha)
-		{
-			BLENDFUNCTION s = { AC_SRC_OVER, 0, Alpha, 1 };
-			::AlphaBlend(m_hDC, destX, destY, destCX, destCY, m_value, srcX, srcY, srcCX, srcCY, s);
-		}
-		else
-		{
-			::StretchBlt(m_hDC, destX, destY, destCX, destCY, m_value, srcX, srcY, srcCX, srcCY, SRCCOPY);
-		}
-	}
+	//TinyMenDC::TinyMenDC(HDC hDC, INT cx, INT cy)
+	//	:m_hDC(NULL), m_hOldBitmap(NULL)
+	//{
+	//	ASSERT(hDC);
+	//	//创建内存DC
+	//	HDC hMenDC = ::CreateCompatibleDC(hDC);
+	//	Attach(hMenDC);
+	//	HBITMAP hBitmap = ::CreateCompatibleBitmap(hDC, cx, cy);
+	//	m_hOldBitmap = (HBITMAP)::SelectObject(hMenDC, hBitmap);
+	//}
+	//TinyMenDC::TinyMenDC(HDC hDC, HBITMAP hBitmap)
+	//	:m_hDC(hDC), m_hOldBitmap(NULL)
+	//{
+	//	ASSERT(hDC);
+	//	HDC hMenDC = ::CreateCompatibleDC(hDC);
+	//	Attach(hMenDC);
+	//	m_hOldBitmap = (HBITMAP)::SelectObject(hMenDC, hBitmap);
+	//}
+	//TinyMenDC::~TinyMenDC()
+	//{
+	//	if (m_hOldBitmap != NULL)
+	//	{
+	//		::SelectObject(m_value, m_hOldBitmap);
+	//	}
+	//}
+	//void TinyMenDC::Render(INT destX, INT destY, INT destCX, INT destCY, INT srcX, INT srcY, INT srcCX, INT srcCY, BOOL bAlpha, BYTE Alpha)
+	//{
+	//	if (bAlpha)
+	//	{
+	//		BLENDFUNCTION s = { AC_SRC_OVER, 0, Alpha, 1 };
+	//		::AlphaBlend(m_hDC, destX, destY, destCX, destCY, m_value, srcX, srcY, srcCX, srcCY, s);
+	//	}
+	//	else
+	//	{
+	//		::StretchBlt(m_hDC, destX, destY, destCX, destCY, m_value, srcX, srcY, srcCX, srcCY, SRCCOPY);
+	//	}
+	//}
 	/************************************************************************/
 	/* PEN                                                                  */
 	/************************************************************************/

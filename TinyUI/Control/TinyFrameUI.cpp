@@ -46,8 +46,7 @@ namespace TinyUI
 	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		image.Load("D:\\PNG_transparency_demonstration_1.png");
-		//image1.Load("D:\\bianping.png");
+		image.Load("D:\\install_logo.png");
 		
 		return TRUE;
 	}

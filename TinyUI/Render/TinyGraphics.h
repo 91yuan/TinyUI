@@ -396,18 +396,18 @@ namespace TinyUI
 	/// <summary>
 	/// ƒ⁄¥ÊDC
 	/// </summary>
-	class TinyMenDC : public TinyDC
+	/*class TinyMenDC : public TinyDC
 	{
-		DECLARE_DYNAMIC(TinyMenDC)
+	DECLARE_DYNAMIC(TinyMenDC)
 	public:
-		TinyMenDC(HDC hDC, INT cx, INT cy);
-		TinyMenDC(HDC hDC, HBITMAP hBitmap);
-		void Render(INT destX, INT destY, INT destCX, INT destCY, INT srcX, INT srcY, INT srcCX, INT srcCY, BOOL bAlpha = TRUE, BYTE Alpha = 0);
-		virtual ~TinyMenDC();
+	TinyMenDC(HDC hDC, INT cx, INT cy);
+	TinyMenDC(HDC hDC, HBITMAP hBitmap);
+	void Render(INT destX, INT destY, INT destCX, INT destCY, INT srcX, INT srcY, INT srcCX, INT srcCY, BOOL bAlpha = TRUE, BYTE Alpha = 0);
+	virtual ~TinyMenDC();
 	private:
-		HBITMAP m_hOldBitmap;
-		HDC		m_hDC;
-	};
+	HBITMAP m_hOldBitmap;
+	HDC		m_hDC;
+	};*/
 	/// <summary>
 	/// Pen¿‡
 	/// </summary>
