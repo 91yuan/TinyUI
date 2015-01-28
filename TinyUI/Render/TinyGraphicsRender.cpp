@@ -8,14 +8,10 @@ namespace TinyUI
 	{
 
 	}
-
-
 	TinyGraphicsRender::~TinyGraphicsRender()
 	{
 
 	}
-<<<<<<< HEAD
-
 	void TinyGraphicsRender::DrawShadedRect(TinyRectangle& rect)
 	{
 		WORD bits[] =
@@ -39,7 +35,7 @@ namespace TinyUI
 	{
 		m_dc.MoveTo(p0);
 		m_dc.LineTo(p1);
-=======
+	}
 	void TinyGraphicsRender::DrawAlpha(HDC hDstDC, const TinyRectangle& rectDst, HDC hSrcDC, const TinyRectangle& rectSrc, BYTE nOpacity)
 	{
 		BLENDFUNCTION pixelblend = { AC_SRC_OVER, 0, nOpacity, AC_SRC_ALPHA };
@@ -81,7 +77,7 @@ namespace TinyUI
 		}
 
 		BITMAP bmp;
-		if (::GetObject(bitmap, sizeof (BITMAP), &bmp) == 0)
+		if (::GetObject(bitmap, sizeof(BITMAP), &bmp) == 0)
 		{
 			return NULL;
 		}
@@ -147,7 +143,7 @@ namespace TinyUI
 			return NULL;
 		}
 		BITMAP bmp;
-		if (::GetObject(bitmap, sizeof (BITMAP), &bmp) == 0)
+		if (::GetObject(bitmap, sizeof(BITMAP), &bmp) == 0)
 		{
 			return NULL;
 		}
@@ -214,7 +210,6 @@ namespace TinyUI
 			}
 		}
 		return hBitmap;
->>>>>>> origin/master
 	}
 }
 

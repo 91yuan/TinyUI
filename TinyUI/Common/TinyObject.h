@@ -24,6 +24,9 @@ namespace TinyUI
 		/// 使用引用计数前必须先创建
 		/// </summary>
 		virtual TinyReference* CreateReference() const;
+		/// <summary>
+		/// 拷贝引用计数
+		/// </summary>
 		virtual TinyReference* CloneReference(const TinyReference* data) const;
 	protected:
 		TinyReference* m_reference;

@@ -116,17 +116,14 @@ namespace TinyUI
 	public:
 		TinyGraphicsRender(TinyDC& dc);
 		~TinyGraphicsRender();
-<<<<<<< HEAD
 		void DrawShadedRect(TinyRectangle& rect);
 		void DrawLine(TinyPoint p0, TinyPoint p1);
-=======
 		static void DrawAlpha(HDC hDstDC, const TinyRectangle& rectDst, HDC hSrcDC, const TinyRectangle& rectSrc, BYTE nOpacity = 255);
-	private:
+	public:
 		static HBITMAP CreateBitmap_24(const TinySize& size, void** pBits);
 		static HBITMAP CreateBitmap_24(HBITMAP bitmap);
 		static HBITMAP CreateBitmap_32(const TinySize& size, void** pBits);
 		static HBITMAP CreateBitmap_32(HBITMAP bitmap, COLORREF clrTransparent = -1);
->>>>>>> origin/master
 	private:
 		TinyDC&	m_dc;
 	};

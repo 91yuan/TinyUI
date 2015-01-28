@@ -35,7 +35,6 @@ namespace TinyUI
 #ifndef ASSERT
 #define ASSERT(expr) _ASSERTE(expr)
 #endif 
-
 	void Trace(LPCTSTR lpszFormat, ...);
 #ifndef TRACE
 #define TRACE Trace
@@ -44,7 +43,7 @@ namespace TinyUI
 #ifndef ASSUME
 #define ASSUME(expr) do { ASSERT(expr); __analysis_assume(!!(expr)); } while(0)
 #endif // ASSUME
-	//////////////////////////////////////////////////////////////////////////
+
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(p)  { if (p) { delete (p);  (p)=NULL; } }
 #endif    
@@ -106,6 +105,28 @@ namespace TinyUI
 
 #define IS_VALID_STRING_PTR(ptr, type) \
 	(!IsBadStringPtr((ptr), (UINT)-1))
+
+#define DISALLOW_COPY(TypeName) \
+  TypeName(const TypeName&)
+
+#define DISALLOW_ASSIGN(TypeName) \
+  void operator=(const TypeName&)
+
+#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+  TypeName(const TypeName&);               \
+  void operator=(const TypeName&)
+
+#define DISALLOW_IMPLICIT_CONSTRUCTORS(TypeName) \
+  TypeName();                                    \
+  DISALLOW_COPY_AND_ASSIGN(TypeName)
+
+	template<typename T, size_t N>
+	char(&ArraySizeHelper(T(&array)[N]))[N];
+#define arraysize(array) (sizeof(ArraySizeHelper(array)))
+
+#define ARRAYSIZE_UNSAFE(a) \
+    ((sizeof(a)/sizeof(*(a))) / \
+    static_cast<size_t>(!(sizeof(a)%sizeof(*(a)))))
 
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
@@ -212,6 +233,59 @@ namespace TinyUI
 		return _myP;
 	}
 	/// <summary>
+	/// 智能指针但不能转让所有权
+	/// </summary>
+	template <class T>
+	class TinyScopedPtr
+	{
+	public:
+		explicit TinyScopedPtr(T* ps = 0);
+		~TinyScopedPtr();
+		void Reset(T* ps = 0) throw();
+		T& operator*() const throw();
+		T* operator->() const throw();
+		T* Ptr() const throw();
+	public:
+		T* _myP;
+	};
+	template<class T>
+	TinyScopedPtr<T>::TinyScopedPtr(T* ps)
+		: _myP(ps)
+	{
+
+	}
+	template<class T>
+	TinyScopedPtr<T>::~TinyScopedPtr()
+	{
+		if (_myP != NULL)
+		{
+			delete _myP;
+			_myP = NULL;
+		}
+	}
+	template<class T>
+	void TinyScopedPtr<T>::Reset(T* ps) throw()
+	{
+		if (_ptr != _myP)
+			delete _myP;
+		_myP = _ptr;
+	}
+	template<class T>
+	T& TinyScopedPtr<T>::operator*() const throw()
+	{
+		return (*_myP);
+	}
+	template<class T>
+	T* TinyScopedPtr<T>::operator->() const throw()
+	{
+		return (_myP);
+	}
+	template<class T>
+	T* TinyScopedPtr<T>::Ptr() const throw()
+	{
+		return (_myP);
+	}
+	/// <summary>
 	/// COM智能指针
 	/// </summary>
 	template <class T>
@@ -219,6 +293,7 @@ namespace TinyUI
 	{
 	public:
 		T* _myP;
+	public:
 		TinyComPtr(T* lp = NULL);
 		TinyComPtr(const TinyComPtr<T>& lp);
 		~TinyComPtr();

@@ -7,7 +7,7 @@
 namespace TinyUI
 {
 	/// <summary>
-	/// ´°¿Ú¿ò¼Ü
+	/// ´°¿Ú¿ò¼Ü,ÎÞ´°¿Ú
 	/// </summary>
 	class TinyFrameUI : public TinyControl
 	{
@@ -29,7 +29,7 @@ namespace TinyUI
 		virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	public:
-		BOOL ShowWindow(int nCmdShow) throw();
+		BOOL ShowWindow(INT nCmdShow) throw();
 		BOOL UpdateWindow() throw();
 	private:
 		TinyImage image;
