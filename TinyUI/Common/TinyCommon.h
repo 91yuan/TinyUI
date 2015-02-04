@@ -286,6 +286,13 @@ namespace TinyUI
 		return (_myP);
 	}
 	/// <summary>
+	/// 
+	/// </summary>
+	class TinyScopedReferencePtr
+	{
+
+	};
+	/// <summary>
 	/// COM÷«ƒ‹÷∏’Î
 	/// </summary>
 	template <class T>

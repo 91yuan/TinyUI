@@ -35,19 +35,19 @@ namespace TinyUI
 	}
 	DWORD TinyFrameUI::RetrieveStyle()
 	{
-		return (WS_VISIBLE | WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU | WS_CLIPSIBLINGS);
+		return (WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_SYSMENU | WS_MINIMIZEBOX);
 	}
 
 	DWORD TinyFrameUI::RetrieveExStyle()
 	{
-		return (WS_EX_LEFT | WS_EX_LTRREADING);
+		return (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_OVERLAPPEDWINDOW | WS_EX_TOPMOST);
 	}
 
 	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		image.Load("D:\\install_logo.png");
-		
+
 		return TRUE;
 	}
 

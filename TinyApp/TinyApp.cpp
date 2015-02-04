@@ -683,49 +683,49 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	v.push_back(4);
 	v.push_back(5);
 	v.insert(v.begin() + 6, 7);*/
-	class Obj
+	/*class Obj
 	{
 	public:
-		Obj()
-			:m_index(0)
-		{
-			TRACE("Obj默认构造函数:%d\n", m_index);
-		}
-		Obj(INT index)
-			:m_index(index)
-		{
-			TRACE("Obj构造函数:%d\n", m_index);
-		}
-		Obj(const Obj& obj)
-		{
-			this->m_index = obj.m_index;
-			TRACE("Obj拷贝构造函数:%d\n", m_index);
-		}
-		Obj& operator = (const Obj& obj)
-		{
-			m_index = obj.m_index;
-			TRACE("Obj赋值构造函数:%d\n", m_index);
-			return (*this);
-		}
-		~Obj()
-		{
-			TRACE("Obj析构函数:%d\n", m_index);
-		}
-		INT m_index;
+	Obj()
+	:m_index(0)
+	{
+	TRACE("Obj默认构造函数:%d\n", m_index);
+	}
+	Obj(INT index)
+	:m_index(index)
+	{
+	TRACE("Obj构造函数:%d\n", m_index);
+	}
+	Obj(const Obj& obj)
+	{
+	this->m_index = obj.m_index;
+	TRACE("Obj拷贝构造函数:%d\n", m_index);
+	}
+	Obj& operator = (const Obj& obj)
+	{
+	m_index = obj.m_index;
+	TRACE("Obj赋值构造函数:%d\n", m_index);
+	return (*this);
+	}
+	~Obj()
+	{
+	TRACE("Obj析构函数:%d\n", m_index);
+	}
+	INT m_index;
 	};
 
 	class Object1
 	{
 	public:
-		Object1(Obj& obj)
-			:_obj(obj)
-		{
+	Object1(Obj& obj)
+	:_obj(obj)
+	{
 
-		}
+	}
 	private:
-		Obj& _obj;
+	Obj& _obj;
 	};
-
+	*/
 	/*Obj obj0(0);
 	Obj obj1(1);
 	Obj obj2(2);
@@ -778,7 +778,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyMessageLoop theLoop;
 	TinyApplication::Instance()->AddMessageLoop(&theLoop);
 	TinyFrameUI uiImpl;
-	uiImpl.Create(NULL, 10, 10, 900, 900);
+	uiImpl.Create(NULL, 10, 10, 300, 400);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();
 
