@@ -210,9 +210,6 @@
     <ClInclude Include="Render\TinyTheme.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
-    <ClInclude Include="TinyCallback.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -373,9 +370,6 @@
     </ClCompile>
     <ClCompile Include="Render\TinyTheme.cpp">
       <Filter>源文件\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="TinyCallback.cpp">
-      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

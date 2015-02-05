@@ -38,7 +38,6 @@ namespace TinyUI
 	{
 		enum{ Result = 1 };
 	};
-
 	template <typename T>
 	struct IsReference
 	{
@@ -224,6 +223,23 @@ namespace TinyUI
 	{
 		enum { Result = 1 };
 	};
+
+	template<typename T>
+	struct IsArrayType
+	{
+		enum { Result = 0 };
+	};
+	template<typename T>
+	struct IsArrayType<T[]>
+	{
+		enum { Result = 1 };
+	};
+	template<typename T, size_t n>
+	struct IsArrayType<T[n]>
+	{
+		enum { Result = 1 };
+	};
+
 #define TYPE_LIST0() NullType
 #define TYPE_LIST1(P1) TypeList<P1, NullType>
 #define TYPE_LIST2(P1, P2) TypeList<P1, TYPE_LIST1(P2)>

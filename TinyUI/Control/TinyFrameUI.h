@@ -23,6 +23,7 @@ namespace TinyUI
 		virtual HICON RetrieveIcon();
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		//事件
+		virtual LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -31,10 +32,8 @@ namespace TinyUI
 	public:
 		BOOL ShowWindow(INT nCmdShow) throw();
 		BOOL UpdateWindow() throw();
-	private:
-		TinyImage image;
-		TinyImage image1;
-		INT m_cx;
-		INT m_cy;
+	protected:
+		//缓冲的样式
+		TinySize m_size;
 	};
 }

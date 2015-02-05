@@ -46,7 +46,6 @@ namespace TinyUI
 	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		image.Load("D:\\install_logo.png");
 
 		return TRUE;
 	}
@@ -70,30 +69,30 @@ namespace TinyUI
 	{
 		bHandled = FALSE;
 
-		PAINTSTRUCT s;
-		HDC hDC = BeginPaint(m_hWND, &s);
-		TinySize size = image.GetSize();
-		TinySize size1 = image1.GetSize();
-		TinySize paintSize((s.rcPaint.right - s.rcPaint.left), (s.rcPaint.bottom - s.rcPaint.top));
-		TinyRectangle paintRect(0, 0, m_cx, m_cy);
-		//±³¾°
+		//PAINTSTRUCT s;
+		//HDC hDC = BeginPaint(m_hWND, &s);
+		//TinySize size = image.GetSize();
+		//TinySize size1 = image1.GetSize();
+		//TinySize paintSize((s.rcPaint.right - s.rcPaint.left), (s.rcPaint.bottom - s.rcPaint.top));
+		//TinyRectangle paintRect(0, 0, m_cx, m_cy);
+		////±³¾°
 
-		HDC hMemDC = CreateCompatibleDC(hDC);
-		HBITMAP hBitmap = CreateCompatibleBitmap(hDC, m_cx, m_cy);
-		HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
-		::FillRect(hMemDC, &paintRect, (HBRUSH)GetStockObject(WHITE_BRUSH));
+		//HDC hMemDC = CreateCompatibleDC(hDC);
+		//HBITMAP hBitmap = CreateCompatibleBitmap(hDC, m_cx, m_cy);
+		//HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
+		//::FillRect(hMemDC, &paintRect, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
-		HDC hMenDC1 = CreateCompatibleDC(hMemDC);
-		HBITMAP hOldBitmap1 = (HBITMAP)SelectObject(hMenDC1, image);
-		BLENDFUNCTION blend = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
-		::AlphaBlend(hMemDC, 0, 0, size.cx, size.cy, hMenDC1, 0, 0, size.cx, size.cy, blend);
-		SelectObject(hMenDC1, hOldBitmap1);
-		DeleteDC(hMenDC1);
+		//HDC hMenDC1 = CreateCompatibleDC(hMemDC);
+		//HBITMAP hOldBitmap1 = (HBITMAP)SelectObject(hMenDC1, image);
+		//BLENDFUNCTION blend = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+		//::AlphaBlend(hMemDC, 0, 0, size.cx, size.cy, hMenDC1, 0, 0, size.cx, size.cy, blend);
+		//SelectObject(hMenDC1, hOldBitmap1);
+		//DeleteDC(hMenDC1);
 
-		::BitBlt(hDC, 0, 0, m_cx, m_cy, hMemDC, 0, 0, SRCCOPY);
-		SelectObject(hMemDC, hOldBitmap);
-		DeleteObject(hBitmap);
-		DeleteDC(hMemDC);
+		//::BitBlt(hDC, 0, 0, m_cx, m_cy, hMemDC, 0, 0, SRCCOPY);
+		//SelectObject(hMemDC, hOldBitmap);
+		//DeleteObject(hBitmap);
+		//DeleteDC(hMemDC);
 
 		return FALSE;
 	}
@@ -107,10 +106,15 @@ namespace TinyUI
 	LRESULT TinyFrameUI::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_cx = LOWORD(lParam);
-		m_cy = HIWORD(lParam);
+		m_size.cx = LOWORD(lParam);
+		m_size.cy = HIWORD(lParam);
 		return FALSE;
 	}
 
+	LRESULT TinyFrameUI::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
 }
 

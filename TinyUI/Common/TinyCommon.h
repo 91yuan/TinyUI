@@ -107,30 +107,30 @@ namespace TinyUI
 	(!IsBadStringPtr((ptr), (UINT)-1))
 
 #define DISALLOW_COPY(TypeName) \
-  TypeName(const TypeName&)
+	TypeName(const TypeName&)
 
 #define DISALLOW_ASSIGN(TypeName) \
-  void operator=(const TypeName&)
+	void operator=(const TypeName&)
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
-  TypeName(const TypeName&);               \
-  void operator=(const TypeName&)
+	TypeName(const TypeName&);               \
+	void operator=(const TypeName&)
 
 #define DISALLOW_IMPLICIT_CONSTRUCTORS(TypeName) \
-  TypeName();                                    \
-  DISALLOW_COPY_AND_ASSIGN(TypeName)
+	TypeName();                                    \
+	DISALLOW_COPY_AND_ASSIGN(TypeName)
 
 	template<typename T, size_t N>
 	char(&ArraySizeHelper(T(&array)[N]))[N];
 #define arraysize(array) (sizeof(ArraySizeHelper(array)))
 
 #define ARRAYSIZE_UNSAFE(a) \
-    ((sizeof(a)/sizeof(*(a))) / \
-    static_cast<size_t>(!(sizeof(a)%sizeof(*(a)))))
+	((sizeof(a) / sizeof(*(a))) / \
+	static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
 
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
-	/// 引用计数类
+	/// 线程安全的引用计数类
 	/// </summary>
 	class TinyReference
 	{
@@ -286,12 +286,128 @@ namespace TinyUI
 		return (_myP);
 	}
 	/// <summary>
-	/// 
+	/// 引用计数智能指针 
 	/// </summary>
+	template<class T>
 	class TinyScopedReferencePtr
 	{
-
+	public:
+		TinyScopedReferencePtr();
+		TinyScopedReferencePtr(T* myP);
+		TinyScopedReferencePtr(const TinyScopedReferencePtr<T>& s);
+		template<typename U>
+		TinyScopedReferencePtr(const TinyScopedReferencePtr<U>& s) : m_myP(s.Ptr())
+		{
+			if (m_myP != NULL)
+			{
+				m_myP->AddRef();
+			}
+		}
+		~TinyScopedReferencePtr();
+		T* Ptr() const;
+		operator T*() const;
+		T* operator->() const;
+		T* Release();
+		TinyScopedReferencePtr<T>& operator=(T* ps);
+		TinyScopedReferencePtr<T>& operator=(const TinyScopedReferencePtr<T>& s);
+		template<typename U>
+		TinyScopedReferencePtr<T>& operator=(const TinyScopedReferencePtr<U>& s)
+		{
+			return *this = s.Ptr();
+		}
+		void Swap(T** pp);
+		void Swap(TinyScopedReferencePtr<T>& s);
+	protected:
+		T* m_myP;
 	};
+	template<class T>
+	TinyScopedReferencePtr<T>::TinyScopedReferencePtr()
+		:m_myP(NULL)
+	{}
+	template<class T>
+	TinyScopedReferencePtr<T>::TinyScopedReferencePtr(T* myP)
+		: m_myP(myP)
+	{
+		if (m_myP)
+		{
+			m_myP->AddRef();
+		}
+	}
+	template<class T>
+	TinyScopedReferencePtr<T>::TinyScopedReferencePtr(const TinyScopedReferencePtr<T>& s)
+		: m_myP(s.m_myP)
+	{
+		if (m_myP)
+		{
+			m_myP->AddRef();
+		}
+	}
+	template<class T>
+	TinyScopedReferencePtr<T>::~TinyScopedReferencePtr()
+	{
+		if (m_myP != NULL)
+		{
+			m_myP->Release();
+		}
+	}
+	template<class T>
+	T* TinyScopedReferencePtr<T>::Ptr() const
+	{
+		return m_myP;
+	}
+	template<class T>
+	TinyScopedReferencePtr<T>::operator T*() const
+	{
+		return m_myP;
+	}
+	template<class T>
+	T* TinyScopedReferencePtr<T>::operator->() const
+	{
+		return m_myP;
+	}
+	/// <summary>
+	/// 释放指针.
+	/// 返回对象当前拥有的指针. 如果指针为NULL, 返回NULL.
+	/// 操作完成后, 对象拥有一个NULL指针, 不再拥有任何对象.
+	/// </summary>
+	template<class T>
+	T* TinyScopedReferencePtr<T>::Release()
+	{
+		T* _ps = m_myP;
+		m_myP = NULL;
+		return _ps;
+	}
+	template<class T>
+	TinyScopedReferencePtr<T>& TinyScopedReferencePtr<T>::operator=(T* ps)
+	{
+		if (ps != NULL)
+		{
+			ps->AddRef();
+		}
+		if (m_myP != NULL)
+		{
+			m_myP->Release();
+		}
+		m_myP = ps;
+		return *this;
+	}
+	template<class T>
+	TinyScopedReferencePtr<T>& TinyScopedReferencePtr<T>::operator=(const TinyScopedReferencePtr<T>& s)
+	{
+		return *this = s.m_myP;
+	}
+	template<class T>
+	void TinyScopedReferencePtr<T>::Swap(T** pp)
+	{
+		T* p = ptr_;
+		m_myP = *pp;
+		*pp = p;
+	}
+	template<class T>
+	void TinyScopedReferencePtr<T>::Swap(TinyScopedReferencePtr<T>& s)
+	{
+		swap(&s.m_myP);
+	}
 	/// <summary>
 	/// COM智能指针
 	/// </summary>
