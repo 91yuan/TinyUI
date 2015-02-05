@@ -35,12 +35,12 @@ namespace TinyUI
 	}
 	DWORD TinyFrameUI::RetrieveStyle()
 	{
-		return (WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_SYSMENU | WS_MINIMIZEBOX);
+		return (WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_MINIMIZEBOX);
 	}
 
 	DWORD TinyFrameUI::RetrieveExStyle()
 	{
-		return (WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR | WS_EX_OVERLAPPEDWINDOW | WS_EX_TOPMOST);
+		return (WS_EX_LEFT | WS_EX_RIGHTSCROLLBAR | WS_EX_OVERLAPPEDWINDOW | WS_EX_TOPMOST);
 	}
 
 	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -65,34 +65,57 @@ namespace TinyUI
 		return NULL;
 	}
 
+	void TinyFrameUI::CenterWindow(HWND parent, HWND window, TinySize size) throw()
+	{
+		RECT window_bounds;
+		RECT center_bounds = { 0 };
+		if (parent)
+		{
+			::GetWindowRect(parent, &center_bounds);
+		}
+		else
+		{
+			HMONITOR monitor = MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST);
+			if (monitor != NULL)
+			{
+				MONITORINFO mi = { 0 };
+				mi.cbSize = sizeof(mi);
+				GetMonitorInfo(monitor, &mi);
+				center_bounds = mi.rcWork;
+			}
+		}
+		window_bounds.left = center_bounds.left + (center_bounds.right - center_bounds.left - size.cx) / 2;
+		window_bounds.right = window_bounds.left + size.cx;
+		window_bounds.top = center_bounds.top + (center_bounds.bottom - center_bounds.top - size.cy) / 2;
+		window_bounds.bottom = window_bounds.top + size.cy;
+		if (::GetWindowLong(window, GWL_STYLE) & WS_CHILD)
+		{
+			POINT topleft = { window_bounds.left, window_bounds.top };
+			::MapWindowPoints(HWND_DESKTOP, parent, &topleft, 1);
+			window_bounds.left = topleft.x;
+			window_bounds.top = topleft.y;
+			window_bounds.right = window_bounds.left + size.cx;
+			window_bounds.bottom = window_bounds.top + size.cy;
+		}
+		WINDOWINFO win_info = { 0 };
+		win_info.cbSize = sizeof(WINDOWINFO);
+		GetWindowInfo(window, &win_info);
+		if (AdjustWindowRectEx(&window_bounds, win_info.dwStyle, FALSE, win_info.dwExStyle))
+		{
+			SetWindowPos(window, 0, window_bounds.left, window_bounds.top,
+				window_bounds.right - window_bounds.left,
+				window_bounds.bottom - window_bounds.top,
+				SWP_NOACTIVATE | SWP_NOZORDER);
+		}
+	}
+
 	LRESULT TinyFrameUI::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 
-		//PAINTSTRUCT s;
-		//HDC hDC = BeginPaint(m_hWND, &s);
-		//TinySize size = image.GetSize();
-		//TinySize size1 = image1.GetSize();
-		//TinySize paintSize((s.rcPaint.right - s.rcPaint.left), (s.rcPaint.bottom - s.rcPaint.top));
-		//TinyRectangle paintRect(0, 0, m_cx, m_cy);
-		////背景
-
-		//HDC hMemDC = CreateCompatibleDC(hDC);
-		//HBITMAP hBitmap = CreateCompatibleBitmap(hDC, m_cx, m_cy);
-		//HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
-		//::FillRect(hMemDC, &paintRect, (HBRUSH)GetStockObject(WHITE_BRUSH));
-
-		//HDC hMenDC1 = CreateCompatibleDC(hMemDC);
-		//HBITMAP hOldBitmap1 = (HBITMAP)SelectObject(hMenDC1, image);
-		//BLENDFUNCTION blend = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
-		//::AlphaBlend(hMemDC, 0, 0, size.cx, size.cy, hMenDC1, 0, 0, size.cx, size.cy, blend);
-		//SelectObject(hMenDC1, hOldBitmap1);
-		//DeleteDC(hMenDC1);
-
-		//::BitBlt(hDC, 0, 0, m_cx, m_cy, hMemDC, 0, 0, SRCCOPY);
-		//SelectObject(hMemDC, hOldBitmap);
-		//DeleteObject(hBitmap);
-		//DeleteDC(hMemDC);
+		PAINTSTRUCT s;
+		HDC hDC = BeginPaint(m_hWND, &s);
+		EndPaint(m_hWND, &s);
 
 		return FALSE;
 	}
@@ -106,6 +129,7 @@ namespace TinyUI
 	LRESULT TinyFrameUI::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		TRACE("OnSize\n");
 		m_size.cx = LOWORD(lParam);
 		m_size.cy = HIWORD(lParam);
 		return FALSE;
@@ -113,8 +137,91 @@ namespace TinyUI
 
 	LRESULT TinyFrameUI::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
+		bHandled = TRUE;
+		POINT pos = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+		ScreenToClient(m_hWND, &pos);
+		//窗口缩放
+		if (pos.x <= CLIENT_MARGIN_LEFT && pos.y <= CLIENT_MARGIN_TOP)
+		{
+			return HTTOPLEFT;
+		}
+		if (pos.x >= CLIENT_MARGIN_LEFT && pos.x <= (m_size.cx - CLIENT_MARGIN_RIGHT) && pos.y <= CLIENT_MARGIN_TOP)
+		{
+			return HTTOP;
+		}
+		if (pos.x >= (m_size.cx - CLIENT_MARGIN_RIGHT) && pos.x <= m_size.cx && pos.y <= CLIENT_MARGIN_TOP)
+		{
+			return HTTOPRIGHT;
+		}
+		if (pos.x <= CLIENT_MARGIN_LEFT && pos.y >= (m_size.cy - CLIENT_MARGIN_BOTTOM) && pos.y <= m_size.cy)
+		{
+			return HTBOTTOMLEFT;
+		}
+		if (pos.x >= CLIENT_MARGIN_LEFT && pos.x <= (m_size.cx - CLIENT_MARGIN_RIGHT) && pos.y >= (m_size.cy - CLIENT_MARGIN_TOP))
+		{
+			return HTBOTTOM;
+		}
+		if (pos.x >= (m_size.cx - CLIENT_MARGIN_RIGHT) && pos.y >= (m_size.cy - CLIENT_MARGIN_BOTTOM) && pos.y <= m_size.cy)
+		{
+			return HTBOTTOMRIGHT;
+		}
+		if (pos.x <= CLIENT_MARGIN_LEFT && pos.y >= CLIENT_MARGIN_TOP && pos.y <= (m_size.cy - CLIENT_MARGIN_BOTTOM))
+		{
+			return HTLEFT;
+		}
+		if (pos.x >= (m_size.cx - CLIENT_MARGIN_RIGHT) && pos.x <= m_size.cx && pos.y >= CLIENT_MARGIN_TOP && pos.y <= (m_size.cy - CLIENT_MARGIN_BOTTOM))
+		{
+			return HTRIGHT;
+		}
+		//标题栏
+		if (pos.y <= CAPTION_HEIGHT)
+		{
+			return HTCAPTION;
+		}
+		return HTCLIENT;
+	}
+
+	LRESULT TinyFrameUI::OnNCLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
 		bHandled = FALSE;
+		TRACE("OnNCLButtonDown\n");
 		return FALSE;
 	}
+
+	LRESULT TinyFrameUI::OnNCLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		TRACE("OnNCLButtonUp\n");
+		return FALSE;
+	}
+
+	LRESULT TinyFrameUI::OnNCLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		TRACE("OnNCLButtonDBClick\n");
+		return FALSE;
+	}
+
+	LRESULT TinyFrameUI::OnNCRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		TRACE("OnNCRButtonDown\n");
+		return FALSE;
+	}
+
+	LRESULT TinyFrameUI::OnNCRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		TRACE("OnNCRButtonUp\n");
+		return FALSE;
+	}
+
+	LRESULT TinyFrameUI::OnNCRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		TRACE("OnNCRButtonDBClick\n");
+		return FALSE;
+	}
+
 }
 

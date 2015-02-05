@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<window title="" width="100" height="400">
+	<caption>
+		<button width="30" height="30" normal="btn_max_normal.png" highlight="btn_max_highlight.png" down="btn_max_down.png" value="" name="min"></button>
+		<button width="30" height="30" normal="btn_max_normal.png" highlight="btn_max_highlight.png" down="btn_max_down.png" value="" name="max"></button>
+		<button width="30" height="30" normal="btn_max_normal.png" highlight="btn_max_highlight.png" down="btn_max_down.png" value="" name="restore"></button>
+		<button width="30" height="30" normal="btn_max_normal.png" highlight="btn_max_highlight.png" down="btn_max_down.png" value="" name="close"></button>
+	</caption>
+	<client>
+
+	</client>
+</window>

@@ -377,4 +377,7 @@
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="Skin.xml" />
+  </ItemGroup>
 </Project>
