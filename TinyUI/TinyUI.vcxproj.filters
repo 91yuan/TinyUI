@@ -49,6 +49,12 @@
     <Filter Include="源文件\XML">
       <UniqueIdentifier>{76d9aa03-1393-4abe-a455-49aa1d246187}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Windowless">
+      <UniqueIdentifier>{4194c984-b513-4f95-885a-189b3e0790f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Windowless">
+      <UniqueIdentifier>{1310ee77-7b33-4ade-865a-a2cf1c0fa9da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -156,9 +162,6 @@
     <ClInclude Include="Control\TinyFolderView.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\TinyFrameUI.h">
-      <Filter>头文件\Control</Filter>
-    </ClInclude>
     <ClInclude Include="Control\TinyHotKey.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
@@ -209,6 +212,27 @@
     </ClInclude>
     <ClInclude Include="Render\TinyTheme.h">
       <Filter>头文件\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisual.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\TinyTree.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualHWND.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\TinyFrameUI.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyView.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="XML\TinyXMLParse.h">
+      <Filter>头文件\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyLayout.h">
+      <Filter>头文件\Windowless</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -285,9 +309,6 @@
       <Filter>源文件\Control</Filter>
     </ClCompile>
     <ClCompile Include="Control\TinyFolderView.cpp">
-      <Filter>源文件\Control</Filter>
-    </ClCompile>
-    <ClCompile Include="Control\TinyFrameUI.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
     <ClCompile Include="Control\TinyHotKey.cpp">
@@ -370,6 +391,27 @@
     </ClCompile>
     <ClCompile Include="Render\TinyTheme.cpp">
       <Filter>源文件\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisual.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\TinyTree.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualHWND.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinyFrameUI.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyView.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="XML\TinyXMLParse.cpp">
+      <Filter>源文件\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyLayout.cpp">
+      <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

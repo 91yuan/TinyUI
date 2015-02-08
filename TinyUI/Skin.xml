@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<window title="" width="100" height="400">
-	<caption>
-		<button width="30" height="30" normal="btn_max_normal.png" highlight="btn_max_highlight.png" down="btn_max_down.png" value="" name="min"></button>
-		<button width="30" height="30" normal="btn_max_normal.png" highlight="btn_max_highlight.png" down="btn_max_down.png" value="" name="max"></button>
-		<button width="30" height="30" normal="btn_max_normal.png" highlight="btn_max_highlight.png" down="btn_max_down.png" value="" name="restore"></button>
-		<button width="30" height="30" normal="btn_max_normal.png" highlight="btn_max_highlight.png" down="btn_max_down.png" value="" name="close"></button>
-	</caption>
-	<client>
-
-	</client>
+<window name="" value="" size="100,400">
+	<systemcaption name="caption" value="标题栏" size="null,30">
+		<button name="min" value="" size="30,30" style="0x0001"></button>
+		<button name="max" value="" size="30,30" style="0x0001"></button>
+		<button name="restore" value="" size="30,30" style="0x0001"></button>
+		<button name="close" value="" size="30,30" style="0x0001"></button>
+	</systemcaption>
+	<systemclient>
+	</systemclient>
 </window>

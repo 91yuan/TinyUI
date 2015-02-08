@@ -108,6 +108,22 @@ namespace TinyUI
 		RGBQUAD rgb = { b, g, r, 0 };
 		return rgb;
 	}
+	class TinyGraphicsRender;
+	/// <summary>
+	/// 裁剪区域
+	/// </summary>
+	class RenderClip
+	{
+		friend class TinyGraphicsRender;
+	public:
+		RenderClip(HDC hDC, TinyRgn& rgn);
+		RenderClip(HDC hDC, TinyRectangle& rect);
+		~RenderClip();
+	private:
+		HDC		m_hDC;
+		HRGN	m_hRGN;
+		HRGN	m_hClipRGN;
+	};
 	/// <summary>
 	/// Render虚基类
 	/// </summary>
@@ -117,13 +133,20 @@ namespace TinyUI
 		TinyGraphicsRender(TinyDC& dc);
 		~TinyGraphicsRender();
 		void DrawShadedRect(TinyRectangle& rect);
+		/// <summary>
+		/// 绘制直线
+		/// </summary>
 		void DrawLine(TinyPoint p0, TinyPoint p1);
-		static void DrawAlpha(HDC hDstDC, const TinyRectangle& rectDst, HDC hSrcDC, const TinyRectangle& rectSrc, BYTE nOpacity = 255);
 	public:
+		/// <summary>
+		/// 裁剪DC
+		/// </summary>
+		static BOOL GenerateClip(RenderClip& clip);
 		static HBITMAP CreateBitmap_24(const TinySize& size, void** pBits);
 		static HBITMAP CreateBitmap_24(HBITMAP bitmap);
 		static HBITMAP CreateBitmap_32(const TinySize& size, void** pBits);
 		static HBITMAP CreateBitmap_32(HBITMAP bitmap, COLORREF clrTransparent = -1);
+		static void DrawAlpha(HDC hDstDC, const TinyRectangle& rectDst, HDC hSrcDC, const TinyRectangle& rectSrc, BYTE nOpacity = 255);
 	private:
 		TinyDC&	m_dc;
 	};

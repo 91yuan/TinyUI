@@ -50,6 +50,9 @@ namespace TinyUI
 #ifndef SAFE_DELETE_ARRAY
 #define SAFE_DELETE_ARRAY(p) { if (p) { delete[] (p); (p)=NULL; } }
 #endif    
+#ifndef SAFE_DELETE_OBJECT
+#define SAFE_DELETE_OBJECT(p) { if (p) { DeleteObject(p); (p)=NULL; } }
+#endif    
 #ifndef SAFE_RELEASE
 #define SAFE_RELEASE(p)  { if (p) { (p)->Release(); (p)=NULL; } }
 #endif
@@ -94,6 +97,9 @@ namespace TinyUI
 #ifndef WM_DELETEITEMREFLECT
 #define WM_DELETEITEMREFLECT (WM_DELETEITEM + WM_REFLECT)
 #endif
+
+#define WM_NCMOUSEFIRST WM_NCMOUSEMOVE
+#define WM_NCMOUSELAST  WM_NCMBUTTONDBLCLK
 
 #ifndef GET_X_LPARAM
 #define GET_X_LPARAM(lParam)    ((INT)(short)LOWORD(lParam))

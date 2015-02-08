@@ -277,254 +277,58 @@ private:
 	LPTSTR m_pzName;
 };
 
-/// <summary>
-/// T是对象调用拷贝构造函数,否则直接赋值
-/// </summary>
-template<class T>
-class TinyPlaceNew1
+class Base1
 {
 public:
-	TinyPlaceNew1(T& _myT) :
-		m_myT(_myT)
+	Base1()
 	{
-	};
-	template <class _Ty>
-	void * __cdecl operator new(size_t, _Ty* p)
+		TRACE("调用Base1构造函数\n");
+	}
+	virtual ~Base1()
 	{
-		return p;
-	};
-	template <class _Ty>
-	void __cdecl operator delete(void*, _Ty*)
-	{
-	};
-	T& m_myT;
-};
+		TRACE("调用Base1析构函数\n");
+		Print();
+	}
 
-template<class T>
-class TinyArray1
+	virtual void Print()
+	{
+		TRACE("调用Base1-Print\n");
+	}
+
+	void CallPrintABC()
+	{
+		PrintABC();
+	}
+
+	virtual void PrintABC()
+	{
+		TRACE("调用Base1-PrintABC\n");
+	}
+
+};
+class Base2 : public Base1
 {
 public:
-	TinyArray1();
-	TinyArray1(const TinyArray1<T>& myT);
-	TinyArray1<T>& operator=(const TinyArray1<T>& myT);
-	~TinyArray1();
-	BOOL	Add(T& myT);
-	BOOL	Insert(INT index, T& myT);
-	BOOL	Remove(const T& myT);
-	BOOL	RemoveAt(INT index);
-	void	RemoveAll();
-	INT		Lookup(const T& myT) const;
-	T*		GetDate() const;
-	INT		GetSize() const;
-	const T& operator[](INT index) const;
-	T&	operator[](INT index);
-	T*	m_value;
-	INT m_size;
-	INT m_alloc_size;
-};
-template<class T>
-TinyArray1<T>::TinyArray1()
-	:m_value(NULL),
-	m_size(0),
-	m_alloc_size(0)
-{
+	Base2()
+	{
+		TRACE("调用Base2构造函数\n");
+	}
+	virtual ~Base2()
+	{
+		TRACE("调用Base2析构函数\n");
+	}
+	virtual void Print()
+	{
+		TRACE("调用Base2-Print\n");
+	}
 
-}
-template<class T>
-TinyArray1<T>::TinyArray1(const TinyArray1<T>& myT)
-	:m_value(NULL),
-	m_size(0),
-	m_alloc_size(0)
-{
-	INT size = myT.GetSize();
-	if (size > 0)
+	virtual void PrintABC()
 	{
-		m_value = (T*)calloc(size, sizeof(T));
-		if (m_value != NULL)
-		{
-			m_alloc_size = size;
-			for (INT i = 0; i < size; i++)
-			{
-				Add(myT[i]);
-			}
-		}
+		TRACE("调用Base2-PrintABC\n");
 	}
-}
-template<class T>
-TinyArray1<T>& TinyArray1<T>::operator=(const TinyArray1<T>& myT)
-{
-	INT size = myT.GetSize();
-	if (m_size != size)
-	{
-		RemoveAll();
-		m_value = (T*)calloc(size, sizeof(T));
-		if (m_value != NULL)
-		{
-			m_alloc_size = m_size;
-		}
-	}
-	else
-	{
-		for (INT i = m_size; i > 0; i--)
-		{
-			RemoveAt(i - 1);
-		}
-	}
-	for (INT i = 0; i < size; i++)
-	{
-		Add(myT[i]);
-	}
-	return *this;
-}
-template<class T>
-TinyArray1<T>::~TinyArray1()
-{
-	RemoveAll();
-}
-template<class T>
-T*	TinyArray1<T>::GetDate() const
-{
-	return m_value;
-}
-template<class T>
-INT	TinyArray1<T>::GetSize() const
-{
-	return m_size;
-}
-template<class T>
-BOOL TinyArray1<T>::Add(T& myT)
-{
-	if (m_size == m_alloc_size)//需要重新分配内存
-	{
-		T* _myP = NULL;
-		INT size = (m_alloc_size == 0) ? 1 : (m_size * 2);
-		if (size < 0 || size >(INT_MAX / sizeof(T)))
-		{
-			return FALSE;
-		}
-		_myP = (T*)_recalloc(m_value, size, sizeof(T));
-		if (_myP == NULL)
-		{
-			return FALSE;
-		}
-		m_alloc_size = size;
-		m_value = _myP;
-	}
-#pragma push_macro("new")
-#undef new
-	::new(m_value + m_size) T;//TinyPlaceNew1<T>(myT);
-#pragma pop_macro("new")
-	m_size++;
-	TRACE("myT%d\n", &myT);
-	m_value[m_size - 1] = myT;
-	return TRUE;
-}
-template<class T>
-BOOL TinyArray1<T>::Remove(const T& myT)
-{
-	INT index = Lookup(myT);
-	if (index == -1)
-	{
-		return FALSE;
-	}
-	return RemoveAt(index);
-}
-template<class T>
-BOOL TinyArray1<T>::RemoveAt(INT index)
-{
-	if (index < 0 || index >= m_size)
-	{
-		return FALSE;
-	}
-	m_value[index].~T();
-	if (index != (m_size - 1))
-	{
-		//移动内存
-		memmove_s((void*)(m_value + index),
-			(m_size - index) * sizeof(T),
-			(void*)(m_value + index + 1),
-			(m_size - (index + 1)) * sizeof(T));
-	}
-	m_size--;
-	return TRUE;
-}
-template<class T>
-void TinyArray1<T>::RemoveAll()
-{
-	if (m_value != NULL)
-	{
-		for (INT i = 0; i < m_size; i++)
-		{
-			m_value[i].~T();
-		}
-		SAFE_FREE(m_value);
-	}
-	m_size = 0;
-	m_alloc_size = 0;
-}
-template<class T>
-BOOL TinyArray1<T>::Insert(INT index, T& myT)
-{
-	//Index超出范围
-	if (index < 0 || index > m_size)
-	{
-		return FALSE;
-	}
-	//需要重新分配内存
-	if (m_size == m_alloc_size)
-	{
-		T* _myP = NULL;
-		INT size = (m_alloc_size == 0) ? 1 : (m_size * 2);
-		if (size < 0 || size >(INT_MAX / sizeof(T)))
-		{
-			return FALSE;
-		}
-		_myP = (T*)_recalloc(m_value, size, sizeof(T));
-		if (_myP == NULL)
-		{
-			return FALSE;
-		}
-		m_alloc_size = size;
-		m_value = _myP;
-	}
-	//向后移动一个T大小内存
-	memmove_s((void*)(m_value + index + 1),
-		(m_size - index) * sizeof(T),
-		(void*)(m_value + index),
-		(m_size - index) * sizeof(T));
-#pragma push_macro("new")
-#undef new
-	::new(m_value + index) TinyPlaceNew1<T>(myT);
-#pragma pop_macro("new")
-	m_size++;
-	return TRUE;
-}
-template<class T>
-INT	TinyArray1<T>::Lookup(const T& myT) const
-{
-	for (INT i = 0; i < m_size; i++)
-	{
-		if (m_value[i] == myT)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-template<class T>
-const T& TinyArray1<T>::operator[](INT index) const
-{
-	if (index < 0 || index >= m_size)
-		throw("无效的index");
-	return m_value[index];
-}
-template<class T>
-T&	TinyArray1<T>::operator[](INT index)
-{
-	if (index < 0 || index >= m_size)
-		throw("无效的index");
-	return m_value[index];
-}
+};
+
+
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -534,13 +338,14 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
+#pragma region old
 	/*DelegateBase<INT, TYPE_LIST1(INT)> _base(&Test12);
 	_base(10);*/
 	/*DemoAbs12 a11;
 	a11.A = 10;
 	DemoAbs12 a12(a11);*/
 
-
+	//baseclass2::print();
 #pragma region oldcode
 	//DelegateImplBase<INT, INT(*)(INT, INT), INT, INT> del1;
 	//TRACE(typeid(FunctionTraits<INT(INT)>::ParamType).name());
@@ -768,6 +573,11 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_array.Add(obj1);
 	_array.Add(obj2);
 	TRACE("%d\n", &_array[0]);*/
+#pragma endregion
+
+	Base2* base2 = new Base2();
+	base2->CallPrintABC();
+	delete base2;
 
 	HRESULT hRes = OleInitialize(NULL);
 

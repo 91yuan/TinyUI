@@ -3,6 +3,29 @@
 
 namespace TinyUI
 {
+	RenderClip::RenderClip(HDC hDC, TinyRgn& rgn)
+		:m_hDC(hDC),
+		m_hRGN(rgn.Handle()),
+		m_hClipRGN(NULL)
+	{
+
+	}
+	RenderClip::RenderClip(HDC hDC, TinyRectangle& rect)
+		:m_hDC(hDC),
+		m_hRGN(NULL),
+		m_hClipRGN(NULL)
+	{
+		m_hRGN = CreateRectRgnIndirect(&rect);
+	}
+	RenderClip::~RenderClip()
+	{
+		if (m_hClipRGN != NULL)
+		{
+			::ExtSelectClipRgn(m_hDC, m_hClipRGN, RGN_COPY);
+			SAFE_DELETE_OBJECT(m_hClipRGN);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
 	TinyGraphicsRender::TinyGraphicsRender(TinyDC& dc)
 		:m_dc(dc)
 	{
@@ -12,6 +35,19 @@ namespace TinyUI
 	{
 
 	}
+	BOOL TinyGraphicsRender::GenerateClip(RenderClip& clip)
+	{
+		clip.m_hClipRGN = ::CreateRectRgn(0, 0, 0, 0);
+		if (clip.m_hClipRGN != NULL)
+		{
+			//调用成功
+			if (::GetClipRgn(clip.m_hDC, clip.m_hClipRGN) != 1)
+			{
+				return ::ExtSelectClipRgn(clip.m_hDC, clip.m_hRGN, RGN_AND) != ERROR;
+			}
+		}
+		return FALSE;
+	}
 	void TinyGraphicsRender::DrawShadedRect(TinyRectangle& rect)
 	{
 		WORD bits[] =
@@ -20,16 +56,22 @@ namespace TinyUI
 			0x0055, 0x00AA, 0x0055, 0x00AA
 		};
 		HBITMAP hBitmap = CreateBitmap(8, 8, 1, 1, &bits);
-		HBRUSH hBrush = CreatePatternBrush(hBitmap);
-		HBRUSH hOldBrush = (HBRUSH)m_dc.SelectObject(hBrush);
-		COLORREF backColor = m_dc.SetBkColor(COLOR_3DFACE);
-		COLORREF textColor = m_dc.SetTextColor(COLOR_3DHIGHLIGHT);
-		m_dc.PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATCOPY);
-		m_dc.SelectObject(hOldBrush);
-		m_dc.SetBkColor(backColor);
-		m_dc.SetTextColor(textColor);
-		DeleteObject(hBrush);
-		DeleteObject(hBitmap);
+		if (hBitmap != NULL)
+		{
+			HBRUSH hBrush = CreatePatternBrush(hBitmap);
+			if (hBrush != NULL)
+			{
+				HBRUSH hOldBrush = (HBRUSH)m_dc.SelectObject(hBrush);
+				COLORREF backColor = m_dc.SetBkColor(COLOR_3DFACE);
+				COLORREF textColor = m_dc.SetTextColor(COLOR_3DHIGHLIGHT);
+				m_dc.PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATCOPY);
+				m_dc.SelectObject(hOldBrush);
+				m_dc.SetBkColor(backColor);
+				m_dc.SetTextColor(textColor);
+				DeleteObject(hBrush);
+			}
+			DeleteObject(hBitmap);
+		}
 	}
 	void TinyGraphicsRender::DrawLine(TinyPoint p0, TinyPoint p1)
 	{
