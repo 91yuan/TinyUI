@@ -1215,48 +1215,19 @@ namespace TinyUI
 	}
 #pragma endregion
 	/************************************************************************/
-	/* MenDC                                                                */
-	/************************************************************************/
-	//TinyMenDC::TinyMenDC(HDC hDC, INT cx, INT cy)
-	//	:m_hDC(NULL), m_hOldBitmap(NULL)
-	//{
-	//	ASSERT(hDC);
-	//	//´´½¨ÄÚ´æDC
-	//	HDC hMenDC = ::CreateCompatibleDC(hDC);
-	//	Attach(hMenDC);
-	//	HBITMAP hBitmap = ::CreateCompatibleBitmap(hDC, cx, cy);
-	//	m_hOldBitmap = (HBITMAP)::SelectObject(hMenDC, hBitmap);
-	//}
-	//TinyMenDC::TinyMenDC(HDC hDC, HBITMAP hBitmap)
-	//	:m_hDC(hDC), m_hOldBitmap(NULL)
-	//{
-	//	ASSERT(hDC);
-	//	HDC hMenDC = ::CreateCompatibleDC(hDC);
-	//	Attach(hMenDC);
-	//	m_hOldBitmap = (HBITMAP)::SelectObject(hMenDC, hBitmap);
-	//}
-	//TinyMenDC::~TinyMenDC()
-	//{
-	//	if (m_hOldBitmap != NULL)
-	//	{
-	//		::SelectObject(m_value, m_hOldBitmap);
-	//	}
-	//}
-	//void TinyMenDC::Render(INT destX, INT destY, INT destCX, INT destCY, INT srcX, INT srcY, INT srcCX, INT srcCY, BOOL bAlpha, BYTE Alpha)
-	//{
-	//	if (bAlpha)
-	//	{
-	//		BLENDFUNCTION s = { AC_SRC_OVER, 0, Alpha, 1 };
-	//		::AlphaBlend(m_hDC, destX, destY, destCX, destCY, m_value, srcX, srcY, srcCX, srcCY, s);
-	//	}
-	//	else
-	//	{
-	//		::StretchBlt(m_hDC, destX, destY, destCX, destCY, m_value, srcX, srcY, srcCX, srcCY, SRCCOPY);
-	//	}
-	//}
-	/************************************************************************/
 	/* PEN                                                                  */
 	/************************************************************************/
+	TinyPen::TinyPen()
+	{
+
+	}
+	TinyPen::~TinyPen()
+	{
+		if (m_value != NULL)
+		{
+			::DeleteObject(Detach());
+		}
+	}
 	BOOL TinyPen::CreatePen(INT nPenStyle, INT nWidth, COLORREF crColor)
 	{
 		HPEN hPen = ::CreatePen(nPenStyle, nWidth, crColor);
@@ -1282,13 +1253,6 @@ namespace TinyUI
 		ASSERT(m_value != NULL);
 		return ::GetObject(m_value, sizeof(LOGPEN), pLogPen);
 	}
-	void TinyPen::Destory()
-	{
-		if (m_value != NULL)
-		{
-			::DeleteObject(Detach());
-		}
-	}
 	TinyHandleMap<HPEN>* TinyPen::GetMap() const
 	{
 		return &(TinyApplication::Instance()->GetMapHPEN());
@@ -1296,6 +1260,17 @@ namespace TinyUI
 	/************************************************************************/
 	/* BRUSH                                                                */
 	/************************************************************************/
+	TinyBrush::TinyBrush()
+	{
+
+	}
+	TinyBrush::~TinyBrush()
+	{
+		if (m_value != NULL)
+		{
+			::DeleteObject(Detach());
+		}
+	}
 	BOOL TinyBrush::CreateBrush(COLORREF crColor)
 	{
 		HBRUSH hBrush = ::CreateSolidBrush(crColor);
@@ -1329,16 +1304,20 @@ namespace TinyUI
 		ASSERT(m_value != NULL);
 		return ::GetObject(m_value, sizeof(LOGBRUSH), pLogBrush);
 	}
-	void TinyBrush::Destory()
+	/************************************************************************/
+	/* BITMAP                                                                */
+	/************************************************************************/
+	TinyBitmap::TinyBitmap()
+	{
+
+	}
+	TinyBitmap::~TinyBitmap()
 	{
 		if (m_value != NULL)
 		{
 			::DeleteObject(Detach());
 		}
 	}
-	/************************************************************************/
-	/* BITMAP                                                                */
-	/************************************************************************/
 	BOOL TinyBitmap::CreateBitmap(INT nWidth, INT nHeight, UINT nPlanes, UINT nBitcount, const void* lpBits)
 	{
 		HBITMAP hBitmap = ::CreateBitmap(nWidth, nHeight, nPlanes, nBitcount, lpBits);
@@ -1466,17 +1445,20 @@ namespace TinyUI
 		CloseHandle(hFile);
 		return TRUE;
 	}
-	void TinyBitmap::Destory()
+	/************************************************************************/
+	/* PALETTE                                                              */
+	/************************************************************************/
+	TinyPalette::TinyPalette()
+	{
+
+	}
+	TinyPalette::~TinyPalette()
 	{
 		if (m_value != NULL)
 		{
 			::DeleteObject(Detach());
 		}
 	}
-
-	/************************************************************************/
-	/* PALETTE                                                              */
-	/************************************************************************/
 	BOOL TinyPalette::CreatePalette(LPLOGPALETTE lpLogPalette)
 	{
 		HPALETTE hP = ::CreatePalette(lpLogPalette);
@@ -1519,17 +1501,20 @@ namespace TinyUI
 		ASSERT(m_value != NULL);
 		return ::ResizePalette((HPALETTE)m_value, nNumEntries);
 	}
-	void TinyPalette::Destory()
+	/************************************************************************/
+	/* RGN																	*/
+	/************************************************************************/
+	TinyRgn::TinyRgn()
+	{
+
+	}
+	TinyRgn::~TinyRgn()
 	{
 		if (m_value != NULL)
 		{
 			::DeleteObject(Detach());
 		}
 	}
-
-	/************************************************************************/
-	/* RGN																	*/
-	/************************************************************************/
 	BOOL TinyRgn::CreateRgn(INT x1, INT y1, INT x2, INT y2)
 	{
 		HRGN hRgn = ::CreateRectRgn(x1, y1, x2, y2);
@@ -1575,13 +1560,6 @@ namespace TinyUI
 	{
 		HRGN hRgn = ::ExtCreateRegion(lpXForm, nCount, pRgnData);
 		return Attach(hRgn);
-	}
-	void TinyRgn::Destory()
-	{
-		if (m_value != NULL)
-		{
-			::DeleteObject(Detach());
-		}
 	}
 	INT TinyRgn::GetRegionData(LPRGNDATA lpRgnData, INT nDataSize) const
 	{

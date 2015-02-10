@@ -7,6 +7,11 @@
 /// </summary>
 namespace TinyUI
 {
+#define HANDLETYPE_PEN		1
+#define HANDLETYPE_BRUSH	1
+#define HANDLETYPE_BITMAP	1
+#define HANDLETYPE_PALETTE	1
+
 	//GDI对象
 	class TinySize;
 	class TinyPoint;
@@ -18,7 +23,7 @@ namespace TinyUI
 	class TinyBitmap;
 	class TinyPalette;
 	/// <summary>
-	/// GDI对象类 T是句柄类型
+	/// GDI句柄类
 	/// </summary>
 	template<class T = HANDLE>
 	class TinyGDIHandle : public TinyObject
@@ -27,8 +32,8 @@ namespace TinyUI
 		TinyGDIHandle();
 		T Handle() const;
 		operator T() const;
-		virtual BOOL Attach(T& val);
-		virtual T& Detach();
+		BOOL Attach(T& val);
+		T& Detach();
 		BOOL operator==(const TinyGDIHandle& obj) const;
 		BOOL operator!=(const TinyGDIHandle& obj) const;
 	public:
@@ -108,14 +113,6 @@ namespace TinyUI
 		return _value;
 #pragma warning(pop)
 
-	}
-	template<class T>
-	void TinyGDIHandle<T>::Destory()
-	{
-		if (m_value != NULL)
-		{
-			::DeleteObject(Detach());
-		}
 	}
 	template<class T>
 	TinyHandleMap<T>* TinyGDIHandle<T>::GetMap() const
@@ -394,21 +391,6 @@ namespace TinyUI
 		virtual TinyHandleMap<HDC>* GetMap() const;
 	};
 	/// <summary>
-	/// 内存DC
-	/// </summary>
-	/*class TinyMenDC : public TinyDC
-	{
-	DECLARE_DYNAMIC(TinyMenDC)
-	public:
-	TinyMenDC(HDC hDC, INT cx, INT cy);
-	TinyMenDC(HDC hDC, HBITMAP hBitmap);
-	void Render(INT destX, INT destY, INT destCX, INT destCY, INT srcX, INT srcY, INT srcCX, INT srcCY, BOOL bAlpha = TRUE, BYTE Alpha = 0);
-	virtual ~TinyMenDC();
-	private:
-	HBITMAP m_hOldBitmap;
-	HDC		m_hDC;
-	};*/
-	/// <summary>
 	/// Pen类
 	/// </summary>
 	class TinyPen : public TinyGDIHandle < HPEN >
@@ -424,7 +406,6 @@ namespace TinyUI
 		INT		GetExtLogPen(EXTLOGPEN* pLogPen);
 		INT		GetLogPen(LOGPEN* pLogPen);
 	public:
-		virtual void Destory();
 		virtual TinyHandleMap<HPEN>* GetMap() const;
 	};
 
@@ -444,7 +425,6 @@ namespace TinyUI
 		BOOL	CreateBrush(const void* lpPackedDIB, UINT nUsage);
 		INT		GetLogBrush(LOGBRUSH* pLogBrush);
 	public:
-		virtual void Destory();
 		virtual TinyHandleMap<HBRUSH>* GetMap() const;
 	};
 
@@ -457,6 +437,8 @@ namespace TinyUI
 	public:
 		TinyBitmap();
 		virtual ~TinyBitmap();
+	public:
+
 		BOOL	CreateBitmap(INT nWidth, INT nHeight, UINT nPlanes, UINT nBitcount, const void* lpBits);
 		BOOL	CreateBitmap(LPBITMAP lpBitmap);
 		BOOL	CreateCompatibleBitmap(HDC hDC, INT nWidth, INT nHeight);
@@ -472,7 +454,6 @@ namespace TinyUI
 		INT		GetBitmap(BITMAP* pBitMap);
 		BOOL	Save(LPCTSTR pzSaveFile);
 	public:
-		virtual void Destory();
 		virtual TinyHandleMap<HBITMAP>* GetMap() const;
 	};
 	/// <summary>
@@ -484,6 +465,7 @@ namespace TinyUI
 	public:
 		TinyPalette();
 		virtual ~TinyPalette();
+	public:
 		BOOL CreatePalette(LPLOGPALETTE lpLogPalette);
 		BOOL CreatePalette(HDC hDC);
 		INT	 GetEntryCount();
@@ -493,7 +475,6 @@ namespace TinyUI
 		UINT GetNearestPaletteIndex(COLORREF crColor) const;
 		BOOL ResizePalette(UINT nNumEntries);
 	public:
-		virtual void Destory();
 		virtual TinyHandleMap<HPALETTE>* GetMap() const;
 	};
 	/// <summary>
@@ -505,6 +486,7 @@ namespace TinyUI
 	public:
 		TinyRgn();
 		virtual ~TinyRgn();
+	public:
 		BOOL CreateRgn(INT x1, INT y1, INT x2, INT y2);
 		BOOL CreateRgn(LPCRECT lpRect);
 		BOOL CreateRgn(HDC hDC);
@@ -527,7 +509,6 @@ namespace TinyUI
 		void SetRectRgn(INT x1, INT y1, INT x2, INT y2);
 		void SetRectRgn(LPCRECT lpRect);
 	public:
-		virtual void Destory();
 		virtual TinyHandleMap<HRGN>* GetMap() const;
 	};
 	/// <summary>

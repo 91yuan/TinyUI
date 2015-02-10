@@ -47,9 +47,8 @@ namespace TinyUI
 	/// <summary>
 	///  ±º‰¿‡
 	/// </summary>
-	class TinyTime : public TinyObject
+	class TinyTime
 	{
-		DECLARE_DYNAMIC(TinyTime);
 	public:
 		static TinyTime WINAPI GetCurrentTime() throw();
 		static BOOL WINAPI IsValidFILETIME(const FILETIME& ft) throw();
@@ -108,8 +107,8 @@ namespace TinyUI
 		enum DateTimeSpanStatus
 		{
 			valid = 0,
-			invalid = 1,   
-			null = 2,       
+			invalid = 1,
+			null = 2,
 		};
 
 		double m_span;
@@ -118,15 +117,15 @@ namespace TinyUI
 		void SetStatus(DateTimeSpanStatus status) throw();
 		DateTimeSpanStatus GetStatus() const throw();
 
-		double GetTotalDays() const throw();   
-		double GetTotalHours() const throw();  
+		double GetTotalDays() const throw();
+		double GetTotalHours() const throw();
 		double GetTotalMinutes() const throw();
 		double GetTotalSeconds() const throw();
 
-		LONG GetDays() const throw();     
-		LONG GetHours() const throw();     
-		LONG GetMinutes() const throw();    
-		LONG GetSeconds() const throw();   
+		LONG GetDays() const throw();
+		LONG GetHours() const throw();
+		LONG GetMinutes() const throw();
+		LONG GetSeconds() const throw();
 		TinyOleDateTimeSpan& operator=(double dblSpanSrc) throw();
 
 		bool operator==(const TinyOleDateTimeSpan& dateSpan) const throw();
@@ -160,7 +159,7 @@ namespace TinyUI
 		TinyOleDateTime(__time64_t timeSrc) throw();
 		TinyOleDateTime(const SYSTEMTIME& systimeSrc) throw();
 		TinyOleDateTime(const FILETIME& filetimeSrc) throw();
-		TinyOleDateTime(INT nYear, INT nMonth, INT nDay,INT nHour, INT nMin, INT nSec) throw();
+		TinyOleDateTime(INT nYear, INT nMonth, INT nDay, INT nHour, INT nMin, INT nSec) throw();
 		TinyOleDateTime(WORD wDosDate, WORD wDosTime) throw();
 
 #ifdef __oledb_h__

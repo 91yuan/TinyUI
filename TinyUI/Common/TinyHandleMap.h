@@ -6,7 +6,7 @@ using namespace std;
 namespace TinyUI
 {
 	/// <summary>
-	/// 句柄对象映射类,std::map效率高点
+	/// 句柄和windows对象映射类
 	/// </summary>
 	template<class T = HANDLE>
 	class TinyHandleMap

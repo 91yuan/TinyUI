@@ -3,40 +3,32 @@
 
 namespace TinyUI
 {
-	/// <summary>
-	/// 对象基类
-	/// </summary>
-	class TinyObject
-	{
-	public:
-		TinyObject();
-		virtual ~TinyObject();
-		TinyObject(const TinyObject& other);
-		TinyObject& operator = (const TinyObject& other);
-		void AddRef(const TinyObject& clone);
-		void Release();
-		/// <summary>
-		/// 类型转化的名字
-		/// </summary>
-		virtual LPCTSTR GetClassName() const = 0;
-	protected:
-		/// <summary>
-		/// 使用引用计数前必须先创建
-		/// </summary>
-		virtual TinyReference* CreateReference() const;
-		/// <summary>
-		/// 拷贝引用计数
-		/// </summary>
-		virtual TinyReference* CloneReference(const TinyReference* data) const;
-	protected:
-		TinyReference* m_reference;
-	};
 #define DECLARE_DYNAMIC(class_name) \
 public: \
 	virtual LPCTSTR class_name::GetClassName() const \
-				{ \
+	{ \
 	return #class_name; \
-				};
-
+};
+	/// <summary>
+	/// 对象基类,不允许拷贝和赋值
+	/// </summary>
+	class TinyObject
+	{
+	protected:
+		TinyObject();
+	public:
+		virtual ~TinyObject();
+		virtual LPCTSTR GetClassName() const = 0;
+	public:
+		void* WINAPI operator new(size_t size);
+		void* WINAPI operator new(size_t, void* ps);
+		void WINAPI operator delete(void* ps);
+		void WINAPI operator delete(void* ps, void* place);
+#if defined(_DEBUG)
+		void* WINAPI operator new(size_t size, LPCSTR pzFile, INT line);
+		void WINAPI operator delete(void *ps, LPCSTR pzFile, INT line);
+#endif
+		DISALLOW_COPY_AND_ASSIGN(TinyObject);
+	};
 };
 

@@ -9,8 +9,9 @@ namespace TinyUI
 	/// <summary>
 	/// TinyUI的应用实例
 	/// </summary>
-	class TinyApplication
+	class TinyApplication : public TinyObject
 	{
+		DECLARE_DYNAMIC(TinyApplication)
 	public:
 		TinyApplication();
 		~TinyApplication();

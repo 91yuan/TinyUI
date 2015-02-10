@@ -28,6 +28,10 @@ namespace TinyUI
 	{
 
 	}
+	TinyReference::~TinyReference()
+	{
+
+	}
 	void TinyReference::AddRef()
 	{
 		InterlockedIncrement(&m_cRef);

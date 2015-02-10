@@ -113,16 +113,20 @@ namespace TinyUI
 	(!IsBadStringPtr((ptr), (UINT)-1))
 
 #define DISALLOW_COPY(TypeName) \
+private:\
 	TypeName(const TypeName&)
 
 #define DISALLOW_ASSIGN(TypeName) \
+private:\
 	void operator=(const TypeName&)
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+private:\
 	TypeName(const TypeName&);               \
 	void operator=(const TypeName&)
 
 #define DISALLOW_IMPLICIT_CONSTRUCTORS(TypeName) \
+private:\
 	TypeName();                                    \
 	DISALLOW_COPY_AND_ASSIGN(TypeName)
 
@@ -142,6 +146,7 @@ namespace TinyUI
 	{
 	public:
 		TinyReference();
+		virtual ~TinyReference();
 		/// <summary>
 		/// 获得当前的引用计数
 		/// </summary>
@@ -154,7 +159,7 @@ namespace TinyUI
 		/// 释放
 		/// </summary>
 		void Release();
-	private:
+	protected:
 		LONG	m_cRef;
 	};
 	/// <summary>
@@ -498,4 +503,153 @@ namespace TinyUI
 	{
 		return (_myP == NULL) ? TRUE : FALSE;
 	}
+
+	struct LIST
+	{
+		struct LIST *NEXT;
+		struct LIST *PREV;
+	};
+
+	static inline void LIST_ADD_AFTER(LIST *elem, LIST *to_add)
+	{
+		to_add->NEXT = elem->NEXT;
+		to_add->PREV = elem;
+		elem->NEXT->PREV = to_add;
+		elem->NEXT = to_add;
+	}
+
+	static inline void LIST_ADD_BEFORE(LIST *elem, LIST *to_add)
+	{
+		to_add->NEXT = elem;
+		to_add->PREV = elem->PREV;
+		elem->PREV->NEXT = to_add;
+		elem->PREV = to_add;
+	}
+
+	static inline void LIST_ADD_HEAD(LIST *list, LIST *elem)
+	{
+		LIST_ADD_AFTER(list, elem);
+	}
+
+	static inline void LIST_ADD_TAIL(LIST *list, LIST *elem)
+	{
+		LIST_ADD_BEFORE(list, elem);
+	}
+
+	static inline void LIST_REMOVE(LIST *elem)
+	{
+		elem->NEXT->PREV = elem->PREV;
+		elem->PREV->NEXT = elem->NEXT;
+	}
+
+	static inline struct LIST *LIST_NEXT(const LIST *list, const LIST *elem)
+	{
+		struct LIST *ret = elem->NEXT;
+		if (elem->NEXT == list) ret = NULL;
+		return ret;
+	}
+
+	static inline struct LIST *LIST_PREV(const LIST *list, const LIST *elem)
+	{
+		struct LIST *ret = elem->PREV;
+		if (elem->PREV == list) ret = NULL;
+		return ret;
+	}
+
+	static inline struct LIST *LIST_HEAD(const  LIST *list)
+	{
+		return LIST_NEXT(list, list);
+	}
+
+	static inline struct LIST *LIST_TAIL(const  LIST *list)
+	{
+		return LIST_PREV(list, list);
+	}
+
+	static inline int LIST_EMPTY(const  LIST *list)
+	{
+		return list->NEXT == list;
+	}
+
+	static inline void LIST_INIT( LIST *list)
+	{
+		list->NEXT = list->PREV = list;
+	}
+
+	static inline unsigned int LIST_COUNT(const  LIST *list)
+	{
+		unsigned count = 0;
+		const LIST *ps = NULL;
+		for (ps = list->NEXT; ps != list; ps = ps->NEXT) count++;
+		return count;
+	}
+
+	static inline void LIST_MOVE_TAIL(struct LIST *dst, struct LIST *src)
+	{
+		if (LIST_EMPTY(src)) return;
+
+		dst->PREV->NEXT = src->NEXT;
+		src->NEXT->PREV = dst->PREV;
+		dst->PREV = src->PREV;
+		src->PREV->NEXT = dst;
+		LIST_INIT(src);
+	}
+
+	static inline void LIST_MOVE_HEAD(struct LIST *dst, struct LIST *src)
+	{
+		if (LIST_EMPTY(src)) return;
+
+		dst->NEXT->PREV = src->PREV;
+		src->PREV->NEXT = dst->NEXT;
+		dst->NEXT = src->NEXT;
+		src->NEXT->PREV = dst;
+		LIST_INIT(src);
+	}
+
+#define LIST_FOR_EACH(cursor,list) \
+	for ((cursor) = (list)->NEXT; (cursor) != (list); (cursor) = (cursor)->NEXT)
+
+#define LIST_FOR_EACH_SAFE(cursor, cursor2, list) \
+	for ((cursor) = (list)->NEXT, (cursor2) = (cursor)->NEXT; \
+	(cursor) != (list); \
+	(cursor) = (cursor2), (cursor2) = (cursor)->NEXT)
+
+#define LIST_FOR_EACH_ENTRY(elem, list, type, field) \
+	for ((elem) = LIST_ENTRY((list)->NEXT, type, field); \
+	&(elem)->field != (list); \
+	(elem) = LIST_ENTRY((elem)->field.NEXT, type, field))
+
+#define LIST_FOR_EACH_ENTRY_SAFE(cursor, cursor2, list, type, field) \
+	for ((cursor) = LIST_ENTRY((list)->NEXT, type, field), \
+	(cursor2) = LIST_ENTRY((cursor)->field.NEXT, type, field); \
+	&(cursor)->field != (list); \
+	(cursor) = (cursor2), \
+	(cursor2) = LIST_ENTRY((cursor)->field.NEXT, type, field))
+
+#define LIST_FOR_EACH_REV(cursor,list) \
+	for ((cursor) = (list)->PREV; (cursor) != (list); (cursor) = (cursor)->PREV)
+
+#define LIST_FOR_EACH_SAFE_REV(cursor, cursor2, list) \
+	for ((cursor) = (list)->PREV, (cursor2) = (cursor)->PREV; \
+	(cursor) != (list); \
+	(cursor) = (cursor2), (cursor2) = (cursor)->PREV)
+
+#define LIST_FOR_EACH_ENTRY_REV(elem, list, type, field) \
+	for ((elem) = LIST_ENTRY((list)->PREV, type, field); \
+	&(elem)->field != (list); \
+	(elem) = LIST_ENTRY((elem)->field.PREV, type, field))
+
+#define LIST_FOR_EACH_ENTRY_SAFE_REV(cursor, cursor2, list, type, field) \
+	for ((cursor) = LIST_ENTRY((list)->PREV, type, field), \
+	(cursor2) = LIST_ENTRY((cursor)->field.PREV, type, field); \
+	&(cursor)->field != (list); \
+	(cursor) = (cursor2), \
+	(cursor2) = LIST_ENTRY((cursor)->field.PREV, type, field))
+
+#undef LIST_INIT
+#define LIST_INIT(list)  { &(list), &(list) }
+
+#undef LIST_ENTRY
+#define LIST_ENTRY(elem, type, field) \
+	((type *)((char *)(elem)-offsetof(type, field)))
 };
