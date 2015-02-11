@@ -50,5 +50,8 @@ namespace TinyUI
 	protected:
 		//»º³åµÄÑùÊ½
 		TinySize m_size;
+	private:
+		TinyButton btn1;
+		TinyButton btn2;
 	};
 }

@@ -575,9 +575,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TRACE("%d\n", &_array[0]);*/
 #pragma endregion
 
-	Base2* base2 = new Base2();
-	base2->CallPrintABC();
-	delete base2;
+	//Base2* base2 = new Base2();
+	//base2->CallPrintABC();
+	//delete base2;
 
 	HRESULT hRes = OleInitialize(NULL);
 

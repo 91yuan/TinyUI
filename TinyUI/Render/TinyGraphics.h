@@ -41,7 +41,6 @@ namespace TinyUI
 		static TinyGDIHandle* Lookup(T& _value);
 	public:
 		virtual TinyHandleMap<T>* GetMap() const;
-		virtual void Destory();//子类重载实现,子类自己实现逻辑去释放资源
 		virtual ~TinyGDIHandle();
 	};
 	template<class T>
@@ -53,7 +52,7 @@ namespace TinyUI
 	template<class T>
 	TinyGDIHandle<T>::~TinyGDIHandle()
 	{
-		Destory();
+
 	}
 	template<class T>
 	T TinyGDIHandle<T>::Handle() const
@@ -387,7 +386,6 @@ namespace TinyUI
 		void Draw3dRect(LPCRECT lpRect, COLORREF clrTopLeft, COLORREF clrBottomRight);
 		void Draw3dRect(INT x, INT y, INT cx, INT cy, COLORREF clrTopLeft, COLORREF clrBottomRight);
 	public:
-		virtual void Destory();
 		virtual TinyHandleMap<HDC>* GetMap() const;
 	};
 	/// <summary>

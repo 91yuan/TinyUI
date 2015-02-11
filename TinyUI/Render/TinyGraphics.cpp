@@ -43,13 +43,6 @@ namespace TinyUI
 		return Attach(hAttribDC);
 	}
 
-	void TinyDC::Destory()
-	{
-		if (m_value != NULL)
-		{
-			::DeleteDC(Detach());
-		}
-	}
 	INT TinyDC::ExcludeUpdateRgn(HWND hWnd)
 	{
 		ASSERT(m_value != NULL);

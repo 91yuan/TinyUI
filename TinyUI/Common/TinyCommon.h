@@ -114,16 +114,16 @@ namespace TinyUI
 
 #define DISALLOW_COPY(TypeName) \
 private:\
-	TypeName(const TypeName&)
+	TypeName(const TypeName&);
 
 #define DISALLOW_ASSIGN(TypeName) \
 private:\
-	void operator=(const TypeName&)
+	void operator=(const TypeName&);
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
 private:\
 	TypeName(const TypeName&);               \
-	void operator=(const TypeName&)
+	void operator=(const TypeName&);
 
 #define DISALLOW_IMPLICIT_CONSTRUCTORS(TypeName) \
 private:\
@@ -645,9 +645,6 @@ private:\
 	&(cursor)->field != (list); \
 	(cursor) = (cursor2), \
 	(cursor2) = LIST_ENTRY((cursor)->field.PREV, type, field))
-
-#undef LIST_INIT
-#define LIST_INIT(list)  { &(list), &(list) }
 
 #undef LIST_ENTRY
 #define LIST_ENTRY(elem, type, field) \

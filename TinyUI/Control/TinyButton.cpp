@@ -22,7 +22,7 @@ namespace TinyUI
 	};
 	DWORD TinyButton::RetrieveStyle()
 	{
-		return (WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_NOTIFY);
+		return (WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_NOTIFY | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 	}
 	DWORD TinyButton::RetrieveExStyle()
 	{

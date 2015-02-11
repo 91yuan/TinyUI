@@ -46,7 +46,8 @@ namespace TinyUI
 	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-
+		btn1.Create(m_hWND, 10, 10, 200, 30);
+		btn2.Create(m_hWND, 25, 25, 200, 30);
 		return TRUE;
 	}
 
