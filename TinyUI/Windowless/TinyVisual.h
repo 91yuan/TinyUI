@@ -11,10 +11,12 @@ namespace TinyUI
 #define VS_VISIBLE          0x10000000L
 #define VS_DISABLED         0x08000000L
 #define VS_TOPMOST			0x00000008L
-#define VISUAL_TOP       ((Visual*)1L)
-#define VISUAL_BOTTOM    ((Visual*)2L)
-#define VISUAL_TOPMOST   ((Visual*)3L)
-#define VISUAL_NOTOPMOST ((Visual*)4L)
+#define VS_CLIPSIBLINGS     0x04000000L
+#define VS_CLIPCHILDREN     0x02000000L
+#define VISUAL_TOP			((Visual*)1L)
+#define VISUAL_BOTTOM		((Visual*)2L)
+#define VISUAL_TOPMOST		((Visual*)3L)
+#define VISUAL_NOTOPMOST	((Visual*)4L)
 	typedef struct tagVisual
 	{
 		tagVisual*		parent;
@@ -22,7 +24,8 @@ namespace TinyUI
 		LIST			children;//子元素
 		UINT			zorder;//层叠元素的z->顺序,zorder越大越先显示
 		UINT			style;//元素风格
-		RECT			window_rectangle;//元素矩形
+		RECT			window_rectangle;//元素矩形相对于屏幕
+		RECT			client_rectangle;//客户端矩形
 		RECT			visible_rectangle;//可见的矩形
 		HRGN			region;//可见区域
 		LIST			entry;//占位符根据这个变量指针获取整个结构体指针
@@ -52,7 +55,13 @@ namespace TinyUI
 		static inline HRGN GetVisibleRegion(const Visual* val, UINT flags);
 		static inline BOOL PtInVisual(const Visual* val, INT x, INT y);
 		static inline BOOL SetRegion(Visual *val, HRGN region, INT redraw);
+		static inline Visual* GetTopClippingVisual(Visual *val);
+		static inline BOOL IntersectRegion(HRGN hRgn, Visual *val);
 		static BOOL SetVisualPos(Visual* val, Visual* previous, UINT swpFlags);
+		static HRGN	GetVisibleRegion(Visual* val, UINT flags);
+		static BOOL ClipChildren(Visual *parent, Visual *last, HRGN hRgn, INT offset_x, INT offset_y);
+		static inline void MirrorRectangle(const RECT *client_rect, RECT *rect);
+		static inline INT IntersectRectangle(RECT *dst, const RECT *src1, const RECT *src2);
 	protected:
 		Visual m_visual;
 	};

@@ -43,14 +43,6 @@ namespace TinyUI
 		return (WS_EX_LEFT | WS_EX_RIGHTSCROLLBAR | WS_EX_OVERLAPPEDWINDOW | WS_EX_TOPMOST);
 	}
 
-	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		btn1.Create(m_hWND, 10, 10, 200, 30);
-		btn2.Create(m_hWND, 25, 25, 200, 30);
-		return TRUE;
-	}
-
 	LPCSTR TinyFrameUI::RetrieveClassName()
 	{
 		return TEXT("FramwUI");
@@ -108,6 +100,23 @@ namespace TinyUI
 				window_bounds.bottom - window_bounds.top,
 				SWP_NOACTIVATE | SWP_NOZORDER);
 		}
+	}
+	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		btn1.Create(m_hWND, 10, 10, 200, 30);
+		RECT rect = { 0 };
+		GetClientRect(btn1, &rect);
+		HRGN hRgn = CreateRoundRectRgn(rect.left + 3, rect.top + 3, rect.right - 3, rect.bottom - 3, 5, 5);
+		SetWindowRgn(btn1, hRgn, TRUE);
+		DeleteObject(hRgn);
+		RECT rect1 = { 0 };
+		RECT rect2 = { 0 };
+		GetClientRect(btn1, &rect1);
+		GetWindowRect(btn1, &rect2);
+		//intersect_rect(&rect, &rect2, &rect1);
+		BOOL a = IntersectRect1(&rect, &rect2, &rect1);
+		return TRUE;
 	}
 
 	LRESULT TinyFrameUI::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
