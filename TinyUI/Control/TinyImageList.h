@@ -4,13 +4,13 @@
 
 namespace TinyUI
 {
-	class TinyImageList : public TinyObject
+	class TinyImageList : public TinyHandleHIMAGELIST, public TinyObject
 	{
 		DECLARE_DYNAMIC(TinyImageList)
 	public:
 		TinyImageList();
 		virtual ~TinyImageList();
-		static TinyImageList* PASCAL FromHandle(HIMAGELIST hImageList);
+
 		BOOL Create(INT cx, INT cy, UINT nFlags, INT nInitial, INT nGrow);
 		BOOL Create(UINT nBitmapID, INT cx, INT nGrow, COLORREF crMask);
 		BOOL Create(LPCTSTR lpszBitmapID, INT cx, INT nGrow, COLORREF crMask);
@@ -18,9 +18,6 @@ namespace TinyUI
 		BOOL Create(TinyImageList* pImageList);
 		BOOL Attach(HIMAGELIST hImageList);
 		HIMAGELIST Detach();
-
-		operator HIMAGELIST() const;
-		HIMAGELIST Handle() const;
 
 		INT GetImageCount() const;
 		COLORREF SetBkColor(COLORREF cr);
@@ -59,8 +56,6 @@ namespace TinyUI
 		static TinyImageList* PASCAL GetDragImage(LPPOINT lpPoint, LPPOINT lpPointHotSpot);
 		static BOOL PASCAL DragEnter(HWND pWndLock, TinyPoint point);
 		static BOOL PASCAL DragLeave(HWND pWndLock);
-	private:
-		HIMAGELIST m_hImageList;
 	};
 }
 

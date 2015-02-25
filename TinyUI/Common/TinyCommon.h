@@ -44,6 +44,10 @@ namespace TinyUI
 #define ASSUME(expr) do { ASSERT(expr); __analysis_assume(!!(expr)); } while(0)
 #endif // ASSUME
 
+#ifndef COMPILE_ASSERT
+#define COMPILE_ASSERT(exp, name) typedef int dummy##name [(exp) ? 1 : -1]
+#endif
+
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(p)  { if (p) { delete (p);  (p)=NULL; } }
 #endif    
@@ -504,6 +508,7 @@ private:\
 		return (_myP == NULL) ? TRUE : FALSE;
 	}
 
+	//////////////////////////////////////////////////////////////////////////
 	struct LIST
 	{
 		struct LIST *NEXT;

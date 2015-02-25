@@ -113,18 +113,6 @@ namespace TinyUI
 		}
 		return (INT_PTR)bRet;
 	}
-	TinyDialog::operator HWND() const
-	{
-		return this == NULL ? NULL : m_hWND;
-	}
-	BOOL TinyDialog::operator == (const TinyDialog& wnd) const
-	{
-		return ((HWND)wnd) == m_hWND;
-	}
-	BOOL TinyDialog::operator != (const TinyDialog& wnd) const
-	{
-		return ((HWND)wnd) != m_hWND;
-	}
 	BOOL TinyDialog::Create(HWND hParent, LPCTSTR lpTemplateName)
 	{
 		this->m_pTemplateName = lpTemplateName;
@@ -137,12 +125,8 @@ namespace TinyUI
 			return NULL;
 		}
 		m_bModal = FALSE;
-		HWND hWnd = ::CreateDialogParam(TinyApplication::Instance()->Handle(), lpTemplateName, hParent, TinyDialog::BeginLoop, (LPARAM)this);
-		if (hWnd == NULL)
-			return FALSE;
-		m_hWND = hWnd;
-		TinyApplication::Instance()->GetMapHWND().AddHandle(m_hWND, this);
-		return TRUE;
+		HWND hWND = ::CreateDialogParam(TinyApplication::Instance()->Handle(), lpTemplateName, hParent, TinyDialog::BeginLoop, (LPARAM)this);
+		return Attach(hWND);
 	}
 	BOOL TinyDialog::Create(HWND hParent, WORD wInteger)
 	{
@@ -190,24 +174,20 @@ namespace TinyUI
 		ASSERT(::IsWindow(m_hWND));
 		return ::MapDialogRect(m_hWND, lpRect);
 	}
-
 	BOOL TinyDialog::EndDialog()
 	{
 		ASSERT(::IsWindow(m_hWND));
-		TinyApplication::Instance()->GetMapHWND().RemoveHandle(m_hWND);
-		return ::EndDialog(m_hWND, m_iDlgResult);
+		return ::EndDialog(Detach(), m_iDlgResult);
 	}
 	BOOL TinyDialog::EndDialog(INT_PTR m_DlgResult)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		TinyApplication::Instance()->GetMapHWND().RemoveHandle(m_hWND);
-		return ::EndDialog(m_hWND, m_DlgResult);
+		return ::EndDialog(Detach(), m_DlgResult);
 	}
 	BOOL TinyDialog::EndDialog(HWND hWnd, INT_PTR m_DlgResult)
 	{
 		ASSERT(::IsWindow(hWnd));
-		TinyApplication::Instance()->GetMapHWND().RemoveHandle(hWnd);
-		return ::EndDialog(hWnd, m_DlgResult);
+		return ::EndDialog(Detach(), m_DlgResult);
 	}
 	BOOL TinyDialog::IsModal() const throw()
 	{
@@ -219,12 +199,7 @@ namespace TinyUI
 	}
 	BOOL TinyDialog::DestroyWindow()
 	{
-		if (m_hWND != NULL)
-		{
-			TinyApplication::Instance()->GetMapHWND().RemoveHandle(m_hWND);
-			return ::DestroyWindow(m_hWND);
-		}
-		return FALSE;
+		return ::DestroyWindow(Detach());
 	}
 }
 

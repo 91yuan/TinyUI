@@ -104,18 +104,6 @@ namespace TinyUI
 	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		btn1.Create(m_hWND, 10, 10, 200, 30);
-		RECT rect = { 0 };
-		GetClientRect(btn1, &rect);
-		HRGN hRgn = CreateRoundRectRgn(rect.left + 3, rect.top + 3, rect.right - 3, rect.bottom - 3, 5, 5);
-		SetWindowRgn(btn1, hRgn, TRUE);
-		DeleteObject(hRgn);
-		RECT rect1 = { 0 };
-		RECT rect2 = { 0 };
-		GetClientRect(btn1, &rect1);
-		GetWindowRect(btn1, &rect2);
-		//intersect_rect(&rect, &rect2, &rect1);
-		BOOL a = IntersectRect1(&rect, &rect2, &rect1);
 		return TRUE;
 	}
 

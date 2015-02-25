@@ -16,18 +16,6 @@ namespace TinyUI
 	TinyWindow::~TinyWindow()
 	{
 	};
-	TinyWindow::operator HWND() const
-	{
-		return this == NULL ? NULL : m_hWND;
-	}
-	BOOL TinyWindow::operator == (const TinyWindow& wnd) const
-	{
-		return ((HWND)wnd) == m_hWND;
-	}
-	BOOL TinyWindow::operator != (const TinyWindow& wnd) const
-	{
-		return ((HWND)wnd) != m_hWND;
-	}
 	LRESULT TinyWindow::DefWindowProc()
 	{
 		const TinyMsg* pMsg = m_pCurrentMsg;
@@ -46,7 +34,7 @@ namespace TinyUI
 	}
 	LPCSTR TinyWindow::RetrieveClassName()
 	{
-		return TEXT("TinyWindowClass");
+		return TEXT("TinyWindow");
 	}
 	HICON TinyWindow::RetrieveIcon()
 	{
@@ -131,20 +119,11 @@ namespace TinyUI
 		HWND hWND = ::CreateWindowEx(cs.dwExStyle, lpszClass, cs.lpszName,
 			cs.style, cs.x, cs.y, cs.cx, cs.cy, cs.hwndParent,
 			cs.hMenu, cs.hInstance, cs.lpCreateParams);
-		if (hWND == NULL)
-			return FALSE;
-		m_hWND = hWND;
-		TinyApplication::Instance()->GetMapHWND().AddHandle(m_hWND, this);
-		return TRUE;
+		return Attach(hWND);
 	};
 	BOOL TinyWindow::DestroyWindow()
 	{
-		if (m_hWND != NULL)
-		{
-			TinyApplication::Instance()->GetMapHWND().RemoveHandle(m_hWND);
-			return ::DestroyWindow(m_hWND);
-		}
-		return FALSE;
+		return ::DestroyWindow(Detach());
 	}
 	void TinyWindow::PreSubclassWindow()
 	{
@@ -152,8 +131,8 @@ namespace TinyUI
 	}
 	BOOL TinyWindow::SubclassWindow(HWND hWnd)
 	{
-		PreSubclassWindow();
 		ASSERT(::IsWindow(hWnd));
+		PreSubclassWindow();
 		BOOL result = m_thunk.Initialize(TinyWindow::EndLoop, this);
 		if (result == FALSE) return FALSE;
 		WNDPROC hProc = m_thunk.GetWNDPROC();
@@ -169,8 +148,8 @@ namespace TinyUI
 	}
 	BOOL TinyWindow::SubclassDlgItem(UINT nID, HWND hDlg)
 	{
-		PreSubclassDlgItem();
 		ASSERT(::IsWindow(hDlg));
+		PreSubclassDlgItem();
 		HWND hItem = ::GetDlgItem(hDlg, nID);
 		if (hItem == NULL) return FALSE;
 		return SubclassWindow(hItem);
@@ -229,18 +208,18 @@ namespace TinyUI
 			{
 			case WM_CREATE:
 			{
-				TinyMessageLoop* pLoop = TinyApplication::Instance()->GetMessageLoop();
-				ASSERT(pLoop != NULL);
-				pLoop->AddMessageFilter(_this);
+							  TinyMessageLoop* pLoop = TinyApplication::Instance()->GetMessageLoop();
+							  ASSERT(pLoop != NULL);
+							  pLoop->AddMessageFilter(_this);
 			}
-			break;
+				break;
 			case WM_DESTROY:
 			{
-				TinyMessageLoop* pLoop = TinyApplication::Instance()->GetMessageLoop();
-				ASSERT(pLoop != NULL);
-				pLoop->RemoveMessageFilter(_this);
+							   TinyMessageLoop* pLoop = TinyApplication::Instance()->GetMessageLoop();
+							   ASSERT(pLoop != NULL);
+							   pLoop->RemoveMessageFilter(_this);
 			}
-			break;
+				break;
 			default:
 				break;
 			}
@@ -288,9 +267,8 @@ namespace TinyUI
 	{
 
 	}
-
 	BOOL TinyWindow::PreTranslateMessage(MSG* pMsg)
 	{
 		return FALSE;
 	}
-}
+};

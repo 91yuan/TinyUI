@@ -17,15 +17,15 @@ namespace TinyUI
 #define VISUAL_BOTTOM		((Visual*)2L)
 #define VISUAL_TOPMOST		((Visual*)3L)
 #define VISUAL_NOTOPMOST	((Visual*)4L)
+
+	DECLARE_HANDLE(HELM);
+
 	typedef struct tagVisual
 	{
-		tagVisual*		parent;
-		tagVisual*		last_active;//激活的元素
-		LIST			children;//子元素
-		UINT			zorder;//层叠元素的z->顺序,zorder越大越先显示
+		tagVisual*		parent;//父元素
+		LIST			children;//子元素列表
 		UINT			style;//元素风格
-		RECT			window_rectangle;//元素矩形相对于屏幕
-		RECT			client_rectangle;//客户端矩形
+		RECT			window_rectangle;//元素矩形
 		RECT			visible_rectangle;//可见的矩形
 		HRGN			region;//可见区域
 		LIST			entry;//占位符根据这个变量指针获取整个结构体指针
@@ -38,32 +38,17 @@ namespace TinyUI
 		DECLARE_DYNAMIC(TinyVisual)
 	public:
 		TinyVisual();
+	public:
 		virtual ~TinyVisual();
 	public:
-		virtual void Render(HDC hDC);
-
-		//静态
 		static inline Visual* GetNextVisual(Visual *val);
 		static inline Visual* GetPrevVisual(Visual *val);
 		static inline Visual* GetFirstChild(Visual *val);
 		static inline Visual* GetLastChild(Visual *val);
-		static void LinkVisual(Visual* val, Visual* previous);
-		static BOOL SetParent(Visual *val, Visual *parent);
+		static inline BOOL IsTop(const Visual *val);
 		static inline BOOL IsVisible(const Visual *val);
-		static inline BOOL	IsTop(const Visual *val);
-		static inline BOOL GetVisibleRectangle(const Visual* val, TinyRectangle& rect);
-		static inline HRGN GetVisibleRegion(const Visual* val, UINT flags);
-		static inline BOOL PtInVisual(const Visual* val, INT x, INT y);
-		static inline BOOL SetRegion(Visual *val, HRGN region, INT redraw);
-		static inline Visual* GetTopClippingVisual(Visual *val);
-		static inline BOOL IntersectRegion(HRGN hRgn, Visual *val);
-		static BOOL SetVisualPos(Visual* val, Visual* previous, UINT swpFlags);
-		static HRGN	GetVisibleRegion(Visual* val, UINT flags);
-		static BOOL ClipChildren(Visual *parent, Visual *last, HRGN hRgn, INT offset_x, INT offset_y);
-		static inline void MirrorRectangle(const RECT *client_rect, RECT *rect);
-		static inline INT IntersectRectangle(RECT *dst, const RECT *src1, const RECT *src2);
-	protected:
-		Visual m_visual;
+		static BOOL	SetParent(Visual* val, Visual* parent);
+		static BOOL	SetVisualPos(Visual* val, Visual* valAfter, INT X, INT Y, INT cx, INT cy, UINT uFlags);
 	};
 }
 

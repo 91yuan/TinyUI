@@ -10,7 +10,7 @@ namespace TinyUI
 	/// <summary>
 	/// Msg∂‘œÛ
 	/// </summary>
-	class TinyMsg : public MSG
+	class TINY_NO_VTABLE TinyMsg : public MSG
 	{
 	public:
 		INT cbSize;

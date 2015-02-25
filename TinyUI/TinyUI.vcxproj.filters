@@ -216,9 +216,6 @@
     <ClInclude Include="Windowless\TinyVisual.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Common\TinyTree.h">
-      <Filter>头文件\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Windowless\TinyVisualHWND.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
@@ -233,6 +230,9 @@
     </ClInclude>
     <ClInclude Include="Windowless\TinyLayout.h">
       <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\TinyTree.h">
+      <Filter>头文件\Control</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -395,9 +395,6 @@
     <ClCompile Include="Windowless\TinyVisual.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Common\TinyTree.cpp">
-      <Filter>源文件\Common</Filter>
-    </ClCompile>
     <ClCompile Include="Windowless\TinyVisualHWND.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
@@ -412,6 +409,9 @@
     </ClCompile>
     <ClCompile Include="Windowless\TinyLayout.cpp">
       <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\TinyTree.cpp">
+      <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

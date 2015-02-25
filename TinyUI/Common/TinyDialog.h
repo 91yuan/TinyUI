@@ -7,10 +7,7 @@
 
 namespace TinyUI
 {
-	/// <summary>
-	/// ∂‘ª∞øÚ¿‡
-	/// </summary>
-	class TinyDialog : public TinyWindowMsg, public TinyMessageFilter
+	class TinyDialog : public TinyHandleHWND, public TinyObject
 	{
 		DECLARE_DYNAMIC(TinyDialog)
 	protected:
@@ -33,9 +30,6 @@ namespace TinyUI
 	public:
 		TinyDialog();
 		virtual ~TinyDialog();
-		operator HWND() const;
-		BOOL operator==(const TinyDialog& wnd) const;
-		BOOL operator!=(const TinyDialog& wnd) const;
 		virtual BOOL Create(HWND hParent, WORD wInteger);
 		virtual BOOL Create(HWND hParent, LPCTSTR lpTemplateName);
 		virtual INT_PTR DoModal(HWND hParent = ::GetActiveWindow(), WORD wInteger = 0);

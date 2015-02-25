@@ -1,8 +1,9 @@
 #pragma once
-#include "TinyControl.h"
 #include "TinyButton.h"
-#include "../Render/TinyImage.h"
+#include "TinyControl.h"
 #include "TinyListBox.h"
+#include "../Render/TinyImage.h"
+#include "../Windowless/TinyVisual.h"
 
 namespace TinyUI
 {
@@ -50,8 +51,7 @@ namespace TinyUI
 	protected:
 		//»º³åµÄÑùÊ½
 		TinySize m_size;
-	private:
-		TinyButton btn1;
-		TinyButton btn2;
+	public:
+		TinyVisual m_visual;
 	};
 }

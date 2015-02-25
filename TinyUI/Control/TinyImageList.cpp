@@ -4,7 +4,6 @@
 namespace TinyUI
 {
 	TinyImageList::TinyImageList()
-		:m_hImageList(NULL)
 	{
 
 	}
@@ -12,33 +11,7 @@ namespace TinyUI
 	{
 		DeleteImageList();
 	}
-	TinyImageList* PASCAL TinyImageList::FromHandle(HIMAGELIST hImageList)
-	{
-		TinyImageList* pImageList = static_cast<TinyImageList*>(TinyApplication::Instance()->GetMapHIMAGELIST().FromHandle(hImageList));
-		ASSERT(pImageList == NULL || pImageList->m_hImageList == hImageList);
-		return pImageList;
-	}
-	BOOL TinyImageList::Attach(HIMAGELIST hImageList)
-	{
-		ASSERT(m_hImageList == NULL);
-		if (hImageList == NULL)
-		{
-			return FALSE;
-		}
-		m_hImageList = hImageList;
-		TinyApplication::Instance()->GetMapHIMAGELIST().AddHandle(m_hImageList, this);
-		return TRUE;
-	}
-	HIMAGELIST TinyImageList::Detach()
-	{
-		HIMAGELIST hImageList = m_hImageList;
-		if (hImageList != NULL)
-		{
-			TinyApplication::Instance()->GetMapHIMAGELIST().RemoveHandle(m_hImageList);
-		}
-		m_hImageList = NULL;
-		return hImageList;
-	}
+	
 	BOOL TinyImageList::Create(INT cx, INT cy, UINT nFlags, INT nInitial, INT nGrow)
 	{
 		return Attach(::ImageList_Create(cx, cy, nFlags, nInitial, nGrow));
@@ -46,7 +19,7 @@ namespace TinyUI
 
 	BOOL TinyImageList::Create(TinyImageList& imagelist1, INT nImage1, TinyImageList& imagelist2, INT nImage2, INT dx, INT dy)
 	{
-		return Attach(::ImageList_Merge(imagelist1.m_hImageList, nImage1, imagelist2.m_hImageList, nImage2, dx, dy));
+		return Attach(::ImageList_Merge(imagelist1.m_hIMAGELIST, nImage1, imagelist2.m_hIMAGELIST, nImage2, dx, dy));
 	}
 	BOOL TinyImageList::Create(UINT nBitmapID, INT cx, INT nGrow, COLORREF crMask)
 	{
@@ -56,102 +29,95 @@ namespace TinyUI
 	{
 		return Attach(::ImageList_LoadBitmap(TinyApplication::Instance()->Handle(), lpszBitmapID, cx, nGrow, crMask));
 	}
-	TinyImageList::operator HIMAGELIST() const
-	{
-		return m_hImageList;
-	}
-	HIMAGELIST TinyImageList::Handle() const
-	{
-		return (this == NULL) ? NULL : m_hImageList;
-	}
+
 	INT TinyImageList::GetImageCount() const
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_GetImageCount(m_hImageList);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_GetImageCount(m_hIMAGELIST);
 	}
 	INT TinyImageList::Add(HBITMAP hBmImage, HBITMAP hBmMask)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_Add(m_hImageList, hBmImage, hBmMask);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_Add(m_hIMAGELIST, hBmImage, hBmMask);
 	}
 	INT TinyImageList::Add(HBITMAP hBmImage, COLORREF crMask)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_AddMasked(m_hImageList, hBmImage, crMask);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_AddMasked(m_hIMAGELIST, hBmImage, crMask);
 	}
 	BOOL TinyImageList::Remove(INT nImage)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_Remove(m_hImageList, nImage);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_Remove(m_hIMAGELIST, nImage);
 	}
 	BOOL TinyImageList::Replace(INT nImage, HBITMAP hBmImage, HBITMAP hBmMask)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_Replace(m_hImageList, nImage, hBmImage, hBmMask);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_Replace(m_hIMAGELIST, nImage, hBmImage, hBmMask);
 	}
 	INT TinyImageList::Add(HICON hIcon)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_AddIcon(m_hImageList, hIcon);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_AddIcon(m_hIMAGELIST, hIcon);
 	}
 	INT TinyImageList::Replace(INT nImage, HICON hIcon)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_ReplaceIcon(m_hImageList, nImage, hIcon);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_ReplaceIcon(m_hIMAGELIST, nImage, hIcon);
 	}
 	HICON TinyImageList::ExtractIcon(INT nImage)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_ExtractIcon(NULL, m_hImageList, nImage);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_ExtractIcon(NULL, m_hIMAGELIST, nImage);
 	}
 	BOOL TinyImageList::Draw(HDC hDC, INT nImage, POINT pt, UINT nStyle)
 	{
-		ASSERT(m_hImageList != NULL);
+		ASSERT(m_hIMAGELIST != NULL);
 		ASSERT(hDC != NULL);
-		return ::ImageList_Draw(m_hImageList, nImage, hDC, pt.x, pt.y, nStyle);
+		return ::ImageList_Draw(m_hIMAGELIST, nImage, hDC, pt.x, pt.y, nStyle);
 	}
 	BOOL TinyImageList::Draw(TinyDC& dc, INT nImage, TinyPoint pt, UINT nStyle)
 	{
-		ASSERT(m_hImageList != NULL);
+		ASSERT(m_hIMAGELIST != NULL);
 		ASSERT(dc != NULL);
-		return ::ImageList_Draw(m_hImageList, nImage, dc, pt.x, pt.y, nStyle);
+		return ::ImageList_Draw(m_hIMAGELIST, nImage, dc, pt.x, pt.y, nStyle);
 	}
 	BOOL TinyImageList::DrawEx(HDC hDC, INT nImage, POINT pt, SIZE sz, COLORREF clrBk, COLORREF clrFg, UINT nStyle)
 	{
-		ASSERT(m_hImageList != NULL);
+		ASSERT(m_hIMAGELIST != NULL);
 		ASSERT(hDC != NULL);
-		return ::ImageList_DrawEx(m_hImageList, nImage, hDC, pt.x, pt.y, sz.cx, sz.cy, clrBk, clrFg, nStyle);
+		return ::ImageList_DrawEx(m_hIMAGELIST, nImage, hDC, pt.x, pt.y, sz.cx, sz.cy, clrBk, clrFg, nStyle);
 	}
 	BOOL TinyImageList::DrawEx(TinyDC& dc, INT nImage, TinyPoint pt, TinySize sz, COLORREF clrBk, COLORREF clrFg, UINT nStyle)
 	{
-		ASSERT(m_hImageList != NULL);
+		ASSERT(m_hIMAGELIST != NULL);
 		ASSERT(dc != NULL);
-		return ::ImageList_DrawEx(m_hImageList, nImage, dc, pt.x, pt.y, sz.cx, sz.cy, clrBk, clrFg, nStyle);
+		return ::ImageList_DrawEx(m_hIMAGELIST, nImage, dc, pt.x, pt.y, sz.cx, sz.cy, clrBk, clrFg, nStyle);
 	}
 	COLORREF TinyImageList::SetBkColor(COLORREF cr)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_SetBkColor(m_hImageList, cr);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_SetBkColor(m_hIMAGELIST, cr);
 	}
 	COLORREF TinyImageList::GetBkColor() const
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_GetBkColor(m_hImageList);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_GetBkColor(m_hIMAGELIST);
 	}
 	BOOL TinyImageList::SetOverlayImage(INT nImage, INT nOverlay)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_SetOverlayImage(m_hImageList, nImage, nOverlay);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_SetOverlayImage(m_hIMAGELIST, nImage, nOverlay);
 	}
 	BOOL TinyImageList::GetImageInfo(INT nImage, IMAGEINFO* pImageInfo) const
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_GetImageInfo(m_hImageList, nImage, pImageInfo);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_GetImageInfo(m_hIMAGELIST, nImage, pImageInfo);
 	}
 	BOOL TinyImageList::BeginDrag(INT nImage, TinyPoint ptHotSpot)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_BeginDrag(m_hImageList, nImage, ptHotSpot.x, ptHotSpot.y);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_BeginDrag(m_hIMAGELIST, nImage, ptHotSpot.x, ptHotSpot.y);
 	}
 	void PASCAL TinyImageList::EndDrag()
 	{
@@ -163,8 +129,8 @@ namespace TinyUI
 	}
 	BOOL TinyImageList::SetDragCursorImage(INT nDrag, TinyPoint ptHotSpot)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_SetDragCursorImage(m_hImageList, nDrag, ptHotSpot.x, ptHotSpot.y);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_SetDragCursorImage(m_hIMAGELIST, nDrag, ptHotSpot.x, ptHotSpot.y);
 	}
 	BOOL PASCAL TinyImageList::DragShowNolock(BOOL bShow)
 	{
@@ -172,7 +138,7 @@ namespace TinyUI
 	}
 	TinyImageList* PASCAL TinyImageList::GetDragImage(LPPOINT lpPoint, LPPOINT lpPointHotSpot)
 	{
-		return TinyImageList::FromHandle(::ImageList_GetDragImage(lpPoint, lpPointHotSpot));
+		return (TinyImageList*)TinyImageList::Lookup(::ImageList_GetDragImage(lpPoint, lpPointHotSpot));
 	}
 	BOOL PASCAL TinyImageList::DragEnter(HWND pWndLock, TinyPoint point)
 	{
@@ -184,21 +150,21 @@ namespace TinyUI
 	}
 	HIMAGELIST TinyImageList::Read(IStream* ps)
 	{
-		ASSERT(m_hImageList == NULL);
+		ASSERT(m_hIMAGELIST == NULL);
 		return::ImageList_Read(ps);
 	}
 
 	BOOL TinyImageList::Write(IStream* ps)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_Write(m_hImageList, ps);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_Write(m_hIMAGELIST, ps);
 	}
 	BOOL TinyImageList::DrawIndirect(IMAGELISTDRAWPARAMS* pimldp)
 	{
-		ASSERT(m_hImageList != NULL);
+		ASSERT(m_hIMAGELIST != NULL);
 		DWORD dwMajor = 0, dwMinor = 0;
 		pimldp->cbSize = sizeof(IMAGELISTDRAWPARAMS);
-		pimldp->himl = m_hImageList;
+		pimldp->himl = m_hIMAGELIST;
 		return ::ImageList_DrawIndirect(pimldp);
 	}
 
@@ -231,35 +197,32 @@ namespace TinyUI
 
 	BOOL TinyImageList::Create(TinyImageList* pImageList)
 	{
-		ASSERT(m_hImageList != NULL);
-		return Attach(::ImageList_Duplicate(pImageList->m_hImageList));
+		ASSERT(m_hIMAGELIST != NULL);
+		return Attach(::ImageList_Duplicate(pImageList->m_hIMAGELIST));
 	}
 
 	BOOL TinyImageList::DeleteImageList()
 	{
-		if (m_hImageList == NULL)
-		{
-			return FALSE;
-		}
+		ASSERT(m_hIMAGELIST != NULL);
 		return ::ImageList_Destroy(Detach());
 	}
 
 	BOOL TinyImageList::SetImageCount(UINT uNewCount)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_SetImageCount(m_hImageList, uNewCount);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_SetImageCount(m_hIMAGELIST, uNewCount);
 	}
 
 	BOOL TinyImageList::Copy(INT iDst, INT iSrc, UINT uFlags /* = ILCF_MOVE */)
 	{
-		ASSERT(m_hImageList != NULL);
-		return ::ImageList_Copy(m_hImageList, iDst, m_hImageList, iSrc, uFlags);
+		ASSERT(m_hIMAGELIST != NULL);
+		return ::ImageList_Copy(m_hIMAGELIST, iDst, m_hIMAGELIST, iSrc, uFlags);
 	}
 
 	BOOL TinyImageList::Copy(INT iDst, TinyImageList* pSrc, INT iSrc, UINT uFlags /* = ILCF_MOVE */)
 	{
-		ASSERT(m_hImageList != NULL);
+		ASSERT(m_hIMAGELIST != NULL);
 		ASSERT(pSrc != NULL && (HIMAGELIST)*pSrc != NULL);
-		return ::ImageList_Copy(m_hImageList, iDst, *pSrc, iSrc, uFlags);
+		return ::ImageList_Copy(m_hIMAGELIST, iDst, *pSrc, iSrc, uFlags);
 	}
 }

@@ -3,11 +3,9 @@
 
 namespace TinyUI
 {
-
-	TinyMenu::TinyMenu(HMENU hMenu)
-		:m_hMenu(hMenu)
+	TinyMenu::TinyMenu(HMENU hMENU)
 	{
-
+		m_hMENU = hMENU;
 	}
 
 	TinyMenu::~TinyMenu()
@@ -17,179 +15,154 @@ namespace TinyUI
 
 	BOOL TinyMenu::CreateMenu()
 	{
-		m_hMenu = ::CreateMenu();
-		TinyApplication::Instance()->GetMapHMENU().AddHandle(m_hMenu, this);
-		return m_hMenu != NULL;
+		return Attach(::CreateMenu());
 	}
 	BOOL TinyMenu::CreatePopupMenu()
 	{
-		m_hMenu = ::CreatePopupMenu();
-		TinyApplication::Instance()->GetMapHMENU().AddHandle(m_hMenu, this);
-		return m_hMenu != NULL;
-	}
-	TinyMenu::operator HMENU() const
-	{
-		ASSERT(this == NULL || m_hMenu == NULL || ::IsMenu(m_hMenu));
-		return this == NULL ? NULL : m_hMenu;
-	}
-	BOOL TinyMenu::operator==(const TinyMenu& menu) const
-	{
-		return ((HMENU)menu) == m_hMenu;
-	}
-	BOOL TinyMenu::operator!=(const TinyMenu& menu) const
-	{
-		return ((HMENU)menu) != m_hMenu;
+		return Attach(::CreatePopupMenu());
 	}
 
 	BOOL TinyMenu::DeleteMenu(UINT nPosition, UINT nFlags)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::DeleteMenu(m_hMenu, nPosition, nFlags);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::DeleteMenu(Detach(), nPosition, nFlags);
 	}
 	BOOL TinyMenu::AppendMenu(UINT nFlags, UINT_PTR nIDNewItem, LPCTSTR lpszNewItem)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::AppendMenu(m_hMenu, nFlags, nIDNewItem, lpszNewItem);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::AppendMenu(m_hMENU, nFlags, nIDNewItem, lpszNewItem);
 	}
 	BOOL TinyMenu::AppendMenu(UINT nFlags, UINT_PTR nIDNewItem, const HBITMAP hBmp)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::AppendMenu(m_hMenu, nFlags | MF_BITMAP, nIDNewItem, (LPCTSTR)hBmp);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::AppendMenu(m_hMENU, nFlags | MF_BITMAP, nIDNewItem, (LPCTSTR)hBmp);
 	}
 	UINT TinyMenu::CheckMenuItem(UINT nIDCheckItem, UINT nCheck)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return (UINT)::CheckMenuItem(m_hMenu, nIDCheckItem, nCheck);
+		ASSERT(::IsMenu(m_hMENU));
+		return (UINT)::CheckMenuItem(m_hMENU, nIDCheckItem, nCheck);
 	}
 	UINT TinyMenu::EnableMenuItem(UINT nIDEnableItem, UINT nEnable)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::EnableMenuItem(m_hMenu, nIDEnableItem, nEnable);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::EnableMenuItem(m_hMENU, nIDEnableItem, nEnable);
 	}
 	BOOL TinyMenu::SetDefaultItem(UINT uItem, BOOL fByPos)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::SetMenuDefaultItem(m_hMenu, uItem, fByPos);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::SetMenuDefaultItem(m_hMENU, uItem, fByPos);
 	}
 	UINT TinyMenu::GetDefaultItem(UINT gmdiFlags, BOOL fByPos)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::GetMenuDefaultItem(m_hMenu, fByPos, gmdiFlags);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::GetMenuDefaultItem(m_hMENU, fByPos, gmdiFlags);
 	}
 	UINT TinyMenu::GetMenuItemCount() const
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::GetMenuItemCount(m_hMenu);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::GetMenuItemCount(m_hMENU);
 	}
 	UINT TinyMenu::GetMenuItemID(INT nPos) const
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::GetMenuItemID(m_hMenu, nPos);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::GetMenuItemID(m_hMENU, nPos);
 	}
 	UINT TinyMenu::GetMenuState(UINT nID, UINT nFlags) const
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::GetMenuState(m_hMenu, nID, nFlags);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::GetMenuState(m_hMENU, nID, nFlags);
 	}
 	INT TinyMenu::GetMenuString(_In_ UINT nIDItem, _Out_z_cap_(nMaxCount) LPTSTR lpString, _In_ INT nMaxCount, _In_ UINT nFlags) const
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::GetMenuString(m_hMenu, nIDItem, lpString, nMaxCount, nFlags);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::GetMenuString(m_hMENU, nIDItem, lpString, nMaxCount, nFlags);
 	}
 	BOOL TinyMenu::GetMenuItemInfo(UINT uItem, LPMENUITEMINFO lpMenuItemInfo, BOOL fByPos)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::GetMenuItemInfo(m_hMenu, uItem, fByPos, lpMenuItemInfo);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::GetMenuItemInfo(m_hMENU, uItem, fByPos, lpMenuItemInfo);
 	}
 	BOOL TinyMenu::SetMenuItemInfo(UINT uItem, LPMENUITEMINFO lpMenuItemInfo, BOOL fByPos)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::SetMenuItemInfo(m_hMenu, uItem, fByPos, lpMenuItemInfo);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::SetMenuItemInfo(m_hMENU, uItem, fByPos, lpMenuItemInfo);
 	}
 	BOOL TinyMenu::InsertMenu(UINT nPosition, UINT nFlags, UINT_PTR nIDNewItem, LPCTSTR lpszNewItem)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::InsertMenu(m_hMenu, nPosition, nFlags, nIDNewItem, lpszNewItem);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::InsertMenu(m_hMENU, nPosition, nFlags, nIDNewItem, lpszNewItem);
 	}
 	BOOL TinyMenu::InsertMenu(UINT nPosition, UINT nFlags, UINT_PTR nIDNewItem, const HBITMAP hBmp)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::InsertMenu(m_hMenu, nPosition, nFlags | MF_BITMAP, nIDNewItem, (LPCTSTR)hBmp);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::InsertMenu(m_hMENU, nPosition, nFlags | MF_BITMAP, nIDNewItem, (LPCTSTR)hBmp);
 	}
 	BOOL TinyMenu::InsertMenuItem(UINT uItem, LPMENUITEMINFO lpMenuItemInfo, BOOL fByPos)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::InsertMenuItem(m_hMenu, uItem, fByPos, lpMenuItemInfo);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::InsertMenuItem(m_hMENU, uItem, fByPos, lpMenuItemInfo);
 	}
 	BOOL TinyMenu::ModifyMenu(UINT nPosition, UINT nFlags, UINT_PTR nIDNewItem, LPCTSTR lpszNewItem)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::ModifyMenu(m_hMenu, nPosition, nFlags, nIDNewItem, lpszNewItem);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::ModifyMenu(m_hMENU, nPosition, nFlags, nIDNewItem, lpszNewItem);
 	}
 	BOOL TinyMenu::ModifyMenu(UINT nPosition, UINT nFlags, UINT_PTR nIDNewItem, const HBITMAP hBmp)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::ModifyMenu(m_hMenu, nPosition, nFlags | MF_BITMAP, nIDNewItem, (LPCSTR)hBmp);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::ModifyMenu(m_hMENU, nPosition, nFlags | MF_BITMAP, nIDNewItem, (LPCSTR)hBmp);
 	}
 	BOOL TinyMenu::RemoveMenu(UINT nPosition, UINT nFlags)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::RemoveMenu(m_hMenu, nPosition, nFlags);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::RemoveMenu(m_hMENU, nPosition, nFlags);
 	}
 	BOOL TinyMenu::SetMenuItemBitmaps(UINT nPosition, UINT nFlags, const HBITMAP hBmpUnchecked, const HBITMAP hBmpChecked)
 	{
-		ASSERT(::IsMenu(m_hMenu));
-		return ::SetMenuItemBitmaps(m_hMenu, nPosition, nFlags, hBmpUnchecked, hBmpChecked);
+		ASSERT(::IsMenu(m_hMENU));
+		return ::SetMenuItemBitmaps(m_hMENU, nPosition, nFlags, hBmpUnchecked, hBmpChecked);
 	}
 	BOOL TinyMenu::LoadMenu(LPCTSTR lpszResourceName)
 	{
-		m_hMenu = ::LoadMenu((HINSTANCE)::FindResource(TinyApplication::Instance()->Handle(), lpszResourceName, RT_MENU), lpszResourceName);
-		TinyApplication::Instance()->GetMapHMENU().AddHandle(m_hMenu, this);
-		return m_hMenu != NULL;
+		return Attach(::LoadMenu((HINSTANCE)::FindResource(TinyApplication::Instance()->Handle(), lpszResourceName, RT_MENU), lpszResourceName));
 	}
 	BOOL TinyMenu::LoadMenu(UINT nIDResource)
 	{
-		m_hMenu = ::LoadMenu((HINSTANCE)::FindResource(TinyApplication::Instance()->Handle(), MAKEINTRESOURCE(nIDResource), RT_MENU), MAKEINTRESOURCE(nIDResource));
-		TinyApplication::Instance()->GetMapHMENU().AddHandle(m_hMenu, this);
-		return m_hMenu != NULL;
+		return Attach(::LoadMenu((HINSTANCE)::FindResource(TinyApplication::Instance()->Handle(), MAKEINTRESOURCE(nIDResource), RT_MENU), MAKEINTRESOURCE(nIDResource)));
 	}
 	BOOL TinyMenu::LoadMenuIndirect(const void* lpMenuTemplate)
 	{
-		m_hMenu = ::LoadMenuIndirect(lpMenuTemplate);
-		TinyApplication::Instance()->GetMapHMENU().AddHandle(m_hMenu, this);
-		return m_hMenu != NULL;
+		return Attach(::LoadMenuIndirect(lpMenuTemplate));
 	}
 
 	BOOL TinyMenu::SetMenuContextHelpId(DWORD dwContextHelpId)
 	{
-		return ::SetMenuContextHelpId(m_hMenu, dwContextHelpId);
+		ASSERT(m_hMENU != NULL);
+		return ::SetMenuContextHelpId(m_hMENU, dwContextHelpId);
 	}
 	DWORD TinyMenu::GetMenuContextHelpId() const
 	{
-		return ::GetMenuContextHelpId(m_hMenu);
+		ASSERT(m_hMENU != NULL);
+		return ::GetMenuContextHelpId(m_hMENU);
 	}
 	BOOL TinyMenu::CheckMenuRadioItem(UINT nIDFirst, UINT nIDLast, UINT nIDItem, UINT nFlags)
 	{
-		return ::CheckMenuRadioItem(m_hMenu, nIDFirst, nIDLast, nIDItem, nFlags);
+		ASSERT(m_hMENU != NULL);
+		return ::CheckMenuRadioItem(m_hMENU, nIDFirst, nIDLast, nIDItem, nFlags);
 	}
 	BOOL TinyMenu::TrackPopupMenu(UINT nFlags, INT x, INT y, HWND pWnd, LPCRECT lpRect /* = 0 */)
 	{
-		ASSERT(m_hMenu != NULL);
-		return  ::TrackPopupMenu(m_hMenu, nFlags, x, y, 0, pWnd, lpRect);
+		ASSERT(m_hMENU != NULL);
+		return  ::TrackPopupMenu(m_hMENU, nFlags, x, y, 0, pWnd, lpRect);
 	}
 	BOOL TinyMenu::TrackPopupMenuEx(UINT fuFlags, INT x, INT y, HWND pWnd, LPTPMPARAMS lptpm)
 	{
-		ASSERT(m_hMenu != NULL);
-		return ::TrackPopupMenuEx(m_hMenu, fuFlags, x, y, pWnd, lptpm);
+		ASSERT(m_hMENU != NULL);
+		return ::TrackPopupMenuEx(m_hMENU, fuFlags, x, y, pWnd, lptpm);
 	}
 	BOOL TinyMenu::DestroyMenu()
 	{
-		if (m_hMenu == NULL)
-		{
-			return FALSE;
-		}
-		TinyApplication::Instance()->GetMapHMENU().RemoveHandle(m_hMenu);
-		return ::DestroyMenu(m_hMenu);
+		return ::DestroyMenu(Detach());
 	}
 
 	void TinyMenu::DrawItem(LPDRAWITEMSTRUCT /*pdis*/)

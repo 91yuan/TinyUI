@@ -6,16 +6,12 @@ namespace TinyUI
 	/// <summary>
 	/// ²Ëµ¥
 	/// </summary>
-	class TinyMenu : public TinyObject
+	class TinyMenu : public TinyHandleHMENU, public TinyObject
 	{
 		DECLARE_DYNAMIC(TinyMenu)
 	public:
 		TinyMenu(HMENU hMenu = NULL);
 		virtual ~TinyMenu();
-
-		operator HMENU() const;
-		BOOL operator==(const TinyMenu& menu) const;
-		BOOL operator!=(const TinyMenu& menu) const;
 
 		BOOL CreateMenu();
 		BOOL CreatePopupMenu();
@@ -58,9 +54,6 @@ namespace TinyUI
 		virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
 		virtual void OnClick(void*, INT menuID);
 		Event<void(void*, INT)> EVENT_Click;
-	protected:
-		HMENU m_hMenu;
 	};
 }
-
 

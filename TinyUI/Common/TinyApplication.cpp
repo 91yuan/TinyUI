@@ -102,41 +102,46 @@ namespace TinyUI
 		}
 		return TRUE;
 	}
-	TinyHandleMap<HDC>&		 TinyApplication::GetMapHDC()
-	{
-		return m_MapHDC;
-	}
-	TinyHandleMap<HRGN>&	 TinyApplication::GetMapHRGN()
-	{
-		return m_MapHRGN;
-	}
-	TinyHandleMap<HWND>&	 TinyApplication::GetMapHWND()
+
+	TinyHandleMap<HWND, TinyHandleHWND*> TinyApplication::GetMapHWND()
 	{
 		return m_MapHWND;
 	}
-	TinyHandleMap<HPEN>&	 TinyApplication::GetMapHPEN()
+	TinyHandleMap<HMENU, TinyHandleHMENU*> TinyApplication::GetMapHMENU()
 	{
-		return m_MapHPEN;
+		return m_MapHMENU;
 	}
-	TinyHandleMap<HBRUSH>&	 TinyApplication::GetMapHBRUSH()
+	TinyHandleMap<HDC, TinyHandleHDC*>	TinyApplication::GetMapHDC()
 	{
-		return m_MapHBRUSH;
+		return m_MapHDC;
 	}
-	TinyHandleMap<HBITMAP>&	 TinyApplication::GetMapHBITMAP()
+	TinyHandleMap<HBITMAP, TinyHandleHBITMAP*>	TinyApplication::GetMapHBITMAP()
 	{
 		return m_MapHBITMAP;
 	}
-	TinyHandleMap<HPALETTE>& TinyApplication::GetMapHPALETTE()
+	TinyHandleMap<HFONT, TinyHandleHFONT*>	TinyApplication::GetMapHFONT()
+	{
+		return m_MapHFONT;
+	}
+	TinyHandleMap<HPEN, TinyHandleHPEN*> TinyApplication::GetMapHPEN()
+	{
+		return m_MapHPEN;
+	}
+	TinyHandleMap<HBRUSH, TinyHandleHBRUSH*> TinyApplication::GetMapHBRUSH()
+	{
+		return m_MapHBRUSH;
+	}
+	TinyHandleMap<HPALETTE, TinyHandleHPALETTE*> TinyApplication::GetMapHPALETTE()
 	{
 		return m_MapHPALETTE;
 	}
-	TinyHandleMap<HIMAGELIST>&	TinyApplication::GetMapHIMAGELIST()
+	TinyHandleMap<HRGN, TinyHandleHRGN*> TinyApplication::GetMapHRGN()
+	{
+		return m_MapHRGN;
+	}
+	TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*> TinyApplication::GetMapHIMAGELIST()
 	{
 		return m_MapHIMAGELIST;
-	}
-	TinyHandleMap<HMENU>&	TinyApplication::GetMapHMENU()
-	{
-		return m_MapHMENU;
 	}
 	TinyApplication::~TinyApplication()
 	{

@@ -1,80 +1,234 @@
 #pragma once
-#include <map>
-#include "TinyObject.h"
-using namespace std;
+#include "TinyWindowMsg.h"
+#include "TinyCollection.h"
 
 namespace TinyUI
 {
 	/// <summary>
-	/// æ‰±˙∫Õwindows∂‘œÛ”≥…‰¿‡
+	/// æ‰±˙”≥…‰¿‡
 	/// </summary>
-	template<class T = HANDLE>
+	template<class T = HANDLE, class V = void*>
 	class TinyHandleMap
 	{
 	public:
-		TinyHandleMap();
-		~TinyHandleMap();
-		TinyObject* FromHandle(T& _value);
-		TinyObject* operator[](T& _value);
-		void AddHandle(T& _value, TinyObject* ps);
-		void RemoveHandle(T& _value);
+		V Lookup(T& _key);
+		V operator[](T& _key);
+		void Add(T& _key, V& _value);
+		void Remove(T& _key);
 		void RemoveAll();
 		INT GetSize() const;
 	private:
-		map<T, TinyObject*> m_handleMap;
+		TinyMap<T, V> m_handleMap;
 	};
-	template<class T>
-	TinyHandleMap<T>::TinyHandleMap()
+	template<class T, class V>
+	V TinyHandleMap<T, V>::Lookup(T& _key)
 	{
-
+		return m_handleMap.Lookup(_key);
 	}
-	template<class T>
-	TinyHandleMap<T>::~TinyHandleMap()
+	template<class T, class V>
+	V TinyHandleMap<T, V>::operator[](T& _key)
 	{
+		return m_handleMap.Lookup(_key);
 	}
-	template<class T>
-	TinyObject* TinyHandleMap<T>::FromHandle(T& _value)
+	template<class T, class V>
+	void TinyHandleMap<T, V>::Add(T& _key, V& _value)
 	{
-		map<T, TinyObject*>::iterator pos = m_handleMap.find(_value);
-		if (pos != m_handleMap.end())
-		{
-			return pos->second;
-		}
-		return NULL;
+		m_handleMap.Add(_key, _value);
 	}
-	template<class T>
-	TinyObject* TinyHandleMap<T>::operator[](T& _value)
+	template<class T, class V>
+	void TinyHandleMap<T, V>::Remove(T& _key)
 	{
-		map<T, TinyObject*>::iterator pos = m_handleMap.find(_value);
-		if (pos != m_handleMap.end())
-		{
-			return pos->second;
-		}
-		return NULL;
+		m_handleMap.Remove(_key);
 	}
-	template<class T>
-	void TinyHandleMap<T>::AddHandle(T& _value, TinyObject* ps)
+	template<class T, class V>
+	void TinyHandleMap<T, V>::RemoveAll()
 	{
-		m_handleMap.insert(map<T, TinyObject*>::value_type(_value, ps));
+		m_handleMap.RemoveAll();
 	}
-	template<class T>
-	void TinyHandleMap<T>::RemoveHandle(T& _value)
+	template<class T, class V>
+	INT TinyHandleMap<T, V>::GetSize() const
 	{
-		map<T, TinyObject*>::iterator pos = m_handleMap.find(_value);
-		if (pos != m_handleMap.end())
-		{
-			m_handleMap.erase(pos);
-		}
+		return m_handleMap.GetSize();
 	}
-	template<class T>
-	void TinyHandleMap<T>::RemoveAll()
+	/// <summary>
+	/// ¥∞ø⁄æ‰±˙¿‡
+	/// </summary>
+	class TinyHandleHWND : public TinyWindowMsg, public TinyMessageFilter
 	{
-		m_handleMap.clear();
-	}
-	template<class T>
-	INT TinyHandleMap<T>::GetSize() const
+	public:
+		TinyHandleHWND();
+		~TinyHandleHWND();
+		operator HWND() const;
+		HWND Handle() const;
+		BOOL operator==(const TinyHandleHWND& obj) const;
+		BOOL operator!=(const TinyHandleHWND& obj) const;
+		BOOL Attach(HWND hWND);
+		HWND Detach();
+		static TinyHandleHWND* Lookup(HWND hWND);
+	public:
+		HWND m_hWND;
+	};
+	/// <summary>
+	/// ≤Àµ•æ‰±˙¿‡
+	/// </summary>
+	class TinyHandleHMENU
 	{
-		return m_handleMap.size();
-	}
+	public:
+		TinyHandleHMENU();
+		~TinyHandleHMENU();
+		operator HMENU() const;
+		HMENU Handle() const;
+		BOOL operator==(const TinyHandleHMENU& obj) const;
+		BOOL operator!=(const TinyHandleHMENU& obj) const;
+		BOOL Attach(HMENU hMENU);
+		HMENU Detach();
+		static TinyHandleHMENU* Lookup(HMENU hMENU);
+	public:
+		HMENU m_hMENU;
+	};
+	/// <summary>
+	/// DCæ‰±˙¿‡
+	/// </summary>
+	class TinyHandleHDC
+	{
+	public:
+		TinyHandleHDC();
+		~TinyHandleHDC();
+		operator HDC() const;
+		HDC Handle() const;
+		BOOL operator==(const TinyHandleHDC& obj) const;
+		BOOL operator!=(const TinyHandleHDC& obj) const;
+		BOOL Attach(HDC hDC);
+		HDC Detach();
+		static TinyHandleHDC* Lookup(HDC hDC);
+	public:
+		HDC m_hDC;
+	};
+	/// <summary>
+	/// BITMAPæ‰±˙¿‡
+	/// </summary>
+	class TinyHandleHBITMAP
+	{
+	public:
+		TinyHandleHBITMAP();
+		~TinyHandleHBITMAP();
+		operator HBITMAP() const;
+		HBITMAP Handle() const;
+		BOOL operator==(const TinyHandleHBITMAP& obj) const;
+		BOOL operator!=(const TinyHandleHBITMAP& obj) const;
+		BOOL Attach(HBITMAP hBITMAP);
+		HBITMAP Detach();
+		static TinyHandleHBITMAP* Lookup(HBITMAP hBITMAP);
+	public:
+		HBITMAP m_hBITMAP;
+	};
+	/// <summary>
+	/// FONTæ‰±˙¿‡
+	/// </summary>
+	class TinyHandleHFONT
+	{
+	public:
+		TinyHandleHFONT();
+		~TinyHandleHFONT();
+		operator HFONT() const;
+		HFONT Handle() const;
+		BOOL operator==(const TinyHandleHFONT& obj) const;
+		BOOL operator!=(const TinyHandleHFONT& obj) const;
+		BOOL Attach(HFONT hFONT);
+		HFONT Detach();
+		static TinyHandleHFONT* Lookup(HFONT hFONT);
+	public:
+		HFONT m_hFONT;
+	};
+	/// <summary>
+	/// PENæ‰±˙¿‡
+	/// </summary>
+	class TinyHandleHPEN
+	{
+	public:
+		TinyHandleHPEN();
+		~TinyHandleHPEN();
+		operator HPEN() const;
+		HPEN Handle() const;
+		BOOL operator==(const TinyHandleHPEN& obj) const;
+		BOOL operator!=(const TinyHandleHPEN& obj) const;
+		BOOL Attach(HPEN hPEN);
+		HPEN Detach();
+		static TinyHandleHPEN* Lookup(HPEN hPEN);
+	public:
+		HPEN m_hPEN;
+	};
+	/// <summary>
+	/// BRUSHæ‰±˙¿‡
+	/// </summary>
+	class TinyHandleHBRUSH
+	{
+	public:
+		TinyHandleHBRUSH();
+		~TinyHandleHBRUSH();
+		operator HBRUSH() const;
+		HBRUSH Handle() const;
+		BOOL operator==(const TinyHandleHBRUSH& obj) const;
+		BOOL operator!=(const TinyHandleHBRUSH& obj) const;
+		BOOL Attach(HBRUSH hBRUSH);
+		HBRUSH Detach();
+		static TinyHandleHBRUSH* Lookup(HBRUSH hBRUSH);
+	public:
+		HBRUSH m_hBRUSH;
+	};
+	/// <summary>
+	/// PALETTEæ‰±˙¿‡
+	/// </summary>
+	class TinyHandleHPALETTE
+	{
+	public:
+		TinyHandleHPALETTE();
+		~TinyHandleHPALETTE();
+		operator HPALETTE() const;
+		HPALETTE Handle() const;
+		BOOL operator==(const TinyHandleHPALETTE& obj) const;
+		BOOL operator!=(const TinyHandleHPALETTE& obj) const;
+		BOOL Attach(HPALETTE hPALETTE);
+		HPALETTE Detach();
+		static TinyHandleHPALETTE* Lookup(HPALETTE hPALETTE);
+	public:
+		HPALETTE m_hPALETTE;
+	};
+	/// <summary>
+	/// RGNæ‰±˙¿‡
+	/// </summary>
+	class TinyHandleHRGN
+	{
+	public:
+		TinyHandleHRGN();
+		~TinyHandleHRGN();
+		operator HRGN() const;
+		HRGN Handle() const;
+		BOOL operator==(const TinyHandleHRGN& obj) const;
+		BOOL operator!=(const TinyHandleHRGN& obj) const;
+		BOOL Attach(HRGN hHRGN);
+		HRGN Detach();
+		static TinyHandleHRGN* Lookup(HRGN hHRGN);
+	public:
+		HRGN m_hHRGN;
+	};
+	/// <summary>
+	/// IMAGELISTæ‰±˙¿‡
+	/// </summary>
+	class TinyHandleHIMAGELIST
+	{
+	public:
+		TinyHandleHIMAGELIST();
+		~TinyHandleHIMAGELIST();
+		operator HIMAGELIST() const;
+		HIMAGELIST Handle() const;
+		BOOL operator==(const TinyHandleHIMAGELIST& obj) const;
+		BOOL operator!=(const TinyHandleHIMAGELIST& obj) const;
+		BOOL Attach(HIMAGELIST hIMAGELIST);
+		HIMAGELIST Detach();
+		static TinyHandleHIMAGELIST* Lookup(HIMAGELIST hIMAGELIST);
+	public:
+		HIMAGELIST m_hIMAGELIST;
+	};
 }
 
