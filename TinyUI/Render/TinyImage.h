@@ -19,9 +19,10 @@ namespace TinyUI
 		TinyImage();
 		~TinyImage();
 		operator HBITMAP() const;
-		BOOL		Load(LPCSTR pz);
-		BOOL		Load(BYTE* p, DWORD size);
-		TinySize	GetSize();
+		BOOL			Load(LPCSTR pz);
+		BOOL			Load(BYTE* p, DWORD size);
+		TinySize		GetSize();
+		TinyRectangle	GetRectangle();
 	protected:
 		HBITMAP		m_hBitmap;
 		INT			m_cx;

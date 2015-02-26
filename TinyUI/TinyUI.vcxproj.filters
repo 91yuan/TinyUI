@@ -234,6 +234,9 @@
     <ClInclude Include="Common\TinyTree.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
+    <ClInclude Include="Control\TinyScroll.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -411,6 +414,9 @@
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="Common\TinyTree.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinyScroll.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>

@@ -35,12 +35,12 @@ namespace TinyUI
 	}
 	DWORD TinyFrameUI::RetrieveStyle()
 	{
-		return (WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_MINIMIZEBOX);
+		return (WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW);
 	}
 
 	DWORD TinyFrameUI::RetrieveExStyle()
 	{
-		return (WS_EX_LEFT | WS_EX_RIGHTSCROLLBAR | WS_EX_OVERLAPPEDWINDOW | WS_EX_TOPMOST);
+		return (WS_EX_LEFT | WS_EX_RIGHTSCROLLBAR);
 	}
 
 	LPCSTR TinyFrameUI::RetrieveClassName()
@@ -104,6 +104,7 @@ namespace TinyUI
 	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		m_scroll.Create(m_hWND, 10, 10, 100, 150);
 		return TRUE;
 	}
 
@@ -120,106 +121,16 @@ namespace TinyUI
 
 	LRESULT TinyFrameUI::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		bHandled = TRUE;
-		return TRUE;
+		bHandled = FALSE;
+		return FALSE;
 	}
 
 	LRESULT TinyFrameUI::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		TRACE("OnSize\n");
 		m_size.cx = LOWORD(lParam);
 		m_size.cy = HIWORD(lParam);
 		return FALSE;
 	}
-
-	LRESULT TinyFrameUI::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = TRUE;
-		POINT pos = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-		ScreenToClient(m_hWND, &pos);
-		//窗口缩放
-		if (pos.x <= CLIENT_MARGIN_LEFT && pos.y <= CLIENT_MARGIN_TOP)
-		{
-			return HTTOPLEFT;
-		}
-		if (pos.x >= CLIENT_MARGIN_LEFT && pos.x <= (m_size.cx - CLIENT_MARGIN_RIGHT) && pos.y <= CLIENT_MARGIN_TOP)
-		{
-			return HTTOP;
-		}
-		if (pos.x >= (m_size.cx - CLIENT_MARGIN_RIGHT) && pos.x <= m_size.cx && pos.y <= CLIENT_MARGIN_TOP)
-		{
-			return HTTOPRIGHT;
-		}
-		if (pos.x <= CLIENT_MARGIN_LEFT && pos.y >= (m_size.cy - CLIENT_MARGIN_BOTTOM) && pos.y <= m_size.cy)
-		{
-			return HTBOTTOMLEFT;
-		}
-		if (pos.x >= CLIENT_MARGIN_LEFT && pos.x <= (m_size.cx - CLIENT_MARGIN_RIGHT) && pos.y >= (m_size.cy - CLIENT_MARGIN_TOP))
-		{
-			return HTBOTTOM;
-		}
-		if (pos.x >= (m_size.cx - CLIENT_MARGIN_RIGHT) && pos.y >= (m_size.cy - CLIENT_MARGIN_BOTTOM) && pos.y <= m_size.cy)
-		{
-			return HTBOTTOMRIGHT;
-		}
-		if (pos.x <= CLIENT_MARGIN_LEFT && pos.y >= CLIENT_MARGIN_TOP && pos.y <= (m_size.cy - CLIENT_MARGIN_BOTTOM))
-		{
-			return HTLEFT;
-		}
-		if (pos.x >= (m_size.cx - CLIENT_MARGIN_RIGHT) && pos.x <= m_size.cx && pos.y >= CLIENT_MARGIN_TOP && pos.y <= (m_size.cy - CLIENT_MARGIN_BOTTOM))
-		{
-			return HTRIGHT;
-		}
-		//标题栏
-		if (pos.y <= CAPTION_HEIGHT)
-		{
-			return HTCAPTION;
-		}
-		return HTCLIENT;
-	}
-
-	LRESULT TinyFrameUI::OnNCLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		TRACE("OnNCLButtonDown\n");
-		return FALSE;
-	}
-
-	LRESULT TinyFrameUI::OnNCLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		TRACE("OnNCLButtonUp\n");
-		return FALSE;
-	}
-
-	LRESULT TinyFrameUI::OnNCLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		TRACE("OnNCLButtonDBClick\n");
-		return FALSE;
-	}
-
-	LRESULT TinyFrameUI::OnNCRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		TRACE("OnNCRButtonDown\n");
-		return FALSE;
-	}
-
-	LRESULT TinyFrameUI::OnNCRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		TRACE("OnNCRButtonUp\n");
-		return FALSE;
-	}
-
-	LRESULT TinyFrameUI::OnNCRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		TRACE("OnNCRButtonDBClick\n");
-		return FALSE;
-	}
-
 }
 

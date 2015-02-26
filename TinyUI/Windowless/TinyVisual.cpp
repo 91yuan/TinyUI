@@ -73,6 +73,7 @@ namespace TinyUI
 			}
 			LIST_ADD_BEFORE(entry, &val->entry);
 		}
+		return TRUE;
 	}
 	BOOL TinyVisual::SetVisualPos(Visual* val, Visual* valAfter, INT X, INT Y, INT cx, INT cy, UINT uFlags)
 	{

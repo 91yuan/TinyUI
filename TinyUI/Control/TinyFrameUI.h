@@ -1,9 +1,6 @@
 #pragma once
-#include "TinyButton.h"
-#include "TinyControl.h"
-#include "TinyListBox.h"
+#include "TinyScroll.h"
 #include "../Render/TinyImage.h"
-#include "../Windowless/TinyVisual.h"
 
 namespace TinyUI
 {
@@ -30,20 +27,14 @@ namespace TinyUI
 		virtual LPCSTR RetrieveClassName();
 		virtual LPCSTR RetrieveTitle();
 		virtual HICON RetrieveIcon();
-		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		//事件
-		virtual LRESULT OnNCLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCLButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		//方法
+		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 	public:
 		BOOL ShowWindow(INT nCmdShow) throw();
 		BOOL UpdateWindow() throw();
@@ -51,7 +42,7 @@ namespace TinyUI
 	protected:
 		//缓冲的样式
 		TinySize m_size;
-	public:
-		TinyVisual m_visual;
+	private:
+		TinyScroll m_scroll;
 	};
 }

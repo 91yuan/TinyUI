@@ -119,4 +119,8 @@ namespace TinyUI
 	{
 		return TinySize(m_cx, m_cy);
 	}
+	TinyRectangle TinyImage::GetRectangle()
+	{
+		return TinyRectangle(0, 0, m_cx, m_cy);
+	}
 }

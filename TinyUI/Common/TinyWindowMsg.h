@@ -4,9 +4,8 @@
 
 namespace TinyUI
 {
-	class TinyWindowMsg : public TinyMessageMap,public TinyObject
+	class TinyWindowMsg : public TinyMessageMap
 	{
-		DECLARE_DYNAMIC(TinyWindowMsg)
 	protected:
 		const TinyMsg*	m_pCurrentMsg;
 		DWORD			m_dwState;

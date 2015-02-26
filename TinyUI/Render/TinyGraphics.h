@@ -21,6 +21,7 @@ namespace TinyUI
 	class TinyBrush;
 	class TinyDC;
 	class TinyBitmap;
+	class TinyMemDC;
 	class TinyPalette;
 	/// <summary>
 	/// DCÀà
@@ -29,7 +30,7 @@ namespace TinyUI
 	{
 		DECLARE_DYNAMIC(TinyDC)
 	public:
-		TinyDC();
+		TinyDC(HDC hDC = NULL);
 		virtual ~TinyDC();
 	public:
 		BOOL		CreateDC(LPCTSTR lpszDriverName, LPCTSTR lpszDeviceName, LPCTSTR lpszOutput, const void* lpInitData);
@@ -348,6 +349,23 @@ namespace TinyUI
 		BOOL	LoadMappedBitmap(HINSTANCE hInstance, UINT nIDBitmap, UINT nFlags, LPCOLORMAP lpColorMap, INT nMapSize);
 		INT		GetBitmap(BITMAP* pBitMap);
 		BOOL	Save(LPCTSTR pzSaveFile);
+	};
+	/// <summary>
+	/// ÄÚ´æDC
+	/// </summary>
+	class TinyMemDC : public TinyDC
+	{
+		DECLARE_DYNAMIC(TinyMemDC)
+	public:
+		TinyMemDC(HDC hDC, RECT rcPaint);
+		TinyMemDC(HDC hDC, HBITMAP hBitmap);
+		BOOL Render(RECT destPaint, BOOL bAlpha);
+		virtual ~TinyMemDC();
+	private:
+		HDC			m_hDestDC;
+		RECT		m_srcPaint;
+		TinyBitmap	m_bitmap;
+		HBITMAP		m_hOldBitmap;
 	};
 	/// <summary>
 	/// TinyPalette

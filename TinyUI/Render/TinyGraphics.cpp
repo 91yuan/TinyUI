@@ -826,9 +826,12 @@ namespace TinyUI
 		ASSERT(m_hDC != NULL);
 		return ::PlayEnhMetaFile(m_hDC, hEnhMF, lpBounds);
 	}
-	TinyDC::TinyDC()
+	TinyDC::TinyDC(HDC hDC)
 	{
-
+		if (hDC != NULL)
+		{
+			Attach(hDC);
+		}
 	}
 	TinyDC::~TinyDC()
 	{
@@ -1180,6 +1183,64 @@ namespace TinyUI
 		return ::GradientFill(m_hDC, pVertices, nVertices, pMesh, nMeshElements, dwMode);
 	}
 #pragma endregion
+	TinyMemDC::TinyMemDC(HDC hDC, RECT srcPaint)
+		:m_hDestDC(hDC)
+		, m_srcPaint(srcPaint)
+		, m_hOldBitmap(NULL)
+	{
+		if (Attach(::CreateCompatibleDC(hDC)))
+		{
+			m_bitmap.Attach(::CreateCompatibleBitmap(hDC, srcPaint.right - srcPaint.left, srcPaint.bottom - srcPaint.top));
+			m_hOldBitmap = (HBITMAP)::SelectObject(m_hDC, m_bitmap);
+		}
+	}
+	TinyMemDC::TinyMemDC(HDC hDC, HBITMAP hBitmap)
+		:m_hDestDC(hDC),
+		m_hOldBitmap(NULL)
+	{
+		if (Attach(::CreateCompatibleDC(hDC)))
+		{
+			m_hOldBitmap = (HBITMAP)::SelectObject(m_hDC, hBitmap);
+		}
+	}
+	BOOL TinyMemDC::Render(RECT destPaint, BOOL bAlpha)
+	{
+		if (bAlpha)
+		{
+			BLENDFUNCTION bs = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+			return ::AlphaBlend(m_hDestDC,
+				destPaint.left,
+				destPaint.top,
+				abs(destPaint.right - destPaint.left),
+				abs(destPaint.bottom - destPaint.top),
+				m_hDC,
+				m_srcPaint.left,
+				m_srcPaint.top,
+				abs(m_srcPaint.right - m_srcPaint.left),
+				abs(m_srcPaint.bottom - m_srcPaint.top),
+				bs);
+		}
+		else
+		{
+			return ::BitBlt(m_hDestDC,
+				destPaint.left,
+				destPaint.top,
+				abs(destPaint.right - destPaint.left),
+				abs(destPaint.bottom - destPaint.top),
+				m_hDC,
+				m_srcPaint.left,
+				m_srcPaint.top,
+				SRCCOPY);
+		}
+	}
+	TinyMemDC::~TinyMemDC()
+	{
+		if (m_hDC && m_hOldBitmap)
+		{
+			::SelectObject(m_hDC, m_hOldBitmap);
+			m_hOldBitmap = NULL;
+		}
+	}
 #pragma region  TinyGDIObject
 	/************************************************************************/
 	/* PEN                                                                  */
