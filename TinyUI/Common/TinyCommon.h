@@ -113,6 +113,14 @@ namespace TinyUI
 #define GET_Y_LPARAM(lParam)    ((INT)(short)HIWORD(lParam))
 #endif
 
+#ifndef TO_CX
+#define TO_CX(rect)    abs(rect.right-rect.left)
+#endif
+
+#ifndef TO_CY
+#define TO_CY(rect)    abs(rect.bottom-rect.top)
+#endif
+
 #define IS_VALID_STRING_PTR(ptr, type) \
 	(!IsBadStringPtr((ptr), (UINT)-1))
 
@@ -576,7 +584,7 @@ private:\
 		return list->NEXT == list;
 	}
 
-	static inline void LIST_INIT( LIST *list)
+	static inline void LIST_INIT(LIST *list)
 	{
 		list->NEXT = list->PREV = list;
 	}

@@ -1194,8 +1194,9 @@ namespace TinyUI
 			m_hOldBitmap = (HBITMAP)::SelectObject(m_hDC, m_bitmap);
 		}
 	}
-	TinyMemDC::TinyMemDC(HDC hDC, HBITMAP hBitmap)
+	TinyMemDC::TinyMemDC(HDC hDC, HBITMAP hBitmap, RECT srcPaint)
 		:m_hDestDC(hDC),
+		m_srcPaint(srcPaint),
 		m_hOldBitmap(NULL)
 	{
 		if (Attach(::CreateCompatibleDC(hDC)))

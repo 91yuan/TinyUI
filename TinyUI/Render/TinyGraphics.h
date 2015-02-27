@@ -357,8 +357,8 @@ namespace TinyUI
 	{
 		DECLARE_DYNAMIC(TinyMemDC)
 	public:
-		TinyMemDC(HDC hDC, RECT rcPaint);
-		TinyMemDC(HDC hDC, HBITMAP hBitmap);
+		TinyMemDC(HDC hDC, RECT srcPaint);
+		TinyMemDC(HDC hDC, HBITMAP hBitmap, RECT srcPaint);
 		BOOL Render(RECT destPaint, BOOL bAlpha);
 		virtual ~TinyMemDC();
 	private:
