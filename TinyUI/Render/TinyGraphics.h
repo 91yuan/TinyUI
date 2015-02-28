@@ -357,13 +357,14 @@ namespace TinyUI
 	{
 		DECLARE_DYNAMIC(TinyMemDC)
 	public:
-		TinyMemDC(HDC hDC, RECT srcPaint);
-		TinyMemDC(HDC hDC, HBITMAP hBitmap, RECT srcPaint);
-		BOOL Render(RECT destPaint, BOOL bAlpha);
+		TinyMemDC(HDC hDC, INT cx, INT cy);
+		TinyMemDC(HDC hDC, HBITMAP hBitmap);
+		BOOL Render(RECT dstPaint, RECT srcPaint, BOOL bAlpha);
+		SIZE GetSize() const;
 		virtual ~TinyMemDC();
 	private:
+		SIZE		m_size;
 		HDC			m_hDestDC;
-		RECT		m_srcPaint;
 		TinyBitmap	m_bitmap;
 		HBITMAP		m_hOldBitmap;
 	};

@@ -104,7 +104,7 @@ namespace TinyUI
 	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_scroll.Create(m_hWND, 10, 10, 100, 150);
+		m_scroll.Create(m_hWND, 10, 10, 300, 350);
 		return TRUE;
 	}
 

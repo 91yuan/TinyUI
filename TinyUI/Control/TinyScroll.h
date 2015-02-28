@@ -45,9 +45,9 @@ namespace TinyUI
 		void SetScrollInfo(SCROLLINFO si);
 		void ScrollCalculate(LPSCROLLCALC lpcalc);
 		INT  ScrollHitTest(POINT ps);
-		void DrawArrow(HDC hDC, INT code, BOOL bMouseDown);
-		void DrawThumb(HDC hDC, INT code, BOOL bMouseDown);
-		void DrawGroove(HDC hDC);
+		void DrawArrow(TinyMemDC dc, INT code, BOOL bMouseDown);
+		void DrawThumb(TinyMemDC dc, INT code, BOOL bMouseDown);
+		void DrawGroove(TinyMemDC dc);
 	private:
 		SCROLLINFO	m_si;
 		INT			m_iLastingCode;
@@ -55,7 +55,8 @@ namespace TinyUI
 		BOOL		m_bTracking;
 		SIZE		m_size;
 	private:
-		TinyImage m_arrow_down_hover;
+		TinyImage smiley_021;
+		/*TinyImage m_arrow_down_hover;
 		TinyImage m_arrow_down_normal;
 		TinyImage m_arrow_down_press;
 		TinyImage m_arrow_up_hover;
@@ -63,7 +64,7 @@ namespace TinyUI
 		TinyImage m_arrow_up_press;
 		TinyImage m_scrollbar_groove;
 		TinyImage m_scrollbar_hover;
-		TinyImage m_scrollbar_normal;
+		TinyImage m_scrollbar_normal;*/
 	};
 }
 

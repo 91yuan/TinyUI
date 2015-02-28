@@ -1183,54 +1183,62 @@ namespace TinyUI
 		return ::GradientFill(m_hDC, pVertices, nVertices, pMesh, nMeshElements, dwMode);
 	}
 #pragma endregion
-	TinyMemDC::TinyMemDC(HDC hDC, RECT srcPaint)
+	TinyMemDC::TinyMemDC(HDC hDC, INT cx, INT cy)
 		:m_hDestDC(hDC)
-		, m_srcPaint(srcPaint)
 		, m_hOldBitmap(NULL)
 	{
+		m_size.cx = cx;
+		m_size.cy = cy;
 		if (Attach(::CreateCompatibleDC(hDC)))
 		{
-			m_bitmap.Attach(::CreateCompatibleBitmap(hDC, srcPaint.right - srcPaint.left, srcPaint.bottom - srcPaint.top));
+			m_bitmap.Attach(::CreateCompatibleBitmap(hDC, cx, cy));
 			m_hOldBitmap = (HBITMAP)::SelectObject(m_hDC, m_bitmap);
 		}
 	}
-	TinyMemDC::TinyMemDC(HDC hDC, HBITMAP hBitmap, RECT srcPaint)
+	TinyMemDC::TinyMemDC(HDC hDC, HBITMAP hBitmap)
 		:m_hDestDC(hDC),
-		m_srcPaint(srcPaint),
 		m_hOldBitmap(NULL)
 	{
 		if (Attach(::CreateCompatibleDC(hDC)))
 		{
+			BITMAP bitmap = { 0 };
+			::GetObject(hBitmap, sizeof(BITMAP), &bitmap);
+			m_size.cx = bitmap.bmWidth;
+			m_size.cy = bitmap.bmHeight;
 			m_hOldBitmap = (HBITMAP)::SelectObject(m_hDC, hBitmap);
 		}
 	}
-	BOOL TinyMemDC::Render(RECT destPaint, BOOL bAlpha)
+	SIZE TinyMemDC::GetSize() const
+	{
+		return m_size;
+	}
+	BOOL TinyMemDC::Render(RECT dstPaint, RECT srcPaint, BOOL bAlpha)
 	{
 		if (bAlpha)
 		{
 			BLENDFUNCTION bs = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 			return ::AlphaBlend(m_hDestDC,
-				destPaint.left,
-				destPaint.top,
-				abs(destPaint.right - destPaint.left),
-				abs(destPaint.bottom - destPaint.top),
+				dstPaint.left,
+				dstPaint.top,
+				abs(dstPaint.right - dstPaint.left),
+				abs(dstPaint.bottom - dstPaint.top),
 				m_hDC,
-				m_srcPaint.left,
-				m_srcPaint.top,
-				abs(m_srcPaint.right - m_srcPaint.left),
-				abs(m_srcPaint.bottom - m_srcPaint.top),
+				srcPaint.left,
+				srcPaint.top,
+				abs(srcPaint.right - srcPaint.left),
+				abs(srcPaint.bottom - srcPaint.top),
 				bs);
 		}
 		else
 		{
 			return ::BitBlt(m_hDestDC,
-				destPaint.left,
-				destPaint.top,
-				abs(destPaint.right - destPaint.left),
-				abs(destPaint.bottom - destPaint.top),
+				dstPaint.left,
+				dstPaint.top,
+				abs(dstPaint.right - dstPaint.left),
+				abs(dstPaint.bottom - dstPaint.top),
 				m_hDC,
-				m_srcPaint.left,
-				m_srcPaint.top,
+				srcPaint.left,
+				srcPaint.top,
 				SRCCOPY);
 		}
 	}

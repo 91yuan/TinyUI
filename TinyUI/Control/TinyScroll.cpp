@@ -8,6 +8,9 @@ namespace TinyUI
 		m_bTracking(FALSE)
 	{
 		memset(&m_si, 0, sizeof(SCROLLINFO));
+		m_si.nMax = 200;
+		m_si.nMin = 0;
+		m_si.nPage = 1;
 	}
 
 
@@ -26,13 +29,17 @@ namespace TinyUI
 		PAINTSTRUCT ps = { 0 };
 		HDC hDC = BeginPaint(m_hWND, &ps);
 
-		TinyMemDC memdc(hDC, ps.rcPaint);
+		TinyMemDC memdc(hDC, TO_CX(ps.rcPaint), TO_CY(ps.rcPaint));
+		FillRect(memdc, &ps.rcPaint, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
-		DrawArrow(memdc, m_iLastingCode, FALSE);
-		DrawThumb(memdc, m_iLastingCode, FALSE);
-		DrawGroove(memdc);
+		RECT rc = { 0, 0, memdc.GetSize().cx, memdc.GetSize().cy };
+		TinyMemDC memdc1(memdc, smiley_021);
+		memdc1.Render(rc, smiley_021.GetRectangle(), TRUE);
+		/*DrawArrow(memdc, m_iLastingCode, TRUE);
+		DrawThumb(memdc, m_iLastingCode, TRUE);
+		DrawGroove(memdc);*/
 
-		memdc.Render(ps.rcPaint, FALSE);
+		memdc.Render(ps.rcPaint, ps.rcPaint, FALSE);
 
 		EndPaint(m_hWND, &ps);
 		return FALSE;
@@ -94,7 +101,8 @@ namespace TinyUI
 	{
 		bHandled = FALSE;
 		//加载图片
-		m_arrow_down_hover.Load("E:\\ScrollBar\\arrow_down_hover.png");
+		smiley_021.Load("E:\\smiley_021.png");
+		/*m_arrow_down_hover.Load("E:\\ScrollBar\\arrow_down_hover.png");
 		m_arrow_down_normal.Load("E:\\ScrollBar\\arrow_down_normal.png");
 		m_arrow_down_press.Load("E:\\ScrollBar\\arrow_down_press.png");
 		m_arrow_up_hover.Load("E:\\ScrollBar\\arrow_up_hover.png");
@@ -102,7 +110,7 @@ namespace TinyUI
 		m_arrow_up_press.Load("E:\\ScrollBar\\arrow_up_press.png");
 		m_scrollbar_groove.Load("E:\\ScrollBar\\scrollbar_groove.png");
 		m_scrollbar_hover.Load("E:\\ScrollBar\\scrollbar_hover.png");
-		m_scrollbar_normal.Load("E:\\ScrollBar\\scrollbar_normal.png");
+		m_scrollbar_normal.Load("E:\\ScrollBar\\scrollbar_normal.png");*/
 		return FALSE;
 	}
 
@@ -116,7 +124,7 @@ namespace TinyUI
 	void TinyScroll::ScrollCalculate(LPSCROLLCALC ps)
 	{
 		ASSERT(ps);
-		SetRect(&ps->rectangle, 0, 0, m_size.cx, m_size.cy);
+		SetRect(&ps->rectangle, m_size.cx - SM_CYVSCROLL, 0, m_size.cx, m_size.cy);
 		INT arrow_size = SM_CYVSCROLL;
 		INT groove_size = TO_CY(ps->rectangle) - 2 * arrow_size;//获得滚动条槽的大小
 		INT thumb_size = 0;
@@ -159,86 +167,97 @@ namespace TinyUI
 		m_si = si;
 		InvalidateRect(m_hWND, NULL, FALSE);
 	}
-	void TinyScroll::DrawArrow(HDC hDC, INT code, BOOL bMouseDown)
+	void TinyScroll::DrawArrow(TinyMemDC dc, INT code, BOOL bMouseDown)
 	{
-		ASSERT(hDC);
 		SCROLLCALC sc = { 0 };
 		ScrollCalculate(&sc);
 		if (code == HTSCROLL_NONE)
 		{
-			RECT rcPaint1 = { sc.rectangle.left, sc.rectangle.top, sc.rectangle.right, sc.arrow[0] };
-			TinyMemDC dc1(hDC, m_arrow_up_normal, m_arrow_up_normal.GetRectangle());
-			dc1.Render(rcPaint1, TRUE);
+			RECT desPaint1 = { sc.rectangle.left, sc.rectangle.top, sc.rectangle.right, sc.arrow[0] };
+			/*TinyMemDC dc1(dc, m_arrow_up_normal);
+			RECT srcPaint1 = { 0, 0, m_arrow_up_normal.GetSize().cx, m_arrow_up_normal.GetSize().cy };
+			dc1.Render(desPaint1, srcPaint1, FALSE);*/
 
-			RECT rcPaint2 = { sc.rectangle.left, sc.arrow[1], sc.rectangle.right, sc.rectangle.bottom };
-			TinyMemDC dc2(hDC, m_arrow_down_normal, m_arrow_down_normal.GetRectangle());
-			dc2.Render(rcPaint2, TRUE);
+			/*RECT desPaint2 = { sc.rectangle.left, sc.arrow[1], sc.rectangle.right, sc.rectangle.bottom };
+			TinyMemDC dc2(dc, m_arrow_down_normal);
+			RECT srcPaint2 = { 0, 0, m_arrow_down_normal.GetSize().cx, m_arrow_down_normal.GetSize().cy };
+			dc2.Render(desPaint2, srcPaint2, FALSE);*/
 		}
-		if (code == HTSCROLL_LINEUP)
+		/*if (code == HTSCROLL_LINEUP)
 		{
-			if (bMouseDown)
-			{
-				RECT rcPaint1 = { sc.rectangle.left, sc.rectangle.top, sc.rectangle.right, sc.arrow[0] };
-				TinyMemDC dc1(hDC, m_arrow_up_press, m_arrow_up_press.GetRectangle());
-				dc1.Render(rcPaint1, TRUE);
-			}
-			else
-			{
-				RECT rcPaint1 = { sc.rectangle.left, sc.rectangle.top, sc.rectangle.right, sc.arrow[0] };
-				TinyMemDC dc1(hDC, m_arrow_up_hover, m_arrow_up_hover.GetRectangle());
-				dc1.Render(rcPaint1, TRUE);
-			}
+		if (bMouseDown)
+		{
+		RECT rcPaint1 = { sc.rectangle.left, sc.rectangle.top, sc.rectangle.right, sc.arrow[0] };
+		TinyMemDC dc1(dc, m_arrow_up_press);
+		dc1.Render(dc.GetRectangle(), TRUE);
+		}
+		else
+		{
+		RECT rcPaint1 = { sc.rectangle.left, sc.rectangle.top, sc.rectangle.right, sc.arrow[0] };
+		TinyMemDC dc1(dc, m_arrow_up_hover);
+		dc1.Render(dc.GetRectangle(), TRUE);
+		}
 
-			RECT rcPaint2 = { sc.rectangle.left, sc.arrow[1], sc.rectangle.right, sc.rectangle.bottom };
-			TinyMemDC dc2(hDC, m_arrow_down_normal, m_arrow_down_normal.GetRectangle());
-			dc2.Render(rcPaint2, TRUE);
+		RECT rcPaint2 = { sc.rectangle.left, sc.arrow[1], sc.rectangle.right, sc.rectangle.bottom };
+		TinyMemDC dc2(dc, m_arrow_down_normal);
+		dc2.Render(dc.GetRectangle(), TRUE);
 		}
 		if (code == HTSCROLL_LINEDOWN)
 		{
-			RECT rcPaint1 = { sc.rectangle.left, sc.rectangle.top, sc.rectangle.right, sc.arrow[0] };
-			TinyMemDC dc1(hDC, m_arrow_up_normal, m_arrow_up_normal.GetRectangle());
-			dc1.Render(rcPaint1, TRUE);
+		RECT rcPaint1 = { sc.rectangle.left, sc.rectangle.top, sc.rectangle.right, sc.arrow[0] };
+		TinyMemDC dc1(dc, m_arrow_up_normal);
+		dc1.Render(dc.GetRectangle(), TRUE);
 
-			if (bMouseDown)
-			{
-				RECT rcPaint2 = { sc.rectangle.left, sc.arrow[1], sc.rectangle.right, sc.rectangle.bottom };
-				TinyMemDC dc2(hDC, m_arrow_down_press, m_arrow_down_press.GetRectangle());
-				dc2.Render(rcPaint2, TRUE);
-			}
-			else
-			{
-				RECT rcPaint2 = { sc.rectangle.left, sc.arrow[1], sc.rectangle.right, sc.rectangle.bottom };
-				TinyMemDC dc2(hDC, m_arrow_down_hover, m_arrow_down_hover.GetRectangle());
-				dc2.Render(rcPaint2, TRUE);
-			}
+		if (bMouseDown)
+		{
+		RECT rcPaint2 = { sc.rectangle.left, sc.arrow[1], sc.rectangle.right, sc.rectangle.bottom };
+		TinyMemDC dc2(dc, m_arrow_down_press);
+		dc2.Render(dc.GetRectangle(), TRUE);
 		}
+		else
+		{
+		RECT rcPaint2 = { sc.rectangle.left, sc.arrow[1], sc.rectangle.right, sc.rectangle.bottom };
+		TinyMemDC dc2(dc, m_arrow_down_hover);
+		dc2.Render(dc.GetRectangle(), TRUE);
+		}
+		}*/
 	}
-	void TinyScroll::DrawThumb(HDC hDC, INT code, BOOL bMouseDown)
+	void TinyScroll::DrawThumb(TinyMemDC dc, INT code, BOOL bMouseDown)
 	{
-		ASSERT(hDC);
 		SCROLLCALC sc = { 0 };
 		ScrollCalculate(&sc);
-		if (code == HTSCROLL_NONE)
+		/*if (code == HTSCROLL_NONE)
 		{
-			RECT rcPaint = { sc.rectangle.left, sc.thumb[0], sc.rectangle.right, sc.thumb[1] };
-			TinyMemDC dc(hDC, m_scrollbar_normal, m_scrollbar_normal.GetRectangle());
-			dc.Render(rcPaint, TRUE);
+		RECT rcPaint = { sc.rectangle.left, sc.thumb[0], sc.rectangle.right, sc.thumb[1] };
+		TinyMemDC memdc(hDC, m_scrollbar_normal);
+		RECT rect = m_scrollbar_normal.GetRectangle();
+		RECT rect1 = { rect.left, rect.top, rect.right, rect.top + 4 };
+		RECT rect2 = { rect.left, rect.top + 4, rect.right, rect.bottom - 4 };
+		RECT rect3 = { rect.left, rect.bottom - 4, rect.right, rect.bottom };
+		memdc.Render(rect1, TRUE);
+		memdc.Render(rect2, TRUE);
+		memdc.Render(rect3, TRUE);
 		}
 		if (code == HTSCROLL_THUMB)
 		{
-			RECT rcPaint = { sc.rectangle.left, sc.thumb[0], sc.rectangle.right, sc.thumb[1] };
-			TinyMemDC dc(hDC, m_scrollbar_hover, m_scrollbar_hover.GetRectangle());
-			dc.Render(rcPaint, TRUE);
-		}
+		RECT rcPaint = { sc.rectangle.left, sc.thumb[0], sc.rectangle.right, sc.thumb[1] };
+		TinyMemDC memdc(hDC, m_scrollbar_hover);
+		RECT rect = m_scrollbar_hover.GetRectangle();
+		RECT rect1 = { rect.left, rect.top, rect.right, rect.top + 4 };
+		RECT rect2 = { rect.left, rect.top + 4, rect.right, rect.bottom - 4 };
+		RECT rect3 = { rect.left, rect.bottom - 4, rect.right, rect.bottom };
+		memdc.Render(rect1, TRUE);
+		memdc.Render(rect2, TRUE);
+		memdc.Render(rect3, TRUE);
+		}*/
 	}
-	void TinyScroll::DrawGroove(HDC hDC)
+	void TinyScroll::DrawGroove(TinyMemDC dc)
 	{
-		ASSERT(hDC);
 		SCROLLCALC sc = { 0 };
 		ScrollCalculate(&sc);
-		RECT rcPaint = { sc.rectangle.left, sc.arrow[0], sc.rectangle.right, sc.thumb[1] };
-		TinyMemDC dc(hDC, m_scrollbar_groove, m_scrollbar_groove.GetRectangle());
-		dc.Render(rcPaint, TRUE);
+		/*RECT rcPaint = { sc.rectangle.left, sc.arrow[0], sc.rectangle.right, sc.thumb[1] };
+		TinyMemDC memDC(dc, m_scrollbar_groove);
+		memDC.Render(dc.GetRectangle(), TRUE);*/
 	}
 
 }
