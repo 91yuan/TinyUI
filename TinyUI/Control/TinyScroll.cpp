@@ -4,13 +4,10 @@
 namespace TinyUI
 {
 	TinyScroll::TinyScroll()
-		:m_iTrackingCode(0),
-		m_bTracking(FALSE)
+		:m_bTracking(FALSE)
 	{
 		memset(&m_si, 0, sizeof(SCROLLINFO));
-		m_si.nMax = 200;
-		m_si.nMin = 0;
-		m_si.nPage = 1;
+		m_si.cbSize = sizeof(SCROLLINFO);
 	}
 
 
@@ -28,19 +25,12 @@ namespace TinyUI
 		bHandled = FALSE;
 		PAINTSTRUCT ps = { 0 };
 		HDC hDC = BeginPaint(m_hWND, &ps);
-
 		TinyMemDC memdc(hDC, TO_CX(ps.rcPaint), TO_CY(ps.rcPaint));
 		FillRect(memdc, &ps.rcPaint, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
-		RECT rc = { 0, 0, memdc.GetSize().cx, memdc.GetSize().cy };
-		TinyMemDC memdc1(memdc, smiley_021);
-		memdc1.Render(rc, smiley_021.GetRectangle(), TRUE);
-		/*DrawArrow(memdc, m_iLastingCode, TRUE);
-		DrawThumb(memdc, m_iLastingCode, TRUE);
-		DrawGroove(memdc);*/
+
 
 		memdc.Render(ps.rcPaint, ps.rcPaint, FALSE);
-
 		EndPaint(m_hWND, &ps);
 		return FALSE;
 	}
@@ -54,34 +44,6 @@ namespace TinyUI
 	LRESULT TinyScroll::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		//POINT ps = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-		//INT code = ScrollHitTest(ps);
-		//if (code != m_iLastCode)
-		//{
-		//	m_iLastCode = code;
-
-		//	SCROLLCALC sc = { 0 };
-		//	ScrollCalculate(&sc);
-
-		//	HDC hDC = GetDC(m_hWND);
-		//	TinyMemDC mendc(hDC, sc.rectangle);
-
-		//	//绘制上箭头
-		//	TinyMemDC mendc1(mendc, m_arrow_up_normal, m_arrow_up_normal.GetRectangle());
-		//	mendc1.Render(m_arrow_up_normal.GetRectangle(), TRUE);
-		//	//绘制槽
-		//	TinyMemDC mendc2(mendc, m_scrollbar_groove, m_scrollbar_groove.GetRectangle());
-		//	mendc1.Render(m_scrollbar_groove.GetRectangle(), TRUE);
-		//	//绘制滑块
-		//	TinyMemDC mendc2(mendc, m_scrollbar_groove, m_scrollbar_groove.GetRectangle());
-		//	mendc1.Render(m_scrollbar_groove.GetRectangle(), TRUE);
-		//	//绘制下箭头
-
-		//	mendc.Render(sc.rectangle, FALSE);
-
-		//	ReleaseDC(m_hWND, hDC);
-		//}
-
 		return FALSE;
 	}
 
@@ -100,17 +62,19 @@ namespace TinyUI
 	LRESULT TinyScroll::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		//加载图片
-		smiley_021.Load("E:\\smiley_021.png");
-		/*m_arrow_down_hover.Load("E:\\ScrollBar\\arrow_down_hover.png");
-		m_arrow_down_normal.Load("E:\\ScrollBar\\arrow_down_normal.png");
-		m_arrow_down_press.Load("E:\\ScrollBar\\arrow_down_press.png");
-		m_arrow_up_hover.Load("E:\\ScrollBar\\arrow_up_hover.png");
-		m_arrow_up_normal.Load("E:\\ScrollBar\\arrow_up_normal.png");
-		m_arrow_up_press.Load("E:\\ScrollBar\\arrow_up_press.png");
-		m_scrollbar_groove.Load("E:\\ScrollBar\\scrollbar_groove.png");
-		m_scrollbar_hover.Load("E:\\ScrollBar\\scrollbar_hover.png");
-		m_scrollbar_normal.Load("E:\\ScrollBar\\scrollbar_normal.png");*/
+		//上箭头
+		m_images[0].Load("E:\\ScrollBar\\1_arrow_up_normal.png");
+		m_images[1].Load("E:\\ScrollBar\\2_arrow_up_hover.png");
+		m_images[2].Load("E:\\ScrollBar\\3_arrow_up_press.png");
+		//下箭头
+		m_images[3].Load("E:\\ScrollBar\\4_arrow_down_normal.png");
+		m_images[4].Load("E:\\ScrollBar\\5_arrow_down_hover.png");
+		m_images[5].Load("E:\\ScrollBar\\6_arrow_down_press.png");
+		//划块
+		m_images[6].Load("E:\\ScrollBar\\7_scrollbar_groove.png");
+		m_images[7].Load("E:\\ScrollBar\\8_scrollbar_normal.png");
+		m_images[8].Load("E:\\ScrollBar\\9_scrollbar_hover.png");
+
 		return FALSE;
 	}
 
@@ -121,143 +85,97 @@ namespace TinyUI
 		m_size.cy = HIWORD(lParam);
 		return FALSE;
 	}
-	void TinyScroll::ScrollCalculate(LPSCROLLCALC ps)
+
+	BOOL TinyScroll::ScrollCalculate(SCROLLCALC* ps)
 	{
 		ASSERT(ps);
-		SetRect(&ps->rectangle, m_size.cx - SM_CYVSCROLL, 0, m_size.cx, m_size.cy);
-		INT arrow_size = SM_CYVSCROLL;
-		INT groove_size = TO_CY(ps->rectangle) - 2 * arrow_size;//获得滚动条槽的大小
-		INT thumb_size = 0;
-		INT thumb_pos = 0;
-		ps->arrow[0] = ps->rectangle.top + arrow_size;
-		ps->arrow[1] = ps->rectangle.bottom - arrow_size;
-		INT range = (m_si.nMax - m_si.nMin) + 1;
-		if (range > 0 && (m_si.nPage > (UINT)m_si.nMax || m_si.nMax <= m_si.nMin || m_si.nMax == 0))
+		SetRect(&ps->rectangle,
+			TINY_SCROLL_MARGIN_LEFT,
+			TINY_SCROLL_MARGIN_TOP,
+			m_size.cx - TINY_SCROLL_MARGIN_RIGHT,
+			m_size.cy - TINY_SCROLL_MARGIN_BOTTOM);
+		SetRect(&ps->arrowRectangle[0],
+			ps->rectangle.left,
+			ps->rectangle.top,
+			ps->rectangle.right,
+			ps->rectangle.top + TINY_SM_CYSCROLL);//上箭头的高度
+		SetRect(&ps->arrowRectangle[1],
+			ps->rectangle.left,
+			ps->rectangle.bottom - TINY_SM_CYSCROLL,
+			ps->rectangle.right,
+			ps->rectangle.bottom);//下箭头的大小
+		INT iRange = (m_si.nMax - m_si.nMin) + 1;
+		INT iGrooveSize = ps->arrowRectangle[1].top - ps->arrowRectangle[0].bottom;//划块的槽
+		BOOL bFlag = (m_si.nPage > (UINT)m_si.nMax || m_si.nMax <= m_si.nMin || m_si.nMax == 0);
+		if (iRange > 0 && !bFlag)
 		{
-			thumb_size = MulDiv(m_si.nPage, groove_size, range);
-			thumb_pos = MulDiv(m_si.nPos - m_si.nMin, groove_size - thumb_size, range - max(1, m_si.nPage));
-			if (thumb_pos < 0)
-				thumb_pos = 0;
-			if (thumb_pos >= (groove_size - thumb_size))
-				thumb_pos = groove_size - thumb_size;
-			thumb_pos += ps->rectangle.top + arrow_size;
-			ps->thumb[0] = thumb_pos;
-			ps->thumb[1] = thumb_pos + thumb_size;
+			//计算划块的大小
+			INT iThumbPos = 0;
+			INT iThumbSize = MulDiv(m_si.nPage, iGrooveSize, iRange);
+			if (iThumbSize < TINY_SCROLL_MINTHUMB_SIZE)
+				iThumbSize = TINY_SCROLL_MINTHUMB_SIZE;
+			//计算Page
+			INT iPageSize = max(1, m_si.nPage);
+			iThumbPos = MulDiv(m_si.nPos - m_si.nMin, iGrooveSize - iThumbSize, iRange - iPageSize);
+			if (iThumbPos < 0)
+				iThumbPos = 0;
+			if (iThumbPos >= (iGrooveSize - iThumbSize))
+				iThumbPos = iGrooveSize - iThumbSize;
+			iThumbPos += ps->rectangle.top + TO_CY(ps->arrowRectangle[0]);
+			SetRect(&ps->thumbRectangle,
+				ps->rectangle.left,
+				iThumbPos,
+				ps->rectangle.right,
+				iThumbPos + iThumbSize);
+			SetRect(&ps->pageRectangle[0],
+				ps->rectangle.top,
+				ps->arrowRectangle[0].bottom,
+				ps->rectangle.right,
+				ps->thumbRectangle.top);
+			SetRect(&ps->pageRectangle[1],
+				ps->rectangle.top,
+				ps->thumbRectangle.top,
+				ps->rectangle.right,
+				ps->arrowRectangle[1].top);
 		}
 		else
 		{
-			ps->thumb[0] = ps->thumb[1] = 0;
+			SetRect(&ps->thumbRectangle,
+				ps->rectangle.left,
+				0,
+				ps->rectangle.right,
+				0);
+			SetRect(&ps->pageRectangle[0],
+				ps->rectangle.top,
+				ps->arrowRectangle[0].bottom,
+				ps->rectangle.right,
+				ps->arrowRectangle[1].top);
+			SetRect(&ps->pageRectangle[1],
+				ps->rectangle.top,
+				ps->arrowRectangle[0].bottom,
+				ps->rectangle.right,
+				ps->arrowRectangle[1].top);
 		}
 	}
-	INT  TinyScroll::ScrollHitTest(POINT ps)
+	void TinyScroll::SetScrollInfo(INT iMax, INT iMin, INT iPage, INT iPos)
 	{
-		SCROLLCALC sc = { 0 };
-		ScrollCalculate(&sc);
-		if (!PtInRect(&sc.rectangle, ps)) return HTSCROLL_NONE;
-		if (ps.y < sc.arrow[0]) return HTSCROLL_LINEUP;
-		if (ps.y > sc.arrow[0] && ps.y < sc.arrow[1]) return HTSCROLL_PAGEUP;
-		if ((ps.y >= sc.thumb[0] && ps.y <= sc.thumb[1])
-			&& (sc.thumb[0] > 0 && (sc.thumb[1] > sc.thumb[0]))) return HTSCROLL_THUMB;
-		if (ps.y > sc.thumb[1] && ps.y < sc.arrow[1]) return HTSCROLL_PAGEDOWN;
-		if (ps.y >= sc.arrow[1]) return HTSCROLL_LINEDOWN;
+		m_si.nMax = iMax;
+		m_si.nMin = iMin;
+		m_si.nPage = iPage;
+		m_si.nPos = iPos;
+	}
+	INT	TinyScroll::ScrollHitTest(POINT pt)
+	{
+		SCROLLCALC si = { 0 };
+		ScrollCalculate(&si);
+		if (!PtInRect(&si.rectangle, pt))
+			return HTSCROLL_NONE;
+		if (pt.y >= si.arrowRectangle[0].top && pt.y < si.arrowRectangle[0].bottom)
+			return HTSCROLL_LINEUP;
+		if (pt.y >= si.thumbRectangle.top && pt.y <= si.thumbRectangle.bottom)
+			return HTSCROLL_THUMB;
+		if (pt.y >= si.arrowRectangle[1].top && pt.y < si.arrowRectangle[1].bottom)
+			return HTSCROLL_LINEDOWN;
 		return HTSCROLL_NONE;
 	}
-	void TinyScroll::SetScrollInfo(SCROLLINFO si)
-	{
-		m_si = si;
-		InvalidateRect(m_hWND, NULL, FALSE);
-	}
-	void TinyScroll::DrawArrow(TinyMemDC dc, INT code, BOOL bMouseDown)
-	{
-		SCROLLCALC sc = { 0 };
-		ScrollCalculate(&sc);
-		if (code == HTSCROLL_NONE)
-		{
-			RECT desPaint1 = { sc.rectangle.left, sc.rectangle.top, sc.rectangle.right, sc.arrow[0] };
-			/*TinyMemDC dc1(dc, m_arrow_up_normal);
-			RECT srcPaint1 = { 0, 0, m_arrow_up_normal.GetSize().cx, m_arrow_up_normal.GetSize().cy };
-			dc1.Render(desPaint1, srcPaint1, FALSE);*/
-
-			/*RECT desPaint2 = { sc.rectangle.left, sc.arrow[1], sc.rectangle.right, sc.rectangle.bottom };
-			TinyMemDC dc2(dc, m_arrow_down_normal);
-			RECT srcPaint2 = { 0, 0, m_arrow_down_normal.GetSize().cx, m_arrow_down_normal.GetSize().cy };
-			dc2.Render(desPaint2, srcPaint2, FALSE);*/
-		}
-		/*if (code == HTSCROLL_LINEUP)
-		{
-		if (bMouseDown)
-		{
-		RECT rcPaint1 = { sc.rectangle.left, sc.rectangle.top, sc.rectangle.right, sc.arrow[0] };
-		TinyMemDC dc1(dc, m_arrow_up_press);
-		dc1.Render(dc.GetRectangle(), TRUE);
-		}
-		else
-		{
-		RECT rcPaint1 = { sc.rectangle.left, sc.rectangle.top, sc.rectangle.right, sc.arrow[0] };
-		TinyMemDC dc1(dc, m_arrow_up_hover);
-		dc1.Render(dc.GetRectangle(), TRUE);
-		}
-
-		RECT rcPaint2 = { sc.rectangle.left, sc.arrow[1], sc.rectangle.right, sc.rectangle.bottom };
-		TinyMemDC dc2(dc, m_arrow_down_normal);
-		dc2.Render(dc.GetRectangle(), TRUE);
-		}
-		if (code == HTSCROLL_LINEDOWN)
-		{
-		RECT rcPaint1 = { sc.rectangle.left, sc.rectangle.top, sc.rectangle.right, sc.arrow[0] };
-		TinyMemDC dc1(dc, m_arrow_up_normal);
-		dc1.Render(dc.GetRectangle(), TRUE);
-
-		if (bMouseDown)
-		{
-		RECT rcPaint2 = { sc.rectangle.left, sc.arrow[1], sc.rectangle.right, sc.rectangle.bottom };
-		TinyMemDC dc2(dc, m_arrow_down_press);
-		dc2.Render(dc.GetRectangle(), TRUE);
-		}
-		else
-		{
-		RECT rcPaint2 = { sc.rectangle.left, sc.arrow[1], sc.rectangle.right, sc.rectangle.bottom };
-		TinyMemDC dc2(dc, m_arrow_down_hover);
-		dc2.Render(dc.GetRectangle(), TRUE);
-		}
-		}*/
-	}
-	void TinyScroll::DrawThumb(TinyMemDC dc, INT code, BOOL bMouseDown)
-	{
-		SCROLLCALC sc = { 0 };
-		ScrollCalculate(&sc);
-		/*if (code == HTSCROLL_NONE)
-		{
-		RECT rcPaint = { sc.rectangle.left, sc.thumb[0], sc.rectangle.right, sc.thumb[1] };
-		TinyMemDC memdc(hDC, m_scrollbar_normal);
-		RECT rect = m_scrollbar_normal.GetRectangle();
-		RECT rect1 = { rect.left, rect.top, rect.right, rect.top + 4 };
-		RECT rect2 = { rect.left, rect.top + 4, rect.right, rect.bottom - 4 };
-		RECT rect3 = { rect.left, rect.bottom - 4, rect.right, rect.bottom };
-		memdc.Render(rect1, TRUE);
-		memdc.Render(rect2, TRUE);
-		memdc.Render(rect3, TRUE);
-		}
-		if (code == HTSCROLL_THUMB)
-		{
-		RECT rcPaint = { sc.rectangle.left, sc.thumb[0], sc.rectangle.right, sc.thumb[1] };
-		TinyMemDC memdc(hDC, m_scrollbar_hover);
-		RECT rect = m_scrollbar_hover.GetRectangle();
-		RECT rect1 = { rect.left, rect.top, rect.right, rect.top + 4 };
-		RECT rect2 = { rect.left, rect.top + 4, rect.right, rect.bottom - 4 };
-		RECT rect3 = { rect.left, rect.bottom - 4, rect.right, rect.bottom };
-		memdc.Render(rect1, TRUE);
-		memdc.Render(rect2, TRUE);
-		memdc.Render(rect3, TRUE);
-		}*/
-	}
-	void TinyScroll::DrawGroove(TinyMemDC dc)
-	{
-		SCROLLCALC sc = { 0 };
-		ScrollCalculate(&sc);
-		/*RECT rcPaint = { sc.rectangle.left, sc.arrow[0], sc.rectangle.right, sc.thumb[1] };
-		TinyMemDC memDC(dc, m_scrollbar_groove);
-		memDC.Render(dc.GetRectangle(), TRUE);*/
-	}
-
 }
