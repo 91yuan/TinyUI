@@ -47,13 +47,22 @@ namespace TinyUI
 		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	private:
-		BOOL	ScrollCalculate(SCROLLCALC* ps);//计算划块大小
-		INT		ScrollHitTest(POINT pt);
+		INT		ScrollHitTest(POINT& pt);
+		void	ScrollCalculate(SCROLLCALC* ps);//计算划块大小
+		void	ScrollTrackThumb(POINT& pt);
+		void	DrawScrollBar(TinyMemDC& dc, INT iHitTest);
+		void	DrawArrow(TinyMemDC& dc, SCROLLCALC* ps);
+		void	DrawThumb(TinyMemDC& dc, SCROLLCALC* ps);
+		void	DrawGroove(TinyMemDC& dc, SCROLLCALC* ps);
+	public:
 		void	SetScrollInfo(INT iMax, INT iMin, INT iPage, INT iPos);//设置滚动条信息
 	private:
 		SIZE		m_size;
 		SCROLLINFO	m_si;
 		BOOL		m_bTracking;
+		INT			m_iOffsetPos;
+		INT			m_iTrackingCode;
+		INT			m_iLastCode;
 		TinyImage	m_images[9];
 	};
 }

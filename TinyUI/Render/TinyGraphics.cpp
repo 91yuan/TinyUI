@@ -1212,6 +1212,83 @@ namespace TinyUI
 	{
 		return m_size;
 	}
+	BOOL TinyMemDC::Render(RECT dstPaint, RECT dstCenter, RECT srcPaint, RECT srcCenter, BOOL bAlpha)
+	{
+		RECT srcRectangles[9];
+		SetRect(&srcRectangles[0], srcPaint.left, srcPaint.top, srcCenter.left, srcCenter.top);
+		SetRect(&srcRectangles[1], srcCenter.left, srcPaint.top, srcCenter.right, srcCenter.top);
+		SetRect(&srcRectangles[2], srcCenter.right, srcPaint.top, srcPaint.right, srcCenter.top);
+		SetRect(&srcRectangles[3], srcPaint.left, srcCenter.top, srcCenter.left, srcCenter.bottom);
+		SetRect(&srcRectangles[4], srcCenter.left, srcCenter.top, srcCenter.right, srcCenter.bottom);
+		SetRect(&srcRectangles[5], srcCenter.right, srcCenter.top, srcPaint.right, srcCenter.bottom);
+		SetRect(&srcRectangles[6], srcPaint.left, srcCenter.bottom, srcCenter.left, srcPaint.bottom);
+		SetRect(&srcRectangles[7], srcCenter.left, srcCenter.bottom, srcCenter.right, srcPaint.bottom);
+		SetRect(&srcRectangles[8], srcCenter.right, srcCenter.bottom, srcPaint.right, srcPaint.bottom);
+
+		RECT dstRectangles[9];
+		SetRect(&dstRectangles[0], dstPaint.left, dstPaint.top, dstCenter.left, dstCenter.top);
+		SetRect(&dstRectangles[1], dstCenter.left, dstPaint.top, dstCenter.right, dstCenter.top);
+		SetRect(&dstRectangles[2], dstCenter.right, dstPaint.top, dstPaint.right, dstCenter.top);
+		SetRect(&dstRectangles[3], dstPaint.left, dstCenter.top, dstCenter.left, dstCenter.bottom);
+		SetRect(&dstRectangles[4], dstCenter.left, dstCenter.top, dstCenter.right, dstCenter.bottom);
+		SetRect(&dstRectangles[5], dstCenter.right, dstCenter.top, dstPaint.right, dstCenter.bottom);
+		SetRect(&dstRectangles[6], dstPaint.left, dstCenter.bottom, dstCenter.left, dstPaint.bottom);
+		SetRect(&dstRectangles[7], dstCenter.left, dstCenter.bottom, dstCenter.right, dstPaint.bottom);
+		SetRect(&dstRectangles[8], dstCenter.right, dstCenter.bottom, dstPaint.right, dstPaint.bottom);
+
+		if (bAlpha)
+		{
+			BLENDFUNCTION bs = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+			BOOL bRes = TRUE;
+			for (INT i = 0; i < 9; i++)
+			{
+				INT dstCX = TO_CX(dstRectangles[i]);
+				INT dstCY = TO_CY(dstRectangles[i]);
+				INT srcCX = TO_CX(srcRectangles[i]);
+				INT srcCY = TO_CY(srcRectangles[i]);
+
+				if (dstCX == 0 || dstCY == 0 || srcCX == 0 || srcCY == 0)
+					continue;
+
+				bRes = ::AlphaBlend(m_hDestDC,
+					dstRectangles[i].left,
+					dstRectangles[i].top,
+					dstCX,
+					dstCY,
+					m_hDC,
+					srcRectangles[i].left,
+					srcRectangles[i].top,
+					srcCX,
+					srcCY,
+					bs);
+				if (!bRes) return FALSE;
+			}
+		}
+		else
+		{
+			BOOL bRes = TRUE;
+			for (INT i = 0; i < 9; i++)
+			{
+				INT dstCX = TO_CX(dstRectangles[i]);
+				INT dstCY = TO_CY(dstRectangles[i]);
+
+				if (dstCX == 0 || dstCY == 0)
+					continue;
+
+				bRes = ::BitBlt(m_hDestDC,
+					dstRectangles[i].left,
+					dstRectangles[i].top,
+					dstCX,
+					dstCY,
+					m_hDC,
+					srcRectangles[i].left,
+					srcRectangles[1].top,
+					SRCCOPY);
+				if (!bRes) return FALSE;
+			}
+		}
+		return TRUE;
+	}
 	BOOL TinyMemDC::Render(RECT dstPaint, RECT srcPaint, BOOL bAlpha)
 	{
 		if (bAlpha)

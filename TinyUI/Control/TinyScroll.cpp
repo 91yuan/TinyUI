@@ -4,7 +4,10 @@
 namespace TinyUI
 {
 	TinyScroll::TinyScroll()
-		:m_bTracking(FALSE)
+		:m_bTracking(FALSE),
+		m_iTrackingCode(0),
+		m_iOffsetPos(0),
+		m_iLastCode(0)
 	{
 		memset(&m_si, 0, sizeof(SCROLLINFO));
 		m_si.cbSize = sizeof(SCROLLINFO);
@@ -28,7 +31,7 @@ namespace TinyUI
 		TinyMemDC memdc(hDC, TO_CX(ps.rcPaint), TO_CY(ps.rcPaint));
 		FillRect(memdc, &ps.rcPaint, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
-
+		DrawScrollBar(memdc, 0);
 
 		memdc.Render(ps.rcPaint, ps.rcPaint, FALSE);
 		EndPaint(m_hWND, &ps);
@@ -44,12 +47,23 @@ namespace TinyUI
 	LRESULT TinyScroll::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+		if (m_bTracking && (wParam & MK_LBUTTON))
+		{
+			if (m_iTrackingCode == HTSCROLL_THUMB)
+			{
+				ScrollTrackThumb(pt);
+				return FALSE;
+			}
+		}
 		return FALSE;
 	}
 
 	LRESULT TinyScroll::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+		INT iHitTest = ScrollHitTest(pt);
 		return FALSE;
 	}
 
@@ -86,7 +100,7 @@ namespace TinyUI
 		return FALSE;
 	}
 
-	BOOL TinyScroll::ScrollCalculate(SCROLLCALC* ps)
+	void TinyScroll::ScrollCalculate(SCROLLCALC* ps)
 	{
 		ASSERT(ps);
 		SetRect(&ps->rectangle,
@@ -157,6 +171,72 @@ namespace TinyUI
 				ps->arrowRectangle[1].top);
 		}
 	}
+	void TinyScroll::ScrollTrackThumb(POINT& pt)
+	{
+		SCROLLCALC si = { 0 };
+		ScrollCalculate(&si);
+		INT iPos = 0;
+		INT iRange = (m_si.nMax - m_si.nMin) + 1;
+		INT iThumbPos = (pt.y - m_iOffsetPos) - si.arrowRectangle[0].bottom;
+		INT iThumbSize = TO_CY(si.thumbRectangle);
+		INT iGrooveSize = si.arrowRectangle[1].top - si.arrowRectangle[0].bottom;
+		if (iThumbPos < 0)
+			iThumbPos = 0;
+		if (iThumbPos >(iGrooveSize - iThumbSize))
+			iThumbPos = iGrooveSize - iThumbSize;
+		if (iRange > 0)
+			iPos = MulDiv(iThumbPos, iRange - m_si.nPage, iGrooveSize - iThumbSize);
+		if (m_si.nPos != iPos)
+		{
+			m_si.nTrackPos = iPos;
+			TRACE("µ±Ç°Î»ÖÃiPos: %d\n" + iPos);
+		}
+	}
+	void TinyScroll::DrawScrollBar(TinyMemDC& dc, INT iHitTest)
+	{
+		SCROLLCALC si = { 0 };
+		ScrollCalculate(&si);
+
+		DrawArrow(dc, &si);
+		DrawGroove(dc, &si);
+		DrawThumb(dc, &si);
+
+	}
+	void TinyScroll::DrawArrow(TinyMemDC& dc, SCROLLCALC* ps)
+	{
+		TinyMemDC memdc1(dc, m_images[0]);
+		memdc1.Render(ps->arrowRectangle[0], m_images[0].GetRectangle(), TRUE);
+		TinyMemDC memdc2(dc, m_images[3]);
+		memdc2.Render(ps->arrowRectangle[1], m_images[3].GetRectangle(), TRUE);
+	}
+	void TinyScroll::DrawThumb(TinyMemDC& dc, SCROLLCALC* ps)
+	{
+		TinyMemDC memdc(dc, m_images[8]);
+		RECT dstCenter, srcCenter;
+		CopyRect(&srcCenter, &m_images[8].GetRectangle());
+		srcCenter.top = srcCenter.top + 3;
+		srcCenter.bottom = srcCenter.bottom - 3;
+		CopyRect(&dstCenter, &ps->thumbRectangle);
+		dstCenter.top = dstCenter.top + 3;
+		dstCenter.bottom = dstCenter.bottom - 3;
+		memdc.Render(ps->thumbRectangle, dstCenter, m_images[8].GetRectangle(), srcCenter, TRUE);
+	}
+	void TinyScroll::DrawGroove(TinyMemDC& dc, SCROLLCALC* ps)
+	{
+		TinyMemDC memdc(dc, m_images[7]);
+		RECT dstCenter, srcCenter;
+		CopyRect(&srcCenter, &m_images[7].GetRectangle());
+		srcCenter.top = srcCenter.top + 3;
+		srcCenter.bottom = srcCenter.bottom - 3;
+		RECT grooveRectangle;
+		CopyRect(&grooveRectangle, &ps->rectangle);
+		grooveRectangle.top = ps->arrowRectangle[0].bottom;
+		grooveRectangle.bottom = ps->arrowRectangle[1].top;
+		CopyRect(&dstCenter, &grooveRectangle);
+		dstCenter.top = dstCenter.top + 3;
+		dstCenter.bottom = dstCenter.bottom - 3;
+		memdc.Render(grooveRectangle, dstCenter, m_images[7].GetRectangle(), srcCenter, TRUE);
+	}
 	void TinyScroll::SetScrollInfo(INT iMax, INT iMin, INT iPage, INT iPos)
 	{
 		m_si.nMax = iMax;
@@ -164,7 +244,7 @@ namespace TinyUI
 		m_si.nPage = iPage;
 		m_si.nPos = iPos;
 	}
-	INT	TinyScroll::ScrollHitTest(POINT pt)
+	INT	TinyScroll::ScrollHitTest(POINT& pt)
 	{
 		SCROLLCALC si = { 0 };
 		ScrollCalculate(&si);
@@ -172,8 +252,12 @@ namespace TinyUI
 			return HTSCROLL_NONE;
 		if (pt.y >= si.arrowRectangle[0].top && pt.y < si.arrowRectangle[0].bottom)
 			return HTSCROLL_LINEUP;
+		if (pt.y >= si.pageRectangle[0].top && pt.y < si.pageRectangle[0].bottom)
+			return HTSCROLL_PAGEUP;
 		if (pt.y >= si.thumbRectangle.top && pt.y <= si.thumbRectangle.bottom)
 			return HTSCROLL_THUMB;
+		if (pt.y > si.pageRectangle[1].top && pt.y < si.pageRectangle[1].bottom)
+			return HTSCROLL_PAGEDOWN;
 		if (pt.y >= si.arrowRectangle[1].top && pt.y < si.arrowRectangle[1].bottom)
 			return HTSCROLL_LINEDOWN;
 		return HTSCROLL_NONE;
