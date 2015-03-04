@@ -27,11 +27,11 @@ namespace TinyUI
 	/// <summary>
 	/// 自绘滚动条
 	/// </summary>
-	class TinyScroll : public TinyControl
+	class TinyScrollBox : public TinyControl
 	{
 	public:
-		TinyScroll();
-		~TinyScroll();
+		TinyScrollBox();
+		~TinyScrollBox();
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -41,6 +41,8 @@ namespace TinyUI
 		virtual LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+	public:
+		BOOL	SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);//设置滚动条信息
 	private:
 		INT		ScrollHitTest(POINT& pt);
 		void	ScrollCalculate(SCROLLCALC* ps);//计算划块大小
@@ -49,15 +51,13 @@ namespace TinyUI
 		void	DrawArrow(TinyMemDC& dc, SCROLLCALC* ps, INT iHitTest, BOOL bMouseDown);
 		void	DrawThumb(TinyMemDC& dc, SCROLLCALC* ps, INT iHitTest);
 		void	DrawGroove(TinyMemDC& dc, SCROLLCALC* ps);
-	public:
-		BOOL	SetScrollInfo(INT iMin,INT iMax, INT iPage, INT iPos);//设置滚动条信息
 	private:
 		SIZE		m_size;
 		SCROLLINFO	m_si;
-		BOOL		m_bTracking;
 		BOOL		m_bMouseTracking;
-		INT			m_iOffsetPos;
-		INT			m_iTrackingCode;
+		BOOL		m_bTracking;//是否还是滑动
+		INT			m_iThumbOffset;//划款偏移量
+		INT			m_iTrackingCode;//当前HitTest
 		TinyImage	m_images[9];
 	};
 }

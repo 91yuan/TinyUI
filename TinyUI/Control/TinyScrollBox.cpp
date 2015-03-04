@@ -1,12 +1,12 @@
 #include "../stdafx.h"
-#include "TinyScroll.h"
+#include "TinyScrollBox.h"
 
 namespace TinyUI
 {
-	TinyScroll::TinyScroll()
+	TinyScrollBox::TinyScrollBox()
 		:m_bTracking(FALSE),
 		m_bMouseTracking(FALSE),
-		m_iOffsetPos(0),
+		m_iThumbOffset(0),
 		m_iTrackingCode(HTSCROLL_NONE)
 	{
 		memset(&m_si, 0, sizeof(SCROLLINFO));
@@ -14,16 +14,16 @@ namespace TinyUI
 	}
 
 
-	TinyScroll::~TinyScroll()
+	TinyScrollBox::~TinyScrollBox()
 	{
 	}
 
-	BOOL TinyScroll::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
+	BOOL TinyScrollBox::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
 		return TinyControl::Create(hParent, x, y, cx, cy, FALSE);
 	}
 
-	LRESULT TinyScroll::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT TinyScrollBox::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		PAINTSTRUCT ps = { 0 };
@@ -40,13 +40,13 @@ namespace TinyUI
 		return FALSE;
 	}
 
-	LRESULT TinyScroll::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT TinyScrollBox::OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = TRUE;
 		return TRUE;
 	}
 
-	LRESULT TinyScroll::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT TinyScrollBox::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 
@@ -81,7 +81,7 @@ namespace TinyUI
 		return FALSE;
 	}
 
-	LRESULT TinyScroll::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT TinyScrollBox::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
@@ -102,7 +102,7 @@ namespace TinyUI
 		INT iHitTest = ScrollHitTest(pt);
 		if (iHitTest == HTSCROLL_THUMB)
 		{
-			m_iOffsetPos = pt.y - si.thumbRectangle.top;
+			m_iThumbOffset = pt.y - si.thumbRectangle.top;
 		}
 		m_iTrackingCode = iHitTest;
 		m_bTracking = TRUE;
@@ -120,30 +120,19 @@ namespace TinyUI
 		return FALSE;
 	}
 
-	LRESULT TinyScroll::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT TinyScrollBox::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 
-		m_iOffsetPos = 0;
+		m_iThumbOffset = 0;
 		m_bTracking = FALSE;
-
-		if (m_iTrackingCode == HTSCROLL_THUMB)
-		{
-			HDC hDC = GetDC(m_hWND);
-			TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
-			RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
-			FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
-			DrawScrollBar(memdc, HTSCROLL_NONE, FALSE);
-			memdc.Render(paintRC, paintRC, FALSE);
-			ReleaseDC(m_hWND, hDC);
-		}
 
 		ReleaseCapture();
 
 		return FALSE;
 	}
 
-	LRESULT TinyScroll::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT TinyScrollBox::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		//ÉÏ¼ýÍ·
@@ -162,14 +151,14 @@ namespace TinyUI
 		return FALSE;
 	}
 
-	LRESULT TinyScroll::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT TinyScrollBox::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		m_size.cx = LOWORD(lParam);
 		m_size.cy = HIWORD(lParam);
 		return FALSE;
 	}
-	LRESULT TinyScroll::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT TinyScrollBox::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 
@@ -188,7 +177,7 @@ namespace TinyUI
 		return FALSE;
 	}
 
-	void TinyScroll::ScrollCalculate(SCROLLCALC* ps)
+	void TinyScrollBox::ScrollCalculate(SCROLLCALC* ps)
 	{
 		ASSERT(ps);
 		SetRect(&ps->rectangle,
@@ -259,12 +248,12 @@ namespace TinyUI
 				ps->arrowRectangle[1].top);
 		}
 	}
-	void TinyScroll::ScrollTrackThumb(POINT& pt, SCROLLCALC* ps)
+	void TinyScrollBox::ScrollTrackThumb(POINT& pt, SCROLLCALC* ps)
 	{
 		ASSERT(ps);
 		INT iPos = 0;
 		INT iRange = (m_si.nMax - m_si.nMin) + 1;
-		INT iThumbPos = (pt.y - m_iOffsetPos) - ps->arrowRectangle[0].bottom;
+		INT iThumbPos = (pt.y - m_iThumbOffset) - ps->arrowRectangle[0].bottom;
 		INT iThumbSize = TO_CY(ps->thumbRectangle);
 		INT iGrooveSize = ps->arrowRectangle[1].top - ps->arrowRectangle[0].bottom;
 		if (iThumbPos < 0)
@@ -276,10 +265,9 @@ namespace TinyUI
 		if (m_si.nPos != iPos)
 		{
 			m_si.nPos = iPos;
-			TRACE("iPos:%d\n", iPos);
 		}
 	}
-	void TinyScroll::DrawScrollBar(TinyMemDC& dc, INT iHitTest, BOOL bMouseDown)
+	void TinyScrollBox::DrawScrollBar(TinyMemDC& dc, INT iHitTest, BOOL bMouseDown)
 	{
 		SCROLLCALC si = { 0 };
 		ScrollCalculate(&si);
@@ -287,7 +275,7 @@ namespace TinyUI
 		DrawGroove(dc, &si);
 		DrawThumb(dc, &si, iHitTest);
 	}
-	void TinyScroll::DrawArrow(TinyMemDC& dc, SCROLLCALC* ps, INT iHitTest, BOOL bMouseDown)
+	void TinyScrollBox::DrawArrow(TinyMemDC& dc, SCROLLCALC* ps, INT iHitTest, BOOL bMouseDown)
 	{
 		if (iHitTest == HTSCROLL_LINEUP)
 		{
@@ -331,7 +319,7 @@ namespace TinyUI
 			memdc2.Render(ps->arrowRectangle[1], m_images[3].GetRectangle(), TRUE);
 		}
 	}
-	void TinyScroll::DrawThumb(TinyMemDC& dc, SCROLLCALC* ps, INT iHitTest)
+	void TinyScrollBox::DrawThumb(TinyMemDC& dc, SCROLLCALC* ps, INT iHitTest)
 	{
 		if (iHitTest == HTSCROLL_THUMB)
 		{
@@ -358,7 +346,7 @@ namespace TinyUI
 			memdc.Render(ps->thumbRectangle, dstCenter, m_images[7].GetRectangle(), srcCenter, TRUE);
 		}
 	}
-	void TinyScroll::DrawGroove(TinyMemDC& dc, SCROLLCALC* ps)
+	void TinyScrollBox::DrawGroove(TinyMemDC& dc, SCROLLCALC* ps)
 	{
 		TinyMemDC memdc(dc, m_images[7]);
 		RECT dstCenter, srcCenter;
@@ -374,7 +362,7 @@ namespace TinyUI
 		dstCenter.bottom = dstCenter.bottom - 4;
 		memdc.Render(grooveRectangle, dstCenter, m_images[7].GetRectangle(), srcCenter, TRUE);
 	}
-	BOOL TinyScroll::SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos)
+	BOOL TinyScrollBox::SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos)
 	{
 		if (iMin <= iPos && iPos <= (iMax - iPage + 1))
 		{
@@ -393,7 +381,7 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
-	INT	TinyScroll::ScrollHitTest(POINT& pt)
+	INT	TinyScrollBox::ScrollHitTest(POINT& pt)
 	{
 		SCROLLCALC si = { 0 };
 		ScrollCalculate(&si);

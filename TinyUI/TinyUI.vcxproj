@@ -110,7 +110,7 @@
     <ClInclude Include="Control\TinyProgressBar.h" />
     <ClInclude Include="Control\TinyRebar.h" />
     <ClInclude Include="Control\TinyRichTextBox.h" />
-    <ClInclude Include="Control\TinyScroll.h" />
+    <ClInclude Include="Control\TinyScrollBox.h" />
     <ClInclude Include="Control\TinyScrollBar.h" />
     <ClInclude Include="Control\TinyTabControl.h" />
     <ClInclude Include="Control\TinyTextBox.h" />
@@ -171,7 +171,7 @@
     <ClCompile Include="Control\TinyProgressBar.cpp" />
     <ClCompile Include="Control\TinyRebar.cpp" />
     <ClCompile Include="Control\TinyRichTextBox.cpp" />
-    <ClCompile Include="Control\TinyScroll.cpp" />
+    <ClCompile Include="Control\TinyScrollBox.cpp" />
     <ClCompile Include="Control\TinyScrollBar.cpp" />
     <ClCompile Include="Control\TinyTabControl.cpp" />
     <ClCompile Include="Control\TinyTextBox.cpp" />

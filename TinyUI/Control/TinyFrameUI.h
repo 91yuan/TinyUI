@@ -43,6 +43,6 @@ namespace TinyUI
 		//»º³åµÄÑùÊ½
 		TinySize m_size;
 	private:
-		TinyScroll m_scroll;
+		TinyScrollBox m_scroll;
 	};
 }
