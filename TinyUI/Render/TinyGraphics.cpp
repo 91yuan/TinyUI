@@ -1214,6 +1214,9 @@ namespace TinyUI
 	}
 	BOOL TinyMemDC::Render(RECT dstPaint, RECT dstCenter, RECT srcPaint, RECT srcCenter, BOOL bAlpha)
 	{
+		if (dstPaint.left == dstPaint.right || dstPaint.top == dstPaint.bottom)
+			return FALSE;
+
 		RECT srcRectangles[9];
 		SetRect(&srcRectangles[0], srcPaint.left, srcPaint.top, srcCenter.left, srcCenter.top);
 		SetRect(&srcRectangles[1], srcCenter.left, srcPaint.top, srcCenter.right, srcCenter.top);
@@ -1291,6 +1294,9 @@ namespace TinyUI
 	}
 	BOOL TinyMemDC::Render(RECT dstPaint, RECT srcPaint, BOOL bAlpha)
 	{
+		if (dstPaint.left == dstPaint.right || dstPaint.top == dstPaint.bottom)
+			return FALSE;
+
 		if (bAlpha)
 		{
 			BLENDFUNCTION bs = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };

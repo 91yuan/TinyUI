@@ -5,9 +5,9 @@ namespace TinyUI
 {
 	TinyScroll::TinyScroll()
 		:m_bTracking(FALSE),
-		m_iTrackingCode(0),
+		m_bMouseTracking(FALSE),
 		m_iOffsetPos(0),
-		m_iLastCode(0)
+		m_iTrackingCode(HTSCROLL_NONE)
 	{
 		memset(&m_si, 0, sizeof(SCROLLINFO));
 		m_si.cbSize = sizeof(SCROLLINFO);
@@ -28,12 +28,14 @@ namespace TinyUI
 		bHandled = FALSE;
 		PAINTSTRUCT ps = { 0 };
 		HDC hDC = BeginPaint(m_hWND, &ps);
-		TinyMemDC memdc(hDC, TO_CX(ps.rcPaint), TO_CY(ps.rcPaint));
-		FillRect(memdc, &ps.rcPaint, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
-		DrawScrollBar(memdc, 0);
+		TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
+		RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
+		FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
-		memdc.Render(ps.rcPaint, ps.rcPaint, FALSE);
+		DrawScrollBar(memdc, HTSCROLL_NONE, FALSE);
+
+		memdc.Render(paintRC, paintRC, FALSE);
 		EndPaint(m_hWND, &ps);
 		return FALSE;
 	}
@@ -47,15 +49,35 @@ namespace TinyUI
 	LRESULT TinyScroll::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+
 		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+
 		if (m_bTracking && (wParam & MK_LBUTTON))
 		{
 			if (m_iTrackingCode == HTSCROLL_THUMB)
 			{
-				ScrollTrackThumb(pt);
+				SCROLLCALC si = { 0 };
+				ScrollCalculate(&si);
+				ScrollTrackThumb(pt, &si);
+				HDC hDC = GetDC(m_hWND);
+				TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
+				RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
+				FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
+				DrawScrollBar(memdc, HTSCROLL_THUMB, wParam & MK_LBUTTON);
+				memdc.Render(paintRC, paintRC, FALSE);
+				ReleaseDC(m_hWND, hDC);
 				return FALSE;
 			}
 		}
+		INT iHitTest = ScrollHitTest(pt);
+		HDC hDC = GetDC(m_hWND);
+		TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
+		RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
+		FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
+		DrawScrollBar(memdc, iHitTest, wParam & MK_LBUTTON);
+		memdc.Render(paintRC, paintRC, FALSE);
+		ReleaseDC(m_hWND, hDC);
+
 		return FALSE;
 	}
 
@@ -63,13 +85,61 @@ namespace TinyUI
 	{
 		bHandled = FALSE;
 		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+
+		if (!m_bMouseTracking)
+		{
+			TRACKMOUSEEVENT tme;
+			tme.cbSize = sizeof(tme);
+			tme.hwndTrack = m_hWND;
+			tme.dwFlags = TME_LEAVE | TME_HOVER;
+			tme.dwHoverTime = 0;
+			m_bMouseTracking = _TrackMouseEvent(&tme);
+		}
+
+		SCROLLCALC si = { 0 };
+		ScrollCalculate(&si);
+
 		INT iHitTest = ScrollHitTest(pt);
+		if (iHitTest == HTSCROLL_THUMB)
+		{
+			m_iOffsetPos = pt.y - si.thumbRectangle.top;
+		}
+		m_iTrackingCode = iHitTest;
+		m_bTracking = TRUE;
+
+		HDC hDC = GetDC(m_hWND);
+		TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
+		RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
+		FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
+		DrawScrollBar(memdc, iHitTest, TRUE);
+		memdc.Render(paintRC, paintRC, FALSE);
+		ReleaseDC(m_hWND, hDC);
+
+		SetCapture(m_hWND);
+
 		return FALSE;
 	}
 
 	LRESULT TinyScroll::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+
+		m_iOffsetPos = 0;
+		m_bTracking = FALSE;
+
+		if (m_iTrackingCode == HTSCROLL_THUMB)
+		{
+			HDC hDC = GetDC(m_hWND);
+			TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
+			RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
+			FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
+			DrawScrollBar(memdc, HTSCROLL_NONE, FALSE);
+			memdc.Render(paintRC, paintRC, FALSE);
+			ReleaseDC(m_hWND, hDC);
+		}
+
+		ReleaseCapture();
+
 		return FALSE;
 	}
 
@@ -97,6 +167,24 @@ namespace TinyUI
 		bHandled = FALSE;
 		m_size.cx = LOWORD(lParam);
 		m_size.cy = HIWORD(lParam);
+		return FALSE;
+	}
+	LRESULT TinyScroll::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+
+		m_bMouseTracking = FALSE;
+
+		if (m_bTracking)
+			return FALSE;
+		HDC hDC = GetDC(m_hWND);
+		TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
+		RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
+		FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
+		DrawScrollBar(memdc, HTSCROLL_NONE, FALSE);
+		memdc.Render(paintRC, paintRC, FALSE);
+		ReleaseDC(m_hWND, hDC);
+
 		return FALSE;
 	}
 
@@ -171,15 +259,14 @@ namespace TinyUI
 				ps->arrowRectangle[1].top);
 		}
 	}
-	void TinyScroll::ScrollTrackThumb(POINT& pt)
+	void TinyScroll::ScrollTrackThumb(POINT& pt, SCROLLCALC* ps)
 	{
-		SCROLLCALC si = { 0 };
-		ScrollCalculate(&si);
+		ASSERT(ps);
 		INT iPos = 0;
 		INT iRange = (m_si.nMax - m_si.nMin) + 1;
-		INT iThumbPos = (pt.y - m_iOffsetPos) - si.arrowRectangle[0].bottom;
-		INT iThumbSize = TO_CY(si.thumbRectangle);
-		INT iGrooveSize = si.arrowRectangle[1].top - si.arrowRectangle[0].bottom;
+		INT iThumbPos = (pt.y - m_iOffsetPos) - ps->arrowRectangle[0].bottom;
+		INT iThumbSize = TO_CY(ps->thumbRectangle);
+		INT iGrooveSize = ps->arrowRectangle[1].top - ps->arrowRectangle[0].bottom;
 		if (iThumbPos < 0)
 			iThumbPos = 0;
 		if (iThumbPos >(iGrooveSize - iThumbSize))
@@ -188,75 +275,135 @@ namespace TinyUI
 			iPos = MulDiv(iThumbPos, iRange - m_si.nPage, iGrooveSize - iThumbSize);
 		if (m_si.nPos != iPos)
 		{
-			m_si.nTrackPos = iPos;
-			TRACE("µ±Ç°Î»ÖÃiPos: %d\n" + iPos);
+			m_si.nPos = iPos;
+			TRACE("iPos:%d\n", iPos);
 		}
 	}
-	void TinyScroll::DrawScrollBar(TinyMemDC& dc, INT iHitTest)
+	void TinyScroll::DrawScrollBar(TinyMemDC& dc, INT iHitTest, BOOL bMouseDown)
 	{
 		SCROLLCALC si = { 0 };
 		ScrollCalculate(&si);
-
-		DrawArrow(dc, &si);
+		DrawArrow(dc, &si, iHitTest, bMouseDown);
 		DrawGroove(dc, &si);
-		DrawThumb(dc, &si);
-
+		DrawThumb(dc, &si, iHitTest);
 	}
-	void TinyScroll::DrawArrow(TinyMemDC& dc, SCROLLCALC* ps)
+	void TinyScroll::DrawArrow(TinyMemDC& dc, SCROLLCALC* ps, INT iHitTest, BOOL bMouseDown)
 	{
-		TinyMemDC memdc1(dc, m_images[0]);
-		memdc1.Render(ps->arrowRectangle[0], m_images[0].GetRectangle(), TRUE);
-		TinyMemDC memdc2(dc, m_images[3]);
-		memdc2.Render(ps->arrowRectangle[1], m_images[3].GetRectangle(), TRUE);
+		if (iHitTest == HTSCROLL_LINEUP)
+		{
+			if (bMouseDown)
+			{
+				TinyMemDC memdc1(dc, m_images[2]);
+				memdc1.Render(ps->arrowRectangle[0], m_images[2].GetRectangle(), TRUE);
+				TinyMemDC memdc2(dc, m_images[3]);
+				memdc2.Render(ps->arrowRectangle[1], m_images[3].GetRectangle(), TRUE);
+			}
+			else
+			{
+				TinyMemDC memdc1(dc, m_images[1]);
+				memdc1.Render(ps->arrowRectangle[0], m_images[1].GetRectangle(), TRUE);
+				TinyMemDC memdc2(dc, m_images[3]);
+				memdc2.Render(ps->arrowRectangle[1], m_images[3].GetRectangle(), TRUE);
+			}
+		}
+		else if (iHitTest == HTSCROLL_LINEDOWN)
+		{
+			if (bMouseDown)
+			{
+				TinyMemDC memdc1(dc, m_images[0]);
+				memdc1.Render(ps->arrowRectangle[0], m_images[0].GetRectangle(), TRUE);
+				TinyMemDC memdc2(dc, m_images[5]);
+				memdc2.Render(ps->arrowRectangle[1], m_images[5].GetRectangle(), TRUE);
+			}
+			else
+			{
+				TinyMemDC memdc1(dc, m_images[0]);
+				memdc1.Render(ps->arrowRectangle[0], m_images[0].GetRectangle(), TRUE);
+				TinyMemDC memdc2(dc, m_images[4]);
+				memdc2.Render(ps->arrowRectangle[1], m_images[4].GetRectangle(), TRUE);
+			}
+		}
+		else
+		{
+			TinyMemDC memdc1(dc, m_images[0]);
+			memdc1.Render(ps->arrowRectangle[0], m_images[0].GetRectangle(), TRUE);
+			TinyMemDC memdc2(dc, m_images[3]);
+			memdc2.Render(ps->arrowRectangle[1], m_images[3].GetRectangle(), TRUE);
+		}
 	}
-	void TinyScroll::DrawThumb(TinyMemDC& dc, SCROLLCALC* ps)
+	void TinyScroll::DrawThumb(TinyMemDC& dc, SCROLLCALC* ps, INT iHitTest)
 	{
-		TinyMemDC memdc(dc, m_images[8]);
-		RECT dstCenter, srcCenter;
-		CopyRect(&srcCenter, &m_images[8].GetRectangle());
-		srcCenter.top = srcCenter.top + 3;
-		srcCenter.bottom = srcCenter.bottom - 3;
-		CopyRect(&dstCenter, &ps->thumbRectangle);
-		dstCenter.top = dstCenter.top + 3;
-		dstCenter.bottom = dstCenter.bottom - 3;
-		memdc.Render(ps->thumbRectangle, dstCenter, m_images[8].GetRectangle(), srcCenter, TRUE);
+		if (iHitTest == HTSCROLL_THUMB)
+		{
+			TinyMemDC memdc(dc, m_images[8]);
+			RECT dstCenter, srcCenter;
+			CopyRect(&srcCenter, &m_images[8].GetRectangle());
+			srcCenter.top = srcCenter.top + 4;
+			srcCenter.bottom = srcCenter.bottom - 4;
+			CopyRect(&dstCenter, &ps->thumbRectangle);
+			dstCenter.top = dstCenter.top + 4;
+			dstCenter.bottom = dstCenter.bottom - 4;
+			memdc.Render(ps->thumbRectangle, dstCenter, m_images[8].GetRectangle(), srcCenter, TRUE);
+		}
+		else
+		{
+			TinyMemDC memdc(dc, m_images[7]);
+			RECT dstCenter, srcCenter;
+			CopyRect(&srcCenter, &m_images[7].GetRectangle());
+			srcCenter.top = srcCenter.top + 4;
+			srcCenter.bottom = srcCenter.bottom - 4;
+			CopyRect(&dstCenter, &ps->thumbRectangle);
+			dstCenter.top = dstCenter.top + 4;
+			dstCenter.bottom = dstCenter.bottom - 4;
+			memdc.Render(ps->thumbRectangle, dstCenter, m_images[7].GetRectangle(), srcCenter, TRUE);
+		}
 	}
 	void TinyScroll::DrawGroove(TinyMemDC& dc, SCROLLCALC* ps)
 	{
 		TinyMemDC memdc(dc, m_images[7]);
 		RECT dstCenter, srcCenter;
 		CopyRect(&srcCenter, &m_images[7].GetRectangle());
-		srcCenter.top = srcCenter.top + 3;
-		srcCenter.bottom = srcCenter.bottom - 3;
+		srcCenter.top = srcCenter.top + 4;
+		srcCenter.bottom = srcCenter.bottom - 4;
 		RECT grooveRectangle;
 		CopyRect(&grooveRectangle, &ps->rectangle);
 		grooveRectangle.top = ps->arrowRectangle[0].bottom;
 		grooveRectangle.bottom = ps->arrowRectangle[1].top;
 		CopyRect(&dstCenter, &grooveRectangle);
-		dstCenter.top = dstCenter.top + 3;
-		dstCenter.bottom = dstCenter.bottom - 3;
+		dstCenter.top = dstCenter.top + 4;
+		dstCenter.bottom = dstCenter.bottom - 4;
 		memdc.Render(grooveRectangle, dstCenter, m_images[7].GetRectangle(), srcCenter, TRUE);
 	}
-	void TinyScroll::SetScrollInfo(INT iMax, INT iMin, INT iPage, INT iPos)
+	BOOL TinyScroll::SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos)
 	{
-		m_si.nMax = iMax;
-		m_si.nMin = iMin;
-		m_si.nPage = iPage;
-		m_si.nPos = iPos;
+		if (iMin <= iPos && iPos <= (iMax - iPage + 1))
+		{
+			m_si.nMin = iMin;
+			m_si.nMax = iMax;
+			m_si.nPage = iPage;
+			m_si.nPos = iPos;
+			InvalidateRect(m_hWND, NULL, FALSE);
+			return TRUE;
+		}
+		else
+		{
+			m_si.nMax = m_si.nPos = m_si.nMin;
+			m_si.nPage = m_si.nMax - m_si.nPos + 1;
+			InvalidateRect(m_hWND, NULL, FALSE);
+		}
+		return FALSE;
 	}
 	INT	TinyScroll::ScrollHitTest(POINT& pt)
 	{
 		SCROLLCALC si = { 0 };
 		ScrollCalculate(&si);
-		if (!PtInRect(&si.rectangle, pt))
-			return HTSCROLL_NONE;
 		if (pt.y >= si.arrowRectangle[0].top && pt.y < si.arrowRectangle[0].bottom)
 			return HTSCROLL_LINEUP;
 		if (pt.y >= si.pageRectangle[0].top && pt.y < si.pageRectangle[0].bottom)
 			return HTSCROLL_PAGEUP;
-		if (pt.y >= si.thumbRectangle.top && pt.y <= si.thumbRectangle.bottom)
+		if (pt.y >= si.thumbRectangle.top && pt.y < si.thumbRectangle.bottom)
 			return HTSCROLL_THUMB;
-		if (pt.y > si.pageRectangle[1].top && pt.y < si.pageRectangle[1].bottom)
+		if (pt.y >= si.pageRectangle[1].top && pt.y < si.pageRectangle[1].bottom)
 			return HTSCROLL_PAGEDOWN;
 		if (pt.y >= si.arrowRectangle[1].top && pt.y < si.arrowRectangle[1].bottom)
 			return HTSCROLL_LINEDOWN;
