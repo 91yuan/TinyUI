@@ -36,6 +36,16 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
+	BOOL TinyTextBox::SetText(LPCSTR pzText)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetWindowText(m_hWND, pzText);
+	}
+	BOOL TinyTextBox::GetText(LPSTR pzText, INT iSize)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::GetWindowText(m_hWND, pzText, iSize);
+	}
 	BOOL TinyTextBox::CanUndo() const
 	{ 
 		ASSERT(::IsWindow(m_hWND)); 

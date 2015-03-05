@@ -15,7 +15,7 @@ namespace TinyUI
 		virtual DWORD RetrieveExStyle();
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		//////////////////////////////////////////////////////////////////////////
-		virtual HRESULT OnCommand(void* sender, UINT code, UINT ctlID, BOOL& bHandled);
+		virtual LRESULT OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual void OnClick(void*, INT ctrlID);
 		virtual void OnDisable(void*, INT ctrlID);
 		virtual void OnDoubleClick(void*, INT ctrlID);
@@ -27,6 +27,8 @@ namespace TinyUI
 		Event<void(void*, INT)> GotFocus;
 		Event<void(void*, INT)> LostFocus;
 		//////////////////////////////////////////////////////////////////////////
+		BOOL SetText(LPCSTR pzText);
+		BOOL GetText(LPSTR pzText, INT iSize);
 		UINT GetState() const;
 		void SetState(BOOL bHighlight);
 		INT GetCheck() const;

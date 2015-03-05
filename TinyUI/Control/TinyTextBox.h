@@ -13,7 +13,8 @@ namespace TinyUI
 		virtual DWORD RetrieveStyle();
 		virtual DWORD RetrieveExStyle();
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-
+		BOOL SetText(LPCSTR pzText);
+		BOOL GetText(LPSTR pzText, INT iSize);
 		BOOL CanUndo() const;
 		INT GetLineCount() const;
 		BOOL GetModify() const;

@@ -13,6 +13,7 @@ namespace TinyUI
 
 	TinyScrollBox::~TinyScrollBox()
 	{
+
 	}
 
 	BOOL TinyScrollBox::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
@@ -57,8 +58,11 @@ namespace TinyUI
 									INT iHitTest = ScrollHitTest(pt);
 									if (iHitTest == HTSCROLL_THUMB)
 									{
+										m_si.iTrackHitTest = HTSCROLL_THUMB;
+										SCROLLCALC si = { 0 };
+										ScrollCalculate(&si);
+										m_si.iThumbOffset = pt.y - si.thumbRectangle.top;
 										KillTimer(m_hWND, SB_TIMER_SCROLL);
-										m_si.iTrackHitTest = iHitTest;
 										return FALSE;
 									}
 									INT iNewPos = m_si.iPos;
@@ -68,16 +72,16 @@ namespace TinyUI
 										KillTimer(m_hWND, SB_TIMER_SCROLL);
 										return FALSE;
 									case HTSCROLL_LINEUP:
-										iNewPos = m_si.iPos > m_si.iMin ? m_si.iPos - 1 : m_si.iMin;
+										iNewPos = (m_si.iPos - 1) > m_si.iMin ? m_si.iPos - 1 : m_si.iMin;
 										break;
 									case HTSCROLL_LINEDOWN:
-										iNewPos = m_si.iPos < m_si.iMax ? m_si.iPos + 1 : m_si.iMax;
+										iNewPos = (m_si.iPos + 1) < (m_si.iMax - m_si.iPage + 1) ? m_si.iPos + 1 : (m_si.iMax - m_si.iPage + 1);
 										break;
 									case HTSCROLL_PAGEUP:
-										iNewPos = m_si.iPos > m_si.iMin ? m_si.iPos - m_si.iPage : m_si.iMin;
+										iNewPos = (m_si.iPos - m_si.iPage) > m_si.iMin ? m_si.iPos - m_si.iPage : m_si.iMin;
 										break;
 									case HTSCROLL_PAGEDOWN:
-										iNewPos = m_si.iPos < (m_si.iMax - m_si.iPage) ? m_si.iPos + m_si.iPage : (m_si.iMax - m_si.iPage);
+										iNewPos = (m_si.iPos + m_si.iPage) < (m_si.iMax - m_si.iPage + 1) ? m_si.iPos + m_si.iPage : (m_si.iMax - m_si.iPage + 1);
 										break;
 									}
 									if (iNewPos != m_si.iPos)
@@ -197,19 +201,19 @@ namespace TinyUI
 			switch (m_si.iTrackHitTest)
 			{
 			case HTSCROLL_LINEUP:
-				iNewPos = m_si.iPos > m_si.iMin ? m_si.iPos - 1 : m_si.iMin;
+				iNewPos = (m_si.iPos - 1) > m_si.iMin ? m_si.iPos - 1 : m_si.iMin;
 				KillTimer(m_hWND, SB_TIMER_SCROLL);
 				break;
 			case HTSCROLL_LINEDOWN:
-				iNewPos = m_si.iPos < m_si.iMax ? m_si.iPos + 1 : m_si.iMax;
+				iNewPos = (m_si.iPos + 1) < (m_si.iMax - m_si.iPage + 1) ? m_si.iPos + 1 : (m_si.iMax - m_si.iPage + 1);
 				KillTimer(m_hWND, SB_TIMER_SCROLL);
 				break;
 			case HTSCROLL_PAGEUP:
-				iNewPos = m_si.iPos > m_si.iMin ? m_si.iPos - m_si.iPage : m_si.iMin;
+				iNewPos = (m_si.iPos - m_si.iPage) > m_si.iMin ? m_si.iPos - m_si.iPage : m_si.iMin;
 				KillTimer(m_hWND, SB_TIMER_SCROLL);
 				break;
 			case HTSCROLL_PAGEDOWN:
-				iNewPos = m_si.iPos < (m_si.iMax - m_si.iPage) ? m_si.iPos + m_si.iPage : (m_si.iMax - m_si.iPage);
+				iNewPos = (m_si.iPos + m_si.iPage) < (m_si.iMax - m_si.iPage + 1) ? m_si.iPos + m_si.iPage : (m_si.iMax - m_si.iPage + 1);
 				KillTimer(m_hWND, SB_TIMER_SCROLL);
 				break;
 			}
@@ -226,11 +230,11 @@ namespace TinyUI
 			DrawScrollBar(memdc, HTSCROLL_THUMB, FALSE);
 			memdc.Render(paintRC, paintRC, FALSE);
 			ReleaseDC(m_hWND, hDC);
-		}
 
+			m_bTracking = FALSE;
+		}
 		m_si.iLatestHitTest = HTSCROLL_NONE;
 		m_si.iTrackHitTest = HTSCROLL_NONE;
-		m_bTracking = FALSE;
 		m_si.iThumbOffset = 0;
 
 		ReleaseCapture();
@@ -255,7 +259,6 @@ namespace TinyUI
 
 		return FALSE;
 	}
-
 	LRESULT TinyScrollBox::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
@@ -283,6 +286,22 @@ namespace TinyUI
 		ReleaseDC(m_hWND, hDC);
 
 		return FALSE;
+	}
+	INT	TinyScrollBox::ScrollHitTest(POINT& pt)
+	{
+		SCROLLCALC si = { 0 };
+		ScrollCalculate(&si);
+		if (pt.y >= si.arrowRectangle[0].top && pt.y < si.arrowRectangle[0].bottom)
+			return HTSCROLL_LINEUP;
+		if (pt.y >= si.pageRectangle[0].top && pt.y < si.pageRectangle[0].bottom)
+			return HTSCROLL_PAGEUP;
+		if (pt.y >= si.thumbRectangle.top && pt.y < si.thumbRectangle.bottom)
+			return HTSCROLL_THUMB;
+		if (pt.y >= si.pageRectangle[1].top && pt.y < si.pageRectangle[1].bottom)
+			return HTSCROLL_PAGEDOWN;
+		if (pt.y >= si.arrowRectangle[1].top && pt.y < si.arrowRectangle[1].bottom)
+			return HTSCROLL_LINEDOWN;
+		return HTSCROLL_NONE;
 	}
 	void TinyScrollBox::ScrollCalculate(SCROLLCALC* ps)
 	{
@@ -367,8 +386,11 @@ namespace TinyUI
 			iThumbPos = 0;
 		if (iThumbPos >(iGrooveSize - iThumbSize))
 			iThumbPos = iGrooveSize - iThumbSize;
+
 		if (iRange > 0)
-			iPos = MulDiv(iThumbPos, iRange - m_si.iPage, iGrooveSize - iThumbSize);
+		{
+			iPos = m_si.iMin + MulDiv(iThumbPos, iRange - m_si.iPage, iGrooveSize - iThumbSize);
+		}
 		if (m_si.iPos != iPos)
 		{
 			INT iOldPos = m_si.iPos;
@@ -471,39 +493,24 @@ namespace TinyUI
 		dstCenter.bottom = dstCenter.bottom - 4;
 		memdc.Render(grooveRectangle, dstCenter, m_images[7].GetRectangle(), srcCenter, TRUE);
 	}
-	BOOL TinyScrollBox::SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos)
+	void TinyScrollBox::SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos)
 	{
-		if (iMin <= iPos && iPos <= (iMax - iPage + 1))
+		m_si.iPos = iPos < iMin ? iMin : iPos;
+		m_si.iPos = iPos >(iMax - iPage + 1) ? (iMax - iPage + 1) : iPos;
+		if (iMin <= m_si.iPos && m_si.iPos <= (iMax - iPage + 1))
 		{
 			m_si.iMin = iMin;
 			m_si.iMax = iMax;
 			m_si.iPage = iPage;
-			m_si.iPos = iPos;
-			InvalidateRect(m_hWND, NULL, FALSE);
-			return TRUE;
 		}
 		else
 		{
-			m_si.iMax = m_si.iPos = m_si.iMin;
-			m_si.iPage = m_si.iMax - m_si.iPos + 1;
-			InvalidateRect(m_hWND, NULL, FALSE);
+			m_si.iPos = m_si.iMin = m_si.iMax = m_si.iMin = 0;
 		}
-		return FALSE;
+		InvalidateRect(m_hWND, NULL, FALSE);
 	}
-	INT	TinyScrollBox::ScrollHitTest(POINT& pt)
+	INT	TinyScrollBox::GetScrollPos()
 	{
-		SCROLLCALC si = { 0 };
-		ScrollCalculate(&si);
-		if (pt.y >= si.arrowRectangle[0].top && pt.y < si.arrowRectangle[0].bottom)
-			return HTSCROLL_LINEUP;
-		if (pt.y >= si.pageRectangle[0].top && pt.y < si.pageRectangle[0].bottom)
-			return HTSCROLL_PAGEUP;
-		if (pt.y >= si.thumbRectangle.top && pt.y < si.thumbRectangle.bottom)
-			return HTSCROLL_THUMB;
-		if (pt.y >= si.pageRectangle[1].top && pt.y < si.pageRectangle[1].bottom)
-			return HTSCROLL_PAGEDOWN;
-		if (pt.y >= si.arrowRectangle[1].top && pt.y < si.arrowRectangle[1].bottom)
-			return HTSCROLL_LINEDOWN;
-		return HTSCROLL_NONE;
+		return m_si.iPos;
 	}
 }

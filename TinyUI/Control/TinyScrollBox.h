@@ -58,7 +58,8 @@ namespace TinyUI
 		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	public:
-		BOOL	SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);//设置滚动条信息
+		INT		GetScrollPos();
+		void	SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);//设置滚动条信息
 		Event<void(INT, INT)> PosChange;
 	private:
 		INT		ScrollHitTest(POINT& pt);

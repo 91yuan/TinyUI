@@ -21,11 +21,11 @@ namespace TinyUI
 	}
 	DWORD TinyLabel::RetrieveStyle()
 	{
-		return (WS_EX_LEFT | WS_EX_LTRREADING);
+		return (WS_EX_LEFT | WS_EX_LTRREADING | WS_CHILD | WS_VISIBLE);
 	}
 	DWORD TinyLabel::RetrieveExStyle()
 	{
-		return (WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_BORDER);
+		return (WS_EX_LTRREADING);
 	}
 	BOOL TinyLabel::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
@@ -35,6 +35,16 @@ namespace TinyUI
 			return TinyControl::Create(hParent, x, y, cx, cy);
 		}
 		return FALSE;
+	}
+	BOOL TinyLabel::SetText(LPCSTR pzText)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetWindowText(m_hWND, pzText);
+	}
+	BOOL TinyLabel::GetText(LPSTR pzText, INT iSize)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::GetWindowText(m_hWND, pzText, iSize);
 	}
 	HICON TinyLabel::SetIcon(HICON hIcon)
 	{

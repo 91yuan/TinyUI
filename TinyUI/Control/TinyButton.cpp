@@ -36,6 +36,16 @@ namespace TinyUI
 	{
 		return _T("TinyButton");
 	};
+	BOOL TinyButton::SetText(LPCSTR pzText)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::SetWindowText(m_hWND, pzText);
+	}
+	BOOL TinyButton::GetText(LPSTR pzText, INT iSize)
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::GetWindowText(m_hWND, pzText, iSize);
+	}
 	UINT TinyButton::GetState() const
 	{
 		ASSERT(::IsWindow(m_hWND));
@@ -252,8 +262,11 @@ namespace TinyUI
 		LostFocus(sender, ctrlID);
 	}
 
-	HRESULT TinyButton::OnCommand(void* sender, UINT code, UINT ctlID, BOOL& bHandled)
+	LRESULT TinyButton::OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
+		bHandled = FALSE;
+		UINT code = HIWORD(wParam);
+		UINT ctlID = LOWORD(wParam);
 		switch (code)
 		{
 		case BN_CLICKED:
@@ -274,5 +287,6 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
+
 }
 

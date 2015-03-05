@@ -9,7 +9,7 @@ namespace TinyUI
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		TRACE("调用构造函数TinyString()\n");
+		//TRACE("调用构造函数TinyString()\n");
 	}
 	TinyString::TinyString(size_t size)
 		:_Myres(size),
@@ -18,14 +18,14 @@ namespace TinyUI
 	{
 
 		_Mystr = new CHAR[_Mysize];
-		TRACE("调用构造函数TinyString(INT size)\n");
+		//TRACE("调用构造函数TinyString(INT size)\n");
 	}
 	TinyString::TinyString(const CHAR* s)
 		: _Myres(0),
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		TRACE("调用构造函数TinyString(const CHAR* s)\n");
+		//TRACE("调用构造函数TinyString(const CHAR* s)\n");
 		ASSERT(s);
 		Assign(s, strlen(s));
 	}
@@ -34,7 +34,7 @@ namespace TinyUI
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		TRACE("调用拷贝构造函数TinyString(const TinyString& s)\n");
+		//TRACE("调用拷贝构造函数TinyString(const TinyString& s)\n");
 		size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
 		Assign(s, 0, _Maxsize);
 	}
@@ -43,7 +43,7 @@ namespace TinyUI
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		TRACE("调用拷贝构造函数TinyString(const TinyString& s, size_t pos, size_t size)\n");
+		//TRACE("调用拷贝构造函数TinyString(const TinyString& s, size_t pos, size_t size)\n");
 		Assign(s, pos, size);
 	}
 	TinyString::~TinyString()

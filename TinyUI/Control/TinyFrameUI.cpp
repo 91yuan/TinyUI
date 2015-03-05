@@ -105,15 +105,41 @@ namespace TinyUI
 	{
 		bHandled = FALSE;
 		m_scroll.Create(m_hWND, 10, 10, 12, 350);
-		m_scroll.SetScrollInfo(0, 100, 10, 0);
 		m_fs_PosChange.BindDelegate(this, &TinyFrameUI::PosChanges);
 		m_scroll.PosChange += &m_fs_PosChange;
+
+		m_lblPos.Create(m_hWND, 100, 10, 40, 23);
+		m_lblPos.SetText("Pos:");
+		m_txtPos.Create(m_hWND, 150, 10, 100, 23);
+		m_txtPos.SetText("0");
+
+		m_lblPage.Create(m_hWND, 100, 45, 40, 23);
+		m_lblPage.SetText("Page:");
+		m_txtPage.Create(m_hWND, 150, 45, 100, 23);
+		m_txtPage.SetText("10");
+
+		m_lblMax.Create(m_hWND, 100, 80, 40, 23);
+		m_lblMax.SetText("Max:");
+		m_txtMax.Create(m_hWND, 150, 80, 100, 23);
+		m_txtMax.SetText("100");
+
+		m_lblMin.Create(m_hWND, 100, 115, 40, 23);
+		m_lblMin.SetText("Min:");
+		m_txtMin.Create(m_hWND, 150, 115, 100, 23);
+		m_txtMin.SetText("0");
+
+		m_btn.Create(m_hWND, 250, 10, 100, 23);
+		m_btn.SetText("…Ë÷√");
+		m_fs_Click.BindDelegate(this, &TinyFrameUI::Click);
+		m_btn.Click += &m_fs_Click;
+
 		return TRUE;
 	}
 	LRESULT TinyFrameUI::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		m_scroll.PosChange -= &m_fs_PosChange;
+		m_btn.Click -= &m_fs_Click;
 		return FALSE;
 	}
 
@@ -141,11 +167,25 @@ namespace TinyUI
 		m_size.cy = HIWORD(lParam);
 		return FALSE;
 	}
+
 	void TinyFrameUI::PosChanges(INT oldPos, INT newPos)
 	{
-		TRACE("OldPos:%d,NewPos:%d\n", oldPos, newPos);
+		TinyString str = TinyString::Format("%d", newPos);
+		m_txtPos.SetText(str.STR());
 	}
+	void TinyFrameUI::Click(void* ps, INT cmd)
+	{
+		TinyString str(20);
+		m_txtPos.GetText(str.STR(), str.GetSize());
+		INT iPos = atoi(str.STR());
+		m_txtPage.GetText(str.STR(), str.GetSize());
+		INT iPage = atoi(str.STR());
+		m_txtMax.GetText(str.STR(), str.GetSize());
+		INT iMax = atoi(str.STR());
+		m_txtMin.GetText(str.STR(), str.GetSize());
+		INT iMin = atoi(str.STR());
 
-	
+		m_scroll.SetScrollInfo(iMin, iMax, iPage, iPos);
+	}
 }
 

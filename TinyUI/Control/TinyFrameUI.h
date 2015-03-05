@@ -1,5 +1,8 @@
 #pragma once
 #include "TinyScrollBox.h"
+#include "TinyTextBox.h"
+#include "TinyLabel.h"
+#include "TinyButton.h"
 #include "../Render/TinyImage.h"
 
 namespace TinyUI
@@ -41,11 +44,22 @@ namespace TinyUI
 		BOOL UpdateWindow() throw();
 		void CenterWindow(HWND parent, HWND window, TinySize pref) throw();
 		void PosChanges(INT oldPos, INT newPos);
+		void Click(void* ps, INT cmd);
 	protected:
 		//»º³åµÄÑùÊ½
 		TinySize m_size;
 	private:
 		TinyScrollBox m_scroll;
+		TinyTextBox m_txtPos;
+		TinyTextBox m_txtPage;
+		TinyTextBox m_txtMax;
+		TinyTextBox m_txtMin;
+		TinyLabel	m_lblPos;
+		TinyLabel	m_lblPage;
+		TinyLabel	m_lblMax;
+		TinyLabel	m_lblMin;
+		TinyButton	m_btn;
 		Delegate<void(INT, INT)> m_fs_PosChange;
+		Delegate<void(void*, INT)> m_fs_Click;
 	};
 }
