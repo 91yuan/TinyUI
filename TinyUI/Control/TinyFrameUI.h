@@ -1,5 +1,5 @@
 #pragma once
-#include "TinyScroll.h"
+#include "TinyScrollBox.h"
 #include "../Render/TinyImage.h"
 
 namespace TinyUI
@@ -28,10 +28,11 @@ namespace TinyUI
 		virtual LPCSTR RetrieveTitle();
 		virtual HICON RetrieveIcon();
 		//事件
-		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		//方法
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
@@ -39,10 +40,12 @@ namespace TinyUI
 		BOOL ShowWindow(INT nCmdShow) throw();
 		BOOL UpdateWindow() throw();
 		void CenterWindow(HWND parent, HWND window, TinySize pref) throw();
+		void PosChanges(INT oldPos, INT newPos);
 	protected:
 		//缓冲的样式
 		TinySize m_size;
 	private:
 		TinyScrollBox m_scroll;
+		Delegate<void(INT, INT)> m_fs_PosChange;
 	};
 }

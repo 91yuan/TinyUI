@@ -1,4 +1,5 @@
 #pragma once
+#include "../Common/TinyEvent.h"
 #include "TinyControl.h"
 #include "../Render/TinyImage.h"
 
@@ -7,10 +8,14 @@ namespace TinyUI
 #define TINY_SM_CXSCROLL				  12 //滚动条箭头的宽度
 #define TINY_SM_CYSCROLL				  12 //滚动条箭头的高度
 #define TINY_SCROLL_MINTHUMB_SIZE		  10
-#define TINY_SCROLL_MARGIN_LEFT			  1 
-#define TINY_SCROLL_MARGIN_TOP			  1 
-#define TINY_SCROLL_MARGIN_RIGHT		  1 
-#define TINY_SCROLL_MARGIN_BOTTOM		  1 
+#define TINY_SCROLL_MARGIN_LEFT			  0 
+#define TINY_SCROLL_MARGIN_TOP			  0 
+#define TINY_SCROLL_MARGIN_RIGHT		  0 
+#define TINY_SCROLL_MARGIN_BOTTOM		  0 
+#define SB_TIMER_DELAY                65533
+#define SB_TIMER_SCROLL               65534
+#define SB_SCROLL_DELAY               300
+#define SB_SCROLL_INTERVAL            40
 	//HITTEST
 #define HTSCROLL_NONE                 0x00000000L
 #define HTSCROLL_LINEUP               0x00000001L
@@ -24,6 +29,16 @@ namespace TinyUI
 		RECT	thumbRectangle;//划块的矩形
 		RECT	pageRectangle[2];//上下Page的矩形
 	} SCROLLCALC, *LPSCROLLCALC;
+	typedef struct tagSCROLLBOXINFO
+	{
+		INT     iMin;
+		INT     iMax;
+		INT		iPage;
+		INT     iPos;
+		INT		iThumbOffset;
+		INT		iLatestHitTest;
+		INT		iTrackHitTest;
+	}SCROLLBOXINFO, *LPSCROLLBOXINFO;
 	/// <summary>
 	/// 自绘滚动条
 	/// </summary>
@@ -41,8 +56,10 @@ namespace TinyUI
 		virtual LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	public:
 		BOOL	SetScrollInfo(INT iMin, INT iMax, INT iPage, INT iPos);//设置滚动条信息
+		Event<void(INT, INT)> PosChange;
 	private:
 		INT		ScrollHitTest(POINT& pt);
 		void	ScrollCalculate(SCROLLCALC* ps);//计算划块大小
@@ -52,13 +69,11 @@ namespace TinyUI
 		void	DrawThumb(TinyMemDC& dc, SCROLLCALC* ps, INT iHitTest);
 		void	DrawGroove(TinyMemDC& dc, SCROLLCALC* ps);
 	private:
-		SIZE		m_size;
-		SCROLLINFO	m_si;
-		BOOL		m_bMouseTracking;
-		BOOL		m_bTracking;//是否还是滑动
-		INT			m_iThumbOffset;//划款偏移量
-		INT			m_iTrackingCode;//当前HitTest
-		TinyImage	m_images[9];
+		SIZE			m_size;
+		SCROLLBOXINFO	m_si;
+		BOOL			m_bMouseTracking;
+		BOOL			m_bTracking;//是否滑动
+		TinyImage		m_images[9];
 	};
 }
 

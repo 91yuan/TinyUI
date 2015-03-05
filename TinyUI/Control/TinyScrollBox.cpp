@@ -5,14 +5,11 @@ namespace TinyUI
 {
 	TinyScrollBox::TinyScrollBox()
 		:m_bTracking(FALSE),
-		m_bMouseTracking(FALSE),
-		m_iThumbOffset(0),
-		m_iTrackingCode(HTSCROLL_NONE)
+		m_bMouseTracking(FALSE)
 	{
-		memset(&m_si, 0, sizeof(SCROLLINFO));
-		m_si.cbSize = sizeof(SCROLLINFO);
+		memset(&m_si, 0, sizeof(SCROLLBOXINFO));
+		m_si.iTrackHitTest = m_si.iLatestHitTest = HTSCROLL_NONE;
 	}
-
 
 	TinyScrollBox::~TinyScrollBox()
 	{
@@ -33,7 +30,7 @@ namespace TinyUI
 		RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
 		FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
-		DrawScrollBar(memdc, HTSCROLL_NONE, FALSE);
+		DrawScrollBar(memdc, m_si.iTrackHitTest, FALSE);
 
 		memdc.Render(paintRC, paintRC, FALSE);
 		EndPaint(m_hWND, &ps);
@@ -45,17 +42,89 @@ namespace TinyUI
 		bHandled = TRUE;
 		return TRUE;
 	}
+	LRESULT TinyScrollBox::OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		switch (wParam)
+		{
+		case SB_TIMER_SCROLL:
+		{
+								if (m_si.iTrackHitTest == m_si.iLatestHitTest)
+								{
+									DWORD dwPos = GetMessagePos();
+									POINT pt = { GET_X_LPARAM(dwPos), GET_Y_LPARAM(dwPos) };
+									ScreenToClient(m_hWND, &pt);
+									INT iHitTest = ScrollHitTest(pt);
+									if (iHitTest == HTSCROLL_THUMB)
+									{
+										KillTimer(m_hWND, SB_TIMER_SCROLL);
+										m_si.iTrackHitTest = iHitTest;
+										return FALSE;
+									}
+									INT iNewPos = m_si.iPos;
+									switch (m_si.iTrackHitTest)
+									{
+									case HTSCROLL_NONE:
+										KillTimer(m_hWND, SB_TIMER_SCROLL);
+										return FALSE;
+									case HTSCROLL_LINEUP:
+										iNewPos = m_si.iPos > m_si.iMin ? m_si.iPos - 1 : m_si.iMin;
+										break;
+									case HTSCROLL_LINEDOWN:
+										iNewPos = m_si.iPos < m_si.iMax ? m_si.iPos + 1 : m_si.iMax;
+										break;
+									case HTSCROLL_PAGEUP:
+										iNewPos = m_si.iPos > m_si.iMin ? m_si.iPos - m_si.iPage : m_si.iMin;
+										break;
+									case HTSCROLL_PAGEDOWN:
+										iNewPos = m_si.iPos < (m_si.iMax - m_si.iPage) ? m_si.iPos + m_si.iPage : (m_si.iMax - m_si.iPage);
+										break;
+									}
+									if (iNewPos != m_si.iPos)
+									{
+										PosChange(m_si.iPos, iNewPos);
+										m_si.iPos = iNewPos;
+									}
 
+									HDC hDC = GetDC(m_hWND);
+									TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
+									RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
+									FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
+									DrawScrollBar(memdc, m_si.iTrackHitTest, TRUE);
+									memdc.Render(paintRC, paintRC, FALSE);
+									ReleaseDC(m_hWND, hDC);
+								}
+		}
+			break;
+		case SB_TIMER_DELAY:
+		{
+							   KillTimer(m_hWND, SB_TIMER_DELAY);
+							   SetTimer(m_hWND, SB_TIMER_SCROLL, SB_SCROLL_INTERVAL, 0);
+		}
+			break;
+		}
+		return FALSE;
+	}
 	LRESULT TinyScrollBox::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 
-		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+		if (!m_bMouseTracking)
+		{
+			TRACKMOUSEEVENT tme;
+			tme.cbSize = sizeof(tme);
+			tme.hwndTrack = m_hWND;
+			tme.dwFlags = TME_LEAVE | TME_HOVER;
+			tme.dwHoverTime = 0;
+			m_bMouseTracking = _TrackMouseEvent(&tme);
+		}
 
+		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 		if (m_bTracking && (wParam & MK_LBUTTON))
 		{
-			if (m_iTrackingCode == HTSCROLL_THUMB)
+			if (m_si.iTrackHitTest == HTSCROLL_THUMB)
 			{
+				m_si.iLatestHitTest = HTSCROLL_THUMB;
 				SCROLLCALC si = { 0 };
 				ScrollCalculate(&si);
 				ScrollTrackThumb(pt, &si);
@@ -70,41 +139,41 @@ namespace TinyUI
 			}
 		}
 		INT iHitTest = ScrollHitTest(pt);
-		HDC hDC = GetDC(m_hWND);
-		TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
-		RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
-		FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
-		DrawScrollBar(memdc, iHitTest, wParam & MK_LBUTTON);
-		memdc.Render(paintRC, paintRC, FALSE);
-		ReleaseDC(m_hWND, hDC);
+		if (m_si.iLatestHitTest != iHitTest)
+		{
+			HDC hDC = GetDC(m_hWND);
+			TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
+			RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
+			FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
+			DrawScrollBar(memdc, iHitTest, wParam & MK_LBUTTON);
+			memdc.Render(paintRC, paintRC, FALSE);
+			ReleaseDC(m_hWND, hDC);
+			m_si.iLatestHitTest = iHitTest;
+		}
 
 		return FALSE;
 	}
-
 	LRESULT TinyScrollBox::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-
-		if (!m_bMouseTracking)
-		{
-			TRACKMOUSEEVENT tme;
-			tme.cbSize = sizeof(tme);
-			tme.hwndTrack = m_hWND;
-			tme.dwFlags = TME_LEAVE | TME_HOVER;
-			tme.dwHoverTime = 0;
-			m_bMouseTracking = _TrackMouseEvent(&tme);
-		}
-
-		SCROLLCALC si = { 0 };
-		ScrollCalculate(&si);
-
 		INT iHitTest = ScrollHitTest(pt);
-		if (iHitTest == HTSCROLL_THUMB)
+		switch (iHitTest)
 		{
-			m_iThumbOffset = pt.y - si.thumbRectangle.top;
+		case HTSCROLL_LINEUP:
+		case HTSCROLL_LINEDOWN:
+		case HTSCROLL_PAGEUP:
+		case HTSCROLL_PAGEDOWN:
+			SetTimer(m_hWND, SB_TIMER_DELAY, SB_SCROLL_DELAY, NULL);
+			break;
+		case HTSCROLL_THUMB:
+			SCROLLCALC si = { 0 };
+			ScrollCalculate(&si);
+			m_si.iThumbOffset = pt.y - si.thumbRectangle.top;
+			break;
 		}
-		m_iTrackingCode = iHitTest;
+		m_si.iLatestHitTest = iHitTest;
+		m_si.iTrackHitTest = iHitTest;
 		m_bTracking = TRUE;
 
 		HDC hDC = GetDC(m_hWND);
@@ -114,24 +183,60 @@ namespace TinyUI
 		DrawScrollBar(memdc, iHitTest, TRUE);
 		memdc.Render(paintRC, paintRC, FALSE);
 		ReleaseDC(m_hWND, hDC);
-
 		SetCapture(m_hWND);
 
 		return FALSE;
 	}
-
 	LRESULT TinyScrollBox::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 
-		m_iThumbOffset = 0;
+		if (m_bTracking)
+		{
+			INT iNewPos = m_si.iPos;
+			switch (m_si.iTrackHitTest)
+			{
+			case HTSCROLL_LINEUP:
+				iNewPos = m_si.iPos > m_si.iMin ? m_si.iPos - 1 : m_si.iMin;
+				KillTimer(m_hWND, SB_TIMER_SCROLL);
+				break;
+			case HTSCROLL_LINEDOWN:
+				iNewPos = m_si.iPos < m_si.iMax ? m_si.iPos + 1 : m_si.iMax;
+				KillTimer(m_hWND, SB_TIMER_SCROLL);
+				break;
+			case HTSCROLL_PAGEUP:
+				iNewPos = m_si.iPos > m_si.iMin ? m_si.iPos - m_si.iPage : m_si.iMin;
+				KillTimer(m_hWND, SB_TIMER_SCROLL);
+				break;
+			case HTSCROLL_PAGEDOWN:
+				iNewPos = m_si.iPos < (m_si.iMax - m_si.iPage) ? m_si.iPos + m_si.iPage : (m_si.iMax - m_si.iPage);
+				KillTimer(m_hWND, SB_TIMER_SCROLL);
+				break;
+			}
+			if (iNewPos != m_si.iPos)
+			{
+				PosChange(m_si.iPos, iNewPos);
+				m_si.iPos = iNewPos;
+			}
+
+			HDC hDC = GetDC(m_hWND);
+			TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
+			RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
+			FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
+			DrawScrollBar(memdc, HTSCROLL_THUMB, FALSE);
+			memdc.Render(paintRC, paintRC, FALSE);
+			ReleaseDC(m_hWND, hDC);
+		}
+
+		m_si.iLatestHitTest = HTSCROLL_NONE;
+		m_si.iTrackHitTest = HTSCROLL_NONE;
 		m_bTracking = FALSE;
+		m_si.iThumbOffset = 0;
 
 		ReleaseCapture();
 
 		return FALSE;
 	}
-
 	LRESULT TinyScrollBox::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
@@ -166,6 +271,9 @@ namespace TinyUI
 
 		if (m_bTracking)
 			return FALSE;
+
+		m_si.iTrackHitTest = m_si.iLatestHitTest = HTSCROLL_NONE;
+
 		HDC hDC = GetDC(m_hWND);
 		TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
 		RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
@@ -176,7 +284,6 @@ namespace TinyUI
 
 		return FALSE;
 	}
-
 	void TinyScrollBox::ScrollCalculate(SCROLLCALC* ps)
 	{
 		ASSERT(ps);
@@ -195,19 +302,19 @@ namespace TinyUI
 			ps->rectangle.bottom - TINY_SM_CYSCROLL,
 			ps->rectangle.right,
 			ps->rectangle.bottom);//下箭头的大小
-		INT iRange = (m_si.nMax - m_si.nMin) + 1;
+		INT iRange = (m_si.iMax - m_si.iMin) + 1;
 		INT iGrooveSize = ps->arrowRectangle[1].top - ps->arrowRectangle[0].bottom;//划块的槽
-		BOOL bFlag = (m_si.nPage > (UINT)m_si.nMax || m_si.nMax <= m_si.nMin || m_si.nMax == 0);
+		BOOL bFlag = (m_si.iPage > m_si.iMax || m_si.iMax <= m_si.iMin || m_si.iMax == 0);
 		if (iRange > 0 && !bFlag)
 		{
 			//计算划块的大小
 			INT iThumbPos = 0;
-			INT iThumbSize = MulDiv(m_si.nPage, iGrooveSize, iRange);
+			INT iThumbSize = MulDiv(m_si.iPage, iGrooveSize, iRange);
 			if (iThumbSize < TINY_SCROLL_MINTHUMB_SIZE)
 				iThumbSize = TINY_SCROLL_MINTHUMB_SIZE;
 			//计算Page
-			INT iPageSize = max(1, m_si.nPage);
-			iThumbPos = MulDiv(m_si.nPos - m_si.nMin, iGrooveSize - iThumbSize, iRange - iPageSize);
+			INT iPageSize = max(1, m_si.iPage);
+			iThumbPos = MulDiv(m_si.iPos - m_si.iMin, iGrooveSize - iThumbSize, iRange - iPageSize);
 			if (iThumbPos < 0)
 				iThumbPos = 0;
 			if (iThumbPos >= (iGrooveSize - iThumbSize))
@@ -252,8 +359,8 @@ namespace TinyUI
 	{
 		ASSERT(ps);
 		INT iPos = 0;
-		INT iRange = (m_si.nMax - m_si.nMin) + 1;
-		INT iThumbPos = (pt.y - m_iThumbOffset) - ps->arrowRectangle[0].bottom;
+		INT iRange = (m_si.iMax - m_si.iMin) + 1;
+		INT iThumbPos = (pt.y - m_si.iThumbOffset) - ps->arrowRectangle[0].bottom;
 		INT iThumbSize = TO_CY(ps->thumbRectangle);
 		INT iGrooveSize = ps->arrowRectangle[1].top - ps->arrowRectangle[0].bottom;
 		if (iThumbPos < 0)
@@ -261,10 +368,12 @@ namespace TinyUI
 		if (iThumbPos >(iGrooveSize - iThumbSize))
 			iThumbPos = iGrooveSize - iThumbSize;
 		if (iRange > 0)
-			iPos = MulDiv(iThumbPos, iRange - m_si.nPage, iGrooveSize - iThumbSize);
-		if (m_si.nPos != iPos)
+			iPos = MulDiv(iThumbPos, iRange - m_si.iPage, iGrooveSize - iThumbSize);
+		if (m_si.iPos != iPos)
 		{
-			m_si.nPos = iPos;
+			INT iOldPos = m_si.iPos;
+			m_si.iPos = iPos;
+			PosChange(iOldPos, iPos);
 		}
 	}
 	void TinyScrollBox::DrawScrollBar(TinyMemDC& dc, INT iHitTest, BOOL bMouseDown)
@@ -366,17 +475,17 @@ namespace TinyUI
 	{
 		if (iMin <= iPos && iPos <= (iMax - iPage + 1))
 		{
-			m_si.nMin = iMin;
-			m_si.nMax = iMax;
-			m_si.nPage = iPage;
-			m_si.nPos = iPos;
+			m_si.iMin = iMin;
+			m_si.iMax = iMax;
+			m_si.iPage = iPage;
+			m_si.iPos = iPos;
 			InvalidateRect(m_hWND, NULL, FALSE);
 			return TRUE;
 		}
 		else
 		{
-			m_si.nMax = m_si.nPos = m_si.nMin;
-			m_si.nPage = m_si.nMax - m_si.nPos + 1;
+			m_si.iMax = m_si.iPos = m_si.iMin;
+			m_si.iPage = m_si.iMax - m_si.iPos + 1;
 			InvalidateRect(m_hWND, NULL, FALSE);
 		}
 		return FALSE;

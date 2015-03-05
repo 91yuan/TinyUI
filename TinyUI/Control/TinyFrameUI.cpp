@@ -104,9 +104,17 @@ namespace TinyUI
 	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_scroll.Create(m_hWND, 10, 10, 14, 350);
-		m_scroll.SetScrollInfo(0, 100, 1, 0);
+		m_scroll.Create(m_hWND, 10, 10, 12, 350);
+		m_scroll.SetScrollInfo(0, 100, 10, 0);
+		m_fs_PosChange.BindDelegate(this, &TinyFrameUI::PosChanges);
+		m_scroll.PosChange += &m_fs_PosChange;
 		return TRUE;
+	}
+	LRESULT TinyFrameUI::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		m_scroll.PosChange -= &m_fs_PosChange;
+		return FALSE;
 	}
 
 	LRESULT TinyFrameUI::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -133,5 +141,11 @@ namespace TinyUI
 		m_size.cy = HIWORD(lParam);
 		return FALSE;
 	}
+	void TinyFrameUI::PosChanges(INT oldPos, INT newPos)
+	{
+		TRACE("OldPos:%d,NewPos:%d\n", oldPos, newPos);
+	}
+
+	
 }
 
