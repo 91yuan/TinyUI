@@ -133,6 +133,8 @@ namespace TinyUI
 		m_fs_Click.BindDelegate(this, &TinyFrameUI::Click);
 		m_btn.Click += &m_fs_Click;
 
+		m_menuBox.Create(m_hWND, 100, 150, 200, 250);
+
 		return TRUE;
 	}
 	LRESULT TinyFrameUI::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)

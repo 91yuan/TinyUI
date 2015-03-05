@@ -83,7 +83,7 @@
     <ClInclude Include="Common\TinyHandleMap.h" />
     <ClInclude Include="Common\TinyModule.h" />
     <ClInclude Include="Common\TinyMsg.h" />
-    <ClInclude Include="Common\TinyTree.h" />
+    <ClInclude Include="Common\TinyTreeBox.h" />
     <ClInclude Include="Common\TinyObject.h" />
     <ClInclude Include="Common\TinyShell.h" />
     <ClInclude Include="Common\TinySingle.h" />
@@ -107,11 +107,13 @@
     <ClInclude Include="Control\TinyListBox.h" />
     <ClInclude Include="Control\TinyListView.h" />
     <ClInclude Include="Control\TinyMenu.h" />
+    <ClInclude Include="Control\TinyMenuBox.h" />
     <ClInclude Include="Control\TinyProgressBar.h" />
     <ClInclude Include="Control\TinyRebar.h" />
     <ClInclude Include="Control\TinyRichTextBox.h" />
     <ClInclude Include="Control\TinyScrollBox.h" />
     <ClInclude Include="Control\TinyScrollBar.h" />
+    <ClInclude Include="Control\TinyTabBox.h" />
     <ClInclude Include="Control\TinyTabControl.h" />
     <ClInclude Include="Control\TinyTextBox.h" />
     <ClInclude Include="Control\TinyTrackBar.h" />
@@ -144,7 +146,7 @@
     <ClCompile Include="Common\TinyHandleMap.cpp" />
     <ClCompile Include="Common\TinyModule.cpp" />
     <ClCompile Include="Common\TinyMsg.cpp" />
-    <ClCompile Include="Common\TinyTree.cpp" />
+    <ClCompile Include="Common\TinyTreeBox.cpp" />
     <ClCompile Include="Common\TinyObject.cpp" />
     <ClCompile Include="Common\TinyShell.cpp" />
     <ClCompile Include="Common\TinySingle.cpp" />
@@ -168,11 +170,13 @@
     <ClCompile Include="Control\TinyListBox.cpp" />
     <ClCompile Include="Control\TinyListView.cpp" />
     <ClCompile Include="Control\TinyMenu.cpp" />
+    <ClCompile Include="Control\TinyMenuBox.cpp" />
     <ClCompile Include="Control\TinyProgressBar.cpp" />
     <ClCompile Include="Control\TinyRebar.cpp" />
     <ClCompile Include="Control\TinyRichTextBox.cpp" />
     <ClCompile Include="Control\TinyScrollBox.cpp" />
     <ClCompile Include="Control\TinyScrollBar.cpp" />
+    <ClCompile Include="Control\TinyTabBox.cpp" />
     <ClCompile Include="Control\TinyTabControl.cpp" />
     <ClCompile Include="Control\TinyTextBox.cpp" />
     <ClCompile Include="Control\TinyTrackBar.cpp" />

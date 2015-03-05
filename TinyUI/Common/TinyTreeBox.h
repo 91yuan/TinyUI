@@ -15,10 +15,10 @@ namespace TinyUI
 		~TinyTreeNode();
 	};
 	/// <summary>
-	/// 高效的多X树结构
+	/// 自绘树控件
 	/// </summary>
 	template<class T>
-	class TinyTree
+	class TinyTreeBox
 	{
 
 	};

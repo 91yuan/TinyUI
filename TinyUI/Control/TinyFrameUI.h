@@ -3,6 +3,7 @@
 #include "TinyTextBox.h"
 #include "TinyLabel.h"
 #include "TinyButton.h"
+#include "TinyMenuBox.h"
 #include "../Render/TinyImage.h"
 
 namespace TinyUI
@@ -16,7 +17,7 @@ namespace TinyUI
 #define BUTTON_SIZE_CX			30
 #define BUTTON_SIZE_CY			30
 	/// <summary>
-	/// ´°¿Ú¿ò¼Ü,ÎÞ´°¿Ú
+	/// ´°¿Ú¿ò¼Ü,ÎÞ±ß¿ò
 	/// </summary>
 	class TinyFrameUI : public TinyControl
 	{
@@ -61,5 +62,7 @@ namespace TinyUI
 		TinyButton	m_btn;
 		Delegate<void(INT, INT)> m_fs_PosChange;
 		Delegate<void(void*, INT)> m_fs_Click;
+
+		TinyMenuBox m_menuBox;
 	};
 }

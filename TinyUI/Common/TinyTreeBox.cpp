@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinyObject.h"
+#include "TinyTreeBox.h"
 
 namespace TinyUI
 {

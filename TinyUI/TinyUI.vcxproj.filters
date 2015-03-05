@@ -231,10 +231,16 @@
     <ClInclude Include="Windowless\TinyLayout.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Common\TinyTree.h">
+    <ClInclude Include="Control\TinyScrollBox.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\TinyScrollBox.h">
+    <ClInclude Include="Control\TinyTabBox.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\TinyMenuBox.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\TinyTreeBox.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
   </ItemGroup>
@@ -413,10 +419,16 @@
     <ClCompile Include="Windowless\TinyLayout.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Common\TinyTree.cpp">
+    <ClCompile Include="Control\TinyScrollBox.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
-    <ClCompile Include="Control\TinyScrollBox.cpp">
+    <ClCompile Include="Control\TinyTabBox.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Control\TinyMenuBox.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\TinyTreeBox.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>

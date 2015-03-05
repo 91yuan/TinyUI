@@ -350,6 +350,8 @@ namespace TinyUI
 		INT		GetBitmap(BITMAP* pBitMap);
 		BOOL	Save(LPCTSTR pzSaveFile);
 	};
+#define STRETCH_ALL		0x00000000L
+#define STRETCH_BORDER	0x00000001L
 	/// <summary>
 	/// ƒ⁄¥ÊDC
 	/// </summary>
@@ -360,6 +362,10 @@ namespace TinyUI
 		TinyMemDC(HDC hDC, INT cx, INT cy);
 		TinyMemDC(HDC hDC, HBITMAP hBitmap);
 		BOOL Render(RECT dstPaint, RECT srcPaint, BOOL bAlpha);
+		/// <summary>
+		/// ªÊ÷∆Õº∆¨æ≈π¨∏Ò
+		/// </summary>
+		BOOL Render(RECT dstPaint, RECT srcPaint, RECT srcCenter, BOOL bAlpha);
 		/// <summary>
 		/// ªÊ÷∆Õº∆¨æ≈π¨∏Ò
 		/// </summary>
