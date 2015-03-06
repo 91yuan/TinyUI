@@ -161,6 +161,16 @@ namespace TinyUI
 		bHandled = FALSE;
 		return FALSE;
 	}
+	LRESULT TinyControl::OnNCActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
+	LRESULT TinyControl::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
 	LRESULT TinyControl::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;

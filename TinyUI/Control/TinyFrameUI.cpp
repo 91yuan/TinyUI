@@ -130,10 +130,50 @@ namespace TinyUI
 
 		m_btn.Create(m_hWND, 250, 10, 100, 23);
 		m_btn.SetText("设置");
-		m_fs_Click.BindDelegate(this, &TinyFrameUI::Click);
+
+		m_btnPop.Create(m_hWND, 250, 40, 100, 23);
+		m_btnPop.SetText("弹出菜单");
+
+		m_fs_Click.BindDelegate(this, &TinyFrameUI::ClickSetting);
 		m_btn.Click += &m_fs_Click;
 
+		m_fs_Pop.BindDelegate(this, &TinyFrameUI::ClickPop);
+		m_btnPop.Click += &m_fs_Pop;
+
 		m_menuBox.Create(m_hWND, 100, 150, 200, 250);
+		::ShowWindow(m_menuBox.Handle(), SW_HIDE);
+		m_menuItem1.Reset(new TinyMenuItem());
+		m_menuItem1->SetText("图标显示1");
+		m_menuItem1->SetCheck(TRUE);
+		m_menuItem2.Reset(new TinyMenuItem());
+		m_menuItem2->SetText("图标显示1");
+		m_menuItem3.Reset(new TinyMenuItem());
+		m_menuItem3->SetText("图标显示2");
+		m_menuItem3->SetCheck(TRUE);
+		m_menuItem4.Reset(new TinyMenuItem(TRUE));
+		m_menuItem5.Reset(new TinyMenuItem());
+		m_menuItem5->SetText("图标显示4");
+		m_menuItem6.Reset(new TinyMenuItem());
+		m_menuItem6->SetText("图标显示5");
+		m_menuItem7.Reset(new TinyMenuItem());
+		m_menuItem7->SetText("图标显示6");
+		m_menuItem8.Reset(new TinyMenuItem(TRUE));
+		m_menuItem9.Reset(new TinyMenuItem());
+		m_menuItem9->SetText("图标显示7");
+		m_menuItem9->SetCheck(TRUE);
+		m_menuItem10.Reset(new TinyMenuItem());
+		m_menuItem10->SetText("图标显示8");
+
+		m_menuBox.AddItem(m_menuItem1);
+		m_menuBox.AddItem(m_menuItem2);
+		m_menuBox.AddItem(m_menuItem3);
+		m_menuBox.AddItem(m_menuItem4);
+		m_menuBox.AddItem(m_menuItem5);
+		m_menuBox.AddItem(m_menuItem6);
+		m_menuBox.AddItem(m_menuItem7);
+		m_menuBox.AddItem(m_menuItem8);
+		m_menuBox.AddItem(m_menuItem9);
+		m_menuBox.AddItem(m_menuItem10);
 
 		return TRUE;
 	}
@@ -142,6 +182,7 @@ namespace TinyUI
 		bHandled = FALSE;
 		m_scroll.PosChange -= &m_fs_PosChange;
 		m_btn.Click -= &m_fs_Click;
+
 		return FALSE;
 	}
 
@@ -175,7 +216,16 @@ namespace TinyUI
 		TinyString str = TinyString::Format("%d", newPos);
 		m_txtPos.SetText(str.STR());
 	}
-	void TinyFrameUI::Click(void* ps, INT cmd)
+	void TinyFrameUI::ClickPop(void* ps, INT cmd)
+	{
+		RECT rect = { 0 };
+		::GetWindowRect(m_btnPop.Handle(), &rect);
+		POINT pt = { 0 };
+		pt.x = rect.left;
+		pt.y = rect.bottom;
+		m_menuBox.Show(pt);
+	}
+	void TinyFrameUI::ClickSetting(void* ps, INT cmd)
 	{
 		TinyString str(20);
 		m_txtPos.GetText(str.STR(), str.GetSize());
@@ -186,7 +236,6 @@ namespace TinyUI
 		INT iMax = atoi(str.STR());
 		m_txtMin.GetText(str.STR(), str.GetSize());
 		INT iMin = atoi(str.STR());
-
 		m_scroll.SetScrollInfo(iMin, iMax, iPage, iPos);
 	}
 }

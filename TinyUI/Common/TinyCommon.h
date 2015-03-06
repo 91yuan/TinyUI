@@ -289,9 +289,9 @@ private:\
 	template<class T>
 	void TinyScopedPtr<T>::Reset(T* ps) throw()
 	{
-		if (_ptr != _myP)
+		if (ps != _myP)
 			delete _myP;
-		_myP = _ptr;
+		_myP = ps;
 	}
 	template<class T>
 	T& TinyScopedPtr<T>::operator*() const throw()

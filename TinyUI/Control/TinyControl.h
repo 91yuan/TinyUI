@@ -6,6 +6,14 @@
 
 namespace TinyUI
 {
+#define STATE_BEGIN			   0x00000000L
+#define STATE_ENABLED          0x00000000L
+#define STATE_GRAYED           0x00000001L
+#define STATE_DISABLED         0x00000002L
+#define STATE_UNCHECKED        0x00000000L
+#define STATE_CHECKED          0x00000004L
+#define STATE_UNHILITE         0x00000000L
+#define STATE_HILITE           0x00000008L
 	/// <summary>
 	/// ´°¿Ú¿Ø¼þÀà
 	/// </summary>
@@ -43,6 +51,7 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_NCRBUTTONDOWN, OnNCRButtonDown)
 			MESSAGE_HANDLER(WM_NCRBUTTONUP, OnNCRButtonUp)
 			MESSAGE_HANDLER(WM_NCRBUTTONDBLCLK, OnNCRButtonDBClick)
+			MESSAGE_HANDLER(WM_NCACTIVATE, OnNCActivate)
 			MESSAGE_HANDLER(WM_PAINT, OnPaint)
 			MESSAGE_HANDLER(WM_ERASEBKGND, OnErasebkgnd)
 			MESSAGE_HANDLER(WM_MOUSEMOVE, OnMouseMove)
@@ -53,6 +62,7 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_RBUTTONDOWN, OnRButtonDown)
 			MESSAGE_HANDLER(WM_RBUTTONUP, OnRButtonUp)
 			MESSAGE_HANDLER(WM_RBUTTONDBLCLK, OnRButtonDBClick)
+			MESSAGE_HANDLER(WM_ACTIVATE, OnActivate)
 			MESSAGE_HANDLER(WM_TIMER,OnTimer)
 			MESSAGE_HANDLER(WM_COMMAND, OnCommand)
 			MESSAGE_HANDLER(WM_NOTIFY, OnNotify)
@@ -75,6 +85,7 @@ namespace TinyUI
 		virtual LRESULT OnNCRButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNCRButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNCRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnNCActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -88,6 +99,7 @@ namespace TinyUI
 		virtual LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSetCursor(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnCommandReflect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNotify(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

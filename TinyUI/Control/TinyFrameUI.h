@@ -45,7 +45,8 @@ namespace TinyUI
 		BOOL UpdateWindow() throw();
 		void CenterWindow(HWND parent, HWND window, TinySize pref) throw();
 		void PosChanges(INT oldPos, INT newPos);
-		void Click(void* ps, INT cmd);
+		void ClickSetting(void* ps, INT cmd);
+		void ClickPop(void* ps, INT cmd);
 	protected:
 		//»º³åµÄÑùÊ½
 		TinySize m_size;
@@ -60,9 +61,21 @@ namespace TinyUI
 		TinyLabel	m_lblMax;
 		TinyLabel	m_lblMin;
 		TinyButton	m_btn;
+		TinyButton	m_btnPop;
 		Delegate<void(INT, INT)> m_fs_PosChange;
 		Delegate<void(void*, INT)> m_fs_Click;
+		Delegate<void(void*, INT)> m_fs_Pop;
 
-		TinyMenuBox m_menuBox;
+		TinyMenuBox		m_menuBox;
+		TinyAutoPtr<TinyMenuItem> m_menuItem1;
+		TinyAutoPtr<TinyMenuItem> m_menuItem2;
+		TinyAutoPtr<TinyMenuItem> m_menuItem3;
+		TinyAutoPtr<TinyMenuItem> m_menuItem4;
+		TinyAutoPtr<TinyMenuItem> m_menuItem5;
+		TinyAutoPtr<TinyMenuItem> m_menuItem6;
+		TinyAutoPtr<TinyMenuItem> m_menuItem7;
+		TinyAutoPtr<TinyMenuItem> m_menuItem8;
+		TinyAutoPtr<TinyMenuItem> m_menuItem9;
+		TinyAutoPtr<TinyMenuItem> m_menuItem10;
 	};
 }

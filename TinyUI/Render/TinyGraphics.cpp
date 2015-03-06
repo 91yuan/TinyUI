@@ -1231,17 +1231,18 @@ namespace TinyUI
 		SetRect(&srcRectangles[8], srcCenter.right, srcCenter.bottom, srcPaint.right, srcPaint.bottom);
 
 
-		/*SetRect(&dstRectangles[0], dstPaint.left, dstPaint.top, dstPaint.left + TO_CX(srcRectangles[0]), dstPaint.top + TO_CY(srcRectangles[0]));
+		SetRect(&dstRectangles[0], dstPaint.left, dstPaint.top, dstPaint.left + TO_CX(srcRectangles[0]), dstPaint.top + TO_CY(srcRectangles[0]));
 		SetRect(&dstRectangles[1], dstRectangles[0].right, dstPaint.top, dstPaint.right - TO_CX(srcRectangles[2]), dstRectangles[0].bottom);
 		SetRect(&dstRectangles[2], dstRectangles[1].right, dstPaint.top, dstPaint.right, dstRectangles[0].bottom);
 
-		SetRect(&dstRectangles[3], dstPaint.left, dstCenter.top, dstCenter.left, dstCenter.bottom);
-		SetRect(&dstRectangles[4], dstRectangles[3].right, dstCenter.top, dstCenter.right, dstCenter.bottom);
-		SetRect(&dstRectangles[5], dstRectangles[4].right, dstCenter.top, dstPaint.right, dstCenter.bottom);
+		SetRect(&dstRectangles[3], dstPaint.left, dstRectangles[0].bottom, dstPaint.left + TO_CX(srcRectangles[3]), dstPaint.bottom - TO_CY(srcRectangles[6]));
+		SetRect(&dstRectangles[4], dstRectangles[3].right, dstRectangles[3].top, dstPaint.right - TO_CX(srcRectangles[5]), dstRectangles[3].bottom);
+		SetRect(&dstRectangles[5], dstRectangles[4].right, dstRectangles[3].top, dstPaint.right, dstRectangles[3].bottom);
 
-		SetRect(&dstRectangles[6], dstPaint.left, dstCenter.bottom, dstCenter.left, dstPaint.bottom);
-		SetRect(&dstRectangles[7], dstRectangles[6].right, dstCenter.bottom, dstCenter.right, dstPaint.bottom);
-		SetRect(&dstRectangles[8], dstRectangles[7].right, dstCenter.bottom, dstPaint.right, dstPaint.bottom);*/
+		SetRect(&dstRectangles[6], dstPaint.left, dstRectangles[3].bottom, dstPaint.left + TO_CX(srcRectangles[6]), dstPaint.bottom);
+		SetRect(&dstRectangles[7], dstRectangles[6].right, dstRectangles[6].top, dstPaint.right - TO_CX(srcRectangles[8]), dstPaint.bottom);
+		SetRect(&dstRectangles[8], dstRectangles[7].right, dstRectangles[6].top, dstPaint.right, dstPaint.bottom);
+
 		if (bAlpha)
 		{
 			BLENDFUNCTION bs = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
@@ -1255,7 +1256,6 @@ namespace TinyUI
 
 				if (dstCX == 0 || dstCY == 0 || srcCX == 0 || srcCY == 0)
 					continue;
-
 				bRes = ::AlphaBlend(m_hDestDC,
 					dstRectangles[i].left,
 					dstRectangles[i].top,
