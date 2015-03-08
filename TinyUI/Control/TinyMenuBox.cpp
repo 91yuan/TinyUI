@@ -6,7 +6,7 @@ namespace TinyUI
 	TinyMenuItem::TinyMenuItem(BOOL bBreak)
 		:m_fState(0),
 		m_bBreak(bBreak),
-		m_pSubMenu(NULL),
+		m_pChild(NULL),
 		m_cy(MENUITEM_DEFAULT_HEIGHT)
 	{
 		memset(m_pzText, 0, 150 * sizeof(CHAR));
@@ -50,19 +50,17 @@ namespace TinyUI
 			::InvalidateRect(m_pOwner->Handle(), NULL, FALSE);
 		}
 	}
-	void TinyMenuItem::SetCy(INT cy)
+	void TinyMenuItem::SetChild(TinyMenuBox* ps)
 	{
-		m_cy = cy < MENUITEM_DEFAULT_HEIGHT ? MENUITEM_DEFAULT_HEIGHT : cy;
-		if (m_pOwner != NULL)
-		{
-			m_pOwner->Recalculate();
-			::InvalidateRect(m_pOwner->Handle(), NULL, FALSE);
-		}
+		m_pChild = ps;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyMenuBox::TinyMenuBox()
 		:m_bMouseTracking(FALSE),
-		m_bMouseDown(FALSE)
+		m_bMouseDown(FALSE),
+		m_pParent(NULL),
+		m_pChild(NULL),
+		m_pHoverItem(NULL)
 	{
 
 	}
@@ -76,16 +74,20 @@ namespace TinyUI
 	}
 	DWORD TinyMenuBox::RetrieveStyle()
 	{
-		return (WS_VISIBLE | WS_POPUP);
+		return WS_VISIBLE | WS_POPUP;
+	}
+	DWORD TinyMenuBox::RetrieveExStyle()
+	{
+		return WS_EX_LEFT | WS_EX_LTRREADING;
 	}
 	LRESULT TinyMenuBox::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_images[0].Load("E:\\Menu\\menu_bkg.png");
-		m_images[1].Load("E:\\Menu\\menu_highlight.png");
-		m_images[2].Load("E:\\Menu\\menu_check.png");
-		m_images[3].Load("E:\\Menu\\menu_cutling.png");
-		m_images[4].Load("E:\\Menu\\menu_arrow.png");
+		m_images[0].Load("D:\\Menu\\menu_bkg.png");
+		m_images[1].Load("D:\\Menu\\menu_highlight.png");
+		m_images[2].Load("D:\\Menu\\menu_check.png");
+		m_images[3].Load("D:\\Menu\\menu_cutling.png");
+		m_images[4].Load("D:\\Menu\\menu_arrow.png");
 		return FALSE;
 	}
 
@@ -113,7 +115,7 @@ namespace TinyUI
 			tme.cbSize = sizeof(tme);
 			tme.hwndTrack = m_hWND;
 			tme.dwFlags = TME_LEAVE | TME_HOVER;
-			tme.dwHoverTime = 0;
+			tme.dwHoverTime = 10;
 			m_bMouseTracking = _TrackMouseEvent(&tme);
 		}
 
@@ -125,21 +127,81 @@ namespace TinyUI
 		DrawMenu(memdc, GetAt(pt));
 		memdc.Render(paintRC, paintRC, FALSE);
 		ReleaseDC(m_hWND, hDC);
-
 		return FALSE;
 	}
 
 	LRESULT TinyMenuBox::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_bMouseTracking = FALSE;
-		HDC hDC = GetDC(m_hWND);
-		TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
-		RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
-		FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
-		DrawMenu(memdc, NULL);
-		memdc.Render(paintRC, paintRC, FALSE);
-		ReleaseDC(m_hWND, hDC);
+		if (m_bMouseTracking)
+		{
+			m_bMouseTracking = FALSE;
+			HDC hDC = GetDC(m_hWND);
+			TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
+			RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
+			FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
+			DrawMenu(memdc, m_pHoverItem);
+			memdc.Render(paintRC, paintRC, FALSE);
+			ReleaseDC(m_hWND, hDC);
+		}
+		return FALSE;
+	}
+
+	LRESULT TinyMenuBox::OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		if (m_bMouseTracking)
+		{
+			m_bMouseTracking = FALSE;
+			DWORD dwPos = GetMessagePos();
+			POINT pt = { GET_X_LPARAM(dwPos), GET_Y_LPARAM(dwPos) };
+			ScreenToClient(m_hWND, &pt);
+			TinyMenuItem* pItem = GetAt(pt);
+			if (pItem != NULL)
+			{
+				m_pHoverItem = pItem;
+				if (pItem->m_pChild != NULL)
+				{
+					if (m_pChild != pItem->m_pChild)
+					{
+						if (m_pChild != NULL && m_pChild->IsPopup())
+						{
+							TinyMenuBox* ps = m_pChild;
+							while (ps != NULL)
+							{
+								ps->m_pHoverItem = NULL;
+								ps->DestroyWindow();
+								ps = ps->m_pChild;
+							}
+						}
+						m_pChild = pItem->m_pChild;
+						for (INT i = 0; i < m_pChild->m_items.GetSize(); i++)
+						{
+							m_pChild->m_pParent = this;
+						}
+					}
+					if (!m_pChild->IsPopup())
+					{
+						RECT rect = pItem->m_rectangle;
+						ClientToScreen(m_hWND, (LPPOINT)&rect);
+						ClientToScreen(m_hWND, (LPPOINT)&rect + 1);
+						pt.x = rect.right;
+						pt.y = rect.top;
+						m_pChild->Popup(pt);
+					}
+				}
+				else
+				{
+					TinyMenuBox* ps = m_pChild;
+					while (ps != NULL)
+					{
+						ps->m_pHoverItem = NULL;
+						ps->DestroyWindow();
+						ps = ps->m_pChild;
+					}
+				}
+			}
+		}
 		return FALSE;
 	}
 
@@ -152,24 +214,30 @@ namespace TinyUI
 	LRESULT TinyMenuBox::OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+
 		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-		TinyMenuItem* ps = GetAt(pt);
-		if (ps != NULL)
+		TinyMenuItem* pItem = GetAt(pt);
+		if (pItem != NULL)
 		{
-			TRACE(ps->GetText());
-			TRACE("\n");
-			Click(ps);
+			if (pItem->m_pChild == NULL)
+			{
+				TinyMenuBox* pMenu = pItem->m_pOwner;
+				while (pMenu != NULL)
+				{
+					pMenu->m_pHoverItem = NULL;
+					pMenu->DestroyWindow();
+					pMenu = pMenu->m_pParent;
+				}
+				Click(pItem);
+			}
 		}
-		::ShowWindow(m_hWND, SW_HIDE);
 		return FALSE;
 	}
-
 	LRESULT TinyMenuBox::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
 		return FALSE;
 	}
-
 	LRESULT TinyMenuBox::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
@@ -184,6 +252,20 @@ namespace TinyUI
 
 		memdc.Render(paintRC, paintRC, FALSE);
 		EndPaint(m_hWND, &ps);
+		return FALSE;
+	}
+	LRESULT TinyMenuBox::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		if (LOWORD(wParam) == WA_INACTIVE)
+		{
+			TRACE("WA_INACTIVE\n");
+			DestroyWindow();
+		}
+		if (LOWORD(wParam) == WA_ACTIVE)
+		{
+			TRACE("WA_ACTIVE\n");
+		}
 		return FALSE;
 	}
 	BOOL TinyMenuBox::AddItem(TinyMenuItem* pz)
@@ -305,7 +387,6 @@ namespace TinyUI
 			{
 				if (hotItem != NULL && hotItem == ps)//¸ßÁÁ
 				{
-
 					RECT rect = ps->m_rectangle;
 					RECT rcPaint = { rect.left + 2, rect.top + 2, rect.right - 2, rect.bottom - 2 };
 					TinyMemDC imagedc1(dc, m_images[1]);
@@ -317,6 +398,14 @@ namespace TinyUI
 						OffsetRect(&rcPaint, rect.left + 8, rect.top + (MENUITEM_DEFAULT_HEIGHT - TO_CY(imageRect)) / 2);
 						TinyMemDC imagedc2(dc, m_images[2]);
 						imagedc2.Render(rcPaint, imageRect, TRUE);
+					}
+					if (ps->m_pChild != NULL)
+					{
+						RECT imageRect = m_images[4].GetRectangle();
+						SetRect(&rcPaint, imageRect.left, imageRect.top, imageRect.right, imageRect.bottom);
+						OffsetRect(&rcPaint, rect.right - TO_CX(imageRect) - 8, rect.top + (MENUITEM_DEFAULT_HEIGHT - TO_CY(imageRect)) / 2);
+						TinyMemDC imagedc3(dc, m_images[4]);
+						imagedc3.Render(rcPaint, imageRect, TRUE);
 					}
 					::SetTextColor(dc, RGB(255, 255, 255));
 					rect.left = rect.left + 45;
@@ -334,6 +423,15 @@ namespace TinyUI
 						OffsetRect(&rcPaint, rect.left + 8, rect.top + (MENUITEM_DEFAULT_HEIGHT - TO_CY(imageRect)) / 2);
 						TinyMemDC imagedc1(dc, m_images[2]);
 						imagedc1.Render(rcPaint, imageRect, TRUE);
+					}
+					if (ps->m_pChild != NULL)
+					{
+						RECT imageRect = m_images[4].GetRectangle();
+						RECT rcPaint = { 0 };
+						SetRect(&rcPaint, imageRect.left, imageRect.top, imageRect.right, imageRect.bottom);
+						OffsetRect(&rcPaint, rect.right - TO_CX(imageRect) - 8, rect.top + (MENUITEM_DEFAULT_HEIGHT - TO_CY(imageRect)) / 2);
+						TinyMemDC imagedc2(dc, m_images[4]);
+						imagedc2.Render(rcPaint, imageRect, TRUE);
 					}
 					::SetTextColor(dc, RGB(0, 0, 0));
 					rect.left = rect.left + 45;
@@ -354,7 +452,7 @@ namespace TinyUI
 		dc.SetBkMode(iOldMode);
 		dc.RestoreDC(iSaveDC);
 	}
-	BOOL TinyMenuBox::Show(POINT& pt)
+	BOOL TinyMenuBox::Popup(POINT& pt)
 	{
 		INT size = m_items.GetSize();
 		if (size > 0)
@@ -365,19 +463,14 @@ namespace TinyUI
 				pt.y,
 				TO_CX(m_items[size - 1]->m_rectangle),
 				m_items[size - 1]->m_rectangle.bottom,
-				SWP_SHOWWINDOW);
+				SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOZORDER);
+			UpdateWindow(m_hWND);
 			return TRUE;
 		}
 		return FALSE;
 	}
-	LRESULT TinyMenuBox::OnActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	BOOL TinyMenuBox::IsPopup()
 	{
-		bHandled = FALSE;
-		if (LOWORD(wParam) == WA_INACTIVE)
-		{
-			::ShowWindow(m_hWND, SW_HIDE);
-		}
-		return FALSE;
+		return ::IsWindowVisible(m_hWND);
 	}
-
 }

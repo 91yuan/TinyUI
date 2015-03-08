@@ -208,18 +208,18 @@ namespace TinyUI
 			{
 			case WM_CREATE:
 			{
-							  TinyMessageLoop* pLoop = TinyApplication::Instance()->GetMessageLoop();
-							  ASSERT(pLoop != NULL);
-							  pLoop->AddMessageFilter(_this);
+				TinyMessageLoop* pLoop = TinyApplication::Instance()->GetMessageLoop();
+				ASSERT(pLoop != NULL);
+				pLoop->AddMessageFilter(_this);
 			}
-				break;
+			break;
 			case WM_DESTROY:
 			{
-							   TinyMessageLoop* pLoop = TinyApplication::Instance()->GetMessageLoop();
-							   ASSERT(pLoop != NULL);
-							   pLoop->RemoveMessageFilter(_this);
+				TinyMessageLoop* pLoop = TinyApplication::Instance()->GetMessageLoop();
+				ASSERT(pLoop != NULL);
+				pLoop->RemoveMessageFilter(_this);
 			}
-				break;
+			break;
 			default:
 				break;
 			}

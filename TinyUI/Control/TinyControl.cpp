@@ -191,6 +191,11 @@ namespace TinyUI
 		bHandled = FALSE;
 		return FALSE;
 	}
+	LRESULT TinyControl::OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
 	LRESULT TinyControl::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;;
@@ -217,6 +222,11 @@ namespace TinyUI
 		return FALSE;
 	}
 	LRESULT TinyControl::OnRButtonDBClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;;
+		return FALSE;
+	}
+	LRESULT TinyControl::OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;;
 		return FALSE;

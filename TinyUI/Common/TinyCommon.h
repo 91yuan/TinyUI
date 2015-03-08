@@ -265,6 +265,7 @@ private:\
 		explicit TinyScopedPtr(T* ps = 0);
 		~TinyScopedPtr();
 		void Reset(T* ps = 0) throw();
+		operator T*() const throw();
 		T& operator*() const throw();
 		T* operator->() const throw();
 		T* Ptr() const throw();
@@ -301,12 +302,17 @@ private:\
 	template<class T>
 	T* TinyScopedPtr<T>::operator->() const throw()
 	{
-		return (_myP);
+		return _myP;
 	}
 	template<class T>
 	T* TinyScopedPtr<T>::Ptr() const throw()
 	{
-		return (_myP);
+		return _myP;
+	}
+	template<class T>
+	TinyScopedPtr<T>::operator T*() const throw()
+	{
+		return _myP;
 	}
 	/// <summary>
 	/// 引用计数智能指针 

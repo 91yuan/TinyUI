@@ -28,14 +28,14 @@ namespace TinyUI
 		BOOL	IsChecked();
 		void	SetDisable(BOOL bFlag);
 		BOOL	IsDisabled();
-		void	SetCy(INT cy);
+		void	SetChild(TinyMenuBox* ps);
 	private:
 		RECT			m_rectangle;
 		INT				m_cy;
 		BOOL			m_bBreak;
 		CHAR			m_pzText[150];//菜单项显示的文本
 		TinyMenuBox*	m_pOwner;//菜单项所在的菜单
-		TinyMenuBox*	m_pSubMenu;//菜单项所包含的菜单
+		TinyMenuBox*	m_pChild;//菜单项所包含的子菜单
 		UINT			m_fState;
 	};
 	/// <summary>
@@ -50,11 +50,13 @@ namespace TinyUI
 		~TinyMenuBox();
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 		virtual DWORD RetrieveStyle();
+		virtual DWORD RetrieveExStyle() override;
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -66,7 +68,8 @@ namespace TinyUI
 		BOOL RemoveItem(TinyMenuItem* pz);
 		BOOL RemoveAt(INT index);
 		void RemoveAll();
-		BOOL Show(POINT& pt);
+		BOOL Popup(POINT& pt);
+		BOOL IsPopup();
 		Event<void(TinyMenuItem*)> Click;
 	private:
 		TinyMenuItem*	GetAt(POINT& pt);
@@ -75,10 +78,13 @@ namespace TinyUI
 		void DrawMenuItems(TinyMemDC& dc, TinyMenuItem* hotItem = NULL);
 		void RedrawMenu();
 	private:
-		SIZE	m_size;
-		BOOL	m_bMouseTracking;
-		BOOL	m_bMouseDown;
-		TinyArray<TinyMenuItem*> m_items;
-		TinyImage m_images[5];
+		SIZE						m_size;
+		BOOL						m_bMouseTracking;
+		BOOL						m_bMouseDown;
+		TinyMenuItem*				m_pHoverItem;//当前鼠标悬停的菜单项
+		TinyMenuBox*				m_pParent;//父菜单
+		TinyMenuBox*				m_pChild;//子菜单
+		TinyArray<TinyMenuItem*>	m_items;
+		TinyImage					m_images[5];
 	};
 }
