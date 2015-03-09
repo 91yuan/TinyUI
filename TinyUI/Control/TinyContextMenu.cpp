@@ -87,7 +87,7 @@ namespace TinyUI
 	}
 	DWORD TinyContextMenu::RetrieveExStyle()
 	{
-		return NULL;
+		return WS_EX_LEFT | WS_EX_LTRREADING;
 	}
 	LPCSTR TinyContextMenu::RetrieveClassName()
 	{

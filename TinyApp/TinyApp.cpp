@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "TinyApp.h"
 #include "Control/TinyFrameUI.h"
+#include "Windowless/TinyVisualHWND.h"
 
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
@@ -587,7 +588,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	TinyMessageLoop theLoop;
 	TinyApplication::Instance()->AddMessageLoop(&theLoop);
-	TinyFrameUI uiImpl;
+	TinyVisualHWND uiImpl;
 	uiImpl.Create(NULL, 50, 50, 400, 500);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();

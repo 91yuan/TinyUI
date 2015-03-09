@@ -6,10 +6,21 @@
 namespace TinyUI
 {
 	/// <summary>
+	/// TabÏî
+	/// </summary>
+	class TinyTabItem:public TinyObject
+	{
+		DECLARE_DYNAMIC(TinyTabItem)
+	public:
+		TinyTabItem();
+		~TinyTabItem();
+	};
+	/// <summary>
 	/// ×Ô»æTab¿Ø¼þ
 	/// </summary>
 	class TinyTabBox : public TinyControl
 	{
+		DECLARE_DYNAMIC(TinyTabBox)
 	public:
 		TinyTabBox();
 		~TinyTabBox();

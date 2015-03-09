@@ -149,10 +149,14 @@ namespace TinyUI
 	{
 		m_menuBox1.Create(m_hWND, 0, 0, 0, 0);
 		m_menuItem1.Reset(new TinyMenuItem());
+		m_menuItem1->SetText("menuItem1");
 		m_menuItem2.Reset(new TinyMenuItem());
+		m_menuItem2->SetText("menuItem2");
 		m_menuItem3.Reset(new TinyMenuItem(TRUE));
 		m_menuItem4.Reset(new TinyMenuItem());
+		m_menuItem4->SetText("menuItem4");
 		m_menuItem5.Reset(new TinyMenuItem());
+		m_menuItem5->SetText("menuItem5");
 		m_menuBox1.AddItem(m_menuItem1);
 		m_menuBox1.AddItem(m_menuItem2);
 		m_menuBox1.AddItem(m_menuItem3);
@@ -161,10 +165,14 @@ namespace TinyUI
 
 		m_menuBox2.Create(m_hWND, 0, 0, 0, 0);
 		m_menuItem11.Reset(new TinyMenuItem());
+		m_menuItem11->SetText("menuItem11");
 		m_menuItem21.Reset(new TinyMenuItem());
+		m_menuItem21->SetText("menuItem21");
 		m_menuItem31.Reset(new TinyMenuItem(TRUE));
 		m_menuItem41.Reset(new TinyMenuItem());
+		m_menuItem41->SetText("menuItem41");
 		m_menuItem51.Reset(new TinyMenuItem());
+		m_menuItem51->SetText("menuItem51");
 		m_menuBox2.AddItem(m_menuItem11);
 		m_menuBox2.AddItem(m_menuItem21);
 		m_menuBox2.AddItem(m_menuItem31);
@@ -173,10 +181,14 @@ namespace TinyUI
 
 		m_menuBox3.Create(m_hWND, 0, 0, 0, 0);
 		m_menuItem12.Reset(new TinyMenuItem());
+		m_menuItem12->SetText("menuItem12");
 		m_menuItem22.Reset(new TinyMenuItem());
+		m_menuItem22->SetText("menuItem22");
 		m_menuItem32.Reset(new TinyMenuItem(TRUE));
 		m_menuItem42.Reset(new TinyMenuItem());
+		m_menuItem42->SetText("menuItem42");
 		m_menuItem52.Reset(new TinyMenuItem());
+		m_menuItem52->SetText("menuItem52");
 		m_menuBox3.AddItem(m_menuItem12);
 		m_menuBox3.AddItem(m_menuItem22);
 		m_menuBox3.AddItem(m_menuItem32);
@@ -185,107 +197,12 @@ namespace TinyUI
 
 		m_menuItem4->SetChild(&m_menuBox2);
 		m_menuItem51->SetChild(&m_menuBox3);
-
-		/*	m_menuBox1.Create(m_hWND, 100, 150, 150, 250);
-			m_menuBox1.Unpopup();
-			m_menuItem1.Reset(new TinyMenuItem());
-			m_menuItem1->SetText("图标显示1");
-			m_menuItem1->SetCheck(TRUE);
-
-			m_menuItem2.Reset(new TinyMenuItem());
-			m_menuItem2->SetText("图标显示2");
-			m_menuItem3.Reset(new TinyMenuItem());
-			m_menuItem3->SetText("图标显示3");
-			m_menuItem3->SetCheck(TRUE);
-			m_menuItem4.Reset(new TinyMenuItem(TRUE));
-			m_menuItem5.Reset(new TinyMenuItem());
-			m_menuItem5->SetText("图标显示4");
-			m_menuItem6.Reset(new TinyMenuItem());
-			m_menuItem6->SetText("图标显示5");
-			m_menuItem7.Reset(new TinyMenuItem());
-			m_menuItem7->SetText("图标显示6");
-			m_menuItem8.Reset(new TinyMenuItem(TRUE));
-			m_menuItem9.Reset(new TinyMenuItem());
-			m_menuItem9->SetText("图标显示7");
-			m_menuItem9->SetCheck(TRUE);
-			m_menuItem10.Reset(new TinyMenuItem());
-			m_menuItem10->SetText("图标显示8");
-			m_menuBox1.AddItem(m_menuItem1);
-			m_menuBox1.AddItem(m_menuItem2);
-			m_menuBox1.AddItem(m_menuItem3);
-			m_menuBox1.AddItem(m_menuItem4);
-			m_menuBox1.AddItem(m_menuItem5);
-			m_menuBox1.AddItem(m_menuItem6);
-			m_menuBox1.AddItem(m_menuItem7);
-			m_menuBox1.AddItem(m_menuItem8);
-			m_menuBox1.AddItem(m_menuItem9);
-			m_menuBox1.AddItem(m_menuItem10);
-
-			m_menuBox2.Create(m_hWND, 100, 150, 150, 250);
-			m_menuBox2.Unpopup();
-
-			m_menuBox3.Create(m_hWND, 100, 150, 150, 250);
-			m_menuBox3.Unpopup();
-
-			m_menuBox4.Create(m_hWND, 100, 150, 150, 250);
-			m_menuBox4.Unpopup();
-
-			m_menuItem11.Reset(new TinyMenuItem());
-			m_menuItem11->SetText("图标显示11");
-			m_menuItem12.Reset(new TinyMenuItem());
-			m_menuItem12->SetText("图标显示12");
-			m_menuItem13.Reset(new TinyMenuItem());
-			m_menuItem13->SetText("图标显示13");
-			m_menuItem14.Reset(new TinyMenuItem());
-			m_menuItem14->SetText("图标显示14");
-			m_menuItem15.Reset(new TinyMenuItem());
-			m_menuItem15->SetText("图标显示15");
-			m_menuBox2.AddItem(m_menuItem11);
-			m_menuBox2.AddItem(m_menuItem12);
-			m_menuBox2.AddItem(m_menuItem13);
-			m_menuBox2.AddItem(m_menuItem14);
-			m_menuBox2.AddItem(m_menuItem15);
-
-			m_menuItem111.Reset(new TinyMenuItem());
-			m_menuItem111->SetText("图标显示11");
-			m_menuItem121.Reset(new TinyMenuItem());
-			m_menuItem121->SetText("图标显示12");
-			m_menuItem131.Reset(new TinyMenuItem());
-			m_menuItem131->SetText("图标显示13");
-			m_menuItem141.Reset(new TinyMenuItem());
-			m_menuItem141->SetText("图标显示14");
-			m_menuItem151.Reset(new TinyMenuItem());
-			m_menuItem151->SetText("图标显示15");
-			m_menuBox3.AddItem(m_menuItem111);
-			m_menuBox3.AddItem(m_menuItem121);
-			m_menuBox3.AddItem(m_menuItem131);
-			m_menuBox3.AddItem(m_menuItem141);
-			m_menuBox3.AddItem(m_menuItem151);
-
-			m_menuItem112.Reset(new TinyMenuItem());
-			m_menuItem112->SetText("图标显示11");
-			m_menuItem122.Reset(new TinyMenuItem());
-			m_menuItem122->SetText("图标显示12");
-			m_menuItem132.Reset(new TinyMenuItem());
-			m_menuItem132->SetText("图标显示13");
-			m_menuItem142.Reset(new TinyMenuItem());
-			m_menuItem142->SetText("图标显示14");
-			m_menuItem152.Reset(new TinyMenuItem());
-			m_menuItem152->SetText("图标显示15");
-			m_menuBox4.AddItem(m_menuItem112);
-			m_menuBox4.AddItem(m_menuItem122);
-			m_menuBox4.AddItem(m_menuItem132);
-			m_menuBox4.AddItem(m_menuItem142);
-			m_menuBox4.AddItem(m_menuItem152);
-
-			m_menuItem2->SetChild(&m_menuBox2);
-			m_menuItem11->SetChild(&m_menuBox3);
-			m_menuItem111->SetChild(&m_menuBox4);*/
 	}
 
 	LRESULT TinyFrameUI::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
+
 		m_scroll.PosChange -= &m_fs_PosChange;
 		m_btn.Click -= &m_fs_Click;
 

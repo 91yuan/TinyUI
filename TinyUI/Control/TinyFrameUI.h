@@ -8,14 +8,6 @@
 
 namespace TinyUI
 {
-	//系统参数
-#define CAPTION_HEIGHT			32
-#define CLIENT_MARGIN_LEFT		2
-#define CLIENT_MARGIN_TOP		2
-#define CLIENT_MARGIN_RIGHT		2
-#define CLIENT_MARGIN_BOTTOM	2
-#define BUTTON_SIZE_CX			30
-#define BUTTON_SIZE_CY			30
 	/// <summary>
 	/// 窗口框架,无边框
 	/// </summary>
@@ -89,38 +81,5 @@ namespace TinyUI
 		TinyScopedPtr<TinyMenuItem> m_menuItem32;
 		TinyScopedPtr<TinyMenuItem> m_menuItem42;
 		TinyScopedPtr<TinyMenuItem> m_menuItem52;
-
-		/*TinyMenuBox		m_menuBox1;
-		TinyMenuBox		m_menuBox2;
-		TinyMenuBox		m_menuBox3;
-		TinyMenuBox		m_menuBox4;
-		TinyScopedPtr<TinyMenuItem> m_menuItem1;
-		TinyScopedPtr<TinyMenuItem> m_menuItem2;
-		TinyScopedPtr<TinyMenuItem> m_menuItem3;
-		TinyScopedPtr<TinyMenuItem> m_menuItem4;
-		TinyScopedPtr<TinyMenuItem> m_menuItem5;
-		TinyScopedPtr<TinyMenuItem> m_menuItem6;
-		TinyScopedPtr<TinyMenuItem> m_menuItem7;
-		TinyScopedPtr<TinyMenuItem> m_menuItem8;
-		TinyScopedPtr<TinyMenuItem> m_menuItem9;
-		TinyScopedPtr<TinyMenuItem> m_menuItem10;
-
-		TinyScopedPtr<TinyMenuItem> m_menuItem11;
-		TinyScopedPtr<TinyMenuItem> m_menuItem12;
-		TinyScopedPtr<TinyMenuItem> m_menuItem13;
-		TinyScopedPtr<TinyMenuItem> m_menuItem14;
-		TinyScopedPtr<TinyMenuItem> m_menuItem15;
-
-		TinyScopedPtr<TinyMenuItem> m_menuItem111;
-		TinyScopedPtr<TinyMenuItem> m_menuItem121;
-		TinyScopedPtr<TinyMenuItem> m_menuItem131;
-		TinyScopedPtr<TinyMenuItem> m_menuItem141;
-		TinyScopedPtr<TinyMenuItem> m_menuItem151;
-
-		TinyScopedPtr<TinyMenuItem> m_menuItem112;
-		TinyScopedPtr<TinyMenuItem> m_menuItem122;
-		TinyScopedPtr<TinyMenuItem> m_menuItem132;
-		TinyScopedPtr<TinyMenuItem> m_menuItem142;
-		TinyScopedPtr<TinyMenuItem> m_menuItem152;*/
 	};
 }
