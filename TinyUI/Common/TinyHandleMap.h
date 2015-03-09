@@ -11,15 +11,29 @@ namespace TinyUI
 	class TinyHandleMap
 	{
 	public:
+		TinyHandleMap();
+		~TinyHandleMap();
 		V Lookup(T& _key);
 		V operator[](T& _key);
+		V operator[](INT _index);
 		void Add(T& _key, V& _value);
 		void Remove(T& _key);
 		void RemoveAll();
 		INT GetSize() const;
+		DISALLOW_COPY_AND_ASSIGN(TinyHandleMap)
 	private:
 		TinyMap<T, V> m_handleMap;
 	};
+	template<class T, class V>
+	TinyHandleMap<T, V>::TinyHandleMap()
+	{
+
+	}
+	template<class T, class V>
+	TinyHandleMap<T, V>::~TinyHandleMap()
+	{
+
+	}
 	template<class T, class V>
 	V TinyHandleMap<T, V>::Lookup(T& _key)
 	{
@@ -29,6 +43,11 @@ namespace TinyUI
 	V TinyHandleMap<T, V>::operator[](T& _key)
 	{
 		return m_handleMap.Lookup(_key);
+	}
+	template<class T, class V>
+	V TinyHandleMap<T, V>::operator[](INT _index)
+	{
+		return m_handleMap.GetValueAt(_index);
 	}
 	template<class T, class V>
 	void TinyHandleMap<T, V>::Add(T& _key, V& _value)

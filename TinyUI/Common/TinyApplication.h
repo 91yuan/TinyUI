@@ -41,16 +41,16 @@ namespace TinyUI
 		BOOL Initialize(HINSTANCE m_hInstance, LPTSTR m_lpCmdLine, INT m_nCmdShow, LPCTSTR lpTableName);
 		BOOL Uninitialize();
 	public:
-		TinyHandleMap<HWND, TinyHandleHWND*>			GetMapHWND();
-		TinyHandleMap<HMENU, TinyHandleHMENU*>			GetMapHMENU();
-		TinyHandleMap<HDC, TinyHandleHDC*>				GetMapHDC();
-		TinyHandleMap<HBITMAP, TinyHandleHBITMAP*>		GetMapHBITMAP();
-		TinyHandleMap<HFONT, TinyHandleHFONT*>			GetMapHFONT();
-		TinyHandleMap<HPEN, TinyHandleHPEN*>			GetMapHPEN();
-		TinyHandleMap<HBRUSH, TinyHandleHBRUSH*>		GetMapHBRUSH();
-		TinyHandleMap<HPALETTE, TinyHandleHPALETTE*>	GetMapHPALETTE();
-		TinyHandleMap<HRGN, TinyHandleHRGN*>			GetMapHRGN();
-		TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*>GetMapHIMAGELIST();
+		TinyHandleMap<HWND, TinyHandleHWND*>&				GetMapHWND();
+		TinyHandleMap<HMENU, TinyHandleHMENU*>&				GetMapHMENU();
+		TinyHandleMap<HDC, TinyHandleHDC*>&					GetMapHDC();
+		TinyHandleMap<HBITMAP, TinyHandleHBITMAP*>&			GetMapHBITMAP();
+		TinyHandleMap<HFONT, TinyHandleHFONT*>&				GetMapHFONT();
+		TinyHandleMap<HPEN, TinyHandleHPEN*>&				GetMapHPEN();
+		TinyHandleMap<HBRUSH, TinyHandleHBRUSH*>&			GetMapHBRUSH();
+		TinyHandleMap<HPALETTE, TinyHandleHPALETTE*>&		GetMapHPALETTE();
+		TinyHandleMap<HRGN, TinyHandleHRGN*>&				GetMapHRGN();
+		TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*>&	GetMapHIMAGELIST();
 	private:
 		TinyMap<DWORD, TinyMessageLoop*> m_msgLoops;
 	private:

@@ -48,6 +48,7 @@ namespace TinyUI
 		TinyScrollBox();
 		~TinyScrollBox();
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+		virtual LPCSTR RetrieveClassName();
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

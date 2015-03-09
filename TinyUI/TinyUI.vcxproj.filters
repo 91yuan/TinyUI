@@ -237,10 +237,10 @@
     <ClInclude Include="Control\TinyTabBox.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\TinyMenuBox.h">
+    <ClInclude Include="Common\TinyTreeBox.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Common\TinyTreeBox.h">
+    <ClInclude Include="Control\TinyContextMenu.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
   </ItemGroup>
@@ -425,10 +425,10 @@
     <ClCompile Include="Control\TinyTabBox.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
-    <ClCompile Include="Control\TinyMenuBox.cpp">
+    <ClCompile Include="Common\TinyTreeBox.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
-    <ClCompile Include="Common\TinyTreeBox.cpp">
+    <ClCompile Include="Control\TinyContextMenu.cpp">
       <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>

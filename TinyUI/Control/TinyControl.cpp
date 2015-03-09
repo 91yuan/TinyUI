@@ -30,15 +30,16 @@ namespace TinyUI
 		if (bHook)
 		{
 			m_pHook = SetWindowsHookEx(WH_CBT, CbtFilterHook, TinyApplication::Instance()->Handle(), GetCurrentThreadId());
-			ASSERT(m_pHook != NULL);
-			bRes = TinyWindow::Create(hParent, x, y, cx, cy);
-			::SendMessage(m_hWND, WM_SETFONT, (WPARAM)(HFONT)GetStockObject(DEFAULT_GUI_FONT), MAKELPARAM(TRUE, 0));
-			UnhookWindowsHookEx(m_pHook);
-			m_pHook = NULL;
+			if (m_pHook != NULL && TinyWindow::Create(hParent, x, y, cx, cy))
+			{
+				::SendMessage(m_hWND, WM_SETFONT, (WPARAM)(HFONT)GetStockObject(DEFAULT_GUI_FONT), MAKELPARAM(TRUE, 0));
+				UnhookWindowsHookEx(m_pHook);
+				m_pHook = NULL;
+				return TRUE;
+			}
 			return FALSE;
 		}
-		bRes = TinyWindow::Create(hParent, x, y, cx, cy);
-		return FALSE;
+		return TinyWindow::Create(hParent, x, y, cx, cy);
 	};
 	LPCSTR TinyControl::RetrieveClassName()
 	{

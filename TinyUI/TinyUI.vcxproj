@@ -107,7 +107,7 @@
     <ClInclude Include="Control\TinyListBox.h" />
     <ClInclude Include="Control\TinyListView.h" />
     <ClInclude Include="Control\TinyMenu.h" />
-    <ClInclude Include="Control\TinyMenuBox.h" />
+    <ClInclude Include="Control\TinyContextMenu.h" />
     <ClInclude Include="Control\TinyProgressBar.h" />
     <ClInclude Include="Control\TinyRebar.h" />
     <ClInclude Include="Control\TinyRichTextBox.h" />
@@ -170,7 +170,7 @@
     <ClCompile Include="Control\TinyListBox.cpp" />
     <ClCompile Include="Control\TinyListView.cpp" />
     <ClCompile Include="Control\TinyMenu.cpp" />
-    <ClCompile Include="Control\TinyMenuBox.cpp" />
+    <ClCompile Include="Control\TinyContextMenu.cpp" />
     <ClCompile Include="Control\TinyProgressBar.cpp" />
     <ClCompile Include="Control\TinyRebar.cpp" />
     <ClCompile Include="Control\TinyRichTextBox.cpp" />

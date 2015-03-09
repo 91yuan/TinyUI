@@ -140,13 +140,52 @@ namespace TinyUI
 		m_fs_Pop.BindDelegate(this, &TinyFrameUI::ClickPop);
 		m_btnPop.Click += &m_fs_Pop;
 
-
+		CreateMenuBox();
 
 		return TRUE;
 	}
 
 	void TinyFrameUI::CreateMenuBox()
 	{
+		m_menuBox1.Create(m_hWND, 0, 0, 0, 0);
+		m_menuItem1.Reset(new TinyMenuItem());
+		m_menuItem2.Reset(new TinyMenuItem());
+		m_menuItem3.Reset(new TinyMenuItem(TRUE));
+		m_menuItem4.Reset(new TinyMenuItem());
+		m_menuItem5.Reset(new TinyMenuItem());
+		m_menuBox1.AddItem(m_menuItem1);
+		m_menuBox1.AddItem(m_menuItem2);
+		m_menuBox1.AddItem(m_menuItem3);
+		m_menuBox1.AddItem(m_menuItem4);
+		m_menuBox1.AddItem(m_menuItem5);
+
+		m_menuBox2.Create(m_hWND, 0, 0, 0, 0);
+		m_menuItem11.Reset(new TinyMenuItem());
+		m_menuItem21.Reset(new TinyMenuItem());
+		m_menuItem31.Reset(new TinyMenuItem(TRUE));
+		m_menuItem41.Reset(new TinyMenuItem());
+		m_menuItem51.Reset(new TinyMenuItem());
+		m_menuBox2.AddItem(m_menuItem11);
+		m_menuBox2.AddItem(m_menuItem21);
+		m_menuBox2.AddItem(m_menuItem31);
+		m_menuBox2.AddItem(m_menuItem41);
+		m_menuBox2.AddItem(m_menuItem51);
+
+		m_menuBox3.Create(m_hWND, 0, 0, 0, 0);
+		m_menuItem12.Reset(new TinyMenuItem());
+		m_menuItem22.Reset(new TinyMenuItem());
+		m_menuItem32.Reset(new TinyMenuItem(TRUE));
+		m_menuItem42.Reset(new TinyMenuItem());
+		m_menuItem52.Reset(new TinyMenuItem());
+		m_menuBox3.AddItem(m_menuItem12);
+		m_menuBox3.AddItem(m_menuItem22);
+		m_menuBox3.AddItem(m_menuItem32);
+		m_menuBox3.AddItem(m_menuItem42);
+		m_menuBox3.AddItem(m_menuItem52);
+
+		m_menuItem4->SetChild(&m_menuBox2);
+		m_menuItem51->SetChild(&m_menuBox3);
+
 		/*	m_menuBox1.Create(m_hWND, 100, 150, 150, 250);
 			m_menuBox1.Unpopup();
 			m_menuItem1.Reset(new TinyMenuItem());
@@ -291,35 +330,15 @@ namespace TinyUI
 		pt.x = rect.left;
 		pt.y = rect.bottom;
 
-		m_pMenuBox1 = new TinyMenuBox();
-		m_pMenuBox1->Create(m_hWND, 0, 0, 200, 100);
-		m_menuItem1.Reset(new TinyMenuItem());
-		m_menuItem2.Reset(new TinyMenuItem());
-		m_menuItem3.Reset(new TinyMenuItem(TRUE));
-		m_menuItem4.Reset(new TinyMenuItem());
-		m_menuItem5.Reset(new TinyMenuItem());
-		m_pMenuBox1->AddItem(m_menuItem1);
-		m_pMenuBox1->AddItem(m_menuItem2);
-		m_pMenuBox1->AddItem(m_menuItem3);
-		m_pMenuBox1->AddItem(m_menuItem4);
-		m_pMenuBox1->AddItem(m_menuItem5);
 
-		m_pMenuBox2 = new TinyMenuBox();
-		m_pMenuBox2->Create(m_hWND, 0, 0, 200, 100);
-		m_menuItem11.Reset(new TinyMenuItem());
-		m_menuItem21.Reset(new TinyMenuItem());
-		m_menuItem31.Reset(new TinyMenuItem(TRUE));
-		m_menuItem41.Reset(new TinyMenuItem());
-		m_menuItem51.Reset(new TinyMenuItem());
-		m_pMenuBox2->AddItem(m_menuItem11);
-		m_pMenuBox2->AddItem(m_menuItem21);
-		m_pMenuBox2->AddItem(m_menuItem31);
-		m_pMenuBox2->AddItem(m_menuItem41);
-		m_pMenuBox2->AddItem(m_menuItem51);
-
-		m_menuItem4->SetChild(m_pMenuBox2);
-
-		m_pMenuBox1->Popup(pt);
+		if (m_menuBox1.IsPopup())
+		{
+			m_menuBox1.Unpopup();
+		}
+		else
+		{
+			m_menuBox1.Popup(pt);
+		}
 	}
 	void TinyFrameUI::ClickSetting(void* ps, INT cmd)
 	{

@@ -3,7 +3,7 @@
 #include "TinyTextBox.h"
 #include "TinyLabel.h"
 #include "TinyButton.h"
-#include "TinyMenuBox.h"
+#include "TinyContextMenu.h"
 #include "../Render/TinyImage.h"
 
 namespace TinyUI
@@ -68,8 +68,9 @@ namespace TinyUI
 		Delegate<void(void*, INT)> m_fs_Pop;
 
 
-		TinyMenuBox*		m_pMenuBox1;
-		TinyMenuBox*		m_pMenuBox2;
+		TinyContextMenu		m_menuBox1;
+		TinyContextMenu		m_menuBox2;
+		TinyContextMenu		m_menuBox3;
 
 		TinyScopedPtr<TinyMenuItem> m_menuItem1;
 		TinyScopedPtr<TinyMenuItem> m_menuItem2;
@@ -82,6 +83,13 @@ namespace TinyUI
 		TinyScopedPtr<TinyMenuItem> m_menuItem31;
 		TinyScopedPtr<TinyMenuItem> m_menuItem41;
 		TinyScopedPtr<TinyMenuItem> m_menuItem51;
+
+		TinyScopedPtr<TinyMenuItem> m_menuItem12;
+		TinyScopedPtr<TinyMenuItem> m_menuItem22;
+		TinyScopedPtr<TinyMenuItem> m_menuItem32;
+		TinyScopedPtr<TinyMenuItem> m_menuItem42;
+		TinyScopedPtr<TinyMenuItem> m_menuItem52;
+
 		/*TinyMenuBox		m_menuBox1;
 		TinyMenuBox		m_menuBox2;
 		TinyMenuBox		m_menuBox3;
