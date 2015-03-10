@@ -445,6 +445,7 @@ namespace TinyUI
 		void operator+=(SIZE size) throw();
 		void operator-=(SIZE size) throw();
 		void SetSize(INT CX, INT CY) throw();
+		BOOL IsEmpty() throw();
 		TinySize operator+(SIZE size) const throw();
 		TinySize operator-(SIZE size) const throw();
 		TinySize operator-() const throw();

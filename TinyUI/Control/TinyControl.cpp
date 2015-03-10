@@ -122,6 +122,11 @@ namespace TinyUI
 		bHandled = FALSE;
 		return FALSE;
 	}
+	LRESULT TinyControl::OnNCMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
 	LRESULT TinyControl::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
@@ -267,5 +272,59 @@ namespace TinyUI
 	{
 		bHandled = FALSE;
 		return FALSE;
+	}
+	BOOL TinyControl::ShowWindow(int nCmdShow) throw()
+	{
+		ASSERT(::IsWindow(m_hWND));
+		return ::ShowWindow(m_hWND, nCmdShow);
+	}
+
+	BOOL TinyControl::UpdateWindow() throw()
+	{
+		ASSERT(m_hWND != NULL);
+		return ::UpdateWindow(m_hWND);
+	}
+	void TinyControl::CenterWindow(HWND parent, HWND window, SIZE size) throw()
+	{
+		RECT window_bounds;
+		RECT center_bounds = { 0 };
+		if (parent)
+		{
+			::GetWindowRect(parent, &center_bounds);
+		}
+		else
+		{
+			HMONITOR monitor = MonitorFromWindow(window, MONITOR_DEFAULTTONEAREST);
+			if (monitor != NULL)
+			{
+				MONITORINFO mi = { 0 };
+				mi.cbSize = sizeof(mi);
+				GetMonitorInfo(monitor, &mi);
+				center_bounds = mi.rcWork;
+			}
+		}
+		window_bounds.left = center_bounds.left + (center_bounds.right - center_bounds.left - size.cx) / 2;
+		window_bounds.right = window_bounds.left + size.cx;
+		window_bounds.top = center_bounds.top + (center_bounds.bottom - center_bounds.top - size.cy) / 2;
+		window_bounds.bottom = window_bounds.top + size.cy;
+		if (::GetWindowLong(window, GWL_STYLE) & WS_CHILD)
+		{
+			POINT topleft = { window_bounds.left, window_bounds.top };
+			::MapWindowPoints(HWND_DESKTOP, parent, &topleft, 1);
+			window_bounds.left = topleft.x;
+			window_bounds.top = topleft.y;
+			window_bounds.right = window_bounds.left + size.cx;
+			window_bounds.bottom = window_bounds.top + size.cy;
+		}
+		WINDOWINFO win_info = { 0 };
+		win_info.cbSize = sizeof(WINDOWINFO);
+		GetWindowInfo(window, &win_info);
+		if (AdjustWindowRectEx(&window_bounds, win_info.dwStyle, FALSE, win_info.dwExStyle))
+		{
+			SetWindowPos(window, 0, window_bounds.left, window_bounds.top,
+				window_bounds.right - window_bounds.left,
+				window_bounds.bottom - window_bounds.top,
+				SWP_NOACTIVATE | SWP_NOZORDER);
+		}
 	}
 }

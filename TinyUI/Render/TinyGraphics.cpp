@@ -1812,6 +1812,10 @@ namespace TinyUI
 	{
 		cx = CX; cy = CY;
 	}
+	BOOL TinySize::IsEmpty() throw()
+	{
+		return cx == 0 && cy == 0;
+	}
 	TinySize TinySize::operator+(SIZE size) const throw()
 	{
 		return TinySize(cx + size.cx, cy + size.cy);

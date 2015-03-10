@@ -35,6 +35,10 @@ namespace TinyUI
 		virtual DWORD	RetrieveExStyle();
 		virtual BOOL	Create(HWND hParent, INT x, INT y, INT cx, INT cy, BOOL bHook = TRUE);
 	public:
+		BOOL ShowWindow(INT nCmdShow) throw();
+		BOOL UpdateWindow() throw();
+		void CenterWindow(HWND parent, HWND window, SIZE pref) throw();
+	public:
 		BEGIN_MSG_MAP(TinyControl, TinyWindow)
 			MESSAGE_HANDLER(WM_CREATE, OnCreate)
 			MESSAGE_HANDLER(WM_DESTROY, OnDestory)
@@ -43,6 +47,7 @@ namespace TinyUI
 			MESSAGE_HANDLER(WM_SETCURSOR, OnSetCursor)
 			MESSAGE_HANDLER(WM_NCMOUSEMOVE, OnNCMouseMove)
 			MESSAGE_HANDLER(WM_NCMOUSEHOVER, OnNCMouseHover)
+			MESSAGE_HANDLER(WM_NCMOUSELEAVE, OnNCMouseLeave)
 			MESSAGE_HANDLER(WM_NCHITTEST, OnNCHitTest)
 			MESSAGE_HANDLER(WM_NCPAINT, OnNCPaint)
 			MESSAGE_HANDLER(WM_NCLBUTTONDOWN, OnNCLButtonDown)
@@ -79,6 +84,7 @@ namespace TinyUI
 		virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNCMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNCMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnNCMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNCPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNCLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

@@ -534,7 +534,7 @@ namespace TinyUI
 				TO_CX(rectangle),
 				TO_CY(rectangle),
 				SWP_SHOWWINDOW);
-			UpdateWindow(m_hWND);
+			::UpdateWindow(m_hWND);
 		}
 		return FALSE;
 	}
