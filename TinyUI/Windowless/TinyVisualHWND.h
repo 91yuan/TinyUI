@@ -45,11 +45,16 @@ namespace TinyUI
 		virtual LPCSTR RetrieveClassName();
 		virtual LPCSTR RetrieveTitle();
 		virtual HICON RetrieveIcon();
-		virtual BOOL ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 	public:
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-	private:
-		void ParseUI();//Ω‚ŒˆUI
+		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+		virtual LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnNCMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnNCMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+		virtual LRESULT OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
 	protected:
 		BOOL		m_bMouseTracking;
 		TinySize	m_size;

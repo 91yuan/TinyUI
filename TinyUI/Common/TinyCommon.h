@@ -523,149 +523,202 @@ private:\
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	struct LIST
+	struct list
 	{
-		struct LIST *NEXT;
-		struct LIST *PREV;
+		struct list *NEXT;
+		struct list *PREV;
 	};
-
-	static inline void LIST_ADD_AFTER(LIST *elem, LIST *to_add)
+#define LIST_POISON1	((struct list *)0x00100100)
+#define LIST_POISON2	((struct list *)0x00200200)
+	static inline void INIT_LIST(struct list *_list)
 	{
-		to_add->NEXT = elem->NEXT;
-		to_add->PREV = elem;
-		elem->NEXT->PREV = to_add;
-		elem->NEXT = to_add;
+		_list->NEXT = _list;
+		_list->PREV = _list;
+	}
+	static inline void __LIST_ADD(struct list *_new, struct list *prev, struct list *next)
+	{
+		next->PREV = _new;
+		_new->NEXT = next;
+		_new->PREV = prev;
+		prev->NEXT = _new;
+	}
+	/// <summary>
+	/// 添加到元素之后
+	/// </summary>
+	static inline void LIST_ADD_AFTER(struct list *_new, struct list *node)
+	{
+		__LIST_ADD(_new, node, node->NEXT);
+	}
+	/// <summary>
+	/// 添加到列表末尾
+	/// </summary>
+	static inline void LIST_ADD_BEFORE(struct list *_new, struct list *node)
+	{
+		__LIST_ADD(_new, node->PREV, node);
 	}
 
-	static inline void LIST_ADD_BEFORE(LIST *elem, LIST *to_add)
+	static inline void __LIST_DEL(struct list * prev, struct list * next)
 	{
-		to_add->NEXT = elem;
-		to_add->PREV = elem->PREV;
-		elem->PREV->NEXT = to_add;
-		elem->PREV = to_add;
+		next->PREV = prev;
+		prev->NEXT = next;
 	}
-
-	static inline void LIST_ADD_HEAD(LIST *list, LIST *elem)
+	static inline void __LIST_DEL_ENTRY(struct list *entry)
 	{
-		LIST_ADD_AFTER(list, elem);
+		__LIST_DEL(entry->PREV, entry->NEXT);
 	}
-
-	static inline void LIST_ADD_TAIL(LIST *list, LIST *elem)
+	/// <summary>
+	/// 删除元素
+	/// </summary>
+	static inline void LIST_DEL(struct list *entry)
 	{
-		LIST_ADD_BEFORE(list, elem);
+		__LIST_DEL(entry->PREV, entry->NEXT);
+		entry->NEXT = LIST_POISON1;
+		entry->PREV = LIST_POISON2;
 	}
-
-	static inline void LIST_REMOVE(LIST *elem)
+	static inline void LIST_DEL_INIT(struct list *entry)
 	{
-		elem->NEXT->PREV = elem->PREV;
-		elem->PREV->NEXT = elem->NEXT;
+		__LIST_DEL_ENTRY(entry);
+		INIT_LIST(entry);
 	}
-
-	static inline struct LIST *LIST_NEXT(const LIST *list, const LIST *elem)
+	/// <summary>
+	/// 移动节点到 node 之后
+	/// </summary>
+	static inline void LIST_MOVE_AFTER(struct list *_list, struct list *node)
 	{
-		struct LIST *ret = elem->NEXT;
-		if (elem->NEXT == list) ret = NULL;
-		return ret;
+		__LIST_DEL_ENTRY(_list);
+		LIST_ADD_AFTER(_list, node);
 	}
-
-	static inline struct LIST *LIST_PREV(const LIST *list, const LIST *elem)
+	/// <summary>
+	/// 移动节点到 node 之前
+	/// </summary>
+	static inline void LIST_MOVE_BEFORE(struct list *_list, struct list *node)
 	{
-		struct LIST *ret = elem->PREV;
-		if (elem->PREV == list) ret = NULL;
-		return ret;
+		__LIST_DEL_ENTRY(_list);
+		LIST_ADD_BEFORE(_list, node);
 	}
-
-	static inline struct LIST *LIST_HEAD(const  LIST *list)
+	/// <summary>
+	/// 是否最后一个节点
+	/// </summary>
+	static inline BOOL IS_LIST_LAST(const struct list *_list, const struct list *node)
 	{
-		return LIST_NEXT(list, list);
+		return _list->NEXT == node;
 	}
-
-	static inline struct LIST *LIST_TAIL(const  LIST *list)
+	/// <summary>
+	/// 列表是否为空
+	/// </summary>
+	static inline BOOL IS_LIST_EMPTY(const struct list *node)
 	{
-		return LIST_PREV(list, list);
+		return node->NEXT == node;
 	}
-
-	static inline int LIST_EMPTY(const  LIST *list)
+	/// <summary>
+	/// 旋转整个链表
+	/// </summary>
+	static inline void LIST_ROTATE_LEFT(struct list *node)
 	{
-		return list->NEXT == list;
+		struct list *first;
+		if (!IS_LIST_EMPTY(node))
+		{
+			first = node->NEXT;
+			LIST_MOVE_BEFORE(first, node);
+		}
 	}
-
-	static inline void LIST_INIT(LIST *list)
+	/// <summary>
+	/// 判断链表中是否只有一个节点
+	/// </summary>
+	static inline int IS_LIST_SINGULAR(const struct list *node)
 	{
-		list->NEXT = list->PREV = list;
+		return !IS_LIST_EMPTY(node) && (node->NEXT == node->PREV);
 	}
-
-	static inline unsigned int LIST_COUNT(const  LIST *list)
+	static inline void __LIST_CUT_POSITION(struct list *_list, struct list *node, struct list *entry)
 	{
-		unsigned count = 0;
-		const LIST *ps = NULL;
-		for (ps = list->NEXT; ps != list; ps = ps->NEXT) count++;
-		return count;
+		struct list *new_first = entry->NEXT;
+		_list->NEXT = node->NEXT;
+		_list->NEXT->PREV = _list;
+		_list->PREV = entry;
+		entry->NEXT = _list;
+		node->NEXT = new_first;
+		new_first->PREV = node;
 	}
-
-	static inline void LIST_MOVE_TAIL(struct LIST *dst, struct LIST *src)
+	/// <summary>
+	/// 将1个链表截断为2个链表
+	/// </summary>
+	static inline void LIST_CUT_POSITION(struct list *_list, struct list *node, struct list *entry)
 	{
-		if (LIST_EMPTY(src)) return;
-
-		dst->PREV->NEXT = src->NEXT;
-		src->NEXT->PREV = dst->PREV;
-		dst->PREV = src->PREV;
-		src->PREV->NEXT = dst;
-		LIST_INIT(src);
+		if (IS_LIST_EMPTY(node))
+			return;
+		if (IS_LIST_SINGULAR(node) &&
+			(node->NEXT != entry && node != entry))
+			return;
+		if (entry == node)
+			INIT_LIST(_list);
+		else
+			__LIST_CUT_POSITION(_list, node, entry);
 	}
-
-	static inline void LIST_MOVE_HEAD(struct LIST *dst, struct LIST *src)
+	static inline void __LIST_SPLICE(const struct list *_list, struct list *prev, struct list *next)
 	{
-		if (LIST_EMPTY(src)) return;
-
-		dst->NEXT->PREV = src->PREV;
-		src->PREV->NEXT = dst->NEXT;
-		dst->NEXT = src->NEXT;
-		src->NEXT->PREV = dst;
-		LIST_INIT(src);
+		struct list *first = _list->NEXT;
+		struct list *last = _list->PREV;
+		first->PREV = prev;
+		prev->NEXT = first;
+		last->NEXT = next;
+		next->PREV = last;
 	}
+	/// <summary>
+	/// 将2个链表合并为1个链表, @list中的所有节点(不包括list)加入到 node 之后
+	/// </summary>
+	static inline void LIST_SPLICE_AFTER(const struct list *_list, struct list *node)
+	{
+		if (!IS_LIST_EMPTY(_list))
+			__LIST_SPLICE(_list, node, node->NEXT);
+	}
+	/// <summary>
+	/// 将2个链表合并为1个链表, @list中的所有节点(不包括list)加入到 node 之前
+	/// </summary>
+	static inline void LIST_SPLICE_BEFORE(struct list *_list, struct list *node)
+	{
+		if (!IS_LIST_EMPTY(_list))
+			__LIST_SPLICE(_list, node->PREV, node);
+	}
+	static inline void LIST_SPLICE_AFTER_INIT(struct list *_list, struct list *node)
+	{
+		if (!IS_LIST_EMPTY(_list))
+		{
+			__LIST_SPLICE(_list, node, node->NEXT);
+			INIT_LIST(_list);
+		}
+	}
+	static inline void LIST_SPLICE_BEFORE_INIT(struct list *_list, struct list *node)
+	{
+		if (!IS_LIST_EMPTY(_list))
+		{
+			__LIST_SPLICE(_list, node->PREV, node);
+			INIT_LIST(_list);
+		}
+	}
+#define LIST_INIT(name) { &(name), &(name) }
+#define LIST_ENTRY(ptr, type, member) \
+	((type *)((char *)(ptr)-offsetof(type, member)))
 
-#define LIST_FOR_EACH(cursor,list) \
-	for ((cursor) = (list)->NEXT; (cursor) != (list); (cursor) = (cursor)->NEXT)
+#define LIST_FIRST_ENTRY(ptr, type, member) \
+	LIST_ENTRY((ptr)->NEXT, type, member)
 
-#define LIST_FOR_EACH_SAFE(cursor, cursor2, list) \
-	for ((cursor) = (list)->NEXT, (cursor2) = (cursor)->NEXT; \
-	(cursor) != (list); \
-	(cursor) = (cursor2), (cursor2) = (cursor)->NEXT)
+#define LIST_LAST_ENTRY(ptr, type, member) \
+	LIST_ENTRY((ptr)->PREV, type, member)
 
-#define LIST_FOR_EACH_ENTRY(elem, list, type, field) \
-	for ((elem) = LIST_ENTRY((list)->NEXT, type, field); \
-	&(elem)->field != (list); \
-	(elem) = LIST_ENTRY((elem)->field.NEXT, type, field))
+#define LIST_NEXT_ENTRY(pos,type, member) \
+	LIST_ENTRY((pos)->member.NEXT, type, member)
 
-#define LIST_FOR_EACH_ENTRY_SAFE(cursor, cursor2, list, type, field) \
-	for ((cursor) = LIST_ENTRY((list)->NEXT, type, field), \
-	(cursor2) = LIST_ENTRY((cursor)->field.NEXT, type, field); \
-	&(cursor)->field != (list); \
-	(cursor) = (cursor2), \
-	(cursor2) = LIST_ENTRY((cursor)->field.NEXT, type, field))
+#define LIST_PREV_ENTRY(pos,type, member) \
+	LIST_ENTRY((pos)->member.PREV, type, member)
 
-#define LIST_FOR_EACH_REV(cursor,list) \
-	for ((cursor) = (list)->PREV; (cursor) != (list); (cursor) = (cursor)->PREV)
+#define LIST_FOR_EACH(pos, node) \
+	for (pos = (node)->NEXT; pos != (node); pos = pos->NEXT)
 
-#define LIST_FOR_EACH_SAFE_REV(cursor, cursor2, list) \
-	for ((cursor) = (list)->PREV, (cursor2) = (cursor)->PREV; \
-	(cursor) != (list); \
-	(cursor) = (cursor2), (cursor2) = (cursor)->PREV)
+#define LIST_FOR_EACH_PREV(pos, node) \
+	for (pos = (node)->PREV; pos != (node); pos = pos->PREV)
 
-#define LIST_FOR_EACH_ENTRY_REV(elem, list, type, field) \
-	for ((elem) = LIST_ENTRY((list)->PREV, type, field); \
-	&(elem)->field != (list); \
-	(elem) = LIST_ENTRY((elem)->field.PREV, type, field))
-
-#define LIST_FOR_EACH_ENTRY_SAFE_REV(cursor, cursor2, list, type, field) \
-	for ((cursor) = LIST_ENTRY((list)->PREV, type, field), \
-	(cursor2) = LIST_ENTRY((cursor)->field.PREV, type, field); \
-	&(cursor)->field != (list); \
-	(cursor) = (cursor2), \
-	(cursor2) = LIST_ENTRY((cursor)->field.PREV, type, field))
-
-#undef LIST_ENTRY
-#define LIST_ENTRY(elem, type, field) \
-	((type *)((char *)(elem)-offsetof(type, field)))
+#define LIST_FOR_EACH_ENTRY(pos, node, type, member)	\
+	for (pos = LIST_FIRST_ENTRY(node, type, member);	\
+	&pos->member != (node);								\
+	pos = LIST_NEXT_ENTRY(pos, type, member))
 };

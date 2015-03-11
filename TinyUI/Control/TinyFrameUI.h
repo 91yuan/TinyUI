@@ -33,9 +33,6 @@ namespace TinyUI
 		//·½·¨
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
 	public:
-		BOOL ShowWindow(INT nCmdShow) throw();
-		BOOL UpdateWindow() throw();
-		void CenterWindow(HWND parent, HWND window, TinySize pref) throw();
 		void PosChanges(INT oldPos, INT newPos);
 		void ClickSetting(void* ps, INT cmd);
 		void ClickPop(void* ps, INT cmd);

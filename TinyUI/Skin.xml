@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <window name="" value="" size="100,400">
-	<systemcaption name="caption" value="标题栏" size="null,30">
-		<button name="min" value="" size="30,30" style="0x0001"></button>
-		<button name="max" value="" size="30,30" style="0x0001"></button>
-		<button name="restore" value="" size="30,30" style="0x0001"></button>
-		<button name="close" value="" size="30,30" style="0x0001"></button>
-	</systemcaption>
-	<systemclient>
-	</systemclient>
+	<button name="min" value="" size="30,30" style="0x0001"></button>
+	<button name="max" value="" size="30,30" style="0x0001"></button>
+	<button name="restore" value="" size="30,30" style="0x0001"></button>
+	<button name="close" value="" size="30,30" style="0x0001"></button>
 </window>

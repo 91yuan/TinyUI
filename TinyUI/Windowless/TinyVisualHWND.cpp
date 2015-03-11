@@ -14,13 +14,12 @@ namespace TinyUI
 
 	BOOL TinyVisualHWND::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
-		ParseUI();
 		return TinyControl::Create(hParent, x, y, cx, cy, FALSE);
 	}
 
 	DWORD TinyVisualHWND::RetrieveStyle()
 	{
-		return (WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+		return (WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 	}
 
 	DWORD TinyVisualHWND::RetrieveExStyle()
@@ -43,35 +42,65 @@ namespace TinyUI
 		return NULL;
 	}
 
-
-	void TinyVisualHWND::ParseUI()
+	LRESULT TinyVisualHWND::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		m_desktop = CreateVisual(NULL);
-		strcpy(m_desktop->name, "desktop");
-		Visual* ps1 = m_desktop;
-		for (INT i = 0; i < 100; i++)
-		{
-			Visual* ps = new Visual();
-			TinyString str;
-			str = TinyString::Format("%d-node", i);
-			strcpy(m_desktop->name, str.STR());
-			SetParent(ps, ps1);
-			ps1 = ps;
-		}
+		bHandled = FALSE;
+		PostQuitMessage(0);//退出应用程序
+		return FALSE;
 	}
 
-	BOOL TinyVisualHWND::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
+	LRESULT TinyVisualHWND::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
-		switch (uMsg)
+		bHandled = TRUE;
+		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+		ScreenToClient(m_hWND, &pt);
+
+		RECT rect = { 50, 50, 100, 100 };
+		if (PtInRect(&rect, pt))
 		{
-		case WM_CLOSE:
-			DestoryVisual(m_desktop);
-			PostQuitMessage(0);//退出应用程序
-			break;
-		default:
-			break;
+			return HTCLIENT;
 		}
-		return TinyControl::ProcessWindowMessage(hWnd, uMsg, wParam, lParam, lResult);
+
+		return HTCAPTION;
+	}
+
+	LRESULT TinyVisualHWND::OnNCMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(tme);
+		tme.hwndTrack = m_hWND;
+		tme.dwFlags = TME_LEAVE | TME_NONCLIENT;
+		tme.dwHoverTime = 0;
+		_TrackMouseEvent(&tme);
+		return FALSE;
+	}
+
+	LRESULT TinyVisualHWND::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		TRACE("OnMouseMove\n");
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(tme);
+		tme.hwndTrack = m_hWND;
+		tme.dwFlags = TME_LEAVE | TME_HOVER;
+		tme.dwHoverTime = 0;
+		_TrackMouseEvent(&tme);
+		return FALSE;
+	}
+
+	LRESULT TinyVisualHWND::OnNCMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		TRACE("OnNCMouseLeave\n");
+		return FALSE;
+	}
+
+	LRESULT TinyVisualHWND::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		TRACE("OnMouseLeave\n");
+		return FALSE;
 	}
 
 }
