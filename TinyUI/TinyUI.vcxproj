@@ -131,6 +131,7 @@
     <ClInclude Include="Windowless\TinyLayout.h" />
     <ClInclude Include="Windowless\TinyView.h" />
     <ClInclude Include="Windowless\TinyVisual.h" />
+    <ClInclude Include="Windowless\TinyVisualEvent.h" />
     <ClInclude Include="Windowless\TinyVisualHWND.h" />
     <ClInclude Include="XML\tinystr.h" />
     <ClInclude Include="XML\tinyxml.h" />
@@ -196,6 +197,7 @@
     <ClCompile Include="Windowless\TinyLayout.cpp" />
     <ClCompile Include="Windowless\TinyView.cpp" />
     <ClCompile Include="Windowless\TinyVisual.cpp" />
+    <ClCompile Include="Windowless\TinyVisualEvent.cpp" />
     <ClCompile Include="Windowless\TinyVisualHWND.cpp" />
     <ClCompile Include="XML\tinystr.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

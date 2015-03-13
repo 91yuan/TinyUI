@@ -243,6 +243,9 @@
     <ClInclude Include="Control\TinyContextMenu.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualEvent.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -430,6 +433,9 @@
     </ClCompile>
     <ClCompile Include="Control\TinyContextMenu.cpp">
       <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualEvent.cpp">
+      <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

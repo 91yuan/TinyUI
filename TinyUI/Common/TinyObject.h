@@ -14,7 +14,7 @@ public: \
 	/// </summary>
 	class TinyObject
 	{
-	protected:
+	public:
 		TinyObject();
 	public:
 		virtual ~TinyObject();

@@ -47,17 +47,25 @@ namespace TinyUI
 		virtual HICON RetrieveIcon();
 	public:
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-
+		virtual LRESULT OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNCMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnNCMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		virtual LRESULT OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-
+		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	protected:
 		BOOL		m_bMouseTracking;
 		TinySize	m_size;
+		TinyVisual*	m_desktop;//¸ùÔªËØ
+
+		TinyVisual* m_val1;
+		TinyVisual* m_val2;
+		TinyVisual* m_val3;
+		TinyVisual* m_val4;
+		TinyVisual* m_val5;
 	};
 }
 

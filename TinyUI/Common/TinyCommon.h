@@ -525,17 +525,17 @@ private:\
 	//////////////////////////////////////////////////////////////////////////
 	struct list
 	{
-		struct list *NEXT;
-		struct list *PREV;
+		list *NEXT;
+		list *PREV;
 	};
-#define LIST_POISON1	((struct list *)0x00100100)
-#define LIST_POISON2	((struct list *)0x00200200)
-	static inline void INIT_LIST(struct list *_list)
+#define LIST_POISON1	(( list *)0x00100100)
+#define LIST_POISON2	(( list *)0x00200200)
+	static inline void INIT_LIST(list *_list)
 	{
 		_list->NEXT = _list;
 		_list->PREV = _list;
 	}
-	static inline void __LIST_ADD(struct list *_new, struct list *prev, struct list *next)
+	static inline void __LIST_ADD(list *_new, list *prev, list *next)
 	{
 		next->PREV = _new;
 		_new->NEXT = next;
@@ -545,37 +545,37 @@ private:\
 	/// <summary>
 	/// 添加到元素之后
 	/// </summary>
-	static inline void LIST_ADD_AFTER(struct list *_new, struct list *node)
+	static inline void LIST_ADD_AFTER(list *_new, list *node)
 	{
 		__LIST_ADD(_new, node, node->NEXT);
 	}
 	/// <summary>
 	/// 添加到列表末尾
 	/// </summary>
-	static inline void LIST_ADD_BEFORE(struct list *_new, struct list *node)
+	static inline void LIST_ADD_BEFORE(list *_new, list *node)
 	{
 		__LIST_ADD(_new, node->PREV, node);
 	}
 
-	static inline void __LIST_DEL(struct list * prev, struct list * next)
+	static inline void __LIST_DEL(list * prev, list * next)
 	{
 		next->PREV = prev;
 		prev->NEXT = next;
 	}
-	static inline void __LIST_DEL_ENTRY(struct list *entry)
+	static inline void __LIST_DEL_ENTRY(list *entry)
 	{
 		__LIST_DEL(entry->PREV, entry->NEXT);
 	}
 	/// <summary>
 	/// 删除元素
 	/// </summary>
-	static inline void LIST_DEL(struct list *entry)
+	static inline void LIST_DEL(list *entry)
 	{
 		__LIST_DEL(entry->PREV, entry->NEXT);
 		entry->NEXT = LIST_POISON1;
 		entry->PREV = LIST_POISON2;
 	}
-	static inline void LIST_DEL_INIT(struct list *entry)
+	static inline void LIST_DEL_INIT(list *entry)
 	{
 		__LIST_DEL_ENTRY(entry);
 		INIT_LIST(entry);
@@ -583,7 +583,7 @@ private:\
 	/// <summary>
 	/// 移动节点到 node 之后
 	/// </summary>
-	static inline void LIST_MOVE_AFTER(struct list *_list, struct list *node)
+	static inline void LIST_MOVE_AFTER(list *_list, list *node)
 	{
 		__LIST_DEL_ENTRY(_list);
 		LIST_ADD_AFTER(_list, node);
@@ -591,7 +591,7 @@ private:\
 	/// <summary>
 	/// 移动节点到 node 之前
 	/// </summary>
-	static inline void LIST_MOVE_BEFORE(struct list *_list, struct list *node)
+	static inline void LIST_MOVE_BEFORE(list *_list, list *node)
 	{
 		__LIST_DEL_ENTRY(_list);
 		LIST_ADD_BEFORE(_list, node);
@@ -599,23 +599,23 @@ private:\
 	/// <summary>
 	/// 是否最后一个节点
 	/// </summary>
-	static inline BOOL IS_LIST_LAST(const struct list *_list, const struct list *node)
+	static inline BOOL IS_LIST_LAST(const  list *_list, const  list *node)
 	{
 		return _list->NEXT == node;
 	}
 	/// <summary>
 	/// 列表是否为空
 	/// </summary>
-	static inline BOOL IS_LIST_EMPTY(const struct list *node)
+	static inline BOOL IS_LIST_EMPTY(const  list *node)
 	{
 		return node->NEXT == node;
 	}
 	/// <summary>
 	/// 旋转整个链表
 	/// </summary>
-	static inline void LIST_ROTATE_LEFT(struct list *node)
+	static inline void LIST_ROTATE_LEFT(list *node)
 	{
-		struct list *first;
+		list *first;
 		if (!IS_LIST_EMPTY(node))
 		{
 			first = node->NEXT;
@@ -623,15 +623,33 @@ private:\
 		}
 	}
 	/// <summary>
+	/// 下一个节点
+	/// </summary>
+	static inline  list *LIST_NEXT(const  list *_list, const  list *entry)
+	{
+		list *res = entry->NEXT;
+		if (entry->NEXT == _list) res = NULL;
+		return res;
+	}
+	/// <summary>
+	/// 上一个节点
+	/// </summary>
+	static inline list *LIST_PREV(const  list *_list, const  list *entry)
+	{
+		list *res = entry->PREV;
+		if (entry->PREV == _list) res = NULL;
+		return res;
+	}
+	/// <summary>
 	/// 判断链表中是否只有一个节点
 	/// </summary>
-	static inline int IS_LIST_SINGULAR(const struct list *node)
+	static inline int IS_LIST_SINGULAR(const  list *node)
 	{
 		return !IS_LIST_EMPTY(node) && (node->NEXT == node->PREV);
 	}
-	static inline void __LIST_CUT_POSITION(struct list *_list, struct list *node, struct list *entry)
+	static inline void __LIST_CUT_POSITION(list *_list, list *node, list *entry)
 	{
-		struct list *new_first = entry->NEXT;
+		list *new_first = entry->NEXT;
 		_list->NEXT = node->NEXT;
 		_list->NEXT->PREV = _list;
 		_list->PREV = entry;
@@ -642,7 +660,7 @@ private:\
 	/// <summary>
 	/// 将1个链表截断为2个链表
 	/// </summary>
-	static inline void LIST_CUT_POSITION(struct list *_list, struct list *node, struct list *entry)
+	static inline void LIST_CUT_POSITION(list *_list, list *node, list *entry)
 	{
 		if (IS_LIST_EMPTY(node))
 			return;
@@ -654,10 +672,10 @@ private:\
 		else
 			__LIST_CUT_POSITION(_list, node, entry);
 	}
-	static inline void __LIST_SPLICE(const struct list *_list, struct list *prev, struct list *next)
+	static inline void __LIST_SPLICE(const  list *_list, list *prev, list *next)
 	{
-		struct list *first = _list->NEXT;
-		struct list *last = _list->PREV;
+		list *first = _list->NEXT;
+		list *last = _list->PREV;
 		first->PREV = prev;
 		prev->NEXT = first;
 		last->NEXT = next;
@@ -666,7 +684,7 @@ private:\
 	/// <summary>
 	/// 将2个链表合并为1个链表, @list中的所有节点(不包括list)加入到 node 之后
 	/// </summary>
-	static inline void LIST_SPLICE_AFTER(const struct list *_list, struct list *node)
+	static inline void LIST_SPLICE_AFTER(const  list *_list, list *node)
 	{
 		if (!IS_LIST_EMPTY(_list))
 			__LIST_SPLICE(_list, node, node->NEXT);
@@ -674,12 +692,12 @@ private:\
 	/// <summary>
 	/// 将2个链表合并为1个链表, @list中的所有节点(不包括list)加入到 node 之前
 	/// </summary>
-	static inline void LIST_SPLICE_BEFORE(struct list *_list, struct list *node)
+	static inline void LIST_SPLICE_BEFORE(list *_list, list *node)
 	{
 		if (!IS_LIST_EMPTY(_list))
 			__LIST_SPLICE(_list, node->PREV, node);
 	}
-	static inline void LIST_SPLICE_AFTER_INIT(struct list *_list, struct list *node)
+	static inline void LIST_SPLICE_AFTER_INIT(list *_list, list *node)
 	{
 		if (!IS_LIST_EMPTY(_list))
 		{
@@ -687,7 +705,7 @@ private:\
 			INIT_LIST(_list);
 		}
 	}
-	static inline void LIST_SPLICE_BEFORE_INIT(struct list *_list, struct list *node)
+	static inline void LIST_SPLICE_BEFORE_INIT(list *_list, list *node)
 	{
 		if (!IS_LIST_EMPTY(_list))
 		{
