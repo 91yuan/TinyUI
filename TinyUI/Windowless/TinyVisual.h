@@ -5,6 +5,7 @@
 
 namespace TinyUI
 {
+	class TinyVisualHWND;
 	class TinyVisualEvent;
 	class TinyVisual;
 #define MAX_STRING 256
@@ -19,6 +20,12 @@ namespace TinyUI
 #define WINPTR_BOTTOM    (( TinyVisual *)2L)
 #define WINPTR_TOPMOST   (( TinyVisual *)3L)
 #define WINPTR_NOTOPMOST (( TinyVisual *)4L)
+	struct Visual
+	{
+		Visual*		NEXT;
+		Visual*		PREV;
+		TinyVisual*	OWNER;
+	};
 	/// <summary>
 	/// 可视化元素类
 	/// </summary>
@@ -26,26 +33,40 @@ namespace TinyUI
 	{
 		DECLARE_DYNAMIC(TinyVisual)
 	private:
-		TinyVisual();
+		DISALLOW_IMPLICIT_CONSTRUCTORS(TinyVisual)
 	public:
 		static TinyVisual* New(TinyVisual* parent, INT x, INT y, INT cx, INT cy);
 		static void Delete(TinyVisual* val);
 		virtual ~TinyVisual();
 	public:
 		virtual		BOOL HandleEvent(TinyVisualEvent* pEvent, BOOL& bHandle);
-		void		SetVisualPos(INT x, INT y, INT cx, INT cy, UINT fFlag);
-		BOOL		SetParent(TinyVisual* parent);
 		void		GetRectangle(RECT& rect);
 		void		SetName(LPCSTR pzName);
 		LPCSTR		GetName();
-		TinyVisual* FindVisual(TinyVisual* val, POINT pos);
+		BOOL		SetParent(TinyVisual* parent);
+		BOOL		IsVisible(const  TinyVisual *win);//元素是否可见
+		BOOL		IsTop(const TinyVisual *win);//是否顶层元素
+	public:
+		static BOOL	SetVisualPos(TinyVisual* ps, TinyVisual* insertAfter, INT x, INT y, INT cx, INT cy, UINT fFlag);
+		static BOOL	PtInVisual(const TinyVisual *win, INT x, INT y);
 	private:
-		RECT	m_window_rectangle;
-		RECT	m_visible_rectangle;
-		HRGN	m_window_region;
-		UINT	m_style;
-		UINT	m_alpha;
-		CHAR	m_name[128];
+		static inline void _ADD(Visual *newVal, Visual *prevVal, Visual *nextVal);
+		static inline void _ADD_AFTER(Visual *newVal, Visual *nodeVal);
+		static inline void _ADD_BEFORE(Visual *newVal, Visual *nodeVal);
+		static inline void _MOVE_AFTER(Visual *val, Visual *nodeVal);
+		static inline void _MOVE_BEFORE(Visual *val, Visual *nodeVal);
+		static void _DEL(Visual * prevVal, Visual * nextVal);
+		static void _DEL_ENTRY(Visual *entry);
+	public:
+		TinyVisualHWND* m_host;
+		TinyVisual*		m_parent;
+		Visual			m_visuals;//孩子元素
+		RECT			m_window_rectangle;
+		RECT			m_visible_rectangle;
+		HRGN			m_window_region;
+		UINT			m_style;
+		UINT			m_alpha;
+		CHAR			m_name[MAX_STRING];
 	};
 }
 

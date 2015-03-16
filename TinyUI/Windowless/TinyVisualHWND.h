@@ -31,6 +31,8 @@ namespace TinyUI
 	//#define PART_REDUCE            PART_MINBUTTON
 	//#define PART_ZOOM              PART_MAXBUTTON
 	//#define PART_CLOSE              11
+	class TinyVisualEvent;
+	class TinyVisual;
 	/// <summary>
 	/// 可视化窗口,管理所有可视化元素 
 	/// </summary>HTCLOSE
@@ -60,12 +62,6 @@ namespace TinyUI
 		BOOL		m_bMouseTracking;
 		TinySize	m_size;
 		TinyVisual*	m_desktop;//根元素
-
-		TinyVisual* m_val1;
-		TinyVisual* m_val2;
-		TinyVisual* m_val3;
-		TinyVisual* m_val4;
-		TinyVisual* m_val5;
 	};
 }
 

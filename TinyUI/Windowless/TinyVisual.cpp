@@ -3,194 +3,21 @@
 
 namespace TinyUI
 {
-	//visual *TinyVisual::create_visual(visual *parent, INT x, INT y, INT cx, INT cy)
-	//{
-	//	visual* win = NULL;
-	//	if (!(win = (visual*)malloc(sizeof(visual)))) goto error;
-	//	win->parent = parent;
-	//	win->last_active = parent;
-	//	win->window_region = NULL;
-	//	memset(win->name, 0, 150);
-	//	SetRect(&win->visible_rectangle, x, y, x + cx, y + cy);
-	//	SetRect(&win->window_rectangle, x, y, x + cx, y + cy);
-	//	win->alpha = 0;
-	//	win->style = 0;
-	//	INIT_LIST(&win->children);
-	//	if (parent)
-	//	{
-	//		LIST_ADD_AFTER(&parent->children, &win->entry);
-	//	}
-	//	else
-	//	{
-	//		INIT_LIST(&win->entry);
-	//	}
-	//	return win;
-	//error:
-	//	SAFE_FREE(win);
-	//	return NULL;
-	//};
-	//void TinyVisual::destroy_visual(visual *win)
-	//{
-	//	while (!IS_LIST_EMPTY(&win->children))
-	//	{
-	//		destroy_visual(LIST_ENTRY(&win->children, visual, entry));
-	//	}
-	//	LIST_DEL(&win->entry);
-	//	if (win->window_region != NULL)
-	//	{
-	//		SAFE_DELETE_OBJECT(win->window_region);
-	//	}
-	//	SAFE_FREE(win);
-	//};
-	//inline  visual *TinyVisual::get_next_window(visual *win)
-	//{
-	//	list *ptr = LIST_NEXT(&win->parent->children, &win->entry);
-	//	return ptr ? LIST_ENTRY(ptr, visual, entry) : NULL;
-	//}
-
-	//inline  visual *TinyVisual::get_prev_window(visual *win)
-	//{
-	//	list *ptr = LIST_PREV(&win->parent->children, &win->entry);
-	//	return ptr ? LIST_ENTRY(ptr, visual, entry) : NULL;
-	//}
-
-	//inline  visual *TinyVisual::get_first_child(visual *win)
-	//{
-	//	list *ptr = LIST_NEXT(&win->children, &win->children);
-	//	return ptr ? LIST_ENTRY(ptr, visual, entry) : NULL;
-	//}
-
-	//inline  visual *TinyVisual::get_last_child(visual *win)
-	//{
-	//	list *ptr = LIST_PREV(&win->children, &win->children);
-	//	return ptr ? LIST_ENTRY(ptr, visual, entry) : NULL;
-	//}
-
-	//BOOL TinyVisual::set_parent(visual *win, visual *parent)
-	//{
-	//	visual *ps = NULL;
-	//	for (ps = parent; ps; ps = ps->parent)
-	//	{
-	//		if (ps == win)
-	//		{
-	//			return FALSE;
-	//		}
-	//	}
-	//	//设置父节点
-	//	if (parent != NULL)
-	//	{
-	//		win->parent = parent;
-	//		//后加的元素放在TOP
-	//		LIST_ADD_BEFORE(parent->children.NEXT, &win->entry);
-	//	}
-	//	return TRUE;
-	//}
-	//void TinyVisual::link_window(visual *win, visual *previous)
-	//{
-	//	LIST_DEL(&win->entry);
-	//	if (previous == WINPTR_BOTTOM)
-	//	{
-	//		LIST_ADD_BEFORE(&win->parent->children, &win->entry);
-	//		win->style &= ~VS_TOPMOST;
-	//	}
-	//	else if (previous == WINPTR_TOPMOST)
-	//	{
-	//		LIST_ADD_AFTER(&win->parent->children, &win->entry);
-	//		win->style |= VS_TOPMOST;
-	//	}
-	//	else if (previous == WINPTR_TOP)
-	//	{
-	//		list *entry = win->parent->children.NEXT;
-	//		if (!(win->style & VS_TOPMOST))
-	//		{
-	//			while (entry != &win->parent->children)
-	//			{
-	//				visual *next = LIST_ENTRY(entry, struct visual, entry);
-	//				if (!(next->style & VS_TOPMOST)) break;
-	//				if (next->owner == win->owner)
-	//				{
-	//					win->style |= VS_TOPMOST;
-	//					break;
-	//				}
-	//				entry = entry->NEXT;
-	//			}
-	//		}
-	//		LIST_ADD_BEFORE(entry, &win->entry);
-	//	}
-	//	else
-	//	{
-	//		LIST_ADD_AFTER(&previous->entry, &win->entry);
-	//		if (!(previous->style & VS_TOPMOST))
-	//			win->style &= ~VS_TOPMOST;
-	//		else
-	//		{
-	//			visual *next = get_next_window(win);
-	//			if (next && (next->style & VS_TOPMOST))
-	//				win->style |= VS_TOPMOST;
-	//		}
-	//	}
-	//}
-	//BOOL TinyVisual::is_visible(const  visual *win)
-	//{
-	//	while (win)
-	//	{
-	//		if (!(win->style & VS_VISIBLE)) return FALSE;
-	//		win = win->parent;
-	//		if (win && (win->style & VS_MINIMIZE)) return FALSE;
-	//	}
-	//	return TRUE;
-	//}
-	//BOOL TinyVisual::is_child_window(visual *parent, visual *child)
-	//{
-	//	if (!parent || !child) return FALSE;
-	//	while (child->parent)
-	//	{
-	//		if (child->parent == parent)
-	//			return TRUE;
-	//		child = child->parent;
-	//	}
-	//	return FALSE;
-	//}
-	//inline BOOL TinyVisual::is_point_in_window(visual *win, INT x, INT y)
-	//{
-	//	if (!(win->style & VS_VISIBLE))
-	//		return FALSE;
-	//	POINT pos = { x, y };
-	//	if (!PtInRect(&win->visible_rectangle, pos))
-	//		return FALSE;
-	//	if (win->window_region != NULL && !PtInRegion(win->window_region, x, y))
-	//		return FALSE;
-	//	return TRUE;
-	//}
-	//visual *TinyVisual::child_window_by_point(visual *parent, INT x, INT y)
-	//{
-	//	struct visual *ps = NULL;
-	//	POINT pt = { x, y };
-	//	LIST_FOR_EACH_ENTRY(ps, &parent->children, visual, entry)
-	//	{
-	//		if (is_point_in_window(ps, x, y)) return ps;
-	//		return child_window_by_point(ps, x, y);
-	//	}
-	//	return parent;
-	//}
-	//inline BOOL TinyVisual::is_desktop_window(const  visual *win)
-	//{
-	//	return !win->parent;
-	//}
-	//////////////////////////////////////////////////////////////////////////
 	TinyVisual::TinyVisual()
-		:m_window_region(NULL)
+		:m_window_region(NULL),
+		m_parent(NULL)
 	{
 		SetRectEmpty(&m_window_rectangle);
 		SetRectEmpty(&m_visible_rectangle);
+		m_visuals.OWNER = this;
 	}
 	TinyVisual* TinyVisual::New(TinyVisual* parent, INT x, INT y, INT cx, INT cy)
 	{
 		TinyVisual* ps = new TinyVisual();
-		SetRect(&ps->m_visible_rectangle, x, y, x + cx, y + cy);
-		SetRect(&ps->m_window_rectangle, x, y, x + cx, y + cy);
 		ps->m_style = VS_VISIBLE;
 		ps->m_alpha = 255;
+		ps->m_parent = parent;
+		SetVisualPos(ps, NULL, x, y, cx, cy, 0);
 		return ps;
 	}
 	void TinyVisual::Delete(TinyVisual* val)
@@ -206,12 +33,77 @@ namespace TinyUI
 		ASSERT(pEvent);
 		return FALSE;
 	}
-	void TinyVisual::SetVisualPos(INT x, INT y, INT cx, INT cy, UINT fFlag)
+	BOOL TinyVisual::SetVisualPos(TinyVisual* val, TinyVisual* insertAfter, INT x, INT y, INT cx, INT cy, UINT fFlag)
 	{
-
+		TinyVisual* oldParent = val->m_parent;
+		if (!(fFlag & SWP_NOZORDER))
+		{
+			//insertAfter父节点和val父节点必须一致
+			if (val->m_parent != insertAfter->m_parent)
+			{
+				return FALSE;
+			}
+			_MOVE_AFTER(&val->m_visuals, &insertAfter->m_visuals);
+		}
+		if (!(fFlag & SWP_NOMOVE))
+		{
+			if (x < -32768) x = -32768;
+			else if (x > 32767) x = 32767;
+			if (y < -32768) y = -32768;
+			else if (y > 32767) y = 32767;
+		}
+		else
+		{
+			x = val->m_window_rectangle.left;
+			y = val->m_window_rectangle.top;
+		}
+		if (!(fFlag & SWP_NOSIZE))
+		{
+			if (cx < 0) cx = 0;
+			else if (cx > 32767) cx = 32767;
+			if (cy < 0) cy = 0;
+			else if (cy > 32767) cy = 32767;
+		}
+		else
+		{
+			cx = TO_CX(val->m_window_rectangle);
+			cy = TO_CY(val->m_window_rectangle);
+		}
+		RECT new_rectangle = { x, y, x + cx, y + cy };
+		INT offsetL = val->m_window_rectangle.left - new_rectangle.left;
+		INT offsetT = val->m_window_rectangle.top - new_rectangle.top;
+		INT offsetR = val->m_window_rectangle.right - new_rectangle.right;
+		INT offsetB = val->m_window_rectangle.bottom - new_rectangle.bottom;
+		val->m_window_rectangle.left = x;
+		val->m_window_rectangle.top = y;
+		val->m_window_rectangle.right = x + cx;
+		val->m_window_rectangle.bottom = y + cy;
+		//更新子元素
+		POINT pos = { x, y };
+		Visual *ps = val->m_visuals.NEXT;
+		while (ps)
+		{
+			ps->OWNER->m_window_rectangle.left = ps->OWNER->m_window_rectangle.left + offsetL;
+			ps->OWNER->m_window_rectangle.top = ps->OWNER->m_window_rectangle.top + offsetT;
+			ps->OWNER->m_window_rectangle.right = ps->OWNER->m_window_rectangle.right + offsetR;
+			ps->OWNER->m_window_rectangle.bottom = ps->OWNER->m_window_rectangle.left + offsetB;
+			ps = ps->NEXT;
+		}
+		return TRUE;
 	}
 	BOOL TinyVisual::SetParent(TinyVisual* parent)
 	{
+		TinyVisual *val = NULL;
+		for (val = parent; val; val = val->m_parent)
+		{
+			if (val == this)
+				return FALSE;
+		}
+		if (parent != NULL)
+		{
+			m_parent = parent;
+			_ADD_BEFORE(parent->m_visuals.NEXT, &m_visuals);
+		}
 		return TRUE;
 	}
 	void TinyVisual::GetRectangle(RECT& rect)
@@ -220,14 +112,71 @@ namespace TinyUI
 	}
 	void TinyVisual::SetName(LPCSTR pzName)
 	{
-		strcpy_s(m_name, 150, pzName);
+		strcpy_s(m_name, MAX_STRING, pzName);
 	}
 	LPCSTR	TinyVisual::GetName()
 	{
 		return m_name;
 	}
-	TinyVisual* TinyVisual::FindVisual(TinyVisual* val, POINT pos)
+	BOOL TinyVisual::IsVisible(const TinyVisual *win)
 	{
-		return NULL;
+		while (win)
+		{
+			if (!(win->m_style & VS_VISIBLE)) return FALSE;
+			win = win->m_parent;
+			if (win && (win->m_style & VS_MINIMIZE)) return FALSE;
+		}
+		return TRUE;
 	}
+	BOOL TinyVisual::IsTop(const TinyVisual *win)
+	{
+		return !win->m_parent;
+	}
+	BOOL TinyVisual::PtInVisual(const TinyVisual *win, INT x, INT y)
+	{
+		if (!(win->m_style & VS_VISIBLE))
+			return FALSE;
+		POINT pos = { x, y };
+		if (!PtInRect(&win->m_visible_rectangle, pos))
+			return FALSE;
+		if (win->m_window_region != NULL &&
+			!PtInRegion(win->m_window_region, x, y))
+			return FALSE;
+		return TRUE;
+	}
+	inline void TinyVisual::_ADD(Visual *newVal, Visual *prevVal, Visual *nextVal)
+	{
+		nextVal->PREV = newVal;
+		newVal->NEXT = nextVal;
+		newVal->PREV = prevVal;
+		prevVal->NEXT = newVal;
+	}
+	inline void TinyVisual::_ADD_AFTER(Visual *newVal, Visual *nodeVal)
+	{
+		_ADD(newVal, nodeVal, nodeVal->NEXT);
+	}
+	inline void TinyVisual::_ADD_BEFORE(Visual *newVal, Visual *nodeVal)
+	{
+		_ADD(newVal, nodeVal->PREV, nodeVal);
+	}
+	inline void TinyVisual::_MOVE_AFTER(Visual *val, Visual *nodeVal)
+	{
+		_DEL_ENTRY(val);
+		_ADD_AFTER(val, nodeVal);
+	}
+	inline void TinyVisual::_MOVE_BEFORE(Visual *val, Visual *nodeVal)
+	{
+		_DEL_ENTRY(val);
+		_ADD_BEFORE(val, nodeVal);
+	}
+	void TinyVisual::_DEL(Visual * prevVal, Visual * nextVal)
+	{
+		nextVal->PREV = prevVal;
+		prevVal->NEXT = nextVal;
+	}
+	void TinyVisual::_DEL_ENTRY(Visual *entry)
+	{
+		_DEL(entry->PREV, entry->NEXT);
+	}
+
 }

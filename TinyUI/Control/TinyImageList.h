@@ -16,8 +16,6 @@ namespace TinyUI
 		BOOL Create(LPCTSTR lpszBitmapID, INT cx, INT nGrow, COLORREF crMask);
 		BOOL Create(TinyImageList& imagelist1, INT nImage1, TinyImageList& imagelist2, INT nImage2, INT dx, INT dy);
 		BOOL Create(TinyImageList* pImageList);
-		BOOL Attach(HIMAGELIST hImageList);
-		HIMAGELIST Detach();
 
 		INT GetImageCount() const;
 		COLORREF SetBkColor(COLORREF cr);

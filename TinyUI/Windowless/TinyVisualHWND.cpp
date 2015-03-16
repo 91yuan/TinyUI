@@ -81,13 +81,13 @@ namespace TinyUI
 		tme.dwHoverTime = 0;
 		_TrackMouseEvent(&tme);
 
-		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+		/*POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 		TinyVisual* ps = TinyVisual::FindVisual(m_desktop, pt);
 		if (ps != NULL)
 		{
 			LPCSTR pzName = ps->GetName();
 			TRACE("Name: %s\n", pzName);
-		}
+		}*/
 		return FALSE;
 	}
 
