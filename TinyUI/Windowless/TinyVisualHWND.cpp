@@ -4,8 +4,11 @@
 namespace TinyUI
 {
 	TinyVisualHWND::TinyVisualHWND()
-		:m_desktop(NULL)
+		:m_pCapture(NULL),
+		m_pFocus(NULL),
+		m_pDesktop(NULL)
 	{
+		SetRectEmpty(&m_windowRectangle);
 	}
 
 
@@ -43,103 +46,49 @@ namespace TinyUI
 		return NULL;
 	}
 
-	LRESULT TinyVisualHWND::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	BOOL TinyVisualHWND::ProcessWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, LRESULT& lResult)
 	{
-		bHandled = FALSE;
-		PostQuitMessage(0);//退出应用程序
-		return FALSE;
-	}
-
-	LRESULT TinyVisualHWND::OnNCHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-		ScreenToClient(m_hWND, &pt);
-
-		return FALSE;
-	}
-
-	LRESULT TinyVisualHWND::OnNCMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(tme);
-		tme.hwndTrack = m_hWND;
-		tme.dwFlags = TME_LEAVE | TME_NONCLIENT;
-		tme.dwHoverTime = 0;
-		_TrackMouseEvent(&tme);
-		return FALSE;
-	}
-
-	LRESULT TinyVisualHWND::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(tme);
-		tme.hwndTrack = m_hWND;
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = 0;
-		_TrackMouseEvent(&tme);
-
-		/*POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-		TinyVisual* ps = TinyVisual::FindVisual(m_desktop, pt);
-		if (ps != NULL)
+		lResult = FALSE;
+		if (msg == WM_CREATE)
 		{
-			LPCSTR pzName = ps->GetName();
-			TRACE("Name: %s\n", pzName);
-		}*/
-		return FALSE;
-	}
+			m_pDesktop = new TinyVisual(this);
+		}
+		if (msg == WM_CLOSE)
+		{
+			PostQuitMessage(0);
+		}
+		if (msg == WM_DESTROY)
+		{
+			ReleaseDC(m_hWND, m_canvas.Detach());
+			SAFE_DELETE(m_pDesktop);
+		}
+		if (msg == WM_PAINT)
+		{
+			PAINTSTRUCT ps = { 0 };
+			BeginPaint(m_hWND, &ps);
 
-	LRESULT TinyVisualHWND::OnNCMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		return FALSE;
-	}
+			TinyMemDC memdc(m_canvas, TO_CX(m_windowRectangle), TO_CY(m_windowRectangle));
+			//绘制
 
-	LRESULT TinyVisualHWND::OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		return FALSE;
-	}
+			memdc.Render(m_windowRectangle, m_windowRectangle, FALSE);
 
-	LRESULT TinyVisualHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		m_desktop = TinyVisual::New(NULL, 0, 0, m_size.cx, m_size.cy);
-		m_desktop->SetName("desktop");
-		m_val1 = TinyVisual::New(m_desktop, 10, 10, 10, 10);
-		m_val1->SetName("m_val1");
-		m_val2 = TinyVisual::New(m_desktop, 20, 20, 10, 10);
-		m_val2->SetName("m_val2");
-		m_val3 = TinyVisual::New(m_desktop, 30, 30, 10, 10);
-		m_val3->SetName("m_val3");
-		m_val4 = TinyVisual::New(m_desktop, 40, 40, 10, 10);
-		m_val4->SetName("m_val4");
-		m_val5 = TinyVisual::New(m_desktop, 50, 50, 10, 10);
-		m_val5->SetName("m_val5");
-		return FALSE;
-	}
+			EndPaint(m_hWND, &ps);
+		}
+		if (msg == WM_SIZE)
+		{
+			INT cx = LOWORD(lParam);
+			INT cy = HIWORD(lParam);
+			SetRect(&m_windowRectangle, 0, 0, cx, cy);
+			if (m_canvas != NULL)
+			{
+				ReleaseDC(m_hWND, m_canvas.Detach());
+				m_canvas.Attach(GetWindowDC(hWnd));
+			}
+		}
+		if (msg == WM_NCHITTEST)
+		{
 
-	LRESULT TinyVisualHWND::OnDestory(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-
-		TinyVisual::Delete(m_desktop);
-		TinyVisual::Delete(m_val1);
-		TinyVisual::Delete(m_val2);
-		TinyVisual::Delete(m_val3);
-		TinyVisual::Delete(m_val4);
-		TinyVisual::Delete(m_val5);
-
-		return FALSE;
-	}
-
-	LRESULT TinyVisualHWND::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		m_size.cx = LOWORD(lParam);
-		m_size.cy = HIWORD(lParam);
+		}
 		return FALSE;
 	}
 }
