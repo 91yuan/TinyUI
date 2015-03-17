@@ -6,7 +6,8 @@ namespace TinyUI
 	TinyVisualHWND::TinyVisualHWND()
 		:m_pCapture(NULL),
 		m_pFocus(NULL),
-		m_pDesktop(NULL)
+		m_pDesktop(NULL),
+		m_bMouseTracking(FALSE)
 	{
 		SetRectEmpty(&m_windowRectangle);
 	}
@@ -66,12 +67,9 @@ namespace TinyUI
 		{
 			PAINTSTRUCT ps = { 0 };
 			BeginPaint(m_hWND, &ps);
-
 			TinyMemDC memdc(m_canvas, TO_CX(m_windowRectangle), TO_CY(m_windowRectangle));
-			//»æÖÆ
-
+			Render(memdc);
 			memdc.Render(m_windowRectangle, m_windowRectangle, FALSE);
-
 			EndPaint(m_hWND, &ps);
 		}
 		if (msg == WM_SIZE)
@@ -89,6 +87,34 @@ namespace TinyUI
 		{
 
 		}
+		if (msg >= WM_NCMOUSEFIRST && msg <= WM_NCMOUSELAST)
+		{
+
+		}
+		if (msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST)
+		{
+
+		}
 		return FALSE;
+	}
+	void TinyVisualHWND::Render(TinyMemDC& dc)
+	{
+
+	}
+	TinyVisual*	TinyVisualHWND::SetFocus(TinyVisual* ps)
+	{
+		return NULL;
+	}
+	TinyVisual*	 TinyVisualHWND::GetFocus()
+	{
+		return NULL;
+	}
+	TinyVisual*	 TinyVisualHWND::SetCapture(TinyVisual* ps)
+	{
+		return NULL;
+	}
+	void TinyVisualHWND::ReleaseCapture()
+	{
+
 	}
 }

@@ -39,12 +39,22 @@ namespace TinyUI
 		TinyVisualHWND* m_hostHWND;
 		TinyVisual*		m_parent;//父元素
 		Visual			m_visuals;//孩子元素
-		UINT			m_fStyle;//风格
 		TinyRectangle	m_rectangle;//矩形大小
-		TinyString		m_name;
+		CHAR			m_name[MAX_STRING];
+		CHAR			m_text[MAX_STRING];
+		BOOL			m_bVisible;
+		BOOL			m_bEnable;
+		BOOL			m_bFocus;
 	public:
 		LPCSTR			GetName();
 		void			SetName(LPCSTR pzName);
+		LPCSTR			GetText();
+		void			SetText(LPCSTR pzText);
+		BOOL			IsVisible() const;
+		BOOL			IsEnable() const;
+		BOOL			IsFocus() const;
+		void			SetVisible(BOOL bVisible = TRUE);
+		void			SetEnable(BOOL bEnable = TRUE);
 	public:
 		static TinyVisual* New(TinyVisual* parent, INT x, INT y, INT cx, INT cy);
 		static void	Delete(TinyVisual* ps);

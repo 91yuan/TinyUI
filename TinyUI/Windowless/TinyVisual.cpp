@@ -5,14 +5,20 @@ namespace TinyUI
 {
 	TinyVisual::TinyVisual(TinyVisualHWND* hostHWND)
 		: m_hostHWND(hostHWND),
-		m_parent(NULL)
+		m_parent(NULL),
+		m_bVisible(FALSE),
+		m_bEnable(FALSE),
+		m_bFocus(FALSE)
 	{
 		m_visuals.OWNER = this;
 		m_visuals.NEXT = m_visuals.PREV = &m_visuals;
 	}
 	TinyVisual::TinyVisual(TinyVisual* parent, INT x, INT y, INT cx, INT cy)
 		: m_hostHWND(NULL),
-		m_parent(NULL)
+		m_parent(NULL),
+		m_bVisible(FALSE),
+		m_bEnable(FALSE),
+		m_bFocus(FALSE)
 	{
 		m_parent = parent;
 		m_hostHWND = parent->m_hostHWND;
@@ -25,11 +31,47 @@ namespace TinyUI
 	}
 	LPCSTR	TinyVisual::GetName()
 	{
-		return m_name.STR();
+		return m_name;
 	}
 	void TinyVisual::SetName(LPCSTR pzName)
 	{
-		m_name = pzName;
+		strcpy_s(m_name, MAX_STRING, pzName);
+	}
+	LPCSTR TinyVisual::GetText()
+	{
+		return m_text;
+	}
+	void TinyVisual::SetText(LPCSTR pzText)
+	{
+		strcpy_s(m_text, MAX_STRING, pzText);
+	}
+	BOOL TinyVisual::IsVisible() const
+	{
+		return m_bVisible;
+	}
+	BOOL TinyVisual::IsEnable() const
+	{
+		return m_bEnable;
+	}
+	BOOL TinyVisual::IsFocus() const
+	{
+		return m_bFocus;
+	}
+	void TinyVisual::SetVisible(BOOL bVisible)
+	{
+		if (m_bVisible != bVisible)
+		{
+			m_bVisible = bVisible;
+			//UpdateUI
+		}
+	}
+	void TinyVisual::SetEnable(BOOL bEnable)
+	{
+		if (m_bEnable != bEnable)
+		{
+			m_bEnable = bEnable;
+			//UpdateUI
+		}
 	}
 	TinyVisual* TinyVisual::New(TinyVisual* parent, INT x, INT y, INT cx, INT cy)
 	{

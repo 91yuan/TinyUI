@@ -25,7 +25,13 @@ namespace TinyUI
 		virtual BOOL	ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult);
 	public:
 		BOOL			Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+		void			Render(TinyMemDC& dc);
+		TinyVisual*		SetFocus(TinyVisual* ps);
+		TinyVisual*		GetFocus();
+		TinyVisual*		SetCapture(TinyVisual* ps);
+		void			ReleaseCapture();
 	private:
+		BOOL			m_bMouseTracking;
 		TinyVisual*		m_pDesktop;//桌面根节点
 		TinyVisual*		m_pCapture;//捕获鼠标的
 		TinyVisual*		m_pFocus;//有焦点的
