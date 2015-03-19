@@ -118,6 +118,7 @@
     <ClInclude Include="Control\TinyTextBox.h" />
     <ClInclude Include="Control\TinyTrackBar.h" />
     <ClInclude Include="Control\TinyTreeView.h" />
+    <ClInclude Include="Database\TinyDbAccess.h" />
     <ClInclude Include="IO\TinyIO.h" />
     <ClInclude Include="Media\TinyWave.h" />
     <ClInclude Include="Render\TinyGraphics.h" />
@@ -182,6 +183,7 @@
     <ClCompile Include="Control\TinyTextBox.cpp" />
     <ClCompile Include="Control\TinyTrackBar.cpp" />
     <ClCompile Include="Control\TinyTreeView.cpp" />
+    <ClCompile Include="Database\TinyDbAccess.cpp" />
     <ClCompile Include="IO\TinyIO.cpp" />
     <ClCompile Include="Media\TinyWave.cpp" />
     <ClCompile Include="Render\stb_image.c" />

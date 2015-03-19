@@ -55,6 +55,18 @@
     <Filter Include="源文件\Windowless">
       <UniqueIdentifier>{1310ee77-7b33-4ade-865a-a2cf1c0fa9da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Database">
+      <UniqueIdentifier>{8a86e91d-15fb-42b8-8d9a-9ed07e45d1c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Database">
+      <UniqueIdentifier>{2fd6efcb-9b17-4803-9976-b86ac8f43b30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Network">
+      <UniqueIdentifier>{c4aea11b-e32c-4c8c-b919-91e34f7d913c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Network">
+      <UniqueIdentifier>{ac6f29a6-0362-47eb-941b-f7084c021f6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -246,6 +258,9 @@
     <ClInclude Include="Windowless\TinyVisualEvent.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
+    <ClInclude Include="Database\TinyDbAccess.h">
+      <Filter>头文件\Database</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -436,6 +451,9 @@
     </ClCompile>
     <ClCompile Include="Windowless\TinyVisualEvent.cpp">
       <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Database\TinyDbAccess.cpp">
+      <Filter>源文件\Database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

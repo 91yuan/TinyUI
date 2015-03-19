@@ -76,6 +76,7 @@ namespace TinyUI
 	TinyVisual* TinyVisual::New(TinyVisual* parent, INT x, INT y, INT cx, INT cy)
 	{
 		TinyVisual* ps = new TinyVisual(parent, x, y, cx, cy);
+		return ps;
 	}
 	void TinyVisual::Delete(TinyVisual* val)
 	{
