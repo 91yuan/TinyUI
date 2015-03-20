@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinyDbAccess.h"
+#include "TinyDatabase.h"
 
 namespace TinyUI
 {

@@ -258,7 +258,13 @@
     <ClInclude Include="Windowless\TinyVisualEvent.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Database\TinyDbAccess.h">
+    <ClInclude Include="Database\TinyDatabase.h">
+      <Filter>头文件\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="Database\TinyAdo.h">
+      <Filter>头文件\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="Database\TinySqlite.h">
       <Filter>头文件\Database</Filter>
     </ClInclude>
   </ItemGroup>
@@ -452,7 +458,13 @@
     <ClCompile Include="Windowless\TinyVisualEvent.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Database\TinyDbAccess.cpp">
+    <ClCompile Include="Database\TinyDatabase.cpp">
+      <Filter>源文件\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="Database\TinyAdo.cpp">
+      <Filter>源文件\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="Database\TinySqlite.cpp">
       <Filter>源文件\Database</Filter>
     </ClCompile>
   </ItemGroup>
