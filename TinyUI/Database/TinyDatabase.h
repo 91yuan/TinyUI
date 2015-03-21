@@ -46,8 +46,8 @@ namespace TinyUI
 	public:
 		virtual IDbConnection*	GetConnection() = 0;
 		virtual INT				GetIsolationLevel() = 0;
-		virtual void			Commit() = 0;
-		virtual void			Rollback() = 0;
+		virtual BOOL			Commit() = 0;
+		virtual BOOL			Rollback() = 0;
 	};
 
 	/// <summary>
@@ -57,34 +57,33 @@ namespace TinyUI
 	{
 	public:
 		virtual LPCSTR				GetCommandText() = 0;
-		virtual BOOL				SetCommandText(LPCSTR pzText) = 0;
-		virtual INT					GetCommandTimeout() = 0;
-		virtual BOOL				SetCommandTimeout(INT iTime) = 0;
+		virtual void				SetCommandText(LPCSTR pzText) = 0;
+		virtual LONG				GetCommandTimeout() = 0;
+		virtual void				SetCommandTimeout(LONG iTime) = 0;
+		virtual INT					GetCommandType() = 0;
+		virtual void				SetCommandType(INT commandType) = 0;
 		virtual IDbConnection*		GetConnection() = 0;
 		virtual IDbDataParameters*	GetParameters() = 0;
 		virtual IDbTransaction*		GetTransaction() = 0;
-		virtual void				Cancel() = 0;
+		virtual BOOL				Cancel() = 0;
 		virtual IDbDataParameter*	CreateParameter() = 0;
 		virtual INT					ExecuteNonQuery() = 0;
-		virtual IDbDataReader*		ExecuteReader() = 0;
 		virtual IDbDataReader*		ExecuteReader(INT iBehavior) = 0;
-		virtual void				Prepare() = 0;
 	};
 	/// <summary>
 	/// 数据行
 	/// </summary>
-	class IDataRow
+	class IDbDataRow
 	{
 	public:
 		virtual INT				GetColumnCount() = 0;
 		virtual BOOL			GetBoolean(INT i) = 0;
 		virtual BYTE			GetByte(INT i) = 0;
-		virtual LONG			GetBytes(INT i, LONG offset, BYTE* buffer, INT bufferOffset, INT size) = 0;
 		virtual CHAR			GetChar(INT i) = 0;
-		virtual LONG			GetChars(INT i, LONG offset, CHAR* buffer, INT bufferoffset, INT length) = 0;
-		virtual IDbDataReader*	GetData(INT i) = 0;
+		virtual	BYTE*			GetBlob(INT i) = 0;
 		virtual LPCSTR			GetDataTypeName(INT i) = 0;
-		virtual TinyTimeSpan*	GetDateTime(INT i) = 0;
+		virtual DATE			GetDateTime(INT i) = 0;
+		virtual DECIMAL			GetDecimal(INT i) = 0;
 		virtual DOUBLE			GetDouble(INT i) = 0;
 		virtual FLOAT			GetFloat(INT i) = 0;
 		virtual SHORT			GetInt16(INT i) = 0;
@@ -94,5 +93,17 @@ namespace TinyUI
 		virtual INT				GetOrdinal(LPCSTR pzName) = 0;
 		virtual LPCSTR			GetString(INT i) = 0;
 		virtual BOOL			IsDBNull(INT i) = 0;
+	};
+	/// <summary>
+	/// 数据读取
+	/// </summary>
+	class IDbDataReader :public IDbDataRow
+	{
+	public:
+		virtual BOOL ReadNext();
+		virtual BOOL ReadPrevious();
+		virtual BOOL ReadFirst();
+		virtual BOOL ReadLast();
+		virtual BOOL Close();
 	};
 }

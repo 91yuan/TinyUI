@@ -4,80 +4,480 @@
 namespace TinyUI
 {
 	ADOConnection::ADOConnection()
-		:m_pzErrors(NULL)
+		:m_connectionPtr(NULL),
+		m_pCommand(NULL),
+		m_pTransaction(NULL)
 	{
-
+		m_connectionPtr.CreateInstance(__uuidof(Connection));
+	}
+	ADOConnection::~ADOConnection()
+	{
+		if (m_connectionPtr != NULL)
+		{
+			m_connectionPtr->Close();
+			SAFE_DELETE(m_pCommand);
+			SAFE_DELETE(m_pTransaction);
+		}
 	}
 	LPCSTR ADOConnection::GetConnectionString()
 	{
-		return m_connectionString;
+		ASSERT(m_connectionPtr);
+		return m_connectionPtr->GetConnectionString();
 	}
-
 	void ADOConnection::SetConnectionString(LPCSTR connectionString)
 	{
 		ASSERT(connectionString);
-		if (strcmp(m_connectionString, connectionString))
-		{
-			strcpy_s(m_connectionString, MAX_PATH, connectionString);
-		}
-
+		m_connectionPtr->ConnectionString = connectionString;
 	}
-
 	LONG ADOConnection::GetConnectionTimeout()
 	{
-		return m_connectionTimeout;
+		ASSERT(m_connectionPtr);
+		return m_connectionPtr->GetConnectionTimeout();
 	}
-
 	void ADOConnection::SetConnectionTimeout(LONG connectionTimeout)
 	{
-		if (m_connectionTimeout != connectionTimeout)
-		{
-			m_connectionTimeout = connectionTimeout;
-			m_connectionPtr->CommandTimeout = m_connectionTimeout;
-		}
-
+		ASSERT(m_connectionPtr);
+		m_connectionPtr->CommandTimeout = connectionTimeout;
 	}
 	LONG ADOConnection::GetConnectionState()
 	{
+		ASSERT(m_connectionPtr);
 		return m_connectionPtr->State;
 	}
 	IDbTransaction* ADOConnection::BeginTransaction()
 	{
-		return NULL;
+		ASSERT(m_connectionPtr);
+		TinyCriticalSection section;
+		section.Initialize();
+		section.Lock();
+		if (m_pTransaction == NULL)
+		{
+			m_pTransaction = new ADOTransaction(this);
+		}
+		section.Unlock();
+		section.Uninitialize();
+		if (m_pTransaction)
+		{
+			m_connectionPtr->BeginTrans();
+		}
+		return m_pTransaction;
 	}
-
 	IDbTransaction* ADOConnection::BeginTransaction(INT iIsolationLevel)
 	{
-		return NULL;
+		ASSERT(m_connectionPtr);
+		TinyCriticalSection section;
+		section.Initialize();
+		section.Lock();
+		if (m_pTransaction == NULL)
+		{
+			m_pTransaction = new ADOTransaction(this, iIsolationLevel);
+		}
+		section.Unlock();
+		section.Uninitialize();
+		if (m_pTransaction)
+		{
+			m_connectionPtr->BeginTrans();
+		}
+		return m_pTransaction;
 	}
-
 	BOOL ADOConnection::Open()
 	{
-		HRESULT hRes = S_OK;
-		hRes = m_connectionPtr.CreateInstance(__uuidof(Connection));
-		if (SUCCEEDED(hRes))
+		ASSERT(m_connectionPtr);
+		return SUCCEEDED(m_connectionPtr->Open("", "", "", adModeUnknown));
+	}
+	BOOL ADOConnection::Close()
+	{
+		ASSERT(m_connectionPtr);
+		BOOL bRes = SUCCEEDED(m_connectionPtr->Close());
+		SAFE_DELETE(m_pCommand);
+		SAFE_DELETE(m_pTransaction);
+		return bRes;
+	}
+	IDbCommand* ADOConnection::CreateCommand()
+	{
+		TinyCriticalSection section;
+		section.Initialize();
+		section.Lock();
+		if (m_pCommand == NULL)
 		{
-			m_connectionPtr->ConnectionTimeout = m_connectionTimeout;
-			hRes = m_connectionPtr->Open(m_connectionString, "", "", adModeUnknown);
-			if (SUCCEEDED(hRes)) return TRUE;
-			return FALSE;
+			m_pCommand = new ADOCommand(this);
+		}
+		section.Unlock();
+		section.Uninitialize();
+		return m_pCommand;
+	}
+	void ADOConnection::Dispose()
+	{
+		if (m_connectionPtr != NULL)
+		{
+			m_connectionPtr->Close();
+			SAFE_DELETE(m_pCommand);
+			SAFE_DELETE(m_pTransaction);
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	ADOCommand::ADOCommand(ADOConnection* pConnection)
+		:m_commandPtr(NULL),
+		m_pConnection(pConnection)
+
+	{
+		if (SUCCEEDED(m_commandPtr.CreateInstance(__uuidof(Command))))
+		{
+			m_commandPtr->ActiveConnection = m_pConnection->m_connectionPtr;
+		}
+	}
+	ADOCommand::~ADOCommand()
+	{
+
+	}
+	LPCSTR ADOCommand::GetCommandText()
+	{
+		return m_commandPtr->GetCommandText();
+	}
+	void ADOCommand::SetCommandText(LPCSTR pzText)
+	{
+		ASSERT(m_commandPtr);
+		m_commandPtr->CommandText = pzText;
+	}
+	LONG ADOCommand::GetCommandTimeout()
+	{
+		ASSERT(m_commandPtr);
+		return m_commandPtr->GetCommandTimeout();
+	}
+	void ADOCommand::SetCommandTimeout(LONG commandTimeout)
+	{
+		ASSERT(m_commandPtr);
+		m_commandPtr->CommandTimeout = commandTimeout;
+	}
+	INT	ADOCommand::GetCommandType()
+	{
+		ASSERT(m_commandPtr);
+		return (INT)m_commandPtr->CommandType;
+	}
+	void ADOCommand::SetCommandType(INT commandType)
+	{
+		ASSERT(m_commandPtr);
+		m_commandPtr->CommandType = (CommandTypeEnum)commandType;
+	}
+	IDbConnection* ADOCommand::GetConnection()
+	{
+		return m_pConnection;
+	}
+	IDbDataParameters* ADOCommand::GetParameters()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+	IDbTransaction* ADOCommand::GetTransaction()
+	{
+		ASSERT(m_pConnection);
+		return m_pConnection->m_pTransaction;
+	}
+	BOOL ADOCommand::Cancel()
+	{
+		ASSERT(m_commandPtr);
+		return SUCCEEDED(m_commandPtr->Cancel());
+	}
+	IDbDataParameter* ADOCommand::CreateParameter()
+	{
+		return NULL;
+	}
+	INT ADOCommand::ExecuteNonQuery()
+	{
+		ASSERT(m_commandPtr);
+		ADORecordsetPtr recordsetPtr = m_commandPtr->Execute(NULL, NULL, m_commandPtr->CommandType);
+		INT recordCount = 0;
+		if (recordsetPtr != NULL)
+		{
+			recordCount = recordsetPtr->GetRecordCount();
+			recordsetPtr->Close();
+		}
+		return recordCount;
+	}
+
+	IDbDataReader* ADOCommand::ExecuteReader(INT iBehavior)
+	{
+		return new ADODataReader(m_commandPtr->Execute(NULL, NULL, m_commandPtr->CommandType));
+	}
+
+	void ADOCommand::Dispose()
+	{
+
+	}
+	//////////////////////////////////////////////////////////////////////////
+	ADOTransaction::ADOTransaction(ADOConnection* pConnection, INT iIsolationLevel)
+		: m_pConnection(pConnection),
+		m_iIsolationLevel(iIsolationLevel)
+	{
+		pConnection->m_connectionPtr->IsolationLevel = (IsolationLevelEnum)iIsolationLevel;
+	}
+	IDbConnection* ADOTransaction::GetConnection()
+	{
+		return m_pConnection;
+	}
+	INT ADOTransaction::GetIsolationLevel()
+	{
+		return m_iIsolationLevel;
+	}
+	BOOL ADOTransaction::Commit()
+	{
+		ASSERT(m_pConnection);
+		ASSERT(m_pConnection->m_connectionPtr);
+		return SUCCEEDED(m_pConnection->m_connectionPtr->CommitTrans());
+	}
+	BOOL ADOTransaction::Rollback()
+	{
+		ASSERT(m_pConnection);
+		ASSERT(m_pConnection->m_connectionPtr);
+		return SUCCEEDED(m_pConnection->m_connectionPtr->RollbackTrans());
+	}
+	void ADOTransaction::Dispose()
+	{
+
+	}
+	//////////////////////////////////////////////////////////////////////////
+	ADODataReader::ADODataReader(ADORecordsetPtr& recordsetPtr)
+		:m_recordsetPtr(recordsetPtr)
+	{
+
+	}
+	BOOL ADODataReader::ReadNext()
+	{
+		ASSERT(m_recordsetPtr);
+		if (SUCCEEDED(m_recordsetPtr->MoveNext()))
+		{
+			m_fields = m_recordsetPtr->GetFields();
+			return TRUE;
 		}
 		return FALSE;
 	}
 
-	BOOL ADOConnection::Close()
+	BOOL ADODataReader::ReadPrevious()
 	{
-		return SUCCEEDED(m_connectionPtr->Close());
+		ASSERT(m_recordsetPtr);
+		if (SUCCEEDED(m_recordsetPtr->MovePrevious()))
+		{
+			m_fields = m_recordsetPtr->GetFields();
+			return TRUE;
+		}
+		return FALSE;
 	}
 
-	IDbCommand* ADOConnection::CreateCommand()
+	BOOL ADODataReader::ReadFirst()
 	{
-		return NULL;
+		ASSERT(m_recordsetPtr);
+		if (SUCCEEDED(m_recordsetPtr->MoveFirst()))
+		{
+			m_fields = m_recordsetPtr->GetFields();
+			return TRUE;
+		}
+		return FALSE;
 	}
 
-	void ADOConnection::Dispose()
+	BOOL ADODataReader::ReadLast()
 	{
-		m_connectionPtr->Release();
+		ASSERT(m_recordsetPtr);
+		if (SUCCEEDED(m_recordsetPtr->MoveLast()))
+		{
+			m_fields = m_recordsetPtr->GetFields();
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	BOOL ADODataReader::Close()
+	{
+		ASSERT(m_recordsetPtr);
+		return SUCCEEDED(m_recordsetPtr->Close());
+	}
+	INT ADODataReader::GetColumnCount()
+	{
+		ASSERT(m_recordsetPtr);
+		ASSERT(m_fields);
+		return m_fields->GetCount();
+	}
+
+	BOOL ADODataReader::GetBoolean(INT i)
+	{
+		_variant_t val = m_fields->GetItem(i)->Value;
+		ASSERT(val.vt == VT_BOOL);
+		return (BOOL)val.boolVal;
+	}
+
+	BYTE ADODataReader::GetByte(INT i)
+	{
+		_variant_t val = m_fields->GetItem(i)->Value;
+		ASSERT(val.vt == VT_UI1);
+		return (BOOL)val.bVal;
+	}
+
+
+	CHAR ADODataReader::GetChar(INT i)
+	{
+		_variant_t val = m_fields->GetItem(i)->Value;
+		ASSERT(val.vt == VT_I1);
+		return val.cVal;
+	}
+
+	BYTE* ADODataReader::GetBlob(INT i)
+	{
+		_variant_t val = m_fields->GetItem(i)->Value;
+		ASSERT(val.vt == VT_BLOB);
+		return (BYTE*)val.parray->pvData;
+	}
+
+	LPCSTR ADODataReader::GetDataTypeName(INT i)
+	{
+		switch (m_fields->GetItem(i)->GetType())
+		{
+		case adEmpty:
+			return "Empty";
+		case adTinyInt:
+			return "TinyInt";
+		case adSmallInt:
+			return "SmallInt";
+		case adInteger:
+			return "Integer";
+		case adBigInt:
+			return "BigInt";
+		case adUnsignedTinyInt:
+			return "UnsignedTinyInt";
+		case adUnsignedSmallInt:
+			return "UnsignedSmallInt";
+		case adUnsignedInt:
+			return "UnsignedInt";
+		case adUnsignedBigInt:
+			return "UnsignedBigInt";
+		case adSingle:
+			return "Single";
+		case adDouble:
+			return "Double";
+		case adCurrency:
+			return "Currency";
+		case adDecimal:
+			return "Decimal";
+		case adNumeric:
+			return "Numeric";
+		case adBoolean:
+			return "Boolean";
+		case adError:
+			return "Error";
+		case adUserDefined:
+			return "UserDefined";
+		case adVariant:
+			return "Variant";
+		case adGUID:
+			return "GUID";
+		case adDate:
+			return "Date";
+		case adDBDate:
+			return "DBDate";
+		case adDBTime:
+			return "DBTime";
+		case adDBTimeStamp:
+			return "DBTimeStamp";
+		case adBSTR:
+			return "BSTR";
+		case adChar:
+			return "Char";
+		case adVarChar:
+			return "VarChar";
+		case adLongVarChar:
+			return "LongVarChar";
+		case adWChar:
+			return "WChar";
+		case adVarWChar:
+			return "VarWChar";
+		case adLongVarWChar:
+			return "LongVarWChar";
+		case adBinary:
+			return "Binary";
+		case adVarBinary:
+			return "VarBinary";
+		case adLongVarBinary:
+			return "LongVarBinary";
+		case adChapter:
+			return "Chapter";
+		case adFileTime:
+			return "FileTime";
+		case adPropVariant:
+			return "PropVariant";
+		case adVarNumeric:
+			return "VarNumeric";
+		case adArray:
+			return "Array";
+		default:
+			return "Unknow";
+		}
+	}
+
+	DATE ADODataReader::GetDateTime(INT i)
+	{
+		_variant_t val = m_fields->GetItem(i)->Value;
+		ASSERT(val.vt == VT_DATE);
+		return val.date;
+	}
+	DECIMAL ADODataReader::GetDecimal(INT i)
+	{
+		_variant_t val = m_fields->GetItem(i)->Value;
+		ASSERT(val.vt == VT_DECIMAL);
+		return val.decVal;
+	}
+	DOUBLE ADODataReader::GetDouble(INT i)
+	{
+		_variant_t val = m_fields->GetItem(i)->Value;
+		ASSERT(val.vt == VT_R8);
+		return val.dblVal;
+	}
+
+	FLOAT ADODataReader::GetFloat(INT i)
+	{
+		_variant_t val = m_fields->GetItem(i)->Value;
+		ASSERT(val.vt == VT_R4);
+		return val.fltVal;
+	}
+
+	SHORT ADODataReader::GetInt16(INT i)
+	{
+		_variant_t val = m_fields->GetItem(i)->Value;
+		ASSERT(val.vt == VT_I2);
+		return val.iVal;
+	}
+
+	INT ADODataReader::GetInt32(INT i)
+	{
+		_variant_t val = m_fields->GetItem(i)->Value;
+		ASSERT(val.vt == VT_INT);
+		return val.intVal;
+	}
+
+	LONG ADODataReader::GetInt64(INT i)
+	{
+		_variant_t val = m_fields->GetItem(i)->Value;
+		ASSERT(val.vt == VT_I8);
+		return val.lVal;
+	}
+
+	LPCSTR ADODataReader::GetName(INT i)
+	{
+		return m_fields->GetItem(i)->GetName();
+	}
+
+	INT ADODataReader::GetOrdinal(LPCSTR pzName)
+	{
+		return 0;
+	}
+
+	LPCSTR ADODataReader::GetString(INT i)
+	{
+		_variant_t val = m_fields->GetItem(i)->Value;
+		ASSERT(val.vt == VT_LPSTR);
+		return (LPCSTR)&val.bstrVal;
+	}
+
+	BOOL ADODataReader::IsDBNull(INT i)
+	{
+		_variant_t val = m_fields->GetItem(i)->Value;
+		return val.vt == VT_NULL;
 	}
 
 }
