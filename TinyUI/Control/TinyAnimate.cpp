@@ -39,12 +39,12 @@ namespace TinyUI
 	BOOL TinyAnimate::Open(LPCTSTR lpszName)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (BOOL)::SendMessage(m_hWND, ACM_OPEN, (WPARAM) ::FindResource(TinyApplication::Instance()->Handle(), lpszName, _T("AVI")), (LPARAM)lpszName);
+		return (BOOL)::SendMessage(m_hWND, ACM_OPEN, (WPARAM) ::FindResource(TinyApplication::GetInstance()->Handle(), lpszName, _T("AVI")), (LPARAM)lpszName);
 	}
 	BOOL TinyAnimate::Open(UINT nID)
 	{
 		ASSERT(::IsWindow(m_hWND));
-		return (BOOL)::SendMessage(m_hWND, ACM_OPEN, (WPARAM) ::FindResource(TinyApplication::Instance()->Handle(), MAKEINTRESOURCE(nID), _T("AVI")), (LPARAM)nID);
+		return (BOOL)::SendMessage(m_hWND, ACM_OPEN, (WPARAM) ::FindResource(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(nID), _T("AVI")), (LPARAM)nID);
 	}
 	BOOL TinyAnimate::Play(UINT nFrom, UINT nTo, UINT nRep)
 	{

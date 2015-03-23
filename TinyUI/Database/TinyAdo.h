@@ -1,6 +1,7 @@
 #pragma once
 #include "../Common/TinyCommon.h"
 #include "../Common/TinyTime.h"
+#include "../Common/TinyCollection.h"
 #include "../Common/TinySingle.h"
 #include "TinyDatabase.h"
 #import "C:/Program Files/Common Files/System/ado/msado15.dll" no_namespace rename("EOF","adoEOF")
@@ -8,6 +9,7 @@ typedef ::_ConnectionPtr ADOConnectionPtr;
 typedef ::_Connection	 ADOConnection;
 typedef ::_RecordsetPtr  ADORecordsetPtr;
 typedef ::_CommandPtr	 ADOCommandPtr;
+typedef ::_ParameterPtr  ADOParameterPtr;
 
 namespace TinyUI
 {
@@ -15,6 +17,8 @@ namespace TinyUI
 	class ADOCommand;
 	class ADODataReader;
 	class ADOTransaction;
+	class ADODataParameter;
+	class ADODataParameters;
 	/// <summary>
 	/// ADO数据库连接
 	/// </summary>
@@ -48,9 +52,10 @@ namespace TinyUI
 	class ADOCommand : public IDbCommand
 	{
 		friend class ADOConnection;
+		friend class ADODataParameters;
 		DISALLOW_COPY_AND_ASSIGN(ADOCommand);
 	private:
-		ADOCommand(ADOConnection* connection);
+		ADOCommand(ADOConnection& connection);
 	public:
 		virtual ~ADOCommand();
 		virtual LPCSTR GetCommandText();
@@ -71,8 +76,9 @@ namespace TinyUI
 		virtual IDbDataReader* ExecuteReader(INT iBehavior);
 		virtual void Dispose();
 	private:
-		ADOCommandPtr	m_commandPtr;
-		ADOConnection*	m_pConnection;
+		ADOCommandPtr		m_commandPtr;
+		ADOConnection&		m_connection;
+		ADODataParameters*	m_pParameters;
 	};
 	/// <summary>
 	/// ADO数据库事务
@@ -82,7 +88,7 @@ namespace TinyUI
 		friend class ADOConnection;
 		DISALLOW_COPY_AND_ASSIGN(ADOTransaction);
 	private:
-		ADOTransaction(ADOConnection* connection, INT iIsolationLevel = (INT)adXactUnspecified);
+		ADOTransaction(ADOConnection& connection, INT iIsolationLevel = (INT)adXactUnspecified);
 	public:
 		virtual IDbConnection* GetConnection();
 		virtual INT GetIsolationLevel();
@@ -90,7 +96,7 @@ namespace TinyUI
 		virtual BOOL Rollback();
 		virtual void Dispose();
 	private:
-		ADOConnection*	m_pConnection;
+		ADOConnection&	m_connection;
 		INT				m_iIsolationLevel;
 	};
 	/// <summary>
@@ -127,7 +133,65 @@ namespace TinyUI
 		virtual LPCSTR GetString(INT i);
 		virtual BOOL IsDBNull(INT i);
 	private:
-		ADORecordsetPtr	m_recordsetPtr;
-		FieldsPtr		m_fields;
+		ADORecordsetPtr&	m_recordsetPtr;
+		FieldsPtr			m_fields;
+	};
+	/// <summary>
+	/// ADO参数集合
+	/// </summary>
+	class ADODataParameters :public IDbDataParameters
+	{
+		friend class ADOCommand;
+		friend class ADODataReader;
+		DISALLOW_COPY_AND_ASSIGN(ADODataParameters);
+	private:
+		ADODataParameters(ADOCommand& command);
+	public:
+		virtual IDbDataParameter* Add(IDbDataParameter* pValue);
+		virtual IDbDataParameter* Add(LPCSTR pzName, VARIANT& pValue);
+		virtual IDbDataParameter* Add(LPCSTR pzName, INT dbType);
+		virtual IDbDataParameter* Add(LPCSTR pzName, INT dbType, INT size);
+		virtual void Remove(IDbDataParameter* value);
+		virtual void RemoveAt(INT index);
+		virtual void RemoveAt(LPCSTR pzName);
+		virtual void RemoveAll();
+		virtual INT IndexOf(LPCSTR pzName);
+		virtual IDbDataParameter* GetParameter(INT index);
+		virtual IDbDataParameter* GetParameter(LPCSTR pzName);
+		virtual BOOL Contains(IDbDataParameter* pValue);
+	private:
+		BOOL	DeleteAll();
+		ADOCommand& m_command;
+		TinyArray<IDbDataParameter*> m_parameters;
+	};
+	/// <summary>
+	/// ADO参数
+	/// </summary>
+	class ADODataParameter : public IDbDataParameter
+	{
+		friend class ADOCommand;
+		friend class ADODataReader;
+		friend class ADODataParameters;
+		DISALLOW_COPY_AND_ASSIGN(ADODataParameter);
+	private:
+		ADODataParameter();
+	public:
+		virtual INT GetDbType();
+		virtual void SetDbType(INT dbTye);
+		virtual INT GetDirection();
+		virtual void SetDirection(INT direction);
+		virtual BOOL IsNullable();
+		virtual LPCSTR GetParameterName();
+		virtual void SetParameterName(LPCSTR pzName);
+		virtual VARIANT& GetValue();
+		virtual void SetValue(VARIANT& s);
+		virtual BYTE GetPrecision();
+		virtual void SetPrecision(BYTE precision);
+		virtual BYTE GetScale();
+		virtual void SetScale(BYTE scale);
+		virtual INT GetSize();
+		virtual void SetSize(INT size);
+	private:
+		ADOParameterPtr	m_parameterPtr;
 	};
 }

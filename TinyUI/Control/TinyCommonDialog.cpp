@@ -272,7 +272,7 @@ namespace TinyUI
 		m_ofn.Flags |= dwFlags | OFN_EXPLORER | OFN_ENABLEHOOK;
 		if (dwFlags & OFN_ENABLETEMPLATE)
 			m_ofn.Flags &= ~OFN_ENABLESIZING;
-		m_ofn.hInstance = TinyApplication::Instance()->Handle();
+		m_ofn.hInstance = TinyApplication::GetInstance()->Handle();
 		if (lpszFileName != NULL)
 			_tcsncpy_s(m_szFileName, _countof(m_szFileName), lpszFileName, _TRUNCATE);
 		if (lpszFilter != NULL)

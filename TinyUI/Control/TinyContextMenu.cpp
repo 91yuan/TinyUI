@@ -409,7 +409,7 @@ namespace TinyUI
 		{
 			m_pMessageHook = ::SetWindowsHookEx(WH_GETMESSAGE,
 				MessageFilterHook,
-				TinyApplication::Instance()->Handle(),
+				TinyApplication::GetInstance()->Handle(),
 				GetCurrentThreadId());
 			return m_pMessageHook != NULL;
 		}

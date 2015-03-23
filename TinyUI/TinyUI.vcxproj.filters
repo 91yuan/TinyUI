@@ -267,6 +267,9 @@
     <ClInclude Include="Database\TinySqlite.h">
       <Filter>头文件\Database</Filter>
     </ClInclude>
+    <ClInclude Include="Common\TinyLogging.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -466,6 +469,9 @@
     </ClCompile>
     <ClCompile Include="Database\TinySqlite.cpp">
       <Filter>源文件\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\TinyLogging.cpp">
+      <Filter>源文件\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

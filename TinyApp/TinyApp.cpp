@@ -577,6 +577,51 @@ TRACE("%d\n", &_array[0]);*/
 //	int from;
 //};
 
+//class Test1
+//{
+//public:
+//	INT m_abc;
+//	Test1();
+//	Test1(INT abc);
+//	Test1(const Test1& obj);
+//	Test1& operator=(const Test1& obj);
+//};
+//Test1::Test1()
+//:m_abc(0)
+//{
+//	TRACE("Test1默认构造函数\n");
+//}
+//Test1::Test1(INT abc)
+//: m_abc(abc)
+//{
+//	TRACE("Test1构造函数\n");
+//}
+//Test1::Test1(const Test1& obj)
+//: m_abc(obj.m_abc)
+//{
+//	TRACE("Test1拷贝构造函数\n");
+//}
+//Test1& Test1::operator = (const Test1& obj)
+//{
+//	m_abc = obj.m_abc;
+//	TRACE("Test1赋值构造函数\n");
+//	return *this;
+//}
+//
+//class Test2
+//{
+//public:
+//	Test2(Test1& test1);
+//	Test1& m_test1;
+//};
+//Test2::Test2(Test1& test1)
+//:m_test1(test1)
+//{
+//	TRACE("Test2构造函数\n");
+//}
+
+#include "Database/TinyAdo.h"
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -584,6 +629,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
+
+	//Test1 test1;
+	//Test2 test2(test1);
+	//Test1& test11 = test1;
 
 	/*struct value_list _list;
 
@@ -608,10 +657,10 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 
-	TinyApplication::Instance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
+	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 
 	TinyMessageLoop theLoop;
-	TinyApplication::Instance()->AddMessageLoop(&theLoop);
+	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
 	TinyVisualHWND uiImpl;
 	uiImpl.Create(NULL, 50, 50, 400, 500);
 	uiImpl.ShowWindow(nCmdShow);
@@ -619,8 +668,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	INT loopRes = theLoop.MessageLoop();
 
-	TinyApplication::Instance()->RemoveMessageLoop();
-	TinyApplication::Instance()->Uninitialize();
+	TinyApplication::GetInstance()->RemoveMessageLoop();
+	TinyApplication::GetInstance()->Uninitialize();
 
 	OleUninitialize();
 

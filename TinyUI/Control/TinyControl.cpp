@@ -29,7 +29,7 @@ namespace TinyUI
 		BOOL bRes = FALSE;
 		if (bHook)
 		{
-			m_pHook = SetWindowsHookEx(WH_CBT, CbtFilterHook, TinyApplication::Instance()->Handle(), GetCurrentThreadId());
+			m_pHook = SetWindowsHookEx(WH_CBT, CbtFilterHook, TinyApplication::GetInstance()->Handle(), GetCurrentThreadId());
 			if (m_pHook != NULL && TinyWindow::Create(hParent, x, y, cx, cy))
 			{
 				::SendMessage(m_hWND, WM_SETFONT, (WPARAM)(HFONT)GetStockObject(DEFAULT_GUI_FONT), MAKELPARAM(TRUE, 0));

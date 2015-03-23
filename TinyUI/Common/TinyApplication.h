@@ -32,7 +32,7 @@ namespace TinyUI
 		~TinyApplication();
 	public:
 		//单例模式
-		static TinyApplication* Instance() throw();
+		static TinyApplication* GetInstance() throw();
 		//分静态成员
 		HINSTANCE Handle() throw();
 		BOOL AddMessageLoop(TinyMessageLoop* pMsgLoop);

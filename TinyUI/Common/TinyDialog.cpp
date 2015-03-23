@@ -125,7 +125,7 @@ namespace TinyUI
 			return NULL;
 		}
 		m_bModal = FALSE;
-		HWND hWND = ::CreateDialogParam(TinyApplication::Instance()->Handle(), lpTemplateName, hParent, TinyDialog::BeginLoop, (LPARAM)this);
+		HWND hWND = ::CreateDialogParam(TinyApplication::GetInstance()->Handle(), lpTemplateName, hParent, TinyDialog::BeginLoop, (LPARAM)this);
 		return Attach(hWND);
 	}
 	BOOL TinyDialog::Create(HWND hParent, WORD wInteger)
@@ -166,7 +166,7 @@ namespace TinyUI
 			return -1;
 		}
 		m_bModal = TRUE;
-		m_iDlgResult = ::DialogBoxParam(TinyApplication::Instance()->Handle(), lpTemplateName, hParent, BeginLoop, (LPARAM)this);
+		m_iDlgResult = ::DialogBoxParam(TinyApplication::GetInstance()->Handle(), lpTemplateName, hParent, BeginLoop, (LPARAM)this);
 		return m_iDlgResult;
 	}
 	BOOL TinyDialog::MapDialogRect(LPRECT lpRect)

@@ -106,4 +106,46 @@ namespace TinyUI
 		virtual BOOL ReadLast();
 		virtual BOOL Close();
 	};
+	/// <summary>
+	/// Command 对象的参数
+	/// </summary>
+	class IDbDataParameter
+	{
+	public:
+		virtual INT GetDbType() = 0;
+		virtual void SetDbType(INT dbTye) = 0;
+		virtual INT GetDirection() = 0;
+		virtual void SetDirection(INT direction) = 0;
+		virtual BOOL IsNullable() = 0;
+		virtual LPCSTR GetParameterName() = 0;
+		virtual void SetParameterName(LPCSTR pzName) = 0;
+		virtual VARIANT& GetValue() = 0;
+		virtual void SetValue(VARIANT& s) = 0;
+		virtual BYTE GetPrecision() = 0;
+		virtual void SetPrecision(BYTE precision) = 0;
+		virtual BYTE GetScale() = 0;
+		virtual void SetScale(BYTE scale) = 0;
+		virtual INT GetSize() = 0;
+		virtual void SetSize(INT size) = 0;
+	};
+	/// <summary>
+	/// Command 对象的参数集合
+	/// </summary>
+	class IDbDataParameters
+	{
+	public:
+		virtual IDbDataParameter* Add(IDbDataParameter* pValue) = 0;
+		virtual IDbDataParameter* Add(LPCSTR pzName, VARIANT& pValue) = 0;
+		virtual IDbDataParameter* Add(LPCSTR pzName, INT dbType) = 0;
+		virtual IDbDataParameter* Add(LPCSTR pzName, INT dbType, INT size) = 0;
+		virtual IDbDataParameter* Add(LPCSTR pzName, INT dbType, INT size, LPCSTR pzColumnName);
+		virtual void Remove(IDbDataParameter* value) = 0;
+		virtual void RemoveAt(INT index) = 0;
+		virtual void RemoveAt(LPCSTR pzName) = 0;
+		virtual void RemoveAll() = 0;
+		virtual INT IndexOf(LPCSTR pzName) = 0;
+		virtual IDbDataParameter* GetParameter(INT index) = 0;
+		virtual IDbDataParameter* GetParameter(LPCSTR pzName) = 0;
+		virtual BOOL Contains(IDbDataParameter* pValue) = 0;
+	};
 }

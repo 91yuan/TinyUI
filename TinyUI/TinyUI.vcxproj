@@ -81,6 +81,7 @@
     <ClInclude Include="Common\TinyDialog.h" />
     <ClInclude Include="Common\TinyEvent.h" />
     <ClInclude Include="Common\TinyHandleMap.h" />
+    <ClInclude Include="Common\TinyLogging.h" />
     <ClInclude Include="Common\TinyModule.h" />
     <ClInclude Include="Common\TinyMsg.h" />
     <ClInclude Include="Common\TinyTreeBox.h" />
@@ -148,6 +149,7 @@
     <ClCompile Include="Common\TinyDialog.cpp" />
     <ClCompile Include="Common\TinyEvent.cpp" />
     <ClCompile Include="Common\TinyHandleMap.cpp" />
+    <ClCompile Include="Common\TinyLogging.cpp" />
     <ClCompile Include="Common\TinyModule.cpp" />
     <ClCompile Include="Common\TinyMsg.cpp" />
     <ClCompile Include="Common\TinyTreeBox.cpp" />

@@ -54,7 +54,7 @@ namespace TinyUI
 	}
 	LPCSTR TinyWindow::RetrieveClass(LPCTSTR lpszClass)
 	{
-		HINSTANCE hInstance = TinyApplication::Instance()->Handle();
+		HINSTANCE hInstance = TinyApplication::GetInstance()->Handle();
 		ASSERT(hInstance != NULL);
 		ATOM atom = 0;
 		WNDCLASSEX class_ex;
@@ -94,7 +94,7 @@ namespace TinyUI
 			SetLastError(ERROR_OUTOFMEMORY);
 			return FALSE;
 		}
-		HINSTANCE hInstance = TinyApplication::Instance()->Handle();
+		HINSTANCE hInstance = TinyApplication::GetInstance()->Handle();
 		if (hInstance == NULL)
 		{
 			SetLastError(ERROR_INVALID_DATA);
@@ -208,14 +208,14 @@ namespace TinyUI
 			{
 			case WM_CREATE:
 			{
-				TinyMessageLoop* pLoop = TinyApplication::Instance()->GetMessageLoop();
+				TinyMessageLoop* pLoop = TinyApplication::GetInstance()->GetMessageLoop();
 				ASSERT(pLoop != NULL);
 				pLoop->AddMessageFilter(_this);
 			}
 			break;
 			case WM_DESTROY:
 			{
-				TinyMessageLoop* pLoop = TinyApplication::Instance()->GetMessageLoop();
+				TinyMessageLoop* pLoop = TinyApplication::GetInstance()->GetMessageLoop();
 				ASSERT(pLoop != NULL);
 				pLoop->RemoveMessageFilter(_this);
 			}

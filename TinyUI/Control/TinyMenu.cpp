@@ -124,11 +124,11 @@ namespace TinyUI
 	}
 	BOOL TinyMenu::LoadMenu(LPCTSTR lpszResourceName)
 	{
-		return Attach(::LoadMenu((HINSTANCE)::FindResource(TinyApplication::Instance()->Handle(), lpszResourceName, RT_MENU), lpszResourceName));
+		return Attach(::LoadMenu((HINSTANCE)::FindResource(TinyApplication::GetInstance()->Handle(), lpszResourceName, RT_MENU), lpszResourceName));
 	}
 	BOOL TinyMenu::LoadMenu(UINT nIDResource)
 	{
-		return Attach(::LoadMenu((HINSTANCE)::FindResource(TinyApplication::Instance()->Handle(), MAKEINTRESOURCE(nIDResource), RT_MENU), MAKEINTRESOURCE(nIDResource)));
+		return Attach(::LoadMenu((HINSTANCE)::FindResource(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(nIDResource), RT_MENU), MAKEINTRESOURCE(nIDResource)));
 	}
 	BOOL TinyMenu::LoadMenuIndirect(const void* lpMenuTemplate)
 	{

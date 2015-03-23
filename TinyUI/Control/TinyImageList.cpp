@@ -23,11 +23,11 @@ namespace TinyUI
 	}
 	BOOL TinyImageList::Create(UINT nBitmapID, INT cx, INT nGrow, COLORREF crMask)
 	{
-		return Attach(::ImageList_LoadBitmap(TinyApplication::Instance()->Handle(), MAKEINTRESOURCE(nBitmapID), cx, nGrow, crMask));
+		return Attach(::ImageList_LoadBitmap(TinyApplication::GetInstance()->Handle(), MAKEINTRESOURCE(nBitmapID), cx, nGrow, crMask));
 	}
 	BOOL TinyImageList::Create(LPCTSTR lpszBitmapID, INT cx, INT nGrow, COLORREF crMask)
 	{
-		return Attach(::ImageList_LoadBitmap(TinyApplication::Instance()->Handle(), lpszBitmapID, cx, nGrow, crMask));
+		return Attach(::ImageList_LoadBitmap(TinyApplication::GetInstance()->Handle(), lpszBitmapID, cx, nGrow, crMask));
 	}
 
 	INT TinyImageList::GetImageCount() const
