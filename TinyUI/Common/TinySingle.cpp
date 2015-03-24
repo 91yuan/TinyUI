@@ -16,6 +16,10 @@ namespace TinyUI
 		EnterCriticalSection(&section);
 		return S_OK;
 	}
+	BOOL TinyCriticalSection::Try() throw()
+	{
+		return ::TryEnterCriticalSection(&section);
+	}
 	HRESULT TinyCriticalSection::Unlock() throw()
 	{
 		LeaveCriticalSection(&section);
@@ -23,17 +27,8 @@ namespace TinyUI
 	}
 	HRESULT TinyCriticalSection::Initialize() throw()
 	{
-		HRESULT hRes = E_FAIL;
-		__try
-		{
-			InitializeCriticalSection(&section);
-			hRes = S_OK;
-		}
-		__except (STATUS_NO_MEMORY == GetExceptionCode())
-		{
-			hRes = E_OUTOFMEMORY;
-		}
-		return hRes;
+		InitializeCriticalSection(&section);
+		return S_OK;
 	}
 	HRESULT TinyCriticalSection::Uninitialize() throw()
 	{
@@ -41,10 +36,10 @@ namespace TinyUI
 		return S_OK;
 	}
 	/////////////////////////////////////////////////////////////////////////
-	TinyEvent::TinyEvent(BOOL bInitiallyOwn,BOOL bManualReset,LPCTSTR pstrName,LPSECURITY_ATTRIBUTES lpsaAttribute)
+	TinyEvent::TinyEvent(BOOL bInitiallyOwn, BOOL bManualReset, LPCTSTR pstrName, LPSECURITY_ATTRIBUTES lpsaAttribute)
 		:m_hEvent(NULL)
 	{
-		m_hEvent = ::CreateEvent(lpsaAttribute, bManualReset,bInitiallyOwn, pstrName);
+		m_hEvent = ::CreateEvent(lpsaAttribute, bManualReset, bInitiallyOwn, pstrName);
 	}
 	TinyEvent::~TinyEvent()
 	{
@@ -62,13 +57,13 @@ namespace TinyUI
 	{
 		return m_hEvent;
 	}
-	BOOL TinyEvent::CreateEvent(BOOL bInitiallyOwn,BOOL bManualReset,LPCTSTR lpszNAme,LPSECURITY_ATTRIBUTES lpsaAttribute)
+	BOOL TinyEvent::CreateEvent(BOOL bInitiallyOwn, BOOL bManualReset, LPCTSTR lpszNAme, LPSECURITY_ATTRIBUTES lpsaAttribute)
 	{
 		m_hEvent = ::CreateEvent(lpsaAttribute, bManualReset,
 			bInitiallyOwn, lpszNAme);
 		return m_hEvent == NULL ? FALSE : TRUE;
 	}
-	BOOL TinyEvent::OpenEvent(DWORD dwDesiredAccess,BOOL bInheritHandle,LPCTSTR lpName)
+	BOOL TinyEvent::OpenEvent(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCTSTR lpName)
 	{
 		m_hEvent = ::OpenEvent(dwDesiredAccess, bInheritHandle, lpName);
 		return m_hEvent == NULL ? FALSE : TRUE;
@@ -115,7 +110,7 @@ namespace TinyUI
 			m_hMutex = NULL;
 		}
 	}
-	BOOL TinyMutex::Open(DWORD dwDesiredAccess,BOOL bInheritHandle,LPCTSTR lpName)
+	BOOL TinyMutex::Open(DWORD dwDesiredAccess, BOOL bInheritHandle, LPCTSTR lpName)
 	{
 		m_hMutex = ::OpenMutex(dwDesiredAccess, bInheritHandle, lpName);
 		return m_hMutex == NULL ? FALSE : TRUE;
@@ -141,5 +136,35 @@ namespace TinyUI
 	{
 		ASSERT(m_hMutex != NULL);
 		return ::ReleaseMutex(m_hMutex);
+	}
+	//////////////////////////////////////////////////////////////////////////
+	TinyLock::TinyLock()
+	{
+		m_section.Initialize();
+	}
+	TinyLock::~TinyLock()
+	{
+		m_section.Uninitialize();
+	}
+	void TinyLock::Acquire()
+	{
+		m_section.Lock();
+	}
+	void TinyLock::Release()
+	{
+		m_section.Unlock();
+	}
+	BOOL TinyLock::Try()
+	{
+		return m_section.Try();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	TinyAutoLock::TinyAutoLock(TinyLock& lock) : m_lock(lock)
+	{
+		m_lock.Acquire();
+	}
+	TinyAutoLock::~TinyAutoLock()
+	{
+		m_lock.Release();
 	}
 };
