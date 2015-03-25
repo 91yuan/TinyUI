@@ -8,7 +8,7 @@
 #include <io.h>
 #pragma comment(lib, "dbghelp.lib")
 /************************************************************************/
-/* Google Chrome日志类 我只是个搬运工                                     */
+/* Google Chrome日志类 我只是个搬运工                                   */
 /************************************************************************/
 namespace TinyUI
 {
@@ -34,6 +34,7 @@ namespace TinyUI
 	/// </summary>
 	class StackTrace
 	{
+		DISALLOW_COPY_AND_ASSIGN(StackTrace);
 	public:
 		StackTrace();
 		StackTrace(const void* const* trace, size_t count);

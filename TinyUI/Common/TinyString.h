@@ -70,6 +70,13 @@ namespace TinyUI
 		size_t	_Mysize;
 		size_t	_Myres;
 	};
+	//////////////////////////////////////////////////////////////////////////
+	std::string WStringToString(const std::wstring str, const DWORD dwType = CP_ACP);
+	std::wstring StringToWString(const std::string str, const DWORD dwType = CP_ACP);
+	std::string AnsiToUtf8(const std::string str);
+	std::string Utf8ToAnsi(const std::string str);
+	std::wstring UTF8ToWide(const std::string& s);
+	std::string WideToUTF8(const std::wstring& wide);
 }
 
 

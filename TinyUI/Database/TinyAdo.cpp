@@ -8,7 +8,7 @@ namespace TinyUI
 		m_pCommand(NULL),
 		m_pTransaction(NULL)
 	{
-		m_connectionPtr.CreateInstance(__uuidof(Connection));
+		m_connectionPtr.CreateInstance(__uuidof(ADODB::Connection));
 	}
 	ADOConnection::~ADOConnection()
 	{
@@ -83,14 +83,34 @@ namespace TinyUI
 	BOOL ADOConnection::Open()
 	{
 		ASSERT(m_connectionPtr);
-		return SUCCEEDED(m_connectionPtr->Open("", "", "", adModeUnknown));
+		BOOL bRes = FALSE;
+		try
+		{
+			m_connectionPtr->Provider = "SQLNCLI10";
+			bRes = SUCCEEDED(m_connectionPtr->Open("", "", "", adModeUnknown));
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
+		}
+		return bRes;
 	}
 	BOOL ADOConnection::Close()
 	{
 		ASSERT(m_connectionPtr);
-		BOOL bRes = SUCCEEDED(m_connectionPtr->Close());
-		SAFE_DELETE(m_pCommand);
-		SAFE_DELETE(m_pTransaction);
+		BOOL bRes = FALSE;
+		try
+		{
+			bRes = SUCCEEDED(m_connectionPtr->Close());
+			SAFE_DELETE(m_pCommand);
+			SAFE_DELETE(m_pTransaction);
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
+		}
 		return bRes;
 	}
 	IDbCommand* ADOConnection::CreateCommand()
@@ -110,10 +130,32 @@ namespace TinyUI
 	{
 		if (m_connectionPtr != NULL)
 		{
-			m_connectionPtr->Close();
-			SAFE_DELETE(m_pCommand);
-			SAFE_DELETE(m_pTransaction);
+			try
+			{
+				m_connectionPtr->Close();
+				SAFE_DELETE(m_pCommand);
+				SAFE_DELETE(m_pTransaction);
+			}
+			catch (_com_error& e)
+			{
+				TRACE(e.Description());
+				TRACE("\n");
+			}
 		}
+	}
+	INT	ADOConnection::GetErrors(LPSTR pzError, INT size)
+	{
+		ASSERT(m_connectionPtr);
+		TinyString str;
+		INT count = m_connectionPtr->Errors->Count;
+		for (INT i = 0; i < count; i++)
+		{
+			ErrorPtr errorPtr = m_connectionPtr->Errors->GetItem(i);
+			TinyString desc = TinyString::Format("Number:%d,SQLState:%s,Desc:%s\n", errorPtr->GetNumber(), errorPtr->GetSQLState(), errorPtr->GetDescription());
+			str += desc;
+		}
+		strcpy_s(pzError, size, str.STR());
+		return str.GetSize();
 	}
 	//////////////////////////////////////////////////////////////////////////
 	ADOCommand::ADOCommand(ADOConnection& connection)
@@ -541,6 +583,11 @@ namespace TinyUI
 		m_parameterPtr->PutSize(size);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	ADODataParameters::ADODataParameters(ADOCommand& command)
+		:m_command(command)
+	{
+
+	}
 	IDbDataParameter* ADODataParameters::Add(IDbDataParameter* value)
 	{
 		ASSERT(value);

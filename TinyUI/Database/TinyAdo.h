@@ -4,12 +4,13 @@
 #include "../Common/TinyCollection.h"
 #include "../Common/TinySingle.h"
 #include "TinyDatabase.h"
-#import "C:/Program Files/Common Files/System/ado/msado15.dll" no_namespace rename("EOF","adoEOF")
-typedef ::_ConnectionPtr ADOConnectionPtr;
-typedef ::_Connection	 ADOConnection;
-typedef ::_RecordsetPtr  ADORecordsetPtr;
-typedef ::_CommandPtr	 ADOCommandPtr;
-typedef ::_ParameterPtr  ADOParameterPtr;
+#import "C:\Program Files\Common Files\System\ado\msado15.dll" rename("EOF", "EndOfFile") rename_namespace("ADODB")
+using namespace ADODB;
+
+typedef _ConnectionPtr	ADOConnectionPtr;
+typedef _RecordsetPtr	ADORecordsetPtr;
+typedef _CommandPtr		ADOCommandPtr;
+typedef _ParameterPtr	ADOParameterPtr;
 
 namespace TinyUI
 {
@@ -40,7 +41,8 @@ namespace TinyUI
 		virtual BOOL Close();
 		virtual	LONG GetConnectionState();
 		virtual IDbCommand* CreateCommand();
-		virtual void Dispose();
+		virtual void	Dispose();
+		virtual INT		GetErrors(LPSTR pzError, INT size);
 	private:
 		ADOConnectionPtr	m_connectionPtr;
 		ADOCommand*			m_pCommand;

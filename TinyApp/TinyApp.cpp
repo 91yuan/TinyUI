@@ -5,10 +5,15 @@
 #include "TinyApp.h"
 #include "Control/TinyFrameUI.h"
 #include "Windowless/TinyVisualHWND.h"
+#include "Database/TinyAdo.h"
 
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
 #include <vector>
+
+#pragma region oldcode
+
+
 #pragma region old
 //template <typename R>
 //class FunctionBase0
@@ -619,6 +624,7 @@ TRACE("%d\n", &_array[0]);*/
 //{
 //	TRACE("Test2¹¹Ôìº¯Êý\n");
 //}
+#pragma endregion
 
 #include "Database/TinyAdo.h"
 
@@ -629,6 +635,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
+
+
 
 	//Test1 test1;
 	//Test2 test2(test1);
@@ -655,13 +663,21 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	HRESULT hRes = OleInitialize(NULL);
 
+	ADOConnection m_connection;
+	m_connection.SetConnectionString("Data Source=YF-D110;Initial Catalog=MVC;User ID=sa;Password=123456");
+	m_connection.Open();
+	IDbCommand* ps = m_connection.CreateCommand();
+	IDbDataParameter* parame1 = ps->CreateParameter();
+	parame1->SetDbType((INT)adVarChar);
+	parame1->SetParameterName("Name");
+
 	::DefWindowProc(NULL, 0, 0, 0L);
 
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	TinyVisualHWND uiImpl;
+	TinyFrameUI uiImpl;
 	uiImpl.Create(NULL, 50, 50, 400, 500);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();

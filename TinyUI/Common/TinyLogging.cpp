@@ -1,45 +1,14 @@
 #include "../stdafx.h"
 #include "TinyLogging.h"
+#include <algorithm>
+#include <cstring>
+#include <ctime>
+#include <iomanip>
+#include <ostream>
+#include <string>
 
 namespace TinyUI
 {
-	LPTOP_LEVEL_EXCEPTION_FILTER g_previous_filter = NULL;
-	long WINAPI StackDumpExceptionFilter(EXCEPTION_POINTERS* info)
-	{
-		StackTrace(info).Print();
-		if (g_previous_filter)
-			return g_previous_filter(info);
-		return EXCEPTION_CONTINUE_SEARCH;
-	}
-	void RouteStdioToConsole()
-	{
-		if (_fileno(stdout) >= 0 || _fileno(stderr) >= 0)
-			return;
-		if (!AttachConsole(ATTACH_PARENT_PROCESS))
-		{
-			unsigned int result = GetLastError();
-			if (result == ERROR_ACCESS_DENIED)
-				return;
-			if (result == ERROR_GEN_FAILURE)
-				return;
-			AllocConsole();
-		}
-		enum { kOutputBufferSize = 64 * 1024 };
-
-		FILE* pCout;
-		if (freopen_s(&pCout, "CONOUT$", "w", stdout))
-		{
-			setvbuf(stdout, NULL, _IOLBF, kOutputBufferSize);
-			_dup2(_fileno(stdout), 1);
-		}
-		if (freopen_s(&pCout, "CONOUT$", "w", stderr))
-		{
-			setvbuf(stderr, NULL, _IOLBF, kOutputBufferSize);
-			_dup2(_fileno(stderr), 2);
-		}
-		std::ios::sync_with_stdio();
-	}
-	//////////////////////////////////////////////////////////////////////////
 	SymbolContext::SymbolContext() : m_error(ERROR_SUCCESS)
 	{
 		SymSetOptions(SYMOPT_DEFERRED_LOADS |
@@ -181,11 +150,11 @@ namespace TinyUI
 	{
 		SymbolContext* context = SymbolContext::GetInstance();
 		DWORD error = context->GetError();
-		if (error != ERROR_SUCCESS) 
+		if (error != ERROR_SUCCESS)
 		{
 			(*os) << "Error initializing symbols (" << error
 				<< ").  Dumping unresolved backtrace:\n";
-			for (size_t i = 0; (i < m_count) && os->good(); ++i) 
+			for (size_t i = 0; (i < m_count) && os->good(); ++i)
 			{
 				(*os) << "\t" << m_trace[i] << "\n";
 			}

@@ -36,7 +36,7 @@ namespace TinyUI
 		virtual BOOL			Close() = 0;
 		virtual	LONG			GetConnectionState() = 0;
 		virtual IDbCommand*		CreateCommand() = 0;
-		virtual LPCSTR			GetErrors() = 0;
+		virtual INT				GetErrors(LPSTR pzError, INT size) = 0;
 	};
 	/// <summary>
 	/// 数据库事务
@@ -100,11 +100,11 @@ namespace TinyUI
 	class IDbDataReader :public IDbDataRow
 	{
 	public:
-		virtual BOOL ReadNext();
-		virtual BOOL ReadPrevious();
-		virtual BOOL ReadFirst();
-		virtual BOOL ReadLast();
-		virtual BOOL Close();
+		virtual BOOL ReadNext() = 0;
+		virtual BOOL ReadPrevious() = 0;
+		virtual BOOL ReadFirst() = 0;
+		virtual BOOL ReadLast() = 0;
+		virtual BOOL Close() = 0;
 	};
 	/// <summary>
 	/// Command 对象的参数
@@ -138,7 +138,6 @@ namespace TinyUI
 		virtual IDbDataParameter* Add(LPCSTR pzName, VARIANT& pValue) = 0;
 		virtual IDbDataParameter* Add(LPCSTR pzName, INT dbType) = 0;
 		virtual IDbDataParameter* Add(LPCSTR pzName, INT dbType, INT size) = 0;
-		virtual IDbDataParameter* Add(LPCSTR pzName, INT dbType, INT size, LPCSTR pzColumnName);
 		virtual void Remove(IDbDataParameter* value) = 0;
 		virtual void RemoveAt(INT index) = 0;
 		virtual void RemoveAt(LPCSTR pzName) = 0;
