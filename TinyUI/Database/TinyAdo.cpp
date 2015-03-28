@@ -4,20 +4,14 @@
 namespace TinyUI
 {
 	ADOConnection::ADOConnection()
-		:m_connectionPtr(NULL),
-		m_pCommand(NULL),
-		m_pTransaction(NULL)
+		:m_connectionPtr(NULL)
 	{
 		m_connectionPtr.CreateInstance(__uuidof(ADODB::Connection));
 	}
 	ADOConnection::~ADOConnection()
 	{
-		if (m_connectionPtr != NULL)
-		{
-			m_connectionPtr->Close();
-			SAFE_DELETE(m_pCommand);
-			SAFE_DELETE(m_pTransaction);
-		}
+		TRACE("析构ADOConnection\n");
+		Dispose();
 	}
 	LPCSTR ADOConnection::GetConnectionString()
 	{
@@ -50,17 +44,11 @@ namespace TinyUI
 		TinyCriticalSection section;
 		section.Initialize();
 		section.Lock();
-		if (m_pTransaction == NULL)
-		{
-			m_pTransaction = new ADOTransaction(*this);
-		}
+		m_transaction.Reset(new ADOTransaction(*this));
+		m_connectionPtr->BeginTrans();
 		section.Unlock();
 		section.Uninitialize();
-		if (m_pTransaction)
-		{
-			m_connectionPtr->BeginTrans();
-		}
-		return m_pTransaction;
+		return m_transaction;
 	}
 	IDbTransaction* ADOConnection::BeginTransaction(INT iIsolationLevel)
 	{
@@ -68,17 +56,11 @@ namespace TinyUI
 		TinyCriticalSection section;
 		section.Initialize();
 		section.Lock();
-		if (m_pTransaction == NULL)
-		{
-			m_pTransaction = new ADOTransaction(*this, iIsolationLevel);
-		}
+		m_transaction.Reset(new ADOTransaction(*this));
+		m_connectionPtr->BeginTrans();
 		section.Unlock();
 		section.Uninitialize();
-		if (m_pTransaction)
-		{
-			m_connectionPtr->BeginTrans();
-		}
-		return m_pTransaction;
+		return m_transaction;
 	}
 	BOOL ADOConnection::Open()
 	{
@@ -87,7 +69,10 @@ namespace TinyUI
 		try
 		{
 			m_connectionPtr->Provider = "SQLNCLI10";
-			bRes = SUCCEEDED(m_connectionPtr->Open("", "", "", adModeUnknown));
+			m_connectionPtr->CursorLocation = adUseClient; //游标类型   
+			m_connectionPtr->CommandTimeout = 6000;
+			if (!m_connectionPtr->State)
+				bRes = SUCCEEDED(m_connectionPtr->Open("", "", "", adModeUnknown));
 		}
 		catch (_com_error& e)
 		{
@@ -99,53 +84,59 @@ namespace TinyUI
 	BOOL ADOConnection::Close()
 	{
 		ASSERT(m_connectionPtr);
-		BOOL bRes = FALSE;
 		try
 		{
-			bRes = SUCCEEDED(m_connectionPtr->Close());
-			SAFE_DELETE(m_pCommand);
-			SAFE_DELETE(m_pTransaction);
+			if (m_connectionPtr->State)
+			{
+				return SUCCEEDED(m_connectionPtr->Close());
+			}
 		}
 		catch (_com_error& e)
 		{
 			TRACE(e.Description());
 			TRACE("\n");
 		}
-		return bRes;
+		return FALSE;
 	}
 	IDbCommand* ADOConnection::CreateCommand()
 	{
-		TinyCriticalSection section;
-		section.Initialize();
-		section.Lock();
-		if (m_pCommand == NULL)
+		try
 		{
-			m_pCommand = new ADOCommand(*this);
+			TinyCriticalSection section;
+			section.Initialize();
+			section.Lock();
+			m_command.Reset(new ADOCommand(*this));
+			section.Unlock();
+			section.Uninitialize();
+			return m_command;
 		}
-		section.Unlock();
-		section.Uninitialize();
-		return m_pCommand;
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
+		}
+		return NULL;
 	}
 	void ADOConnection::Dispose()
 	{
-		if (m_connectionPtr != NULL)
+		try
 		{
-			try
+			if (m_connectionPtr != NULL &&
+				m_connectionPtr->State)
 			{
 				m_connectionPtr->Close();
-				SAFE_DELETE(m_pCommand);
-				SAFE_DELETE(m_pTransaction);
 			}
-			catch (_com_error& e)
-			{
-				TRACE(e.Description());
-				TRACE("\n");
-			}
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
 		}
 	}
 	INT	ADOConnection::GetErrors(LPSTR pzError, INT size)
 	{
 		ASSERT(m_connectionPtr);
+		m_connectionPtr->Errors->Clear();
 		TinyString str;
 		INT count = m_connectionPtr->Errors->Count;
 		for (INT i = 0; i < count; i++)
@@ -161,19 +152,21 @@ namespace TinyUI
 	ADOCommand::ADOCommand(ADOConnection& connection)
 		:m_commandPtr(NULL),
 		m_connection(connection),
-		m_pParameters(NULL)
+		m_parameters(NULL)
 	{
 		if (SUCCEEDED(m_commandPtr.CreateInstance(__uuidof(Command))))
 		{
 			m_commandPtr->ActiveConnection = m_connection.m_connectionPtr;
-			m_pParameters = new ADODataParameters(*this);
+			m_commandPtr->NamedParameters = TRUE;
+			m_parameters.Reset(new ADODataParameters(*this));
 		}
 	}
 	ADOCommand::~ADOCommand()
 	{
-		if (m_pParameters != NULL)
+		TRACE("析构ADOCommand\n");
+		if (m_parameters != NULL)
 		{
-			m_pParameters->RemoveAll();
+			m_parameters->RemoveAll();
 		}
 	}
 	LPCSTR ADOCommand::GetCommandText()
@@ -211,11 +204,11 @@ namespace TinyUI
 	}
 	IDbDataParameters* ADOCommand::GetParameters()
 	{
-		return m_pParameters;
+		return m_parameters;
 	}
 	IDbTransaction* ADOCommand::GetTransaction()
 	{
-		return m_connection.m_pTransaction;
+		return m_connection.m_transaction;
 	}
 	BOOL ADOCommand::Cancel()
 	{
@@ -224,34 +217,46 @@ namespace TinyUI
 	}
 	IDbDataParameter* ADOCommand::CreateParameter()
 	{
-		IDbDataParameter* ps = new ADODataParameter();
-		if (ps != NULL)
-		{
-			return m_pParameters->Add(ps);
-		}
-		return NULL;
+		return new ADODataParameter(m_commandPtr);
 	}
 	INT ADOCommand::ExecuteNonQuery()
 	{
 		ASSERT(m_commandPtr);
-		ADORecordsetPtr recordsetPtr = m_commandPtr->Execute(NULL, NULL, m_commandPtr->CommandType);
-		INT recordCount = 0;
-		if (recordsetPtr != NULL)
+		VARIANT vi = { 0 };
+		try
 		{
-			recordCount = recordsetPtr->GetRecordCount();
-			recordsetPtr->Close();
+			VARIANT vi = { 0 };
+			ADORecordsetPtr recordsetPtr = m_commandPtr->Execute(&vi, NULL, (LONG)m_commandPtr->CommandType);
+			return vi.lVal;
 		}
-		return recordCount;
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
+		}
+		return vi.lVal;
 	}
 	IDbDataReader* ADOCommand::ExecuteReader(INT iBehavior)
 	{
-		return new ADODataReader(m_commandPtr->Execute(NULL, NULL, m_commandPtr->CommandType));
+		try
+		{
+			VARIANT vi = { 0 };
+			ADORecordsetPtr recordsetPtr = m_commandPtr->Execute(&vi, NULL, m_commandPtr->CommandType);
+			m_datareader.Reset(new ADODataReader(recordsetPtr));
+			return m_datareader;
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
+		}
+		return NULL;
 	}
 	void ADOCommand::Dispose()
 	{
-		if (m_pParameters != NULL)
+		if (m_parameters != NULL)
 		{
-			m_pParameters->RemoveAll();
+			m_parameters->RemoveAll();
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -260,6 +265,10 @@ namespace TinyUI
 		m_iIsolationLevel(iIsolationLevel)
 	{
 		m_connection.m_connectionPtr->IsolationLevel = (IsolationLevelEnum)iIsolationLevel;
+	}
+	ADOTransaction::~ADOTransaction()
+	{
+		TRACE("析构ADOTransaction\n");
 	}
 	IDbConnection* ADOTransaction::GetConnection()
 	{
@@ -283,54 +292,110 @@ namespace TinyUI
 	}
 	//////////////////////////////////////////////////////////////////////////
 	ADODataReader::ADODataReader(ADORecordsetPtr& recordsetPtr)
-		:m_recordsetPtr(recordsetPtr)
 	{
-
+		if (SUCCEEDED(m_recordsetPtr.CreateInstance(__uuidof(Recordset))))
+		{
+			m_recordsetPtr = recordsetPtr.GetInterfacePtr();
+		}
+	}
+	ADODataReader::~ADODataReader()
+	{
+		m_recordsetPtr->Release();
+		TRACE("析构ADODataReader\n");
 	}
 	BOOL ADODataReader::ReadNext()
 	{
 		ASSERT(m_recordsetPtr);
-		if (SUCCEEDED(m_recordsetPtr->MoveNext()))
+		try
 		{
-			m_fields = m_recordsetPtr->GetFields();
-			return TRUE;
+			if (m_recordsetPtr->State &&
+				SUCCEEDED(m_recordsetPtr->MoveNext()))
+			{
+				m_fields = m_recordsetPtr->GetFields();
+				return !m_recordsetPtr->EndOfFile;
+			}
 		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
+		}
+
 		return FALSE;
 	}
 	BOOL ADODataReader::ReadPrevious()
 	{
 		ASSERT(m_recordsetPtr);
-		if (SUCCEEDED(m_recordsetPtr->MovePrevious()))
+		try
 		{
-			m_fields = m_recordsetPtr->GetFields();
-			return TRUE;
+			if (m_recordsetPtr->State
+				&& SUCCEEDED(m_recordsetPtr->MovePrevious()))
+			{
+				m_fields = m_recordsetPtr->GetFields();
+				return !m_recordsetPtr->EndOfFile;
+			}
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
 		}
 		return FALSE;
 	}
 	BOOL ADODataReader::ReadFirst()
 	{
 		ASSERT(m_recordsetPtr);
-		if (SUCCEEDED(m_recordsetPtr->MoveFirst()))
+		try
 		{
-			m_fields = m_recordsetPtr->GetFields();
-			return TRUE;
+			if (m_recordsetPtr->State
+				&& SUCCEEDED(m_recordsetPtr->MoveFirst()))
+			{
+				m_fields = m_recordsetPtr->GetFields();
+				return !m_recordsetPtr->EndOfFile;
+			}
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
 		}
 		return FALSE;
 	}
 	BOOL ADODataReader::ReadLast()
 	{
 		ASSERT(m_recordsetPtr);
-		if (SUCCEEDED(m_recordsetPtr->MoveLast()))
+		try
 		{
-			m_fields = m_recordsetPtr->GetFields();
-			return TRUE;
+			if (m_recordsetPtr->State
+				&& SUCCEEDED(m_recordsetPtr->MoveLast()))
+			{
+				m_fields = m_recordsetPtr->GetFields();
+				return !m_recordsetPtr->EndOfFile;
+			}
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
 		}
 		return FALSE;
 	}
 	BOOL ADODataReader::Close()
 	{
 		ASSERT(m_recordsetPtr);
-		return SUCCEEDED(m_recordsetPtr->Close());
+		try
+		{
+			if (m_recordsetPtr->State)
+			{
+				return SUCCEEDED(m_recordsetPtr->Close());
+			}
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
+		}
+		return FALSE;
 	}
 	INT ADODataReader::GetColumnCount()
 	{
@@ -340,31 +405,46 @@ namespace TinyUI
 	}
 	BOOL ADODataReader::GetBoolean(INT i)
 	{
-		_variant_t val = m_fields->GetItem(i)->Value;
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		_variant_t val = m_fields->GetItem(vtIndex)->Value;
 		ASSERT(val.vt == VT_BOOL);
 		return (BOOL)val.boolVal;
 	}
 	BYTE ADODataReader::GetByte(INT i)
 	{
-		_variant_t val = m_fields->GetItem(i)->Value;
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		_variant_t val = m_fields->GetItem(vtIndex)->Value;
 		ASSERT(val.vt == VT_UI1);
 		return (BOOL)val.bVal;
 	}
 	CHAR ADODataReader::GetChar(INT i)
 	{
-		_variant_t val = m_fields->GetItem(i)->Value;
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		_variant_t val = m_fields->GetItem(vtIndex)->Value;
 		ASSERT(val.vt == VT_I1);
 		return val.cVal;
 	}
 	BYTE* ADODataReader::GetBlob(INT i)
 	{
-		_variant_t val = m_fields->GetItem(i)->Value;
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		_variant_t val = m_fields->GetItem(vtIndex)->Value;
 		ASSERT(val.vt == VT_BLOB);
 		return (BYTE*)val.parray->pvData;
 	}
 	LPCSTR ADODataReader::GetDataTypeName(INT i)
 	{
-		switch (m_fields->GetItem(i)->GetType())
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		switch (m_fields->GetItem(vtIndex)->GetType())
 		{
 		case adEmpty:
 			return "Empty";
@@ -448,56 +528,92 @@ namespace TinyUI
 	}
 	DATE ADODataReader::GetDateTime(INT i)
 	{
-		_variant_t val = m_fields->GetItem(i)->Value;
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		_variant_t val = m_fields->GetItem(vtIndex)->Value;
 		ASSERT(val.vt == VT_DATE);
 		return val.date;
 	}
 	DECIMAL ADODataReader::GetDecimal(INT i)
 	{
-		_variant_t val = m_fields->GetItem(i)->Value;
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		_variant_t val = m_fields->GetItem(vtIndex)->Value;
 		ASSERT(val.vt == VT_DECIMAL);
 		return val.decVal;
 	}
 	DOUBLE ADODataReader::GetDouble(INT i)
 	{
-		_variant_t val = m_fields->GetItem(i)->Value;
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		_variant_t val = m_fields->GetItem(vtIndex)->Value;
 		ASSERT(val.vt == VT_R8);
 		return val.dblVal;
 	}
 	FLOAT ADODataReader::GetFloat(INT i)
 	{
-		_variant_t val = m_fields->GetItem(i)->Value;
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		_variant_t val = m_fields->GetItem(vtIndex)->Value;
 		ASSERT(val.vt == VT_R4);
 		return val.fltVal;
 	}
 	SHORT ADODataReader::GetInt16(INT i)
 	{
-		_variant_t val = m_fields->GetItem(i)->Value;
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		_variant_t val = m_fields->GetItem(vtIndex)->Value;
 		ASSERT(val.vt == VT_I2);
 		return val.iVal;
 	}
 	INT ADODataReader::GetInt32(INT i)
 	{
-		_variant_t val = m_fields->GetItem(i)->Value;
-		ASSERT(val.vt == VT_INT);
-		return val.intVal;
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		_variant_t val = m_fields->GetItem(vtIndex)->Value;
+		ASSERT(val.vt == VT_I4);
+		return val.lVal;
 	}
 	LONG ADODataReader::GetInt64(INT i)
 	{
-		_variant_t val = m_fields->GetItem(i)->Value;
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		_variant_t val = m_fields->GetItem(vtIndex)->Value;
 		ASSERT(val.vt == VT_I8);
 		return val.lVal;
 	}
 	LPCSTR ADODataReader::GetName(INT i)
 	{
-		return m_fields->GetItem(i)->GetName();
+		try
+		{
+			_variant_t vtIndex;
+			vtIndex.vt = VT_I2;
+			vtIndex.iVal = i;
+			return _com_util::ConvertBSTRToString(m_fields->GetItem(vtIndex)->GetName());
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
+		}
+		return NULL;
 	}
 	INT ADODataReader::GetOrdinal(LPCSTR pzName)
 	{
 		INT count = m_fields->GetCount();
 		for (INT i = 0; i < count; i++)
 		{
-			_bstr_t name = m_fields->GetItem(i)->GetName();
+			_variant_t vtIndex;
+			vtIndex.vt = VT_I2;
+			vtIndex.iVal = i;
+			_bstr_t name = m_fields->GetItem(vtIndex)->GetName();
 			if (name == _bstr_t(pzName))
 			{
 				return i;
@@ -507,20 +623,30 @@ namespace TinyUI
 	}
 	LPCSTR ADODataReader::GetString(INT i)
 	{
-		_variant_t val = m_fields->GetItem(i)->Value;
-		ASSERT(val.vt == VT_LPSTR);
-		return (LPCSTR)&val.bstrVal;
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		_variant_t val = m_fields->GetItem(vtIndex)->Value;
+		ASSERT(val.vt == VT_BSTR);
+		return (LPCSTR)_com_util::ConvertBSTRToString(val.bstrVal);
 	}
 	BOOL ADODataReader::IsDBNull(INT i)
 	{
-		_variant_t val = m_fields->GetItem(i)->Value;
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = i;
+		_variant_t val = m_fields->GetItem(vtIndex)->Value;
 		return val.vt == VT_NULL;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	ADODataParameter::ADODataParameter()
-		:m_parameterPtr(NULL)
+	ADODataParameter::ADODataParameter(ADOCommandPtr&	commandPtr)
+		:m_parameterPtr(NULL),
+		m_commandPtr(commandPtr)
 	{
-		m_parameterPtr.CreateInstance(__uuidof(Parameter));
+		if (SUCCEEDED(m_parameterPtr.CreateInstance(__uuidof(Parameter))))
+		{
+			m_parameterPtr->Direction = adParamInput;
+		}
 	}
 	INT ADODataParameter::GetDbType()
 	{
@@ -550,14 +676,6 @@ namespace TinyUI
 	{
 		m_parameterPtr->PutName(pzName);
 	}
-	VARIANT& ADODataParameter::GetValue()
-	{
-		return m_parameterPtr->GetValue();
-	}
-	void ADODataParameter::SetValue(VARIANT& s)
-	{
-		m_parameterPtr->PutValue(s);
-	}
 	BYTE ADODataParameter::GetPrecision()
 	{
 		return m_parameterPtr->GetPrecision();
@@ -582,39 +700,140 @@ namespace TinyUI
 	{
 		m_parameterPtr->PutSize(size);
 	}
+
+	void ADODataParameter::SetBoolean(BOOL val)
+	{
+		V_VT(&m_value) = VT_BOOL;
+		V_BOOL(&m_value) = val;
+		m_parameterPtr->PutValue(m_value);
+	}
+
+	void ADODataParameter::SetByte(BYTE val)
+	{
+		V_VT(&m_value) = VT_UI1;
+		V_UI1(&m_value) = val;
+		m_parameterPtr->PutValue(m_value);
+	}
+
+	void ADODataParameter::SetChar(CHAR val)
+	{
+		V_VT(&m_value) = VT_I1;
+		V_I1(&m_value) = val;
+		m_parameterPtr->PutValue(m_value);
+	}
+
+	void ADODataParameter::SetBlob(LPBYTE val)
+	{
+
+	}
+
+	void ADODataParameter::SetDateTime(DATE val)
+	{
+		V_VT(&m_value) = VT_DATE;
+		V_DATE(&m_value) = val;
+		m_parameterPtr->PutValue(m_value);
+	}
+
+	void ADODataParameter::SetDecimal(DECIMAL val)
+	{
+		V_VT(&m_value) = VT_DECIMAL;
+		V_DECIMAL(&m_value) = val;
+		m_parameterPtr->PutValue(m_value);
+	}
+
+	void ADODataParameter::SetDouble(DOUBLE val)
+	{
+		V_VT(&m_value) = VT_R8;
+		V_R8(&m_value) = val;
+		m_parameterPtr->PutValue(m_value);
+	}
+
+	void ADODataParameter::SetFloat(FLOAT val)
+	{
+		V_VT(&m_value) = VT_R4;
+		V_R4(&m_value) = val;
+		m_parameterPtr->PutValue(m_value);
+	}
+
+	void ADODataParameter::SetInt16(SHORT val)
+	{
+		V_VT(&m_value) = VT_I2;
+		V_I2(&m_value) = val;
+		m_parameterPtr->PutValue(m_value);
+	}
+
+	void ADODataParameter::SetInt32(INT val)
+	{
+		V_VT(&m_value) = VT_INT;
+		V_INT(&m_value) = val;
+		m_parameterPtr->PutValue(m_value);
+	}
+
+	void ADODataParameter::SetInt64(LONG val)
+	{
+		V_VT(&m_value) = VT_I8;
+		V_I8(&m_value) = val;
+		m_parameterPtr->PutValue(m_value);
+	}
+
+	void ADODataParameter::SetString(LPCSTR val)
+	{
+		V_VT(&m_value) = VT_BSTR;
+		V_BSTR(&m_value) = _bstr_t(val);
+		m_parameterPtr->PutValue(m_value);
+	}
+	void ADODataParameter::SetValue(VARIANT& val)
+	{
+		m_value = val;
+		m_parameterPtr->PutValue(val);
+	}
 	//////////////////////////////////////////////////////////////////////////
 	ADODataParameters::ADODataParameters(ADOCommand& command)
 		:m_command(command)
 	{
 
 	}
+	ADODataParameters::~ADODataParameters()
+	{
+		TRACE("析构ADODataParameters\n");
+	}
 	IDbDataParameter* ADODataParameters::Add(IDbDataParameter* value)
 	{
 		ASSERT(value);
-		if (SUCCEEDED(m_command.m_commandPtr->Parameters->Append(reinterpret_cast<ADODataParameter*>(value)->m_parameterPtr)))
+		try
 		{
-			m_command.m_commandPtr->Parameters->Refresh();
-			if (m_parameters.Add(value))
+			ADODataParameter* ps = reinterpret_cast<ADODataParameter*>(value);
+			if (SUCCEEDED(m_command.m_commandPtr->Parameters->Append(ps->m_parameterPtr)))
 			{
-				return value;
+				m_command.m_commandPtr->Parameters->Refresh();
+				if (m_parameters.Add(value))
+				{
+					return value;
+				}
 			}
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
 		}
 		return NULL;
 	}
-	IDbDataParameter* ADODataParameters::Add(LPCSTR pzName, VARIANT& pValue)
+	IDbDataParameter* ADODataParameters::Add(LPCSTR pzName, VARIANT& val)
 	{
-		IDbDataParameter* ps = new ADODataParameter();
+		ASSERT(m_command.m_commandPtr);
+		IDbDataParameter* ps = new ADODataParameter(m_command.m_commandPtr);
 		if (ps != NULL)
 		{
 			ps->SetParameterName(pzName);
-			ps->SetValue(pValue);
 			return Add(ps);
 		}
 		return NULL;
 	}
 	IDbDataParameter* ADODataParameters::Add(LPCSTR pzName, INT dbType)
 	{
-		IDbDataParameter* ps = new ADODataParameter();
+		ASSERT(m_command.m_commandPtr);
+		IDbDataParameter* ps = new ADODataParameter(m_command.m_commandPtr);
 		if (ps != NULL)
 		{
 			ps->SetParameterName(pzName);
@@ -625,7 +844,8 @@ namespace TinyUI
 	}
 	IDbDataParameter* ADODataParameters::Add(LPCSTR pzName, INT dbType, INT size)
 	{
-		IDbDataParameter* ps = new ADODataParameter();
+		ASSERT(m_command.m_commandPtr);
+		IDbDataParameter* ps = new ADODataParameter(m_command.m_commandPtr);
 		if (ps != NULL)
 		{
 			ps->SetParameterName(pzName);
@@ -638,63 +858,100 @@ namespace TinyUI
 	void ADODataParameters::Remove(IDbDataParameter* value)
 	{
 		ASSERT(value);
-		if (SUCCEEDED(m_command.m_commandPtr->Parameters->Delete(value->GetParameterName())))
+		try
 		{
-			m_command.m_commandPtr->Parameters->Refresh();
-			if (m_parameters.Remove(value))
+			if (SUCCEEDED(m_command.m_commandPtr->Parameters->Delete(value->GetParameterName())))
 			{
-				SAFE_DELETE(value);
+				m_command.m_commandPtr->Parameters->Refresh();
+				if (m_parameters.Remove(value))
+				{
+					SAFE_DELETE(value);
+				}
 			}
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
 		}
 	}
 	void ADODataParameters::RemoveAt(INT index)
 	{
 		ASSERT(index >= 0 && index < m_parameters.GetSize());
-		if (SUCCEEDED(m_command.m_commandPtr->Parameters->Delete(index)))
+		try
 		{
-			m_command.m_commandPtr->Parameters->Refresh();
-			IDbDataParameter* value = GetParameter(index);
-			if (m_parameters.Remove(value))
+			if (SUCCEEDED(m_command.m_commandPtr->Parameters->Delete(index)))
 			{
-				SAFE_DELETE(value);
+				m_command.m_commandPtr->Parameters->Refresh();
+				IDbDataParameter* value = GetParameter(index);
+				if (m_parameters.Remove(value))
+				{
+					SAFE_DELETE(value);
+				}
 			}
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
 		}
 	}
 	void ADODataParameters::RemoveAt(LPCSTR pzName)
 	{
 		ASSERT(pzName);
-		m_command.m_commandPtr->Parameters->GetItem(pzName);
-		if (SUCCEEDED(m_command.m_commandPtr->Parameters->Delete(pzName)))
+		try
 		{
-			m_command.m_commandPtr->Parameters->Refresh();
-			IDbDataParameter* value = GetParameter(pzName);
-			if (m_parameters.Remove(value))
+			m_command.m_commandPtr->Parameters->GetItem(pzName);
+			if (SUCCEEDED(m_command.m_commandPtr->Parameters->Delete(pzName)))
 			{
-				SAFE_DELETE(value);
+				m_command.m_commandPtr->Parameters->Refresh();
+				IDbDataParameter* value = GetParameter(pzName);
+				if (m_parameters.Remove(value))
+				{
+					SAFE_DELETE(value);
+				}
 			}
 		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
+		}
+
 	}
 	void ADODataParameters::RemoveAll()
 	{
-		if (DeleteAll())
+		try
 		{
-			//删除分配内存
-			for (INT i = 0; i < m_parameters.GetSize(); i++)
+			INT count = m_parameters.GetSize();
+			for (INT i = count - 1; i--; i > 0)
 			{
-				delete m_parameters[i];
+				m_parameters.Remove(m_parameters[i]);
 			}
-			m_parameters.RemoveAll();
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
 		}
 	}
 	INT ADODataParameters::IndexOf(LPCSTR pzName)
 	{
-		INT count = m_command.m_commandPtr->Parameters->GetCount();
-		for (INT i = 0; i < count; i++)
+		try
 		{
-			if (m_command.m_commandPtr->Parameters->GetItem(i)->GetName() == _bstr_t(pzName))
+			INT count = m_command.m_commandPtr->Parameters->GetCount();
+			for (INT i = 0; i < count; i++)
 			{
-				return i;
+				if (m_command.m_commandPtr->Parameters->GetItem(i)->GetName() == _bstr_t(pzName))
+				{
+					return i;
+				}
 			}
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
 		}
 		return -1;
 	}
@@ -717,18 +974,5 @@ namespace TinyUI
 	{
 		ASSERT(value);
 		return m_parameters.Lookup(value) >= 0;
-	}
-	BOOL ADODataParameters::DeleteAll()
-	{
-		INT count = m_command.m_commandPtr->Parameters->GetCount();
-		for (INT i = 0; i < count; i++)
-		{
-			if (FAILED(m_command.m_commandPtr->Parameters->Delete(i)))
-			{
-				return FALSE;
-			}
-		}
-		m_command.m_commandPtr->Parameters->Refresh();
-		return TRUE;
 	}
 }

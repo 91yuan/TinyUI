@@ -119,14 +119,24 @@ namespace TinyUI
 		virtual BOOL IsNullable() = 0;
 		virtual LPCSTR GetParameterName() = 0;
 		virtual void SetParameterName(LPCSTR pzName) = 0;
-		virtual VARIANT& GetValue() = 0;
-		virtual void SetValue(VARIANT& s) = 0;
 		virtual BYTE GetPrecision() = 0;
 		virtual void SetPrecision(BYTE precision) = 0;
 		virtual BYTE GetScale() = 0;
 		virtual void SetScale(BYTE scale) = 0;
 		virtual INT GetSize() = 0;
 		virtual void SetSize(INT size) = 0;
+		virtual void SetBoolean(BOOL val) = 0;
+		virtual void SetByte(BYTE val) = 0;
+		virtual void SetChar(CHAR val) = 0;
+		virtual	void SetBlob(LPBYTE val) = 0;
+		virtual void SetDateTime(DATE val) = 0;
+		virtual void SetDecimal(DECIMAL val) = 0;
+		virtual void SetDouble(DOUBLE val) = 0;
+		virtual void SetFloat(FLOAT val) = 0;
+		virtual void SetInt16(SHORT val) = 0;
+		virtual void SetInt32(INT val) = 0;
+		virtual void SetInt64(LONG val) = 0;
+		virtual void SetString(LPCSTR val) = 0;
 	};
 	/// <summary>
 	/// Command 对象的参数集合

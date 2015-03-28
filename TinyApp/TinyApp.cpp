@@ -664,12 +664,35 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	HRESULT hRes = OleInitialize(NULL);
 
 	ADOConnection m_connection;
-	m_connection.SetConnectionString("Data Source=YF-D110;Initial Catalog=MVC;User ID=sa;Password=123456");
+	m_connection.SetConnectionString("Data Source=localhost;Initial Catalog=MyDB;User ID=sa;Password=123456");
 	m_connection.Open();
+	IDbTransaction* trans = m_connection.BeginTransaction();
 	IDbCommand* ps = m_connection.CreateCommand();
-	IDbDataParameter* parame1 = ps->CreateParameter();
-	parame1->SetDbType((INT)adVarChar);
-	parame1->SetParameterName("Name");
+	/*IDbDataParameter* parame1 = ps->CreateParameter();
+	parame1->SetDbType(adVarChar);
+	parame1->SetSize(50);
+	parame1->SetParameterName("@Name");
+	parame1->SetString("XiaoMing");
+	IDbDataParameter* parame2 = ps->CreateParameter();
+	parame2->SetDbType(adInteger);
+	parame2->SetParameterName("@Age");
+	parame2->SetInt32(12);
+	parame2->SetSize(4);
+	ps->GetParameters()->Add(parame1);
+	ps->GetParameters()->Add(parame2);*/
+
+	ps->SetCommandType(adCmdStoredProc);
+	ps->SetCommandText("SelectUser");
+	IDbDataReader* ps1 = ps->ExecuteReader(0);
+	while (ps1->ReadNext())
+	{
+		TRACE("row: %s,%d\n", ps1->GetString(0), ps1->GetInt32(1));
+		/*LPCSTR pz = ps1->GetName("Name");
+		INT index = ps1->GetOrdinal("Name");
+		TRACE("row: %s,%d\n", pz, ps1->GetInt32("Age"));*/
+	};
+
+	trans->Commit();
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 
