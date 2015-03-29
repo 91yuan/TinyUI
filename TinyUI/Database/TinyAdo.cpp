@@ -213,7 +213,16 @@ namespace TinyUI
 	BOOL ADOCommand::Cancel()
 	{
 		ASSERT(m_commandPtr);
-		return SUCCEEDED(m_commandPtr->Cancel());
+		try
+		{
+			return SUCCEEDED(m_commandPtr->Cancel());
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
+		}
+		return FALSE;
 	}
 	IDbDataParameter* ADOCommand::CreateParameter()
 	{
@@ -242,8 +251,8 @@ namespace TinyUI
 		{
 			VARIANT vi = { 0 };
 			ADORecordsetPtr recordsetPtr = m_commandPtr->Execute(&vi, NULL, m_commandPtr->CommandType);
-			m_datareader.Reset(new ADODataReader(recordsetPtr));
-			return m_datareader;
+			m_reader.Reset(new ADODataReader(recordsetPtr));
+			return m_reader;
 		}
 		catch (_com_error& e)
 		{
@@ -764,8 +773,8 @@ namespace TinyUI
 
 	void ADODataParameter::SetInt32(INT val)
 	{
-		V_VT(&m_value) = VT_INT;
-		V_INT(&m_value) = val;
+		V_VT(&m_value) = VT_I4;
+		V_I4(&m_value) = val;
 		m_parameterPtr->PutValue(m_value);
 	}
 
@@ -880,7 +889,10 @@ namespace TinyUI
 		ASSERT(index >= 0 && index < m_parameters.GetSize());
 		try
 		{
-			if (SUCCEEDED(m_command.m_commandPtr->Parameters->Delete(index)))
+			_variant_t vtIndex;
+			vtIndex.vt = VT_I2;
+			vtIndex.iVal = index;
+			if (SUCCEEDED(m_command.m_commandPtr->Parameters->Delete(vtIndex)))
 			{
 				m_command.m_commandPtr->Parameters->Refresh();
 				IDbDataParameter* value = GetParameter(index);
@@ -924,7 +936,7 @@ namespace TinyUI
 		try
 		{
 			INT count = m_parameters.GetSize();
-			for (INT i = count - 1; i--; i > 0)
+			for (INT i = count - 1; i > 0; i--)
 			{
 				m_parameters.Remove(m_parameters[i]);
 			}
@@ -937,36 +949,40 @@ namespace TinyUI
 	}
 	INT ADODataParameters::IndexOf(LPCSTR pzName)
 	{
-		try
+		_ParameterPtr parameterPtr = m_command.m_commandPtr->Parameters->GetItem(pzName);
+		INT count = m_parameters.GetSize();
+		for (INT i = 0; i < count; i++)
 		{
-			INT count = m_command.m_commandPtr->Parameters->GetCount();
-			for (INT i = 0; i < count; i++)
+			ADODataParameter* ps = reinterpret_cast<ADODataParameter*>(m_parameters[i]);
+			if (ps->m_parameterPtr == parameterPtr)
 			{
-				if (m_command.m_commandPtr->Parameters->GetItem(i)->GetName() == _bstr_t(pzName))
-				{
-					return i;
-				}
+				return i;
 			}
-		}
-		catch (_com_error& e)
-		{
-			TRACE(e.Description());
-			TRACE("\n");
 		}
 		return -1;
 	}
 	IDbDataParameter* ADODataParameters::GetParameter(INT index)
 	{
 		ASSERT(index >= 0 && index < m_parameters.GetSize());
-		return m_parameters[index];
+		ADODataParameter* ps = reinterpret_cast<ADODataParameter*>(m_parameters[index]);
+		_variant_t vtIndex;
+		vtIndex.vt = VT_I2;
+		vtIndex.iVal = index;
+		_ParameterPtr parameterPtr = m_command.m_commandPtr->Parameters->GetItem(vtIndex);
+		return ps->m_parameterPtr != parameterPtr ? NULL : ps;
 	}
 	IDbDataParameter* ADODataParameters::GetParameter(LPCSTR pzName)
 	{
 		ASSERT(pzName);
-		INT index = IndexOf(pzName);
-		if (index >= 0)
+		_ParameterPtr parameterPtr = m_command.m_commandPtr->Parameters->GetItem(pzName);
+		INT count = m_parameters.GetSize();
+		for (INT i = 0; i < count; i++)
 		{
-			return m_parameters[IndexOf(pzName)];
+			ADODataParameter* ps = reinterpret_cast<ADODataParameter*>(m_parameters[i]);
+			if (ps->m_parameterPtr == parameterPtr)
+			{
+				return ps;
+			}
 		}
 		return NULL;
 	}

@@ -78,10 +78,10 @@ namespace TinyUI
 		virtual IDbDataReader* ExecuteReader(INT iBehavior);
 		virtual void Dispose();
 	private:
-		ADOCommandPtr						m_commandPtr;
-		ADOConnection&						m_connection;
-		TinyScopedPtr<ADODataParameters>	m_parameters;
-		TinyScopedPtr<ADODataReader>		m_datareader;
+		ADOCommandPtr								m_commandPtr;
+		ADOConnection&								m_connection;
+		TinyScopedPtr<ADODataParameters>			m_parameters;
+		TinyArray<TinyScopedPtr<ADODataReader>*>	m_reader;
 	};
 	/// <summary>
 	/// ADO数据库事务

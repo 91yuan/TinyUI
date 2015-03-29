@@ -438,6 +438,56 @@ private:\
 		swap(&s.m_myP);
 	}
 	/// <summary>
+	/// Scope数组
+	/// </summary>
+	template <class T>
+	class TinyScopedArray
+	{
+	private:
+		TinyArray<T*> m_array;
+	public:
+		BOOL	Add(const T* myT);
+		BOOL	Remove(const T* myT);
+		BOOL	RemoveAt(INT index);
+		BOOL	Insert(INT index, const T* myT);
+		void	RemoveAll();
+	};
+	template <class T>
+	BOOL TinyScopedArray<T>::Add(const T* myT)
+	{
+		ASSERT(myT);
+		return m_array.Add(myT);
+	}
+	template <class T>
+	BOOL TinyScopedArray<T>::Remove(const T* myT)
+	{
+		ASSERT(myT);
+		delete myT;
+		return m_array.Remove(myT);
+	}
+	template <class T>
+	BOOL TinyScopedArray<T>::RemoveAt(INT index)
+	{
+		T* ps = m_array.Lookup(index);
+		return Remove(ps);
+	}
+	template <class T>
+	void TinyScopedArray<T>::RemoveAll()
+	{
+		INT count = m_array.GetSize();
+		for (INT i = 0; i < count; i++)
+		{
+			delete m_array[i];
+		}
+		m_array.RemoveAll();
+	}
+	template <class T>
+	BOOL TinyScopedArray<T>::Insert(INT index, const T* myT)
+	{
+		ASSERT(myT);
+		return m_array.Insert(index, myT);
+	}
+	/// <summary>
 	/// COM智能指针
 	/// </summary>
 	template <class T>
