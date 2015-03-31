@@ -3,131 +3,153 @@
 
 namespace TinyUI
 {
+	SqliteConnection::SqliteConnection()
+		:m_sqlite(NULL)
+	{
 
-	//SqliteConnection::SqliteConnection()
-	//	:m_sqlite(NULL)
-	//{
+	}
+	SqliteConnection::~SqliteConnection()
+	{
 
-	//}
-	//SqliteConnection::~SqliteConnection()
-	//{
+	}
+	LPCSTR SqliteConnection::GetConnectionString() const
+	{
+		return m_connectionString.STR();
+	}
+	void SqliteConnection::SetConnectionString(LPCSTR connectionString)
+	{
+		ASSERT(connectionString);
+		if (::GetFileAttributes(connectionString) == (DWORD)-1)
+			return;
+		//数据库连接改变
+		if (!m_connectionString.Compare(connectionString))
+		{
+			m_connectionString = connectionString;
+			if (m_sqlite != NULL)
+			{
+				if (sqlite3_close(m_sqlite) == SQLITE_OK &&
+					sqlite3_open(m_connectionString.STR(), &m_sqlite) == SQLITE_OK)
+				{
+					sqlite3_busy_timeout(m_sqlite, m_timeMs);
+				}
+			}
+		}
+	}
+	LONG SqliteConnection::GetConnectionTimeout() const
+	{
+		return -1;
+	}
+	void SqliteConnection::SetConnectionTimeout(LONG timeMs)
+	{
 
-	//}
-	//LPCSTR SqliteConnection::GetConnectionString()
-	//{
-	//	return m_connectionString.STR();
-	//}
+	}
+	BOOL SqliteConnection::Open()
+	{
+		if (::GetFileAttributes(m_connectionString.STR()) == (DWORD)-1)
+			return FALSE;
+		Close();
+		INT iRes = sqlite3_open(m_connectionString.STR(), &m_sqlite);
+		if (iRes == SQLITE_OK)
+		{
+			sqlite3_busy_timeout(m_sqlite, m_timeMs);
+			return TRUE;
+		}
+		return FALSE;
+	}
+	BOOL SqliteConnection::Close()
+	{
+		if (m_sqlite != NULL)
+		{
+			sqlite3_close(m_sqlite);
+			m_sqlite = NULL;
+			return TRUE;
+		}
+		return FALSE;
+	}
+	LONG SqliteConnection::GetConnectionState()
+	{
+		return m_sqlite != NULL ? SqliteOpen : SqliteClose;
+	}
+	BOOL SqliteConnection::BeginTransaction(INT iIsolationLevel /*= 0*/)
+	{
+		"BEGIN TRANSACTION";
+	}
+	BOOL SqliteConnection::CommitTransaction()
+	{
+		"COMMIT TRANSACTION";
+	}
+	BOOL SqliteConnection::RollbackTransaction()
+	{
+		"ROLLBACK TRANSACTION";
+	}
+	void SqliteConnection::GetErrors(LPSTR pzError, INT& size)
+	{
 
-	//void SqliteConnection::SetConnectionString(LPCSTR pzText)
-	//{
-	//	m_connectionString = pzText;
-	//}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	SqliteCommand::SqliteCommand(SqliteConnection& connection)
+		: m_connection(connection)
+	{
 
-	//void SqliteConnection::SetConnectionTimeout(LONG time)
-	//{
-	//	if (m_sqlite != NULL)
-	//	{
-	//		sqlite3_busy_timeout(m_sqlite, m_timeMS);
-	//	}
-	//}
+	}
+	SqliteCommand::~SqliteCommand()
+	{
+		TRACE("析构SqliteCommand\n");
+	}
+	LPCSTR	SqliteCommand::GetCommandText() const
+	{
+		return m_commandText.STR();
+	}
+	void	SqliteCommand::SetCommandText(LPCSTR commandText)
+	{
+		m_commandText = commandText;
+	}
+	LONG	SqliteCommand::GetCommandTimeout() const
+	{
+		return m_queryTime;
+	}
+	void	SqliteCommand::SetCommandTimeout(LONG time)
+	{
+		m_queryTime = time;
+	}
+	INT		SqliteCommand::GetCommandType()
+	{
 
-	//LONG SqliteConnection::GetConnectionTimeout()
-	//{
-	//	return m_timeMS;
-	//}
+	}
+	void	SqliteCommand::SetCommandType(INT commandType)
+	{
 
-	//IDbTransaction* SqliteConnection::BeginTransaction()
-	//{
-	//	throw std::logic_error("The method or operation is not implemented.");
-	//}
+	}
+	IDbConnection*	SqliteCommand::GetConnection()
+	{
+		return &m_connection;
+	}
+	BOOL	SqliteCommand::Add(IDbDataParameter* value)
+	{
 
-	//IDbTransaction* SqliteConnection::BeginTransaction(INT iIsolationLevel)
-	//{
-	//	throw std::logic_error("The method or operation is not implemented.");
-	//}
+	}
+	BOOL	SqliteCommand::Remove(INT i)
+	{
 
-	//BOOL SqliteConnection::Open()
-	//{
-	//	if (::GetFileAttributes(m_connectionString.STR()) == (DWORD)-1)
-	//		return FALSE;
-	//	INT iRes = ::sqlite3_open(m_connectionString.STR(), &m_sqlite);
-	//	if (iRes != SQLITE_OK)
-	//	{
-	//		return FALSE;
-	//	}
-	//	sqlite3_busy_timeout(m_sqlite, m_timeMS);
-	//	return TRUE;
-	//}
+	}
+	BOOL	SqliteCommand::Remove(LPCSTR pzName)
+	{
 
-	//BOOL SqliteConnection::Close()
-	//{
-	//	if (m_sqlite != NULL)
-	//	{
-	//		sqlite3_close(m_sqlite);
-	//		m_sqlite = NULL;
-	//		return TRUE;
-	//	}
-	//	return FALSE;
-	//}
+	}
+	BOOL	SqliteCommand::RemoveAll()
+	{
 
-	//LONG SqliteConnection::GetConnectionState()
-	//{
-	//	return m_sqlite == NULL ? SqliteClose : SqliteOpen;
-	//}
+	}
+	INT		SqliteCommand::ExecuteNonQuery()
+	{
 
-	//IDbCommand* SqliteConnection::CreateCommand()
-	//{
-	//	throw std::logic_error("The method or operation is not implemented.");
-	//}
+	}
+	BOOL	SqliteCommand::ExecuteReader(IDbDataReader* ps)
+	{
 
-	//INT SqliteConnection::GetErrors(LPSTR pzError, INT size)
-	//{
-	//	if (m_sqlite != NULL)
-	//	{
-	//		size = sqlite3_errcode(m_sqlite);
-	//		pzError = const_cast<LPSTR>(sqlite3_errmsg(m_sqlite));
-	//		return size;
-	//	}
-	//	return -1;
-	//}
+	}
+	BOOL SqliteCommand::Cancel()
+	{
 
-	//void SqliteConnection::Dispose()
-	//{
-	//	if (m_sqlite != NULL)
-	//	{
-	//		sqlite3_close(m_sqlite);
-	//		m_sqlite = NULL;
-	//	}
-	//}
-	////////////////////////////////////////////////////////////////////////////
-	//SqliteCommand::SqliteCommand()
-	//{
-
-	//}
-
-	//IDbConnection* SqliteTransaction::GetConnection()
-	//{
-	//	throw std::logic_error("The method or operation is not implemented.");
-	//}
-
-	//INT SqliteTransaction::GetIsolationLevel()
-	//{
-	//	throw std::logic_error("The method or operation is not implemented.");
-	//}
-
-	//BOOL SqliteTransaction::Commit()
-	//{
-	//	throw std::logic_error("The method or operation is not implemented.");
-	//}
-
-	//BOOL SqliteTransaction::Rollback()
-	//{
-	//	throw std::logic_error("The method or operation is not implemented.");
-	//}
-
-	//void SqliteTransaction::Dispose()
-	//{
-	//	throw std::logic_error("The method or operation is not implemented.");
-	//}
-
+	}
 }

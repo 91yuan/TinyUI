@@ -17,7 +17,7 @@ namespace TinyUI
 		ASSERT(m_connectionPtr);
 		return m_connectionPtr->GetConnectionString();
 	}
-	void	ADOConnection::SetConnectionString(LPCSTR pzText) const
+	void	ADOConnection::SetConnectionString(LPCSTR pzText)
 	{
 		ASSERT(m_connectionPtr);
 		return m_connectionPtr->PutConnectionString(pzText);
@@ -27,10 +27,10 @@ namespace TinyUI
 		ASSERT(m_connectionPtr);
 		return m_connectionPtr->GetConnectionTimeout();
 	}
-	void	ADOConnection::SetConnectionTimeout(LONG time) const
+	void	ADOConnection::SetConnectionTimeout(LONG timeMs)
 	{
 		ASSERT(m_connectionPtr);
-		m_connectionPtr->PutConnectionTimeout(time);
+		m_connectionPtr->PutConnectionTimeout(timeMs);
 	}
 	BOOL	ADOConnection::Open()
 	{

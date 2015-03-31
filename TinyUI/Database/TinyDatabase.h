@@ -17,9 +17,9 @@ namespace TinyUI
 	{
 	public:
 		virtual LPCSTR			GetConnectionString() const = 0;
-		virtual void			SetConnectionString(LPCSTR pzText) const = 0;
+		virtual void			SetConnectionString(LPCSTR pzText) = 0;
 		virtual LONG			GetConnectionTimeout() const = 0;
-		virtual void			SetConnectionTimeout(LONG time) const = 0;
+		virtual void			SetConnectionTimeout(LONG time) = 0;
 		virtual BOOL			Open() = 0;
 		virtual BOOL			Close() = 0;
 		virtual	LONG			GetConnectionState() = 0;
@@ -35,9 +35,9 @@ namespace TinyUI
 	{
 	public:
 		virtual LPCSTR				GetCommandText() const = 0;
-		virtual void				SetCommandText(LPCSTR pzText) const = 0;
+		virtual void				SetCommandText(LPCSTR pzText) = 0;
 		virtual LONG				GetCommandTimeout() const = 0;
-		virtual void				SetCommandTimeout(LONG time) const = 0;
+		virtual void				SetCommandTimeout(LONG time) = 0;
 		virtual INT					GetCommandType() = 0;
 		virtual void				SetCommandType(INT commandType) = 0;
 		virtual IDbConnection*		GetConnection() = 0;

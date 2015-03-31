@@ -29,9 +29,9 @@ namespace TinyUI
 		ADOConnection();
 		virtual ~ADOConnection();
 		virtual LPCSTR			GetConnectionString() const;
-		virtual void			SetConnectionString(LPCSTR pzText) const;
+		virtual void			SetConnectionString(LPCSTR pzText);
 		virtual LONG			GetConnectionTimeout() const;
-		virtual void			SetConnectionTimeout(LONG time) const;
+		virtual void			SetConnectionTimeout(LONG timeMS);
 		virtual BOOL			Open();
 		virtual BOOL			Close();
 		virtual	LONG			GetConnectionState();
@@ -53,9 +53,9 @@ namespace TinyUI
 		ADOCommand(ADOConnection& connection);
 		virtual ~ADOCommand();
 		virtual LPCSTR				GetCommandText() const;
-		virtual void				SetCommandText(LPCSTR pzText) const;
+		virtual void				SetCommandText(LPCSTR pzText);
 		virtual LONG				GetCommandTimeout() const;
-		virtual void				SetCommandTimeout(LONG time) const;
+		virtual void				SetCommandTimeout(LONG timeMS);
 		virtual INT					GetCommandType();
 		virtual void				SetCommandType(INT commandType);
 		virtual IDbConnection*		GetConnection();
