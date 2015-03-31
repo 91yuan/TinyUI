@@ -663,9 +663,44 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	HRESULT hRes = OleInitialize(NULL);
 
-	//ADOConnection m_connection;
-	//m_connection.SetConnectionString("Data Source=localhost;Initial Catalog=MyDB;User ID=sa;Password=123456");
-	//m_connection.Open();
+	ADOConnection m_connection;
+	m_connection.SetConnectionString("Data Source=localhost;Initial Catalog=MVC;User ID=sa;Password=123456");
+	m_connection.Open();
+	m_connection.BeginTransaction();
+
+	ADOCommand m_command(m_connection);
+	m_command.SetCommandText("InsertUser");
+
+	ADODataParameter parame1(m_command);
+	parame1.SetDbType(adVarChar);
+	parame1.SetParameterName("@Name");
+	parame1.SetString("XiaoMing");
+	parame1.SetSize(50);
+	m_command.Add(&parame1);
+
+	ADODataParameter parame2(m_command);
+	parame2.SetDbType(adInteger);
+	parame2.SetParameterName("@Age");
+	parame2.SetInt32(12);
+	parame2.SetSize(4);
+	m_command.Add(&parame2);
+
+	INT i = m_command.ExecuteNonQuery();
+	TRACE("ExecuteNonQuery %d\n", i);
+	m_connection.CommitTransaction();
+
+	m_command.RemoveAll();
+	m_command.SetCommandText("SELECT * FROM MyUser");
+	m_command.SetCommandType(adCmdText);
+
+	ADODataReader reader;
+	m_command.ExecuteReader(&reader);
+	while (reader.ReadNext())
+	{
+		TRACE("row: %s,%d\n", reader.GetString(0), reader.GetInt32(1));
+	};
+	m_connection.Close();
+
 	//IDbTransaction* trans = m_connection.BeginTransaction();
 	//IDbCommand* ps = m_connection.CreateCommand();
 	//IDbDataParameter* parame1 = ps->CreateParameter();
