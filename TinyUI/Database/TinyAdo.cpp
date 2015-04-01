@@ -161,7 +161,7 @@ namespace TinyUI
 		ASSERT(m_commandPtr);
 		return m_commandPtr->GetCommandText();
 	}
-	void	ADOCommand::SetCommandText(LPCSTR pzText) const
+	void	ADOCommand::SetCommandText(LPCSTR pzText)
 	{
 		ASSERT(m_commandPtr);
 		m_commandPtr->PutCommandText(pzText);
@@ -171,7 +171,7 @@ namespace TinyUI
 		ASSERT(m_commandPtr);
 		return m_commandPtr->GetCommandTimeout();
 	}
-	void	ADOCommand::SetCommandTimeout(LONG time) const
+	void	ADOCommand::SetCommandTimeout(LONG time)
 	{
 		ASSERT(m_commandPtr);
 		m_commandPtr->PutCommandTimeout(time);
