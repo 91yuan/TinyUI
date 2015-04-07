@@ -96,6 +96,7 @@ namespace TinyUI
 	private:
 		TinyString				m_connectionString;
 		sqlite3*				m_sqlite;
+		sqlite3_mutex*			m_mutex;
 	};
 	/// <summary>
 	/// Sqlite数据库命令,不支持存储过程
@@ -122,10 +123,15 @@ namespace TinyUI
 		virtual BOOL				ExecuteReader(IDbDataReader* ps);
 		virtual BOOL				Cancel();
 	private:
+		sqlite3_stmt*				GetSTMT();
+		BOOL						ReleaseSTMT(sqlite3_stmt* statement);
+		BOOL						BindParameter(sqlite3_stmt* statement,IDbDataParameter* value);
+		BOOL						BindParameters(sqlite3_stmt* statement);
+	private:
+		TinyArray<IDbDataParameter*>m_parameters;
 		TinyString					m_commandText;
 		SqliteConnection&			m_connection;
 		INT							m_queryTime;
-		sqlite3_stmt*				m_statement;
 	};
 	/// <summary>
 	/// Sqlite参数

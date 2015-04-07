@@ -4,9 +4,10 @@
 namespace TinyUI
 {
 	SqliteConnection::SqliteConnection()
-		:m_sqlite(NULL)
+		:m_sqlite(NULL),
+		m_mutex(NULL)
 	{
-
+		m_mutex = sqlite3_mutex_alloc(SQLITE_MUTEX_FAST);
 	}
 	SqliteConnection::~SqliteConnection()
 	{
@@ -49,6 +50,11 @@ namespace TinyUI
 	}
 	BOOL SqliteConnection::Close()
 	{
+		if (m_mutex != NULL)
+		{
+			sqlite3_free(m_mutex);
+			m_mutex = NULL;
+		}
 		if (m_sqlite != NULL)
 		{
 			sqlite3_close(m_sqlite);
@@ -79,8 +85,7 @@ namespace TinyUI
 	}
 	//////////////////////////////////////////////////////////////////////////
 	SqliteCommand::SqliteCommand(SqliteConnection& connection)
-		: m_connection(connection),
-		m_statement(NULL)
+		: m_connection(connection)
 	{
 
 	}
@@ -118,18 +123,72 @@ namespace TinyUI
 	}
 	BOOL	SqliteCommand::Add(IDbDataParameter* value)
 	{
-		if (m_statement == NULL)
+		return m_parameters.Add(value);
+	}
+	BOOL	SqliteCommand::Remove(INT i)
+	{
+		return m_parameters.RemoveAt(i);
+	}
+	BOOL	SqliteCommand::Remove(LPCSTR pzName)
+	{
+		for (INT i = 0; i < m_parameters.GetSize(); i++)
 		{
-			if (sqlite3_prepare(m_connection.m_sqlite, m_commandText.STR(), -1, &m_statement, NULL) == SQLITE_OK)
+			if (!strcmp(m_parameters[i]->GetParameterName(), pzName))
 			{
-				return FALSE;
+				return m_parameters.RemoveAt(i);
 			}
 		}
+		return FALSE;
+	}
+	BOOL	SqliteCommand::RemoveAll()
+	{
+		m_parameters.RemoveAll();
+		return TRUE;
+	}
+	INT		SqliteCommand::ExecuteNonQuery()
+	{
+		sqlite3_stmt* statement = GetSTMT();
+		BindParameters(statement);
+		INT rows = 0;
+		while (sqlite3_step(statement) == SQLITE_ROW)
+		{
+			rows++;
+		}
+		ReleaseSTMT(statement);
+		return rows;
+	}
+	BOOL	SqliteCommand::ExecuteReader(IDbDataReader* ps)
+	{
+		sqlite3_stmt* statement = GetSTMT();
+		BindParameters(statement);
+		return ReleaseSTMT(statement);
+	}
+	BOOL SqliteCommand::Cancel()
+	{
+		return FALSE;
+	}
+	sqlite3_stmt* SqliteCommand::GetSTMT()
+	{
+		sqlite3_stmt* statement = NULL;
+		if (sqlite3_prepare_v2(m_connection.m_sqlite, m_commandText.STR(), -1, &statement, NULL) == SQLITE_OK)
+		{
+			return statement;
+		}
+		return NULL;
+	}
+	BOOL SqliteCommand::ReleaseSTMT(sqlite3_stmt* statement)
+	{
+		ASSERT(statement);
+		return sqlite3_finalize(statement) == SQLITE_OK;
+	}
+	BOOL SqliteCommand::BindParameter(sqlite3_stmt* statement, IDbDataParameter* value)
+	{
+		ASSERT(statement);
 		INT iRes = SQLITE_OK;
-		INT index = sqlite3_bind_parameter_index(m_statement, value->GetParameterName());
+		INT index = sqlite3_bind_parameter_index(statement, value->GetParameterName());
 		if (value->IsNullable())
 		{
-			iRes = sqlite3_bind_null(m_statement, index);
+			iRes = sqlite3_bind_null(statement, index);
 		}
 		else
 		{
@@ -137,58 +196,50 @@ namespace TinyUI
 			switch (dbType)
 			{
 			case VARENUM::VT_I4:
-				iRes = sqlite3_bind_int(m_statement, index, value->GetInt32());
+				iRes = sqlite3_bind_int(statement, index, value->GetInt32());
 				break;;
 			case VARENUM::VT_I8:
-				iRes = sqlite3_bind_int64(m_statement, index, value->GetInt64());
+				iRes = sqlite3_bind_int64(statement, index, value->GetInt64());
 				break;
 			case VARENUM::VT_R4:
-				iRes = sqlite3_bind_double(m_statement, index, value->GetFloat());
+				iRes = sqlite3_bind_double(statement, index, value->GetFloat());
 				break;
 			case VARENUM::VT_R8:
-				iRes = sqlite3_bind_double(m_statement, index, value->GetDouble());
+				iRes = sqlite3_bind_double(statement, index, value->GetDouble());
 				break;
 			case VARENUM::VT_BOOL:
-				iRes = sqlite3_bind_int(m_statement, index, value->GetBoolean());
+				iRes = sqlite3_bind_int(statement, index, value->GetBoolean());
 				break;
 			case VARENUM::VT_DATE:
 			{
-									 DATE date = value->GetDateTime();
-									 TinyOleDateTime oleDate(date);
-									 TinyString str = oleDate.Format("yyyy-MM-dd HH:mm:ss.fff");
-									 iRes = sqlite3_bind_text(m_statement, index, str.STR(), str.GetSize(), SQLITE_STATIC);
+				DATE date = value->GetDateTime();
+				TinyOleDateTime oleDate(date);
+				TinyString str = oleDate.Format("yyyy-MM-dd HH:mm:ss.fff");
+				iRes = sqlite3_bind_text(statement, index, str.STR(), str.GetSize(), SQLITE_STATIC);
 			}
-				break;
+			break;
 			case VARENUM::VT_LPSTR:
-				iRes = sqlite3_bind_text(m_statement, index, value->GetString(), -1, NULL);
+				iRes = sqlite3_bind_text(statement, index, value->GetString(), -1, NULL);
 				break;
 			}
-			return iRes == SQLITE_OK;
 		}
+		return iRes == SQLITE_OK;
 	}
-	BOOL	SqliteCommand::Remove(INT i)
+	BOOL SqliteCommand::BindParameters(sqlite3_stmt* statement)
 	{
-		return FALSE;
-	}
-	BOOL	SqliteCommand::Remove(LPCSTR pzName)
-	{
-		return FALSE;
-	}
-	BOOL	SqliteCommand::RemoveAll()
-	{
-		return FALSE;
-	}
-	INT		SqliteCommand::ExecuteNonQuery()
-	{
-
-	}
-	BOOL	SqliteCommand::ExecuteReader(IDbDataReader* ps)
-	{
-
-	}
-	BOOL SqliteCommand::Cancel()
-	{
-
+		ASSERT(statement);
+		if (sqlite3_reset(statement) != SQLITE_OK)
+		{
+			return FALSE;
+		}
+		for (INT i = 0; i < m_parameters.GetSize(); i++)
+		{
+			if (!BindParameter(statement, m_parameters[i]))
+			{
+				return FALSE;
+			}
+		}
+		return TRUE;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	SqlliteParameter::SqlliteParameter(SqliteCommand& command)
