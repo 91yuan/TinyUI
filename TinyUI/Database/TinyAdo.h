@@ -93,6 +93,7 @@ namespace TinyUI
 		virtual void	SetScale(BYTE scale);
 		virtual INT		GetSize();
 		virtual void	SetSize(INT size);
+		virtual	void	SetNull();
 		virtual void	SetBoolean(BOOL val);
 		virtual void	SetByte(BYTE val);
 		virtual void	SetChar(CHAR val);

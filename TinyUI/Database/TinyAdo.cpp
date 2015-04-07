@@ -443,6 +443,20 @@ namespace TinyUI
 			TRACE("\n");
 		}
 	}
+	void	ADODataParameter::SetNull()
+	{
+		ASSERT(m_parameterPtr);
+		try
+		{
+			V_VT(&m_value) = VT_NULL;
+			m_parameterPtr->PutValue(m_value);
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
+		}
+	}
 	void	ADODataParameter::SetBoolean(BOOL val)
 	{
 		ASSERT(m_parameterPtr);

@@ -80,7 +80,7 @@ namespace TinyUI
 	//////////////////////////////////////////////////////////////////////////
 	SqliteCommand::SqliteCommand(SqliteConnection& connection)
 		: m_connection(connection),
-		m_commandType(CmdText)
+		m_statement(NULL)
 	{
 
 	}
@@ -106,11 +106,11 @@ namespace TinyUI
 	}
 	INT		SqliteCommand::GetCommandType()
 	{
-		return m_commandType;
+		return StoredProcedure;
 	}
 	void	SqliteCommand::SetCommandType(INT commandType)
 	{
-		m_commandType = commandType;
+
 	}
 	IDbConnection*	SqliteCommand::GetConnection()
 	{
@@ -118,19 +118,65 @@ namespace TinyUI
 	}
 	BOOL	SqliteCommand::Add(IDbDataParameter* value)
 	{
-
+		if (m_statement == NULL)
+		{
+			if (sqlite3_prepare(m_connection.m_sqlite, m_commandText.STR(), -1, &m_statement, NULL) == SQLITE_OK)
+			{
+				return FALSE;
+			}
+		}
+		INT iRes = SQLITE_OK;
+		INT index = sqlite3_bind_parameter_index(m_statement, value->GetParameterName());
+		if (value->IsNullable())
+		{
+			iRes = sqlite3_bind_null(m_statement, index);
+		}
+		else
+		{
+			VARENUM dbType = (VARENUM)value->GetDbType();
+			switch (dbType)
+			{
+			case VARENUM::VT_I4:
+				iRes = sqlite3_bind_int(m_statement, index, value->GetInt32());
+				break;;
+			case VARENUM::VT_I8:
+				iRes = sqlite3_bind_int64(m_statement, index, value->GetInt64());
+				break;
+			case VARENUM::VT_R4:
+				iRes = sqlite3_bind_double(m_statement, index, value->GetFloat());
+				break;
+			case VARENUM::VT_R8:
+				iRes = sqlite3_bind_double(m_statement, index, value->GetDouble());
+				break;
+			case VARENUM::VT_BOOL:
+				iRes = sqlite3_bind_int(m_statement, index, value->GetBoolean());
+				break;
+			case VARENUM::VT_DATE:
+			{
+									 DATE date = value->GetDateTime();
+									 TinyOleDateTime oleDate(date);
+									 TinyString str = oleDate.Format("yyyy-MM-dd HH:mm:ss.fff");
+									 iRes = sqlite3_bind_text(m_statement, index, str.STR(), str.GetSize(), SQLITE_STATIC);
+			}
+				break;
+			case VARENUM::VT_LPSTR:
+				iRes = sqlite3_bind_text(m_statement, index, value->GetString(), -1, NULL);
+				break;
+			}
+			return iRes == SQLITE_OK;
+		}
 	}
 	BOOL	SqliteCommand::Remove(INT i)
 	{
-
+		return FALSE;
 	}
 	BOOL	SqliteCommand::Remove(LPCSTR pzName)
 	{
-
+		return FALSE;
 	}
 	BOOL	SqliteCommand::RemoveAll()
 	{
-
+		return FALSE;
 	}
 	INT		SqliteCommand::ExecuteNonQuery()
 	{
@@ -146,8 +192,7 @@ namespace TinyUI
 	}
 	//////////////////////////////////////////////////////////////////////////
 	SqlliteParameter::SqlliteParameter(SqliteCommand& command)
-		:m_command(command),
-		m_stmt(NULL)
+		:m_command(command)
 	{
 
 	}
@@ -214,7 +259,10 @@ namespace TinyUI
 	{
 		throw std::logic_error("The method or operation is not implemented.");
 	}
+	void SqlliteParameter::SetNull()
+	{
 
+	}
 	void SqlliteParameter::SetSize(INT size)
 	{
 		throw std::logic_error("The method or operation is not implemented.");

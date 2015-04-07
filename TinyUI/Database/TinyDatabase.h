@@ -105,6 +105,7 @@ namespace TinyUI
 		virtual INT		GetSize() = 0;
 		virtual void	SetSize(INT size) = 0;
 		//////////////////////////////////////////////////////////////////////////
+		virtual void	SetNull() = 0;
 		virtual void	SetBoolean(BOOL val) = 0;
 		virtual void	SetByte(BYTE val) = 0;
 		virtual void	SetChar(CHAR val) = 0;

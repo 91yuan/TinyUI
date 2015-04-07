@@ -29,6 +29,49 @@ namespace TinyUI
 		StoredProcedure = 4,
 		TableDirect = 512,
 	};
+	enum DbType
+	{
+		Empty = 0,
+		TinyInt = 16,
+		SmallInt = 2,
+		Integer = 3,
+		BigInt = 20,
+		UnsignedTinyInt = 17,
+		UnsignedSmallInt = 18,
+		UnsignedInt = 19,
+		UnsignedBigInt = 21,
+		Single = 4,
+		Double = 5,
+		Currency = 6,
+		Decimal = 14,
+		Numeric = 131,
+		Boolean = 11,
+		Error = 10,
+		UserDefined = 132,
+		Variant = 12,
+		IDispatch = 9,
+		IUnknown = 13,
+		GUID = 72,
+		Date = 7,
+		DBDate = 133,
+		DBTime = 134,
+		DBTimeStamp = 135,
+		BSTR = 8,
+		Char = 129,
+		VarChar = 200,
+		LongVarChar = 201,
+		WChar = 130,
+		VarWChar = 202,
+		LongVarWChar = 203,
+		Binary = 128,
+		VarBinary = 204,
+		LongVarBinary = 205,
+		Chapter = 136,
+		FileTime = 64,
+		PropVariant = 138,
+		VarNumeric = 139,
+		Array = 8192
+	};
 	/// <summary>
 	/// Sqlite数据库连接
 	/// </summary>
@@ -79,11 +122,10 @@ namespace TinyUI
 		virtual BOOL				ExecuteReader(IDbDataReader* ps);
 		virtual BOOL				Cancel();
 	private:
-		TinyArray<SqlliteParameter*>m_parameters;
 		TinyString					m_commandText;
 		SqliteConnection&			m_connection;
-		INT							m_commandType;
 		INT							m_queryTime;
+		sqlite3_stmt*				m_statement;
 	};
 	/// <summary>
 	/// Sqlite参数
@@ -108,6 +150,7 @@ namespace TinyUI
 		virtual BYTE GetScale();
 		virtual void SetScale(BYTE scale);
 		virtual INT GetSize();
+		virtual void SetNull();
 		virtual void SetSize(INT size);
 		virtual void SetBoolean(BOOL val);
 		virtual void SetByte(BYTE val);
@@ -135,6 +178,5 @@ namespace TinyUI
 		virtual LPCSTR GetString();
 	private:
 		SqliteCommand&	m_command;
-		sqlite3_stmt*	m_stmt;
 	};
 }
