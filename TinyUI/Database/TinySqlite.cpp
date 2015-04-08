@@ -1,13 +1,14 @@
 #include "../stdafx.h"
 #include "TinySqlite.h"
+#include <stdlib.h>
+using namespace std;
 
 namespace TinyUI
 {
 	SqliteConnection::SqliteConnection()
-		:m_sqlite(NULL),
-		m_mutex(NULL)
+		:m_sqlite(NULL)
 	{
-		m_mutex = sqlite3_mutex_alloc(SQLITE_MUTEX_FAST);
+
 	}
 	SqliteConnection::~SqliteConnection()
 	{
@@ -35,11 +36,11 @@ namespace TinyUI
 	}
 	LONG SqliteConnection::GetConnectionTimeout() const
 	{
-		return -1;
+		throw exception("不支持的参数!");
 	}
 	void SqliteConnection::SetConnectionTimeout(LONG timeMs)
 	{
-
+		throw exception("不支持的参数!");
 	}
 	BOOL SqliteConnection::Open()
 	{
@@ -50,11 +51,6 @@ namespace TinyUI
 	}
 	BOOL SqliteConnection::Close()
 	{
-		if (m_mutex != NULL)
-		{
-			sqlite3_free(m_mutex);
-			m_mutex = NULL;
-		}
 		if (m_sqlite != NULL)
 		{
 			sqlite3_close(m_sqlite);
@@ -69,15 +65,15 @@ namespace TinyUI
 	}
 	BOOL SqliteConnection::BeginTransaction(INT iIsolationLevel /*= 0*/)
 	{
-		"BEGIN TRANSACTION";
+		return sqlite3_exec(m_sqlite, "BEGIN TRANSACTION", NULL, NULL, NULL) == SQLITE_OK;
 	}
 	BOOL SqliteConnection::CommitTransaction()
 	{
-		"COMMIT TRANSACTION";
+		return sqlite3_exec(m_sqlite, "COMMIT TRANSACTION", NULL, NULL, NULL) == SQLITE_OK;
 	}
 	BOOL SqliteConnection::RollbackTransaction()
 	{
-		"ROLLBACK TRANSACTION";
+		return sqlite3_exec(m_sqlite, "ROLLBACK TRANSACTION", NULL, NULL, NULL) == SQLITE_OK;
 	}
 	void SqliteConnection::GetErrors(LPSTR pzError, INT& size)
 	{
@@ -111,11 +107,11 @@ namespace TinyUI
 	}
 	INT		SqliteCommand::GetCommandType()
 	{
-		return StoredProcedure;
+		throw exception("没有实现的方法!");
 	}
 	void	SqliteCommand::SetCommandType(INT commandType)
 	{
-
+		throw exception("没有实现的方法!");
 	}
 	IDbConnection*	SqliteCommand::GetConnection()
 	{
@@ -221,6 +217,14 @@ namespace TinyUI
 			case VARENUM::VT_LPSTR:
 				iRes = sqlite3_bind_text(statement, index, value->GetString(), -1, NULL);
 				break;
+			case VARENUM::VT_BLOB:
+			{
+				INT size = value->GetBlob(NULL);
+				BYTE* ps = new BYTE[size];
+				size = value->GetBlob(ps);
+				iRes = sqlite3_bind_blob(statement, index, ps, size, NULL);
+			}
+			break;
 			}
 		}
 		return iRes == SQLITE_OK;
@@ -243,9 +247,10 @@ namespace TinyUI
 	}
 	//////////////////////////////////////////////////////////////////////////
 	SqlliteParameter::SqlliteParameter(SqliteCommand& command)
-		:m_command(command)
+		:m_command(command),
+		m_size(0)
 	{
-
+		memset(&m_value, 0, sizeof(VARIANT));
 	}
 	SqlliteParameter::~SqlliteParameter()
 	{
@@ -253,62 +258,54 @@ namespace TinyUI
 	}
 	INT SqlliteParameter::GetDbType()
 	{
-
+		return m_value.vt;
 	}
-
 	void SqlliteParameter::SetDbType(INT dbTye)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_value.vt = dbTye;
 	}
-
 	INT SqlliteParameter::GetDirection()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return (INT)Input;
 	}
-
 	void SqlliteParameter::SetDirection(INT direction)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		if (direction != Input)
+		{
+			throw exception("不支持的参数!");
+		}
 	}
-
 	BOOL SqlliteParameter::IsNullable()
 	{
 		throw std::logic_error("The method or operation is not implemented.");
 	}
-
 	LPCSTR SqlliteParameter::GetParameterName()
 	{
 		throw std::logic_error("The method or operation is not implemented.");
 	}
-
 	void SqlliteParameter::SetParameterName(LPCSTR pzName)
 	{
 		throw std::logic_error("The method or operation is not implemented.");
 	}
-
 	BYTE SqlliteParameter::GetPrecision()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		throw exception("不支持的方法!");
 	}
-
 	void SqlliteParameter::SetPrecision(BYTE precision)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		throw exception("不支持的方法!");
 	}
-
 	BYTE SqlliteParameter::GetScale()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		throw exception("不支持的方法!");
 	}
-
 	void SqlliteParameter::SetScale(BYTE scale)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		throw exception("不支持的方法!");
 	}
-
 	INT SqlliteParameter::GetSize()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return m_size;
 	}
 	void SqlliteParameter::SetNull()
 	{
@@ -316,125 +313,216 @@ namespace TinyUI
 	}
 	void SqlliteParameter::SetSize(INT size)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_size = size;
 	}
-
 	void SqlliteParameter::SetBoolean(BOOL val)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_value.boolVal = val;
 	}
-
 	void SqlliteParameter::SetByte(BYTE val)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		throw exception("不支持的参数!");
 	}
-
 	void SqlliteParameter::SetChar(CHAR val)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		throw exception("不支持的参数!");
 	}
-
-	void SqlliteParameter::SetBlob(LPBYTE val)
+	void SqlliteParameter::SetBlob(LPBYTE val, LONG size)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_value.pbVal = val;
+		m_value.lVal = size;
 	}
-
 	void SqlliteParameter::SetDateTime(DATE val)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_value.date = val;
 	}
-
 	void SqlliteParameter::SetDecimal(DECIMAL val)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_value.decVal = val;
 	}
-
 	void SqlliteParameter::SetDouble(DOUBLE val)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_value.dblVal = val;
 	}
-
 	void SqlliteParameter::SetFloat(FLOAT val)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_value.fltVal = val;
 	}
-
 	void SqlliteParameter::SetInt16(SHORT val)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		throw exception("不支持的参数!");
 	}
-
 	void SqlliteParameter::SetInt32(INT val)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_value.intVal = val;
 	}
-
 	void SqlliteParameter::SetInt64(LONG val)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_value.lVal = val;
 	}
-
 	void SqlliteParameter::SetString(LPCSTR val)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_value.bstrVal = _com_util::ConvertStringToBSTR(val);
 	}
-
 	BOOL SqlliteParameter::GetBoolean()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return m_value.boolVal;
 	}
-
 	BYTE SqlliteParameter::GetByte()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		throw exception("不支持的参数!");
 	}
-
 	CHAR SqlliteParameter::GetChar()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		throw exception("不支持的参数!");
 	}
-
-	LPBYTE SqlliteParameter::GetBlob()
+	INT SqlliteParameter::GetBlob(BYTE* ps)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		if (ps != NULL)
+		{
+			memcpy_s(ps, m_value.lVal, m_value.pbVal, m_value.lVal);
+		}
+		return m_value.lVal;
 	}
-
 	DATE SqlliteParameter::GetDateTime()
 	{
 		throw std::logic_error("The method or operation is not implemented.");
 	}
-
 	DECIMAL SqlliteParameter::GetDecimal()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return m_value.decVal;
 	}
-
 	DOUBLE SqlliteParameter::GetDouble()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return m_value.dblVal;
 	}
-
 	FLOAT SqlliteParameter::GetFloat()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return m_value.fltVal;
 	}
-
 	SHORT SqlliteParameter::GetInt16()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		throw exception("不支持的参数!");
 	}
-
 	INT SqlliteParameter::GetInt32()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return m_value.intVal;
 	}
-
 	LONG SqlliteParameter::GetInt64()
+	{
+		return m_value.lVal;
+	}
+	LPCSTR SqlliteParameter::GetString()
+	{
+		return _com_util::ConvertBSTRToString(m_value.bstrVal);
+	}
+	//////////////////////////////////////////////////////////////////////////
+	BOOL SqliteDataReader::ReadNext()
 	{
 		throw std::logic_error("The method or operation is not implemented.");
 	}
 
-	LPCSTR SqlliteParameter::GetString()
+	BOOL SqliteDataReader::ReadPrevious()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	BOOL SqliteDataReader::ReadFirst()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	BOOL SqliteDataReader::ReadLast()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	BOOL SqliteDataReader::Close()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	INT SqliteDataReader::GetColumnCount()
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	BOOL SqliteDataReader::GetBoolean(INT i)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	BYTE SqliteDataReader::GetByte(INT i)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	CHAR SqliteDataReader::GetChar(INT i)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	INT SqliteDataReader::GetBlob(INT i, BYTE* ps)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	LPCSTR SqliteDataReader::GetDataTypeName(INT i)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	DATE SqliteDataReader::GetDateTime(INT i)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	DECIMAL SqliteDataReader::GetDecimal(INT i)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	DOUBLE SqliteDataReader::GetDouble(INT i)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	FLOAT SqliteDataReader::GetFloat(INT i)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	SHORT SqliteDataReader::GetInt16(INT i)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	INT SqliteDataReader::GetInt32(INT i)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	LONG SqliteDataReader::GetInt64(INT i)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	LPCSTR SqliteDataReader::GetName(INT i)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	INT SqliteDataReader::GetOrdinal(LPCSTR pzName)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	LPCSTR SqliteDataReader::GetString(INT i)
+	{
+		throw std::logic_error("The method or operation is not implemented.");
+	}
+
+	BOOL SqliteDataReader::IsDBNull(INT i)
 	{
 		throw std::logic_error("The method or operation is not implemented.");
 	}

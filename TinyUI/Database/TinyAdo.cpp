@@ -502,8 +502,29 @@ namespace TinyUI
 			TRACE("\n");
 		}
 	}
-	void	ADODataParameter::SetBlob(LPBYTE val)
+	void	ADODataParameter::SetBlob(LPBYTE val, LONG size)
 	{
+		ASSERT(m_parameterPtr);
+		try
+		{
+			SAFEARRAY   *psa = NULL;
+			SAFEARRAYBOUND  rgsabound[1];
+			rgsabound[0].lLbound = 0;
+			rgsabound[0].cElements = size;
+			psa = SafeArrayCreate(VT_UI1, 1, rgsabound);
+			for (LONG i = 0; i < (LONG)size; i++)
+			{
+				SafeArrayPutElement(psa, &i, val++);
+			}
+			m_value.vt = VT_ARRAY | VT_UI1;
+			m_value.parray = psa;
+			m_parameterPtr->AppendChunk(m_value);
+		}
+		catch (_com_error& e)
+		{
+			TRACE(e.Description());
+			TRACE("\n");
+		}
 
 	}
 	void	ADODataParameter::SetDateTime(DATE val)
@@ -644,9 +665,19 @@ namespace TinyUI
 		ASSERT(val.vt == VT_I1);
 		return val.cVal;
 	}
-	LPBYTE	ADODataParameter::GetBlob()
+	INT		ADODataParameter::GetBlob(BYTE* ps)
 	{
-		return NULL;
+		_variant_t val = m_parameterPtr->GetValue();
+		ASSERT(val.vt == (VT_ARRAY | VT_UI1));
+		INT size = val.parray->rgsabound[0].cElements;
+		if (ps != NULL)
+		{
+			BYTE *buffer = NULL;
+			SafeArrayAccessData(val.parray, (void **)&buffer);
+			memcpy_s(ps, size, buffer, size);
+			SafeArrayUnaccessData(val.parray);
+		}
+		return size;
 	}
 	DATE	ADODataParameter::GetDateTime()
 	{
@@ -833,14 +864,22 @@ namespace TinyUI
 		ASSERT(val.vt == VT_I1);
 		return val.cVal;
 	}
-	BYTE* ADODataReader::GetBlob(INT i)
+	INT ADODataReader::GetBlob(INT i, BYTE* ps)
 	{
 		_variant_t vtIndex;
 		vtIndex.vt = VT_I2;
 		vtIndex.iVal = i;
-		_variant_t val = m_fields->GetItem(vtIndex)->Value;
-		ASSERT(val.vt == VT_BLOB);
-		return (BYTE*)val.parray->pvData;
+		INT size = m_fields->GetItem(vtIndex)->ActualSize;
+		if (ps != NULL)
+		{
+			_variant_t val = m_fields->GetItem(vtIndex)->GetChunk(size);
+			ASSERT(val.vt == (VT_ARRAY | VT_UI1));
+			BYTE *buffer = NULL;
+			SafeArrayAccessData(val.parray, (void **)&buffer);
+			memcpy_s(ps, size, buffer, size);
+			SafeArrayUnaccessData(val.parray);
+		}
+		return size;
 	}
 	LPCSTR ADODataReader::GetDataTypeName(INT i)
 	{

@@ -27,50 +27,26 @@ namespace TinyUI
 	{
 		Text = 1,
 		StoredProcedure = 4,
-		TableDirect = 512,
+		TableDirect = 512
+	};
+	enum ParameterDirection
+	{
+		Input = 1,
+		Output = 2,
+		InputOutput = 3,
+		ReturnValue = 6
 	};
 	enum DbType
 	{
-		Empty = 0,
-		TinyInt = 16,
-		SmallInt = 2,
-		Integer = 3,
-		BigInt = 20,
-		UnsignedTinyInt = 17,
-		UnsignedSmallInt = 18,
-		UnsignedInt = 19,
-		UnsignedBigInt = 21,
-		Single = 4,
-		Double = 5,
-		Currency = 6,
-		Decimal = 14,
-		Numeric = 131,
-		Boolean = 11,
-		Error = 10,
-		UserDefined = 132,
-		Variant = 12,
-		IDispatch = 9,
-		IUnknown = 13,
-		GUID = 72,
-		Date = 7,
-		DBDate = 133,
-		DBTime = 134,
-		DBTimeStamp = 135,
-		BSTR = 8,
-		Char = 129,
-		VarChar = 200,
-		LongVarChar = 201,
-		WChar = 130,
-		VarWChar = 202,
-		LongVarWChar = 203,
-		Binary = 128,
-		VarBinary = 204,
-		LongVarBinary = 205,
-		Chapter = 136,
-		FileTime = 64,
-		PropVariant = 138,
-		VarNumeric = 139,
-		Array = 8192
+		DT_NULL = VT_NULL,
+		DT_INT = VT_I4,
+		DT_INT64 = VT_I8,
+		DT_FLOAT = VT_R4,
+		DT_DOUBLE = VT_R8,
+		DT_DATE = VT_DATE,
+		DT_TEXT = VT_BSTR,
+		DT_BLOB = VT_BLOB,
+		DT_DECIMAL = VT_DECIMAL
 	};
 	/// <summary>
 	/// Sqlite数据库连接
@@ -96,7 +72,6 @@ namespace TinyUI
 	private:
 		TinyString				m_connectionString;
 		sqlite3*				m_sqlite;
-		sqlite3_mutex*			m_mutex;
 	};
 	/// <summary>
 	/// Sqlite数据库命令,不支持存储过程
@@ -125,7 +100,7 @@ namespace TinyUI
 	private:
 		sqlite3_stmt*				GetSTMT();
 		BOOL						ReleaseSTMT(sqlite3_stmt* statement);
-		BOOL						BindParameter(sqlite3_stmt* statement,IDbDataParameter* value);
+		BOOL						BindParameter(sqlite3_stmt* statement, IDbDataParameter* value);
 		BOOL						BindParameters(sqlite3_stmt* statement);
 	private:
 		TinyArray<IDbDataParameter*>m_parameters;
@@ -161,7 +136,7 @@ namespace TinyUI
 		virtual void SetBoolean(BOOL val);
 		virtual void SetByte(BYTE val);
 		virtual void SetChar(CHAR val);
-		virtual void SetBlob(LPBYTE val);
+		virtual void SetBlob(LPBYTE val, LONG size);
 		virtual void SetDateTime(DATE val);
 		virtual void SetDecimal(DECIMAL val);
 		virtual void SetDouble(DOUBLE val);
@@ -173,7 +148,7 @@ namespace TinyUI
 		virtual BOOL GetBoolean();
 		virtual BYTE GetByte();
 		virtual CHAR GetChar();
-		virtual LPBYTE GetBlob();
+		virtual INT	GetBlob(BYTE* ps);
 		virtual DATE GetDateTime();
 		virtual DECIMAL GetDecimal();
 		virtual DOUBLE GetDouble();
@@ -184,5 +159,36 @@ namespace TinyUI
 		virtual LPCSTR GetString();
 	private:
 		SqliteCommand&	m_command;
+		VARIANT			m_value;
+		INT				m_size;
+	};
+	/// <summary>
+	/// Sqlite 读取
+	/// </summary>
+	class SqliteDataReader :public IDbDataReader
+	{
+	public:
+		virtual BOOL ReadNext() override;
+		virtual BOOL ReadPrevious() override;
+		virtual BOOL ReadFirst() override;
+		virtual BOOL ReadLast() override;
+		virtual BOOL Close() override;
+		virtual INT GetColumnCount() override;
+		virtual BOOL GetBoolean(INT i) override;
+		virtual BYTE GetByte(INT i) override;
+		virtual CHAR GetChar(INT i) override;
+		virtual INT GetBlob(INT i, BYTE* ps) override;
+		virtual LPCSTR GetDataTypeName(INT i) override;
+		virtual DATE GetDateTime(INT i) override;
+		virtual DECIMAL GetDecimal(INT i) override;
+		virtual DOUBLE GetDouble(INT i) override;
+		virtual FLOAT GetFloat(INT i) override;
+		virtual SHORT GetInt16(INT i) override;
+		virtual INT GetInt32(INT i) override;
+		virtual LONG GetInt64(INT i) override;
+		virtual LPCSTR GetName(INT i) override;
+		virtual INT GetOrdinal(LPCSTR pzName) override;
+		virtual LPCSTR GetString(INT i) override;
+		virtual BOOL IsDBNull(INT i) override;
 	};
 }

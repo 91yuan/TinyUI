@@ -59,7 +59,7 @@ namespace TinyUI
 		virtual BOOL			GetBoolean(INT i) = 0;
 		virtual BYTE			GetByte(INT i) = 0;
 		virtual CHAR			GetChar(INT i) = 0;
-		virtual	BYTE*			GetBlob(INT i) = 0;
+		virtual	INT				GetBlob(INT i, BYTE* ps) = 0;
 		virtual LPCSTR			GetDataTypeName(INT i) = 0;
 		virtual DATE			GetDateTime(INT i) = 0;
 		virtual DECIMAL			GetDecimal(INT i) = 0;
@@ -109,7 +109,7 @@ namespace TinyUI
 		virtual void	SetBoolean(BOOL val) = 0;
 		virtual void	SetByte(BYTE val) = 0;
 		virtual void	SetChar(CHAR val) = 0;
-		virtual	void	SetBlob(LPBYTE val) = 0;
+		virtual	void	SetBlob(LPBYTE val, LONG size) = 0;
 		virtual void	SetDateTime(DATE val) = 0;
 		virtual void	SetDecimal(DECIMAL val) = 0;
 		virtual void	SetDouble(DOUBLE val) = 0;
@@ -121,7 +121,7 @@ namespace TinyUI
 		virtual BOOL	GetBoolean() = 0;
 		virtual BYTE	GetByte() = 0;
 		virtual CHAR	GetChar() = 0;
-		virtual	LPBYTE	GetBlob() = 0;
+		virtual	INT		GetBlob(BYTE* ps) = 0;
 		virtual DATE	GetDateTime() = 0;
 		virtual DECIMAL	GetDecimal() = 0;
 		virtual DOUBLE	GetDouble() = 0;

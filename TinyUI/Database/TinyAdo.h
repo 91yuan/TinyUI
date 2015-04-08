@@ -97,7 +97,7 @@ namespace TinyUI
 		virtual void	SetBoolean(BOOL val);
 		virtual void	SetByte(BYTE val);
 		virtual void	SetChar(CHAR val);
-		virtual	void	SetBlob(LPBYTE val);
+		virtual	void	SetBlob(LPBYTE val, LONG size);
 		virtual void	SetDateTime(DATE val);
 		virtual void	SetDecimal(DECIMAL val);
 		virtual void	SetDouble(DOUBLE val);
@@ -109,7 +109,7 @@ namespace TinyUI
 		virtual BOOL	GetBoolean();
 		virtual BYTE	GetByte();
 		virtual CHAR	GetChar();
-		virtual	LPBYTE	GetBlob();
+		virtual	INT		GetBlob(BYTE* ps);
 		virtual DATE	GetDateTime();
 		virtual DECIMAL	GetDecimal();
 		virtual DOUBLE	GetDouble();
@@ -141,7 +141,7 @@ namespace TinyUI
 		virtual INT		GetColumnCount();
 		virtual BOOL	GetBoolean(INT i);
 		virtual BYTE	GetByte(INT i);
-		virtual BYTE*	GetBlob(INT i);
+		virtual INT		GetBlob(INT i, BYTE* ps);
 		virtual CHAR	GetChar(INT i);
 		virtual LPCSTR	GetDataTypeName(INT i);
 		virtual DATE	GetDateTime(INT i);
