@@ -69,6 +69,7 @@ namespace TinyUI
 		virtual BOOL	CommitTransaction();
 		virtual BOOL	RollbackTransaction();
 		virtual void	GetErrors(LPSTR pzError, INT& size);
+		INT				GetRowID();//最新的行号
 	private:
 		TinyString				m_connectionString;
 		sqlite3*				m_sqlite;
@@ -100,6 +101,7 @@ namespace TinyUI
 	private:
 		sqlite3_stmt*				GetSTMT();
 		BOOL						ReleaseSTMT(sqlite3_stmt* statement);
+		BOOL						ResetSTMT(sqlite3_stmt* statement);
 		BOOL						BindParameter(sqlite3_stmt* statement, IDbDataParameter* value);
 		BOOL						BindParameters(sqlite3_stmt* statement);
 	private:
@@ -160,6 +162,7 @@ namespace TinyUI
 	private:
 		SqliteCommand&	m_command;
 		VARIANT			m_value;
+		TinyString		m_parameterName;
 		INT				m_size;
 	};
 	/// <summary>
@@ -167,7 +170,12 @@ namespace TinyUI
 	/// </summary>
 	class SqliteDataReader :public IDbDataReader
 	{
+		friend class SqliteConnection;
+		friend class SqliteCommand;
+		DISALLOW_COPY_AND_ASSIGN(SqliteDataReader);
 	public:
+		SqliteDataReader();
+		virtual ~SqliteDataReader();
 		virtual BOOL ReadNext() override;
 		virtual BOOL ReadPrevious() override;
 		virtual BOOL ReadFirst() override;
@@ -190,5 +198,10 @@ namespace TinyUI
 		virtual INT GetOrdinal(LPCSTR pzName) override;
 		virtual LPCSTR GetString(INT i) override;
 		virtual BOOL IsDBNull(INT i) override;
+	private:
+		BOOL	ReleaseSTMT(sqlite3_stmt* statement);
+		BOOL	ResetSTMT(sqlite3_stmt* statement);
+	private:
+		sqlite3_stmt*		m_statement;
 	};
 }

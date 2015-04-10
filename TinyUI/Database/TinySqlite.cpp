@@ -75,9 +75,16 @@ namespace TinyUI
 	{
 		return sqlite3_exec(m_sqlite, "ROLLBACK TRANSACTION", NULL, NULL, NULL) == SQLITE_OK;
 	}
-	void SqliteConnection::GetErrors(LPSTR pzError, INT& size)
+	void SqliteConnection::GetErrors(LPSTR ps, INT& size)
 	{
-
+		ASSERT(m_sqlite);
+		ps = const_cast<LPSTR>(sqlite3_errmsg(m_sqlite));
+		size = strlen(ps);
+	}
+	INT	SqliteConnection::GetRowID()
+	{
+		ASSERT(m_sqlite);
+		return sqlite3_last_insert_rowid(m_sqlite);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	SqliteCommand::SqliteCommand(SqliteConnection& connection)
@@ -144,24 +151,35 @@ namespace TinyUI
 	INT		SqliteCommand::ExecuteNonQuery()
 	{
 		sqlite3_stmt* statement = GetSTMT();
-		BindParameters(statement);
-		INT rows = 0;
-		while (sqlite3_step(statement) == SQLITE_ROW)
+		if (statement != NULL
+			&& BindParameters(statement))
 		{
-			rows++;
+			INT i = 0;
+			while (sqlite3_step(statement) == SQLITE_ROW)
+				i++;
+			ReleaseSTMT(statement);
+			return i;
 		}
-		ReleaseSTMT(statement);
-		return rows;
+		return -1;
 	}
 	BOOL	SqliteCommand::ExecuteReader(IDbDataReader* ps)
 	{
+		ASSERT(ps);
 		sqlite3_stmt* statement = GetSTMT();
-		BindParameters(statement);
-		return ReleaseSTMT(statement);
+		if (statement != NULL
+			&& BindParameters(statement))
+		{
+			SqliteDataReader* reader = reinterpret_cast<SqliteDataReader*>(ps);
+			reader->m_statement = statement;
+			return TRUE;
+		}
+		return FALSE;
 	}
 	BOOL SqliteCommand::Cancel()
 	{
-		return FALSE;
+		ASSERT(m_connection.m_sqlite);
+		sqlite3_interrupt(m_connection.m_sqlite);
+		return TRUE;
 	}
 	sqlite3_stmt* SqliteCommand::GetSTMT()
 	{
@@ -177,6 +195,11 @@ namespace TinyUI
 		ASSERT(statement);
 		return sqlite3_finalize(statement) == SQLITE_OK;
 	}
+	BOOL SqliteCommand::ResetSTMT(sqlite3_stmt* statement)
+	{
+		ASSERT(statement);
+		return sqlite3_reset(statement) == SQLITE_OK;
+	}
 	BOOL SqliteCommand::BindParameter(sqlite3_stmt* statement, IDbDataParameter* value)
 	{
 		ASSERT(statement);
@@ -191,9 +214,20 @@ namespace TinyUI
 			VARENUM dbType = (VARENUM)value->GetDbType();
 			switch (dbType)
 			{
+			case VARENUM::VT_I1:
+				iRes = sqlite3_bind_int(statement, index, value->GetChar());
+				break;
+			case VARENUM::VT_I2:				iRes = sqlite3_bind_int(statement, index, value->GetInt16());
+				break;
+			case VARENUM::VT_UI1:
+				iRes = sqlite3_bind_int(statement, index, value->GetByte());
+				break;
 			case VARENUM::VT_I4:
 				iRes = sqlite3_bind_int(statement, index, value->GetInt32());
 				break;;
+			case VARENUM::VT_BOOL:
+				iRes = sqlite3_bind_int(statement, index, value->GetBoolean());
+				break;
 			case VARENUM::VT_I8:
 				iRes = sqlite3_bind_int64(statement, index, value->GetInt64());
 				break;
@@ -203,28 +237,25 @@ namespace TinyUI
 			case VARENUM::VT_R8:
 				iRes = sqlite3_bind_double(statement, index, value->GetDouble());
 				break;
-			case VARENUM::VT_BOOL:
-				iRes = sqlite3_bind_int(statement, index, value->GetBoolean());
-				break;
 			case VARENUM::VT_DATE:
 			{
-				DATE date = value->GetDateTime();
-				TinyOleDateTime oleDate(date);
-				TinyString str = oleDate.Format("yyyy-MM-dd HH:mm:ss.fff");
-				iRes = sqlite3_bind_text(statement, index, str.STR(), str.GetSize(), SQLITE_STATIC);
+									 DATE date = value->GetDateTime();
+									 TinyOleDateTime oleDate(date);
+									 TinyString str = oleDate.Format("yyyy-MM-dd HH:mm:ss.fff");
+									 iRes = sqlite3_bind_text(statement, index, str.STR(), str.GetSize(), SQLITE_STATIC);
 			}
-			break;
+				break;
 			case VARENUM::VT_LPSTR:
 				iRes = sqlite3_bind_text(statement, index, value->GetString(), -1, NULL);
 				break;
 			case VARENUM::VT_BLOB:
 			{
-				INT size = value->GetBlob(NULL);
-				BYTE* ps = new BYTE[size];
-				size = value->GetBlob(ps);
-				iRes = sqlite3_bind_blob(statement, index, ps, size, NULL);
+									 INT size = value->GetBlob(NULL);
+									 BYTE* ps = new BYTE[size];
+									 size = value->GetBlob(ps);
+									 iRes = sqlite3_bind_blob(statement, index, ps, size, NULL);
 			}
-			break;
+				break;
 			}
 		}
 		return iRes == SQLITE_OK;
@@ -232,10 +263,8 @@ namespace TinyUI
 	BOOL SqliteCommand::BindParameters(sqlite3_stmt* statement)
 	{
 		ASSERT(statement);
-		if (sqlite3_reset(statement) != SQLITE_OK)
-		{
+		if (sqlite3_clear_bindings(statement) != SQLITE_OK)
 			return FALSE;
-		}
 		for (INT i = 0; i < m_parameters.GetSize(); i++)
 		{
 			if (!BindParameter(statement, m_parameters[i]))
@@ -277,15 +306,15 @@ namespace TinyUI
 	}
 	BOOL SqlliteParameter::IsNullable()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return m_value.vt == VT_NULL;
 	}
 	LPCSTR SqlliteParameter::GetParameterName()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return m_parameterName.STR();
 	}
 	void SqlliteParameter::SetParameterName(LPCSTR pzName)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		m_parameterName = pzName;
 	}
 	BYTE SqlliteParameter::GetPrecision()
 	{
@@ -309,7 +338,7 @@ namespace TinyUI
 	}
 	void SqlliteParameter::SetNull()
 	{
-
+		m_value.vt = VT_NULL;
 	}
 	void SqlliteParameter::SetSize(INT size)
 	{
@@ -317,51 +346,62 @@ namespace TinyUI
 	}
 	void SqlliteParameter::SetBoolean(BOOL val)
 	{
+		m_value.vt = VT_BOOL;
 		m_value.boolVal = val;
 	}
 	void SqlliteParameter::SetByte(BYTE val)
 	{
-		throw exception("不支持的参数!");
+		m_value.vt = VT_UI1;
+		m_value.bVal = val;
 	}
 	void SqlliteParameter::SetChar(CHAR val)
 	{
-		throw exception("不支持的参数!");
+		m_value.vt = VT_I1;
+		m_value.cVal = val;
 	}
 	void SqlliteParameter::SetBlob(LPBYTE val, LONG size)
 	{
+		m_value.vt = VT_ARRAY | VT_BLOB;
 		m_value.pbVal = val;
 		m_value.lVal = size;
 	}
 	void SqlliteParameter::SetDateTime(DATE val)
 	{
+		m_value.vt = VT_DATE;
 		m_value.date = val;
 	}
 	void SqlliteParameter::SetDecimal(DECIMAL val)
 	{
-		m_value.decVal = val;
+		throw exception("不支持的方法!");
 	}
 	void SqlliteParameter::SetDouble(DOUBLE val)
 	{
+		m_value.vt = VT_R4;
 		m_value.dblVal = val;
 	}
 	void SqlliteParameter::SetFloat(FLOAT val)
 	{
+		m_value.vt = VT_R8;
 		m_value.fltVal = val;
 	}
 	void SqlliteParameter::SetInt16(SHORT val)
 	{
-		throw exception("不支持的参数!");
+		m_value.vt = VT_I2;
+		m_value.iVal = val;
 	}
 	void SqlliteParameter::SetInt32(INT val)
 	{
+		m_value.vt = VT_I4;
 		m_value.intVal = val;
 	}
 	void SqlliteParameter::SetInt64(LONG val)
 	{
+		m_value.vt = VT_I8;
 		m_value.lVal = val;
 	}
 	void SqlliteParameter::SetString(LPCSTR val)
 	{
+		m_value.vt = VT_BSTR;
 		m_value.bstrVal = _com_util::ConvertStringToBSTR(val);
 	}
 	BOOL SqlliteParameter::GetBoolean()
@@ -370,11 +410,11 @@ namespace TinyUI
 	}
 	BYTE SqlliteParameter::GetByte()
 	{
-		throw exception("不支持的参数!");
+		return m_value.bVal;
 	}
 	CHAR SqlliteParameter::GetChar()
 	{
-		throw exception("不支持的参数!");
+		return m_value.cVal;
 	}
 	INT SqlliteParameter::GetBlob(BYTE* ps)
 	{
@@ -386,11 +426,11 @@ namespace TinyUI
 	}
 	DATE SqlliteParameter::GetDateTime()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		return m_value.date;
 	}
 	DECIMAL SqlliteParameter::GetDecimal()
 	{
-		return m_value.decVal;
+		throw exception("不支持的方法!");
 	}
 	DOUBLE SqlliteParameter::GetDouble()
 	{
@@ -402,7 +442,7 @@ namespace TinyUI
 	}
 	SHORT SqlliteParameter::GetInt16()
 	{
-		throw exception("不支持的参数!");
+		return m_value.iVal;
 	}
 	INT SqlliteParameter::GetInt32()
 	{
@@ -417,114 +457,167 @@ namespace TinyUI
 		return _com_util::ConvertBSTRToString(m_value.bstrVal);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	SqliteDataReader::SqliteDataReader()
+		:m_statement(NULL)
+	{
+
+	}
+	SqliteDataReader::~SqliteDataReader()
+	{
+		Close();
+	}
 	BOOL SqliteDataReader::ReadNext()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		return sqlite3_step(m_statement) == SQLITE_ROW;
 	}
-
 	BOOL SqliteDataReader::ReadPrevious()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		throw exception("不支持的方法!");
 	}
-
 	BOOL SqliteDataReader::ReadFirst()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		throw exception("不支持的方法!");
 	}
-
 	BOOL SqliteDataReader::ReadLast()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		throw exception("不支持的方法!");
 	}
-
 	BOOL SqliteDataReader::Close()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		return ReleaseSTMT(m_statement);
 	}
-
 	INT SqliteDataReader::GetColumnCount()
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		return sqlite3_column_count(m_statement);
 	}
-
 	BOOL SqliteDataReader::GetBoolean(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		ASSERT(sqlite3_column_type(m_statement, i) == SQLITE_INTEGER);
+		return static_cast<BOOL> (sqlite3_column_int(m_statement, i));
 	}
-
 	BYTE SqliteDataReader::GetByte(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		ASSERT(sqlite3_column_type(m_statement, i) == SQLITE_INTEGER);
+		return static_cast<BYTE> (sqlite3_column_int(m_statement, i));
 	}
-
 	CHAR SqliteDataReader::GetChar(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		ASSERT(sqlite3_column_type(m_statement, i) == SQLITE_INTEGER);
+		return static_cast<CHAR> (sqlite3_column_int(m_statement, i));
 	}
-
 	INT SqliteDataReader::GetBlob(INT i, BYTE* ps)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		ASSERT(sqlite3_column_type(m_statement, i) == SQLITE_BLOB);
+		INT size = sqlite3_column_bytes(m_statement, i);
+		if (ps == NULL)
+		{
+			return size;
+		}
+		const void* val = sqlite3_column_blob(m_statement, i);
+		memcpy_s(ps, size, (BYTE*)val, size);
+		return size;
 	}
-
 	LPCSTR SqliteDataReader::GetDataTypeName(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		INT type = sqlite3_column_type(m_statement, i);
+		switch (type)
+		{
+		case SQLITE_FLOAT:
+			return TEXT("Float");
+		case SQLITE_BLOB:
+			return TEXT("Blob");
+		case SQLITE_INTEGER:
+			return TEXT("Interger");
+		case SQLITE_TEXT:
+			return TEXT("Text");
+		}
+		return TEXT("");
 	}
-
 	DATE SqliteDataReader::GetDateTime(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		ASSERT(sqlite3_column_type(m_statement, i) == SQLITE_TEXT);
+		_variant_t val(sqlite3_column_text(m_statement, i));
+		val.ChangeType(VT_DATE);
+		return val.date;
 	}
-
 	DECIMAL SqliteDataReader::GetDecimal(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		throw exception("不支持的方法!");
 	}
-
 	DOUBLE SqliteDataReader::GetDouble(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		ASSERT(sqlite3_column_type(m_statement, i) == SQLITE_FLOAT);
+		return static_cast<DOUBLE> (sqlite3_column_double(m_statement, i));
 	}
-
 	FLOAT SqliteDataReader::GetFloat(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		ASSERT(sqlite3_column_type(m_statement, i) == SQLITE_FLOAT);
+		return static_cast<FLOAT> (sqlite3_column_double(m_statement, i));
 	}
-
 	SHORT SqliteDataReader::GetInt16(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		ASSERT(sqlite3_column_type(m_statement, i) == SQLITE_INTEGER);
+		return static_cast<SHORT> (sqlite3_column_int(m_statement, i));
 	}
-
 	INT SqliteDataReader::GetInt32(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		ASSERT(sqlite3_column_type(m_statement, i) == SQLITE_INTEGER);
+		return static_cast<INT> (sqlite3_column_int(m_statement, i));
 	}
-
 	LONG SqliteDataReader::GetInt64(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		ASSERT(sqlite3_column_type(m_statement, i) == SQLITE_INTEGER);
+		return static_cast<LONG> (sqlite3_column_int(m_statement, i));
 	}
-
 	LPCSTR SqliteDataReader::GetName(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		return sqlite3_column_name(m_statement, i);
 	}
-
 	INT SqliteDataReader::GetOrdinal(LPCSTR pzName)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		INT count = sqlite3_column_count(m_statement);
+		for (INT i = 0; i < count; i++)
+		{
+			LPCSTR ps = sqlite3_column_name(m_statement, i);
+			if (!strcmp(ps, pzName)) return i;
+		}
+		return -1;
 	}
-
 	LPCSTR SqliteDataReader::GetString(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		ASSERT(sqlite3_column_type(m_statement, i) == SQLITE_TEXT);
+		return reinterpret_cast<LPCSTR>(sqlite3_column_text(m_statement, i));
 	}
-
 	BOOL SqliteDataReader::IsDBNull(INT i)
 	{
-		throw std::logic_error("The method or operation is not implemented.");
+		ASSERT(m_statement);
+		return sqlite3_column_type(m_statement, i) == SQLITE_NULL;
 	}
-
+	BOOL SqliteDataReader::ReleaseSTMT(sqlite3_stmt* statement)
+	{
+		ASSERT(statement);
+		return sqlite3_finalize(statement) == SQLITE_OK;
+	}
+	BOOL SqliteDataReader::ResetSTMT(sqlite3_stmt* statement)
+	{
+		ASSERT(statement);
+		return sqlite3_reset(statement) == SQLITE_OK;
+	}
 }

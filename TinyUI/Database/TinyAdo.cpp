@@ -719,7 +719,7 @@ namespace TinyUI
 	{
 		_variant_t val = m_parameterPtr->GetValue();
 		ASSERT(val.vt == VT_I8);
-		return val.llVal;
+		return val.lVal;
 	}
 	LPCSTR	ADODataParameter::GetString()
 	{
