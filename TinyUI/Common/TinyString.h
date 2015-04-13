@@ -5,6 +5,58 @@
 namespace TinyUI
 {
 	/// <summary>
+	/// 以大小写无关的方式比较两个字符串s1和s2 相等==0
+	/// </summary>
+	inline INT strcasecmp(const char* s1, const char* s2);
+	/// <summary>
+	/// 以大小写无关的方式比较两个字符串s1和s2前count个字符 相等==0
+	/// </summary>
+	inline INT strncasecmp(const char* s1, const char* s2, size_t count);
+	/// <summary>
+	/// Unicode字符串比较
+	/// </summary>
+	inline INT strncmp16(const wchar_t* s1, const wchar_t* s2, size_t count);
+	/// <summary>
+	/// 封装vsnprintf保证字符串始终以null结尾并返回字符长度, 即使发生截断时也一样.
+	/// </summary>
+	INT vsnprintf(char* buffer, size_t size, const char* format, va_list arguments);
+	/// <summary>
+	/// 封装vswnprintf保证字符串始终以null结尾并返回字符长度, 即使发生截断时也一样.
+	/// </summary>
+	INT vswprintf(wchar_t* buffer, size_t size, const wchar_t* format, va_list arguments);
+	/// <summary>
+	/// 宽字节字符创到多字节字符串
+	/// </summary>
+	std::string WStringToString(const std::wstring str, const DWORD dwType = CP_ACP);
+	/// <summary>
+	/// 多字节字符串打到宽字节字符串
+	/// </summary>
+	std::wstring StringToWString(const std::string str, const DWORD dwType = CP_ACP);
+	/// <summary>
+	/// ASCII转UTF8
+	/// </summary>
+	std::string ASCIIToUTF8(const std::string str);
+	/// <summary>
+	/// UTF8转ASCII
+	/// </summary>
+	std::string UTF8ToASCII(const std::string str);
+	/// <summary>
+	/// UTF8转UTF16
+	/// </summary>
+	std::wstring UTF8ToUTF16(const std::string& s);
+	/// <summary>
+	/// UTF16转UTF8
+	/// </summary>
+	std::string UTF16ToUTF8(const std::wstring& wide);
+	/// <summary>
+	/// 转小写CHAR
+	/// </summary>
+	template<class Char>
+	inline CHAR ToLowerASCII(CHAR c)
+	{
+		return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
+	}
+	/// <summary>
 	/// 字符串操作类
 	/// </summary>
 	class TinyString : public TinyObject
@@ -71,12 +123,6 @@ namespace TinyUI
 		size_t	_Myres;
 	};
 	//////////////////////////////////////////////////////////////////////////
-	std::string WStringToString(const std::wstring str, const DWORD dwType = CP_ACP);
-	std::wstring StringToWString(const std::string str, const DWORD dwType = CP_ACP);
-	std::string AnsiToUtf8(const std::string str);
-	std::string Utf8ToAnsi(const std::string str);
-	std::wstring UTF8ToWide(const std::string& s);
-	std::string WideToUTF8(const std::wstring& wide);
 }
 
 

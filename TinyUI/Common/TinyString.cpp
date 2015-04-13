@@ -4,6 +4,74 @@
 
 namespace TinyUI
 {
+	inline INT strcasecmp(const char* s1, const char* s2)
+	{
+		return _stricmp(s1, s2);
+	}
+	inline INT strncasecmp(const char* s1, const char* s2, size_t count)
+	{
+		return _strnicmp(s1, s2, count);
+	}
+	inline INT strncmp16(const wchar_t* s1, const wchar_t* s2, size_t count)
+	{
+		return ::wcsncmp(s1, s2, count);
+	}
+	inline INT vsnprintf(char* buffer, size_t size, const char* format, va_list arguments)
+	{
+		INT length = vsnprintf_s(buffer, size, size - 1, format, arguments);
+		if (length < 0)
+		{
+			return _vscprintf(format, arguments);
+		}
+		return length;
+	}
+	inline INT vswprintf(wchar_t* buffer, size_t size, const wchar_t* format, va_list arguments)
+	{
+		int length = _vsnwprintf_s(buffer, size, size - 1, format, arguments);
+		if (length < 0)
+		{
+			return _vscwprintf(format, arguments);
+		}
+		return length;
+	}
+	std::string WStringToString(const std::wstring str, const DWORD dwType)
+	{
+		int nMultiByteLenght = WideCharToMultiByte(dwType, 0, str.c_str(), -1, NULL, 0, NULL, NULL);
+		char* pMultiByteBuffer = new char[nMultiByteLenght];
+		nMultiByteLenght = WideCharToMultiByte(dwType, 0, str.c_str(), -1, pMultiByteBuffer, nMultiByteLenght, NULL, NULL);
+		std::string sRet = pMultiByteBuffer;
+		delete[] pMultiByteBuffer;
+		return sRet;
+	}
+	std::wstring StringToWString(const std::string str, const DWORD dwType)
+	{
+		int nWideCharLenght = MultiByteToWideChar(dwType, 0, str.c_str(), -1, NULL, 0);
+		wchar_t* pWideCharBuffer = new wchar_t[nWideCharLenght];
+		nWideCharLenght = MultiByteToWideChar(dwType, 0, str.c_str(), -1, pWideCharBuffer, nWideCharLenght);
+		std::wstring sRet = pWideCharBuffer;
+		delete[] pWideCharBuffer;
+		return sRet;
+	}
+	std::string ASCIIToUTF8(const std::string str)
+	{
+		std::wstring temp = StringToWString(str, CP_ACP);
+		return WStringToString(temp, CP_UTF8);
+	}
+	std::string UTF8ToASCII(const std::string str)
+	{
+		std::wstring temp = StringToWString(str, CP_UTF8);
+		return WStringToString(temp, CP_ACP);
+	}
+	std::wstring UTF8ToUTF16(const std::string& s)
+	{
+		return StringToWString(UTF8ToASCII(s));
+	}
+	std::string UTF16ToUTF8(const std::wstring& wide)
+	{
+		std::string temp = WStringToString(wide);
+		return ASCIIToUTF8(temp);
+	}
+	//////////////////////////////////////////////////////////////////////////
 	TinyString::TinyString()
 		:_Myres(0),
 		_Mysize(0),
@@ -650,42 +718,5 @@ namespace TinyUI
 		return result;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	std::string WStringToString(const std::wstring str, const DWORD dwType)
-	{
-		int nMultiByteLenght = WideCharToMultiByte(dwType, 0, str.c_str(), -1, NULL, 0, NULL, NULL);
-		char* pMultiByteBuffer = new char[nMultiByteLenght];
-		nMultiByteLenght = WideCharToMultiByte(dwType, 0, str.c_str(), -1, pMultiByteBuffer, nMultiByteLenght, NULL, NULL);
-		std::string sRet = pMultiByteBuffer;
-		delete[] pMultiByteBuffer;
-		return sRet;
-	}
-	std::wstring StringToWString(const std::string str, const DWORD dwType)
-	{
-		int nWideCharLenght = MultiByteToWideChar(dwType, 0, str.c_str(), -1, NULL, 0);
-		wchar_t* pWideCharBuffer = new wchar_t[nWideCharLenght];
-		nWideCharLenght = MultiByteToWideChar(dwType, 0, str.c_str(), -1, pWideCharBuffer, nWideCharLenght);
-		std::wstring sRet = pWideCharBuffer;
-		delete[] pWideCharBuffer;
-		return sRet;
-	}
-	std::string AnsiToUtf8(const std::string str)
-	{
-		std::wstring temp = StringToWString(str, CP_ACP);
-		return WStringToString(temp, CP_UTF8);
-	}
-	std::string Utf8ToAnsi(const std::string str)
-	{
-		std::wstring temp = StringToWString(str, CP_UTF8);
-		return WStringToString(temp, CP_ACP);
-	}
-	std::wstring UTF8ToWide(const std::string& s)
-	{
-		return StringToWString(Utf8ToAnsi(s));
-	}
-	std::string WideToUTF8(const std::wstring& wide)
-	{
-		std::string temp = WStringToString(wide);
-		return AnsiToUtf8(temp);
-	}
 }
 
