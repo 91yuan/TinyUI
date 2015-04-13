@@ -69,7 +69,7 @@ namespace TinyUI
 		virtual BOOL	CommitTransaction();
 		virtual BOOL	RollbackTransaction();
 		virtual void	GetErrors(LPSTR pzError, INT& size);
-		INT				GetRowID();//最新的行号
+		INT64			GetRowID();//最新的行号
 	private:
 		TinyString				m_connectionString;
 		sqlite3*				m_sqlite;

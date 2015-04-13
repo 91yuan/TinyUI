@@ -29,6 +29,7 @@ namespace TinyUI
 		static TinyApplication*	m_pInstance;//单例
 	private:
 		TinyApplication();
+	protected:
 		~TinyApplication();
 	public:
 		//单例模式

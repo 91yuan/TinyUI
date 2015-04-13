@@ -81,7 +81,7 @@ namespace TinyUI
 		ps = const_cast<LPSTR>(sqlite3_errmsg(m_sqlite));
 		size = strlen(ps);
 	}
-	INT	SqliteConnection::GetRowID()
+	INT64 SqliteConnection::GetRowID()
 	{
 		ASSERT(m_sqlite);
 		return sqlite3_last_insert_rowid(m_sqlite);
@@ -544,7 +544,7 @@ namespace TinyUI
 	{
 		ASSERT(m_statement);
 		ASSERT(sqlite3_column_type(m_statement, i) == SQLITE_TEXT);
-		_variant_t val(sqlite3_column_text(m_statement, i));
+		_variant_t val(reinterpret_cast<const char*>(sqlite3_column_text(m_statement, i)));
 		val.ChangeType(VT_DATE);
 		return val.date;
 	}

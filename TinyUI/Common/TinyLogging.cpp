@@ -71,7 +71,7 @@ namespace TinyUI
 		{
 			TinyLock lock;
 			lock.Acquire();
-			m_pInstance = new SymbolContext;
+			m_pInstance = new SymbolContext();
 			lock.Release();
 		}
 		return m_pInstance;
@@ -164,7 +164,6 @@ namespace TinyUI
 			context->OutputTraceToStream(m_trace, m_count, os);
 		}
 	}
-	//////////////////////////////////////////////////////////////////////////
 }
 
 

@@ -9,7 +9,7 @@
 
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
-#include <vector>
+//#include <vector>
 
 #pragma region oldcode
 
@@ -626,7 +626,7 @@ TRACE("%d\n", &_array[0]);*/
 //}
 #pragma endregion
 
-#include "Database/TinyAdo.h"
+//#include "Database/TinyAdo.h"
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -635,8 +635,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
-
-
 
 	//Test1 test1;
 	//Test2 test2(test1);
@@ -663,7 +661,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	HRESULT hRes = OleInitialize(NULL);
 
-	ADOConnection m_connection;
+	/*ADOConnection m_connection;
 	m_connection.SetConnectionString("Data Source=localhost;Initial Catalog=MVC;User ID=sa;Password=123456");
 	m_connection.Open();
 	m_connection.BeginTransaction();
@@ -697,9 +695,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	m_command.ExecuteReader(&reader);
 	while (reader.ReadNext())
 	{
-		TRACE("row: %s,%d\n", reader.GetString(0), reader.GetInt32(1));
+	TRACE("row: %s,%d\n", reader.GetString(0), reader.GetInt32(1));
 	};
-	m_connection.Close();
+	m_connection.Close();*/
 
 	//IDbTransaction* trans = m_connection.BeginTransaction();
 	//IDbCommand* ps = m_connection.CreateCommand();
@@ -726,7 +724,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//	INT index = ps1->GetOrdinal("Name");
 	//	TRACE("row: %s,%d\n", pz, ps1->GetInt32("Age"));*/
 	//};
-
 	//trans->Commit();
 
 	::DefWindowProc(NULL, 0, 0, 0L);

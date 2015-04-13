@@ -28,7 +28,7 @@ namespace TinyUI
 		TinyLock m_lock;
 		static SymbolContext* m_pInstance;
 	};
-	SymbolContext* SymbolContext::m_pInstance = NULL;
+	__declspec(selectany) SymbolContext* SymbolContext::m_pInstance = NULL;
 	/// <summary>
 	/// ’ª¥Ú”°
 	/// </summary>

@@ -3,6 +3,11 @@
 
 namespace TinyUI
 {
+	void TinyTabItem::Render(TinyMemDC& dc)
+	{
+
+	}
+	//////////////////////////////////////////////////////////////////////////
 	TinyTabBox::TinyTabBox()
 	{
 
@@ -63,5 +68,18 @@ namespace TinyUI
 		bHandled = FALSE;
 		return FALSE;
 	}
-
+	BOOL TinyTabBox::Add(TinyTabItem* ps)
+	{
+		ASSERT(ps);
+		return m_tabs.Add(ps);
+	}
+	BOOL TinyTabBox::Remove(TinyTabItem* ps)
+	{
+		ASSERT(ps);
+		return m_tabs.Remove(ps);
+	}
+	BOOL TinyTabBox::RemoveAt(INT index)
+	{
+		return m_tabs.RemoveAt(index);
+	}
 }
