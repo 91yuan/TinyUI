@@ -24,13 +24,7 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TinyApp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Algorithm.h">
+    <ClInclude Include="TinySmiley.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,24 +32,16 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="TinyApp.cpp">
+    <ClCompile Include="TinySmiley.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Algorithm.cpp">
+    <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="TinyApp.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="small.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="TinyApp.ico">
-      <Filter>资源文件</Filter>
-    </Image>
+    <Midl Include="smiley.idl">
+      <Filter>头文件</Filter>
+    </Midl>
   </ItemGroup>
 </Project>

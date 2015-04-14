@@ -68,6 +68,13 @@ namespace TinyUI
 		bHandled = FALSE;
 		return FALSE;
 	}
+
+	LRESULT TinyTabBox::OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		return FALSE;
+	}
+
 	BOOL TinyTabBox::Add(TinyTabItem* ps)
 	{
 		ASSERT(ps);

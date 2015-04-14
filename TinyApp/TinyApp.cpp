@@ -6,6 +6,7 @@
 #include "Control/TinyFrameUI.h"
 #include "Windowless/TinyVisualHWND.h"
 #include "Database/TinyAdo.h"
+#include "Algorithm.h"
 
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
@@ -639,9 +640,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//Test1 test1;
 	//Test2 test2(test1);
 	//Test1& test11 = test1;
-
 	/*struct value_list _list;
-
 	INIT_LIST(&_list.children);
 
 	for (INT i = 5; i != 0; --i)
@@ -660,6 +659,11 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	}*/
 
 	HRESULT hRes = OleInitialize(NULL);
+
+	/*INT _array[8] = { 10, 11, 13, 16, 21, 25, 27, 29 };
+	INT val = A1(_array, 9, 16);*/
+	//INT _array[8] = { 10, 6, 13, 5, 21, 2, 1, 34 };
+	//A2(_array, 8);
 
 	/*ADOConnection m_connection;
 	m_connection.SetConnectionString("Data Source=localhost;Initial Catalog=MVC;User ID=sa;Password=123456");
@@ -698,7 +702,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TRACE("row: %s,%d\n", reader.GetString(0), reader.GetInt32(1));
 	};
 	m_connection.Close();*/
-
 	//IDbTransaction* trans = m_connection.BeginTransaction();
 	//IDbCommand* ps = m_connection.CreateCommand();
 	//IDbDataParameter* parame1 = ps->CreateParameter();
@@ -713,7 +716,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//parame2->SetSize(4);
 	//ps->GetParameters()->Add(parame1);
 	//ps->GetParameters()->Add(parame2);
-
 	//ps->SetCommandType(adCmdStoredProc);
 	//ps->SetCommandText("SelectUser");
 	//IDbDataReader* ps1 = ps->ExecuteReader(0);

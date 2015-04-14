@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyUI", "TinyUI\TinyUI.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinyApp", "TinyApp\TinyApp.vcxproj", "{9CBF16D3-CE0C-4378-8C36-384C061E0F64}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TinySmiley", "TinySmiley\TinySmiley.vcxproj", "{4D1E61ED-D1C3-4706-B8F2-CB101ADBE9B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,10 @@ Global
 		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Debug|Win32.Build.0 = Debug|Win32
 		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release|Win32.ActiveCfg = Release|Win32
 		{9CBF16D3-CE0C-4378-8C36-384C061E0F64}.Release|Win32.Build.0 = Release|Win32
+		{4D1E61ED-D1C3-4706-B8F2-CB101ADBE9B7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4D1E61ED-D1C3-4706-B8F2-CB101ADBE9B7}.Debug|Win32.Build.0 = Debug|Win32
+		{4D1E61ED-D1C3-4706-B8F2-CB101ADBE9B7}.Release|Win32.ActiveCfg = Release|Win32
+		{4D1E61ED-D1C3-4706-B8F2-CB101ADBE9B7}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

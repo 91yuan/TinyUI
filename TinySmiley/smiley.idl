@@ -1,0 +1,16 @@
+import "oaidl.idl";
+import "ocidl.idl";
+
+[object, uuid(FE78387F-D150-4089-832C-BBF02402C872),
+oleautomation, helpstring("Get the status information about this car")]
+interface ISmileySource : IUnknown
+{
+	HRESULT LoadStream([in] LPSTREAM pStm);
+	HRESULT LoadFile([in]LPCWSTR pszFilePath);
+	HRESULT SaveAs([in] LPSTREAM pStm);
+	HRESULT GetFile([out] BSTR * bstrFile);
+	HRESULT GetFrameCount([out] int *pFrameCount);
+	HRESULT GetFrameDelay([in] int iFrame, [out] int *pFrameDelay);
+	HRESULT GetSize([out] LPSIZE pSize);
+	HRESULT Draw([in] HDC hdc, [in] LPCRECT pRect, [in] int iFrame);
+};
