@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Wed Apr 15 15:58:37 2015
+/* at Wed Apr 15 17:28:31 2015
  */
 /* Compiler settings for smiley.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
@@ -72,7 +72,7 @@ EXTERN_C const IID IID_ISmileySource;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("FE78387F-D150-4089-832C-BBF02402C872")
+    MIDL_INTERFACE("767F59D8-A4DD-4659-A6BC-3769D219F902")
     ISmileySource : public IUnknown
     {
     public:
@@ -80,7 +80,7 @@ EXTERN_C const IID IID_ISmileySource;
             /* [in] */ LPSTREAM pStm) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE LoadFile( 
-            /* [in] */ LPCWSTR pszFilePath) = 0;
+            /* [in] */ LPCSTR pszFilePath) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE SaveAs( 
             /* [in] */ LPSTREAM pStm) = 0;
@@ -130,7 +130,7 @@ EXTERN_C const IID IID_ISmileySource;
         
         HRESULT ( STDMETHODCALLTYPE *LoadFile )( 
             ISmileySource * This,
-            /* [in] */ LPCWSTR pszFilePath);
+            /* [in] */ LPCSTR pszFilePath);
         
         HRESULT ( STDMETHODCALLTYPE *SaveAs )( 
             ISmileySource * This,

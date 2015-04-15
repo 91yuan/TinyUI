@@ -1,12 +1,12 @@
 import "oaidl.idl";
 import "ocidl.idl";
 
-[object, uuid(FE78387F-D150-4089-832C-BBF02402C872),
-oleautomation, helpstring("Get the status information about this car")]
+[object, uuid(767F59D8-A4DD-4659-A6BC-3769D219F902),
+oleautomation, helpstring("ISmileySource")]
 interface ISmileySource : IUnknown
 {
 	HRESULT LoadStream([in] LPSTREAM pStm);
-	HRESULT LoadFile([in]LPCWSTR pszFilePath);
+	HRESULT LoadFile([in]LPCSTR pszFilePath);
 	HRESULT SaveAs([in] LPSTREAM pStm);
 	HRESULT GetFile([out] BSTR * bstrFile);
 	HRESULT GetFrameCount([out] int *pFrameCount);
@@ -14,3 +14,6 @@ interface ISmileySource : IUnknown
 	HRESULT GetSize([out] LPSIZE pSize);
 	HRESULT Draw([in] HDC hdc, [in] LPCRECT pRect, [in] int iFrame);
 };
+
+
+
