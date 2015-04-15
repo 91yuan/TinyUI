@@ -100,6 +100,11 @@ namespace TinyUI
 			GdiplusShutdown(m_gdiplusToken);
 			m_gdiplusToken = 0;
 		}
+		//ÊÍ·Åµ¥Àý
+		if (m_pInstance != NULL)
+		{
+			SAFE_DELETE(m_pInstance);
+		}
 		return TRUE;
 	}
 
@@ -145,5 +150,6 @@ namespace TinyUI
 	}
 	TinyApplication::~TinyApplication()
 	{
+
 	}
 }

@@ -225,10 +225,12 @@ extern "C" {
 	//
 
 	extern stbi_uc *stbi_load_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp);
+	extern stbi_uc *stbi_load_gif_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp, size_t* count);
 
 #ifndef STBI_NO_STDIO
 	extern stbi_uc *stbi_load(char const *filename, int *x, int *y, int *comp, int req_comp);
 	extern stbi_uc *stbi_load_from_file(FILE *f, int *x, int *y, int *comp, int req_comp);
+	extern stbi_uc *stbi_load_gif_from_file(FILE *f, int *x, int *y, int *comp, int req_comp, size_t* count);
 	// for stbi_load_from_file, file pointer is left pointing immediately after image
 #endif
 
@@ -505,6 +507,7 @@ static stbi_uc *stbi_pic_load(stbi *s, int *x, int *y, int *comp, int req_comp);
 static int      stbi_gif_test(stbi *s);
 static stbi_uc *stbi_gif_load(stbi *s, int *x, int *y, int *comp, int req_comp);
 static int      stbi_gif_info(stbi *s, int *x, int *y, int *comp);
+static stbi_uc *stbi_gif_load_ex(stbi *s, int *x, int *y, int *comp, int req_comp, size_t* count);
 
 
 // this is not threadsafe
@@ -591,6 +594,21 @@ unsigned char *stbi_load_from_file(FILE *f, int *x, int *y, int *comp, int req_c
 	}
 	return result;
 }
+
+unsigned char *stbi_load_gif_from_file(FILE *f, int *x, int *y, int *comp, int req_comp, size_t* count)
+{
+	unsigned char *result = NULL;
+	stbi s;
+	start_file(&s, f);
+	if (stbi_gif_test(&s))
+		result = stbi_gif_load_ex(&s, x, y, comp, req_comp, count);
+	if (result) {
+		// need to 'unget' all the characters in the IO buffer
+		fseek(f, -(int)(s.img_buffer_end - s.img_buffer), SEEK_CUR);
+	}
+	return result;
+}
+
 #endif //!STBI_NO_STDIO
 
 unsigned char *stbi_load_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp)
@@ -599,6 +617,17 @@ unsigned char *stbi_load_from_memory(stbi_uc const *buffer, int len, int *x, int
 	start_mem(&s, buffer, len);
 	return stbi_load_main(&s, x, y, comp, req_comp);
 }
+
+unsigned char *stbi_load_gif_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp, size_t* count)
+{
+	unsigned char *result = NULL;
+	stbi s;
+	start_mem(&s, buffer, len);
+	if (stbi_gif_test(&s))
+		result = stbi_gif_load_ex(&s, x, y, comp, req_comp, count);
+	return result;
+}
+
 
 unsigned char *stbi_load_from_callbacks(stbi_io_callbacks const *clbk, void *user, int *x, int *y, int *comp, int req_comp)
 {
@@ -1399,7 +1428,7 @@ static int parse_entropy_coded_data(jpeg *z)
 			for (i = 0; i < w; ++i) {
 				if (!decode_block(z, data, z->huff_dc + z->img_comp[n].hd, z->huff_ac + z->img_comp[n].ha, n)) return 0;
 #ifdef STBI_SIMD
-				stbi_idct_installed(z->img_comp[n].data+z->img_comp[n].w2*j*8+i*8, z->img_comp[n].w2, data, z->dequant2[z->img_comp[n].tq]);
+				stbi_idct_installed(z->img_comp[n].data + z->img_comp[n].w2*j * 8 + i * 8, z->img_comp[n].w2, data, z->dequant2[z->img_comp[n].tq]);
 #else
 				idct_block(z->img_comp[n].data + z->img_comp[n].w2*j * 8 + i * 8, z->img_comp[n].w2, data, z->dequant[z->img_comp[n].tq]);
 #endif
@@ -1430,7 +1459,7 @@ static int parse_entropy_coded_data(jpeg *z)
 							int y2 = (j*z->img_comp[n].v + y) * 8;
 							if (!decode_block(z, data, z->huff_dc + z->img_comp[n].hd, z->huff_ac + z->img_comp[n].ha, n)) return 0;
 #ifdef STBI_SIMD
-							stbi_idct_installed(z->img_comp[n].data+z->img_comp[n].w2*y2+x2, z->img_comp[n].w2, data, z->dequant2[z->img_comp[n].tq]);
+							stbi_idct_installed(z->img_comp[n].data + z->img_comp[n].w2*y2 + x2, z->img_comp[n].w2, data, z->dequant2[z->img_comp[n].tq]);
 #else
 							idct_block(z->img_comp[n].data + z->img_comp[n].w2*y2 + x2, z->img_comp[n].w2, data, z->dequant[z->img_comp[n].tq]);
 #endif
@@ -1478,7 +1507,7 @@ static int process_marker(jpeg *z, int m)
 			for (i = 0; i < 64; ++i)
 				z->dequant[t][dezigzag[i]] = get8u(z->s);
 #ifdef STBI_SIMD
-			for (i=0; i < 64; ++i)
+			for (i = 0; i < 64; ++i)
 				z->dequant2[t][i] = z->dequant[t][i];
 #endif
 			L -= 65;
@@ -3900,7 +3929,7 @@ typedef struct stbi_gif_struct
 {
 	int w, h;
 	stbi_uc *out;                 // output buffer (always 4 components)
-	int flags, bgindex, ratio, transparent, eflags;
+	int flags, bgindex, ratio, transparent, delay, eflags;
 	stbi__uint8  pal[256][4];
 	stbi__uint8 lpal[256][4];
 	stbi_gif_lzw codes[4096];
@@ -4197,7 +4226,7 @@ static stbi__uint8 *stbi_gif_load_next(stbi *s, stbi_gif *g, int *comp, int req_
 						   len = get8(s);
 						   if (len == 4) {
 							   g->eflags = get8(s);
-							   get16le(s); // delay
+							   g->delay = get16le(s); // delay
 							   g->transparent = get8(s);
 						   }
 						   else {
@@ -4232,6 +4261,68 @@ static stbi_uc *stbi_gif_load(stbi *s, int *x, int *y, int *comp, int req_comp)
 	}
 
 	return u;
+}
+
+static void stbi_safe_free(void* p){
+	free(p);
+	p = NULL;
+}
+
+static stbi_uc *stbi_gif_load_ex(stbi *s, int *x, int *y, int *comp, int req_comp, size_t* count)
+{
+	stbi__uint8	 *data = 0;
+	stbi__uint8  *u = 0;
+	stbi__uint8	 *p = 0;
+	stbi__uint32 *delay = 0;
+	stbi_gif g = { 0 };
+	do
+	{
+		u = stbi_gif_load_next(s, &g, comp, req_comp);
+		if (u && u != (void *)1)
+		{
+			(*count)++;
+			int size = 4 * g.w * g.h;
+			if (!data)
+			{
+				delay = (stbi__uint32*)malloc(sizeof(stbi__uint32));
+				if (!delay) goto error;
+				data = (stbi__uint8*)malloc(size);
+				if (!data) goto error;
+			}
+			else
+			{
+				stbi__uint32* p32 = NULL;
+				p32 = (stbi__uint32*)realloc(delay, *count * sizeof(stbi__uint32));
+				if (!p32) goto error;
+				delay = p32;
+
+				stbi__uint8* p8 = NULL;
+				p8 = (stbi__uint8*)realloc(data, *count * size);
+				if (!p8) goto error;
+				data = p8;
+			}
+			memcpy(data + size * (*count - 1), u, size);
+			memcpy(delay + (*count - 1), &g.delay, sizeof(stbi__uint32));
+		}
+	} while (u != (void *)1);
+	stbi__uint8* u8 = NULL;
+	u8 = (stbi__uint8*)realloc(data, 4 * g.w * g.h * (*count) + sizeof(stbi__uint32)* (*count + 1));
+	if (!u8) goto error;
+
+	p = data + 4 * g.w * g.h * (*count);
+	memcpy(p, (stbi__uint8*)delay, sizeof(stbi__uint32) * (*count));
+
+	stbi_safe_free(delay);
+	stbi_safe_free(g.out);
+
+	*x = g.w;
+	*y = g.h;
+	return data;
+error:
+	stbi_safe_free(delay);
+	stbi_safe_free(data);
+	stbi_safe_free(g.out);
+	return NULL;
 }
 
 static int stbi_gif_info(stbi *s, int *x, int *y, int *comp)

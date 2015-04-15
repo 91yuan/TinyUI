@@ -5,6 +5,7 @@ namespace TinyUI
 {
 	TinyFrameUI::TinyFrameUI()
 	{
+		m_index = 0;
 	}
 
 
@@ -51,7 +52,13 @@ namespace TinyUI
 	LRESULT TinyFrameUI::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_scroll.Create(m_hWND, 10, 10, 12, 350);
+
+		m_btn.Create(m_hWND, 250, 10, 100, 23);
+		m_btn.SetText("ÉèÖÃ");
+		m_fs_Click.BindDelegate(this, &TinyFrameUI::ClickSetting);
+		m_btn.Click += &m_fs_Click;
+
+		/*m_scroll.Create(m_hWND, 10, 10, 12, 350);
 		m_fs_PosChange.BindDelegate(this, &TinyFrameUI::PosChanges);
 		m_scroll.PosChange += &m_fs_PosChange;
 
@@ -87,7 +94,9 @@ namespace TinyUI
 		m_fs_Pop.BindDelegate(this, &TinyFrameUI::ClickPop);
 		m_btnPop.Click += &m_fs_Pop;
 
-		CreateMenuBox();
+		CreateMenuBox();*/
+
+		m_image.Load("E:\\test.gif");
 
 		return TRUE;
 	}
@@ -150,7 +159,7 @@ namespace TinyUI
 	{
 		bHandled = FALSE;
 
-		m_scroll.PosChange -= &m_fs_PosChange;
+		//m_scroll.PosChange -= &m_fs_PosChange;
 		m_btn.Click -= &m_fs_Click;
 
 		return FALSE;
@@ -162,6 +171,23 @@ namespace TinyUI
 
 		PAINTSTRUCT s;
 		HDC hDC = BeginPaint(m_hWND, &s);
+
+		TinyDC dc;
+		dc.Attach(hDC);
+
+		TinyDC dcMem;
+		dcMem.CreateCompatibleDC(hDC);
+		HBITMAP hOldBmp = (HBITMAP)dcMem.SelectObject(m_image[m_index]->bitmap);
+		dc.BitBlt(0, 0, 274, 274, dcMem, 0, 0, SRCCOPY);
+		dcMem.SelectObject(hOldBmp);
+
+		/*TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
+		TinyMemDC memdc1(memdc, m_image[1]);
+		RECT rect = { 0, 0, 97, 97 };
+		memdc1.Render(rect, m_image.GetRectangle(), TRUE);*/
+
+		dc.Detach();
+
 		EndPaint(m_hWND, &s);
 
 		return FALSE;
@@ -206,7 +232,16 @@ namespace TinyUI
 	}
 	void TinyFrameUI::ClickSetting(void* ps, INT cmd)
 	{
-		TinyString str(20);
+		if (m_index == (m_image.GetFrameCount()-1))
+		{
+			m_index = 0;
+		}
+		else
+		{
+			m_index++;
+		}
+		::InvalidateRect(m_hWND, NULL, FALSE);
+		/*TinyString str(20);
 		m_txtPos.GetText(str.STR(), str.GetSize());
 		INT iPos = atoi(str.STR());
 		m_txtPage.GetText(str.STR(), str.GetSize());
@@ -215,7 +250,7 @@ namespace TinyUI
 		INT iMax = atoi(str.STR());
 		m_txtMin.GetText(str.STR(), str.GetSize());
 		INT iMin = atoi(str.STR());
-		m_scroll.SetScrollInfo(iMin, iMax, iPage, iPos);
+		m_scroll.SetScrollInfo(iMin, iMax, iPage, iPos);*/
 	}
 }
 
