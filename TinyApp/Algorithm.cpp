@@ -51,7 +51,3 @@ void A3(INT _array[], INT size)
 {
 
 }
-void A3_1(INT _array[], INT l, INT h)
-{
-
-}

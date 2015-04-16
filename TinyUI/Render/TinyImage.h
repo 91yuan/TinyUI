@@ -29,11 +29,6 @@ namespace TinyUI
 		INT			m_cx;
 		INT			m_cy;
 	};
-	typedef struct tagGIFFrame
-	{
-		HBITMAP bitmap;
-		INT		delay;
-	}GIFFrame;
 	/// <summary>
 	/// 多帧GIF解码,解码成32位
 	/// </summary>
@@ -46,10 +41,12 @@ namespace TinyUI
 		BOOL			Load(BYTE* pv, DWORD size);
 		TinySize		GetSize();
 		size_t			GetFrameCount();
+		UINT			GetFrameDelay(INT index);
+		HBITMAP			GetFrame(INT index);
 		TinyRectangle	GetRectangle();
-		GIFFrame*		operator[](INT index);
 	protected:
-		TinyArray<GIFFrame*> m_images;//解码后的GIF
+		TinyArray<HBITMAP>   m_images;//解码后的GIF
+		TinyArray<UINT>		 m_delays;//延时
 		size_t				 m_count;//帧个数
 		INT					 m_cx;
 		INT					 m_cy;

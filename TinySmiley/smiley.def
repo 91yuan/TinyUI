@@ -1,0 +1,9 @@
+LIBRARY			"TinySmiley"
+
+EXPORTS
+	DllMain				PRIVATE
+	DllCanUnloadNow		PRIVATE
+	DllGetClassObject	PRIVATE
+	DllRegisterServer	PRIVATE
+	DllUnregisterServer	PRIVATE
+	DllInstall			PRIVATE 

@@ -33,11 +33,8 @@ namespace TinyUI
 	{
 		ASSERT(pz);
 		FILE* pFile = NULL;
-		pFile = fopen(pz, "rb");
-		if (pFile == NULL)
-		{
+		if (fopen_s(&pFile, pz, "rb") || !pFile)
 			return FALSE;
-		}
 		//解码出来的数据是RGBA
 		INT comp = 0;
 		BYTE* ps = stbi_load_from_file(pFile, &m_cx, &m_cy, &comp, 4);
@@ -135,20 +132,18 @@ namespace TinyUI
 	}
 	TinyGIFDecode::~TinyGIFDecode()
 	{
-		for (size_t i = 0; i < m_images.GetSize(); i++)
+		//释放HBITMAP
+		for (INT i = 0; i < m_images.GetSize(); i++)
 		{
-			delete m_images[i];
+			SAFE_DELETE_OBJECT(m_images[i]);
 		}
 	}
 	BOOL TinyGIFDecode::Load(LPCSTR pz)
 	{
 		ASSERT(pz);
 		FILE* pFile = NULL;
-		pFile = fopen(pz, "rb");
-		if (pFile == NULL)
-		{
+		if (fopen_s(&pFile, pz, "rb") || !pFile)
 			return FALSE;
-		}
 		//解码出来的数据是RGBA
 		INT comp = 0;
 		BYTE* pData = stbi_load_gif_from_file(pFile, &m_cx, &m_cy, &comp, 4, &m_count);
@@ -190,11 +185,9 @@ namespace TinyUI
 						pvBits[i * 4 + 2] = ps[i * 4];
 					}
 				}
-				GIFFrame* pFrame = new GIFFrame();
-				pFrame->bitmap = hBitmap;
-				pFrame->delay = *(UINT*)p;
+				m_images.Add(hBitmap);
+				m_delays.Add(*(UINT*)p);
 				p += sizeof(UINT);
-				m_images.Add(pFrame);
 			}
 		}
 		stbi_image_free(pData);
@@ -242,11 +235,9 @@ namespace TinyUI
 						pvBits[i * 4 + 2] = ps[i * 4];
 					}
 				}
-				GIFFrame* pFrame = new GIFFrame();
-				pFrame->bitmap = hBitmap;
-				pFrame->delay = *(UINT*)p;
+				m_images.Add(hBitmap);
+				m_delays.Add(*(UINT*)p);
 				p += sizeof(UINT);
-				m_images.Add(pFrame);
 			}
 		}
 		stbi_image_free(pData);
@@ -264,7 +255,12 @@ namespace TinyUI
 	{
 		return TinyRectangle(0, 0, m_cx, m_cy);
 	}
-	GIFFrame* TinyGIFDecode::operator[](INT index)
+	UINT TinyGIFDecode::GetFrameDelay(INT index)
+	{
+		ASSERT(index >= 0 && index < m_images.GetSize());
+		return m_delays[index];
+	}
+	HBITMAP	TinyGIFDecode::GetFrame(INT index)
 	{
 		ASSERT(index >= 0 && index < m_images.GetSize());
 		return m_images[index];

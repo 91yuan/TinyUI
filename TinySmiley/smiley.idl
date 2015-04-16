@@ -2,15 +2,14 @@ import "oaidl.idl";
 import "ocidl.idl";
 
 [object, uuid(767F59D8-A4DD-4659-A6BC-3769D219F902),
-oleautomation, helpstring("ISmileySource")]
-interface ISmileySource : IUnknown
+oleautomation, helpstring("ISmiley")]
+interface ISmiley : IUnknown
 {
 	HRESULT LoadStream([in] LPSTREAM pStm);
 	HRESULT LoadFile([in]LPCSTR pszFilePath);
 	HRESULT SaveAs([in] LPSTREAM pStm);
-	HRESULT GetFile([out] BSTR * bstrFile);
 	HRESULT GetFrameCount([out] int *pFrameCount);
-	HRESULT GetFrameDelay([in] int iFrame, [out] int *pFrameDelay);
+	HRESULT GetFrameDelay([in] int iFrame, [out] unsigned int *pFrameDelay);
 	HRESULT GetSize([out] LPSIZE pSize);
 	HRESULT Draw([in] HDC hdc, [in] LPCRECT pRect, [in] int iFrame);
 };

@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0603 */
-/* at Wed Apr 15 17:28:31 2015
+/* at Thu Apr 16 17:17:32 2015
  */
 /* Compiler settings for smiley.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.00.0603 
@@ -45,11 +45,11 @@
 
 /* Forward Declarations */ 
 
-#ifndef __ISmileySource_FWD_DEFINED__
-#define __ISmileySource_FWD_DEFINED__
-typedef interface ISmileySource ISmileySource;
+#ifndef __ISmiley_FWD_DEFINED__
+#define __ISmiley_FWD_DEFINED__
+typedef interface ISmiley ISmiley;
 
-#endif 	/* __ISmileySource_FWD_DEFINED__ */
+#endif 	/* __ISmiley_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -61,19 +61,19 @@ extern "C"{
 #endif 
 
 
-#ifndef __ISmileySource_INTERFACE_DEFINED__
-#define __ISmileySource_INTERFACE_DEFINED__
+#ifndef __ISmiley_INTERFACE_DEFINED__
+#define __ISmiley_INTERFACE_DEFINED__
 
-/* interface ISmileySource */
+/* interface ISmiley */
 /* [helpstring][oleautomation][uuid][object] */ 
 
 
-EXTERN_C const IID IID_ISmileySource;
+EXTERN_C const IID IID_ISmiley;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
     MIDL_INTERFACE("767F59D8-A4DD-4659-A6BC-3769D219F902")
-    ISmileySource : public IUnknown
+    ISmiley : public IUnknown
     {
     public:
         virtual HRESULT STDMETHODCALLTYPE LoadStream( 
@@ -85,15 +85,12 @@ EXTERN_C const IID IID_ISmileySource;
         virtual HRESULT STDMETHODCALLTYPE SaveAs( 
             /* [in] */ LPSTREAM pStm) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE GetFile( 
-            /* [out] */ BSTR *bstrFile) = 0;
-        
         virtual HRESULT STDMETHODCALLTYPE GetFrameCount( 
             /* [out] */ int *pFrameCount) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetFrameDelay( 
             /* [in] */ int iFrame,
-            /* [out] */ int *pFrameDelay) = 0;
+            /* [out] */ unsigned int *pFrameDelay) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetSize( 
             /* [out] */ LPSIZE pSize) = 0;
@@ -108,63 +105,59 @@ EXTERN_C const IID IID_ISmileySource;
     
 #else 	/* C style interface */
 
-    typedef struct ISmileySourceVtbl
+    typedef struct ISmileyVtbl
     {
         BEGIN_INTERFACE
         
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ISmileySource * This,
+            ISmiley * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
             _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ISmileySource * This);
+            ISmiley * This);
         
         ULONG ( STDMETHODCALLTYPE *Release )( 
-            ISmileySource * This);
+            ISmiley * This);
         
         HRESULT ( STDMETHODCALLTYPE *LoadStream )( 
-            ISmileySource * This,
+            ISmiley * This,
             /* [in] */ LPSTREAM pStm);
         
         HRESULT ( STDMETHODCALLTYPE *LoadFile )( 
-            ISmileySource * This,
+            ISmiley * This,
             /* [in] */ LPCSTR pszFilePath);
         
         HRESULT ( STDMETHODCALLTYPE *SaveAs )( 
-            ISmileySource * This,
+            ISmiley * This,
             /* [in] */ LPSTREAM pStm);
         
-        HRESULT ( STDMETHODCALLTYPE *GetFile )( 
-            ISmileySource * This,
-            /* [out] */ BSTR *bstrFile);
-        
         HRESULT ( STDMETHODCALLTYPE *GetFrameCount )( 
-            ISmileySource * This,
+            ISmiley * This,
             /* [out] */ int *pFrameCount);
         
         HRESULT ( STDMETHODCALLTYPE *GetFrameDelay )( 
-            ISmileySource * This,
+            ISmiley * This,
             /* [in] */ int iFrame,
-            /* [out] */ int *pFrameDelay);
+            /* [out] */ unsigned int *pFrameDelay);
         
         HRESULT ( STDMETHODCALLTYPE *GetSize )( 
-            ISmileySource * This,
+            ISmiley * This,
             /* [out] */ LPSIZE pSize);
         
         HRESULT ( STDMETHODCALLTYPE *Draw )( 
-            ISmileySource * This,
+            ISmiley * This,
             /* [in] */ HDC hdc,
             /* [in] */ LPCRECT pRect,
             /* [in] */ int iFrame);
         
         END_INTERFACE
-    } ISmileySourceVtbl;
+    } ISmileyVtbl;
 
-    interface ISmileySource
+    interface ISmiley
     {
-        CONST_VTBL struct ISmileySourceVtbl *lpVtbl;
+        CONST_VTBL struct ISmileyVtbl *lpVtbl;
     };
 
     
@@ -172,38 +165,35 @@ EXTERN_C const IID IID_ISmileySource;
 #ifdef COBJMACROS
 
 
-#define ISmileySource_QueryInterface(This,riid,ppvObject)	\
+#define ISmiley_QueryInterface(This,riid,ppvObject)	\
     ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
 
-#define ISmileySource_AddRef(This)	\
+#define ISmiley_AddRef(This)	\
     ( (This)->lpVtbl -> AddRef(This) ) 
 
-#define ISmileySource_Release(This)	\
+#define ISmiley_Release(This)	\
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define ISmileySource_LoadStream(This,pStm)	\
+#define ISmiley_LoadStream(This,pStm)	\
     ( (This)->lpVtbl -> LoadStream(This,pStm) ) 
 
-#define ISmileySource_LoadFile(This,pszFilePath)	\
+#define ISmiley_LoadFile(This,pszFilePath)	\
     ( (This)->lpVtbl -> LoadFile(This,pszFilePath) ) 
 
-#define ISmileySource_SaveAs(This,pStm)	\
+#define ISmiley_SaveAs(This,pStm)	\
     ( (This)->lpVtbl -> SaveAs(This,pStm) ) 
 
-#define ISmileySource_GetFile(This,bstrFile)	\
-    ( (This)->lpVtbl -> GetFile(This,bstrFile) ) 
-
-#define ISmileySource_GetFrameCount(This,pFrameCount)	\
+#define ISmiley_GetFrameCount(This,pFrameCount)	\
     ( (This)->lpVtbl -> GetFrameCount(This,pFrameCount) ) 
 
-#define ISmileySource_GetFrameDelay(This,iFrame,pFrameDelay)	\
+#define ISmiley_GetFrameDelay(This,iFrame,pFrameDelay)	\
     ( (This)->lpVtbl -> GetFrameDelay(This,iFrame,pFrameDelay) ) 
 
-#define ISmileySource_GetSize(This,pSize)	\
+#define ISmiley_GetSize(This,pSize)	\
     ( (This)->lpVtbl -> GetSize(This,pSize) ) 
 
-#define ISmileySource_Draw(This,hdc,pRect,iFrame)	\
+#define ISmiley_Draw(This,hdc,pRect,iFrame)	\
     ( (This)->lpVtbl -> Draw(This,hdc,pRect,iFrame) ) 
 
 #endif /* COBJMACROS */
@@ -214,15 +204,10 @@ EXTERN_C const IID IID_ISmileySource;
 
 
 
-#endif 	/* __ISmileySource_INTERFACE_DEFINED__ */
+#endif 	/* __ISmiley_INTERFACE_DEFINED__ */
 
 
 /* Additional Prototypes for ALL interfaces */
-
-unsigned long             __RPC_USER  BSTR_UserSize(     unsigned long *, unsigned long            , BSTR * ); 
-unsigned char * __RPC_USER  BSTR_UserMarshal(  unsigned long *, unsigned char *, BSTR * ); 
-unsigned char * __RPC_USER  BSTR_UserUnmarshal(unsigned long *, unsigned char *, BSTR * ); 
-void                      __RPC_USER  BSTR_UserFree(     unsigned long *, BSTR * ); 
 
 unsigned long             __RPC_USER  HDC_UserSize(     unsigned long *, unsigned long            , HDC * ); 
 unsigned char * __RPC_USER  HDC_UserMarshal(  unsigned long *, unsigned char *, HDC * ); 

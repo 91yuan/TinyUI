@@ -7,6 +7,8 @@
 #include "Windowless/TinyVisualHWND.h"
 #include "Database/TinyAdo.h"
 #include "Algorithm.h"
+#include "TinySmiley.h"
+#include "smiley.h"
 
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
@@ -628,7 +630,7 @@ TRACE("%d\n", &_array[0]);*/
 #pragma endregion
 
 //#include "Database/TinyAdo.h"
-
+//const GUID IID_ISmiley1 = { 0x767F59D8, 0xA4DD, 0x4659, { 0xA6, 0xBC, 0x37, 0x69, 0xD2, 0x19, 0xF9, 0x02 } };
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -728,7 +730,21 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//};
 	//trans->Commit();
 
+	/*typedef HRESULT(WINAPI *REGINSTALL)(REFCLSID rclsid, REFIID riid, void **ppv);
+	typedef HRESULT(WINAPI *REGINSTALL1)(void);
+	HINSTANCE hinstAdvPack = LoadLibrary(TEXT("TinySmiley.DLL"));
+	REGINSTALL1 pfnri = (REGINSTALL1)GetProcAddress(hinstAdvPack, "DllRegisterServer");
+	REGINSTALL pfnri1 = (REGINSTALL)GetProcAddress(hinstAdvPack, "DllGetClassObject");*/
+	CoInitialize(NULL);
+	ISmiley* ps = NULL;
+	HRESULT hrA = CoCreateInstance(CLSID_Smiley, NULL, CLSCTX_INPROC_SERVER, IID_ISmiley, (void**)&ps);
+	ps->LoadFile("E:\\test1.gif");
+	
 	::DefWindowProc(NULL, 0, 0, 0L);
+
+	//ISmiley* pSmiley = NULL;
+	//CoCreateInstance(CLSID_MyCOM, NULL, CLSCTX_INPROC_SERVER, IID_ISmiley, (void**)&pSmiley);
+
 
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
 
@@ -743,7 +759,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
-
+	CoUninitialize();// Õ∑≈COM
 	OleUninitialize();
 
 	return loopRes;

@@ -177,7 +177,13 @@ namespace TinyUI
 
 		TinyDC dcMem;
 		dcMem.CreateCompatibleDC(hDC);
-		HBITMAP hOldBmp = (HBITMAP)dcMem.SelectObject(m_image[m_index]->bitmap);
+		BITMAP bitmap = { 0 };
+		GetObject(m_image.GetFrame(m_index), sizeof(BITMAP), (LPSTR)&bitmap);
+		DWORD a = sizeof(BITMAPFILEHEADER);
+		/*DWORD scanline = (bitmap.bmWidth * bitmap.bmBitsPixel + 31) / 32 * 4;
+		DWORD size = scanline  * bitmap.bmHeight;*/
+
+		HBITMAP hOldBmp = (HBITMAP)dcMem.SelectObject(m_image.GetFrame(m_index));
 		dc.BitBlt(0, 0, 274, 274, dcMem, 0, 0, SRCCOPY);
 		dcMem.SelectObject(hOldBmp);
 
@@ -232,7 +238,7 @@ namespace TinyUI
 	}
 	void TinyFrameUI::ClickSetting(void* ps, INT cmd)
 	{
-		if (m_index == (m_image.GetFrameCount()-1))
+		if (m_index == (m_image.GetFrameCount() - 1))
 		{
 			m_index = 0;
 		}

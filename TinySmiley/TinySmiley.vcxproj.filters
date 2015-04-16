@@ -27,7 +27,7 @@
     <ClInclude Include="TinySmiley.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="TinyGIFDecode.h">
+    <ClInclude Include="smiley_h.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,7 +44,7 @@
     <ClCompile Include="stb_image.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="TinyGIFDecode.cpp">
+    <ClCompile Include="smiley_i.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -52,5 +52,10 @@
     <Midl Include="smiley.idl">
       <Filter>头文件</Filter>
     </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="smiley.def">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
