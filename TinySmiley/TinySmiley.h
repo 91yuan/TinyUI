@@ -7,19 +7,9 @@
 #include <vector>
 using namespace std;
 
-EXTERN_C const GUID __declspec(selectany) CLSID_Smiley =
+static const GUID  CLSID_Smiley =
 { 0xB6AD5231, 0xC3EA, 0x4261, { 0xA9, 0xB6, 0xC5, 0x7C, 0xC7, 0x20, 0xB4, 0xC6 } };
-//
-//#ifndef MIDL_DEFINE_GUID
-//#define MIDL_DEFINE_GUID
-//#define MIDL_DEFINE_GUID(type,name,l,w1,w2,b1,b2,b3,b4,b5,b6,b7,b8) \
-//	__declspec(selectany) const type  name = { l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8 } }
-//#endif 
-//
-//MIDL_DEFINE_GUID(IID, IID_ISmiley, 0x767F59D8, 0xA4DD, 0x4659, 0xA6, 0xBC, 0x37, 0x69, 0xD2, 0x19, 0xF9, 0x02);
 
-namespace Tiny
-{
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(p)  { if (p) { delete (p);  (p)=NULL; } }
 #endif    
@@ -47,60 +37,60 @@ namespace Tiny
 #ifndef TINY_IMPORT
 #define TINY_IMPORT __declspec(dllimport)
 #endif // TINY_IMPORT
-	/// <summary>
-	/// 表情类
-	/// </summary>
-	class TinySmiley : public ISmiley
-	{
-	public:
-		TinySmiley();
-		~TinySmiley();
-		virtual HRESULT STDMETHODCALLTYPE LoadStream(LPSTREAM pStm);
-		virtual HRESULT STDMETHODCALLTYPE LoadFile(LPCSTR pszFilePath);
-		virtual HRESULT STDMETHODCALLTYPE SaveAs(LPSTREAM pStm);
-		virtual HRESULT STDMETHODCALLTYPE GetFrameCount(INT *pFrameCount);
-		virtual HRESULT STDMETHODCALLTYPE GetFrameDelay(INT iFrame, UINT *pFrameDelay);
-		virtual HRESULT STDMETHODCALLTYPE GetSize(LPSIZE pSize);
-		virtual HRESULT STDMETHODCALLTYPE Draw(HDC hdc, LPCRECT pRect, INT iFrame);
-		virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
-		virtual ULONG STDMETHODCALLTYPE AddRef(void);
-		virtual ULONG STDMETHODCALLTYPE Release(void);
-	private:
-		vector<HBITMAP> m_images;
-		vector<UINT>	m_delays;
-		LONG    m_cRef;
-		INT		m_cx;
-		INT		m_cy;
-		size_t	m_count;//帧数
-	};
-	//////////////////////////////////////////////////////////////////////////
-	/// <summary>
-	/// COM工厂类
-	/// </summary>
-	template<class T>
-	class ClassFactory : public IClassFactory
-	{
-	public:
-		ClassFactory();
-		~ClassFactory();
-		virtual HRESULT STDMETHODCALLTYPE CreateInstance(_In_opt_ IUnknown *pUnkOuter, _In_ REFIID riid, _COM_Outptr_ void **ppvObject);
-		virtual HRESULT STDMETHODCALLTYPE LockServer(BOOL fLock);
-		virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
-		virtual ULONG STDMETHODCALLTYPE AddRef(void);
-		virtual ULONG STDMETHODCALLTYPE Release(void);
-	private:
-		LONG    m_cRef;
-	};
-	//////////////////////////////////////////////////////////////////////////
-	STDAPI DllRegisterServer(void);
-	STDAPI DllUnregisterServer(void);
-	STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void **ppv);
-	STDAPI DllCanUnloadNow(void);
-	STDAPI DllInstall(BOOL bInstall, LPCWSTR pszCmdLine);
-	//////////////////////////////////////////////////////////////////////////
-	__declspec(selectany) extern  LONG		g_cLocks;
-	__declspec(selectany) extern  HMODULE	g_hModule;
-}
+/// <summary>
+/// 表情类
+/// </summary>
+class TinySmiley : public ISmiley
+{
+public:
+	TinySmiley();
+	~TinySmiley();
+	virtual HRESULT STDMETHODCALLTYPE LoadStream(LPSTREAM pStm);
+	virtual HRESULT STDMETHODCALLTYPE LoadFile(LPCSTR pszFilePath);
+	virtual HRESULT STDMETHODCALLTYPE SaveAs(LPSTREAM pStm);
+	virtual HRESULT STDMETHODCALLTYPE GetFrameCount(INT *pFrameCount);
+	virtual HRESULT STDMETHODCALLTYPE GetFrameDelay(INT iFrame, UINT *pFrameDelay);
+	virtual HRESULT STDMETHODCALLTYPE GetSize(LPSIZE pSize);
+	virtual HRESULT STDMETHODCALLTYPE Draw(HDC hdc, LPCRECT pRect, INT iFrame);
+	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
+	virtual ULONG STDMETHODCALLTYPE AddRef(void);
+	virtual ULONG STDMETHODCALLTYPE Release(void);
+private:
+	vector<HBITMAP> m_images;
+	vector<UINT>	m_delays;
+	LONG    m_cRef;
+	INT		m_cx;
+	INT		m_cy;
+	size_t	m_count;//帧数
+};
+//////////////////////////////////////////////////////////////////////////
+/// <summary>
+/// COM工厂类
+/// </summary>
+template<class T>
+class ClassFactory : public IClassFactory
+{
+public:
+	ClassFactory();
+	~ClassFactory();
+	virtual HRESULT STDMETHODCALLTYPE CreateInstance(_In_opt_ IUnknown *pUnkOuter, _In_ REFIID riid, _COM_Outptr_ void **ppvObject);
+	virtual HRESULT STDMETHODCALLTYPE LockServer(BOOL fLock);
+	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObject);
+	virtual ULONG STDMETHODCALLTYPE AddRef(void);
+	virtual ULONG STDMETHODCALLTYPE Release(void);
+private:
+	LONG    m_cRef;
+};
+//////////////////////////////////////////////////////////////////////////
+STDAPI DllRegisterServer(void);
+STDAPI DllUnregisterServer(void);
+STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void **ppv);
+STDAPI DllCanUnloadNow(void);
+STDAPI DllInstall(BOOL bInstall, LPCWSTR pszCmdLine);
+//////////////////////////////////////////////////////////////////////////
+__declspec(selectany) extern  LONG		g_cLocks;
+__declspec(selectany) extern  HMODULE	g_hModule;
+
 
 
 
