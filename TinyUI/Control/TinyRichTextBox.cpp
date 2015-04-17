@@ -567,95 +567,45 @@ namespace TinyUI
 	BOOL TinyRichTextBox::InsertOLE(LPCTSTR pszFileName)
 	{
 		HRESULT hRes = S_OK;
-		LPRICHEDITOLE pRichEditOle = NULL;
-		SendMessage(m_hWND, EM_GETOLEINTERFACE, 0, (LPARAM)&pRichEditOle);
-		if (pRichEditOle == NULL)
-		{
-			return FALSE;
-		}
-		LPLOCKBYTES pLockBytes = NULL;
-		hRes = CreateILockBytesOnHGlobal(NULL, TRUE, &pLockBytes);
-		if (FAILED(hRes))
-		{
-			pRichEditOle->Release();
-			pRichEditOle = NULL;
-			return FALSE;
-		}
-		LPSTORAGE pStorage = NULL;
-		hRes = StgCreateDocfileOnILockBytes(pLockBytes, STGM_SHARE_EXCLUSIVE | STGM_CREATE | STGM_READWRITE, 0, &pStorage);
-		if (FAILED(hRes))
-		{
-			pLockBytes->Release();
-			pLockBytes = NULL;
-			pRichEditOle->Release();
-			pRichEditOle = NULL;
-			return FALSE;
-		}
+		SIZEL sizel = { 0 };
+		REOBJECT reobject = { sizeof(REOBJECT) };
+		CLSID clsid = CLSID_NULL;
 		FORMATETC formatEtc;
 		formatEtc.cfFormat = 0;
 		formatEtc.ptd = NULL;
 		formatEtc.dwAspect = DVASPECT_CONTENT;
 		formatEtc.lindex = -1;
 		formatEtc.tymed = TYMED_NULL;
+
+		LPRICHEDITOLE pRichEditOle = NULL;
+		LPLOCKBYTES pLockBytes = NULL;
+		LPOLEOBJECT pObject = NULL;
+		LPSTORAGE pStorage = NULL;
 		LPOLECLIENTSITE	pClientSite = NULL;
-		hRes = pRichEditOle->GetClientSite(&pClientSite);
-		if (FAILED(hRes))
-		{
-			pStorage->Release();
-			pStorage = NULL;
-			pLockBytes->Release();
-			pLockBytes = NULL;
-			pRichEditOle->Release();
-			pRichEditOle = NULL;
-			return FALSE;
-		}
 		LPUNKNOWN pUnk = NULL;
-		CLSID clsid = CLSID_NULL;
+
+		SendMessage(m_hWND, EM_GETOLEINTERFACE, 0, (LPARAM)&pRichEditOle);
+		if (FAILED(hRes)) goto error;
+		hRes = CreateILockBytesOnHGlobal(NULL, TRUE, &pLockBytes);
+		if (FAILED(hRes)) goto error;
+		hRes = StgCreateDocfileOnILockBytes(pLockBytes, STGM_SHARE_EXCLUSIVE | STGM_CREATE | STGM_READWRITE, 0, &pStorage);
+		if (FAILED(hRes)) goto error;
+		hRes = pRichEditOle->GetClientSite(&pClientSite);
+		if (FAILED(hRes)) goto error;
 		//多字节转Unicode
 		INT size = ::MultiByteToWideChar(CP_UTF8, 0, pszFileName, -1, NULL, 0);
 		wchar_t*  pUnicode = new  wchar_t[size + 1];
 		::MultiByteToWideChar(CP_UTF8, 0, pszFileName, -1, (LPWSTR)pUnicode, size);
 		//多字节转Unicode
 		hRes = OleCreateFromFile(clsid, pUnicode, IID_IUnknown, OLERENDER_DRAW, &formatEtc, pClientSite, pStorage, (void**)&pUnk);
-		delete[]  pUnicode;
-		if (FAILED(hRes))
-		{
-			pStorage->Release();
-			pStorage = NULL;
-			pLockBytes->Release();
-			pLockBytes = NULL;
-			pRichEditOle->Release();
-			pRichEditOle = NULL;
-			return FALSE;
-		}
-		LPOLEOBJECT pObject = NULL;
+		SAFE_DELETE_ARRAY(pUnicode);
+		if (FAILED(hRes)) goto error;
 		hRes = pUnk->QueryInterface(IID_IOleObject, (void**)&pObject);
 		pUnk->Release();
-		if (FAILED(hRes))
-		{
-			pStorage->Release();
-			pStorage = NULL;
-			pLockBytes->Release();
-			pLockBytes = NULL;
-			pRichEditOle->Release();
-			pRichEditOle = NULL;
-			return FALSE;
-		}
+		if (FAILED(hRes)) goto error;
 		OleSetContainedObject(pObject, TRUE);
-		REOBJECT reobject = { sizeof(REOBJECT) };
 		hRes = pObject->GetUserClassID(&clsid);
-		if (FAILED(hRes))
-		{
-			pObject->Release();
-			pObject = NULL;
-			pStorage->Release();
-			pStorage = NULL;
-			pLockBytes->Release();
-			pLockBytes = NULL;
-			pRichEditOle->Release();
-			pRichEditOle = NULL;
-			return FALSE;
-		}
+		if (FAILED(hRes)) goto error;
 		reobject.clsid = clsid;
 		reobject.cp = REO_CP_SELECTION;
 		reobject.dvaspect = DVASPECT_CONTENT;
@@ -664,7 +614,6 @@ namespace TinyUI
 		reobject.poleobj = pObject;
 		reobject.polesite = pClientSite;
 		reobject.pstg = pStorage;
-		SIZEL sizel = { 0 };
 		reobject.sizel = sizel;
 		SendMessage(m_hWND, EM_SETSEL, 0, -1);
 		DWORD dwStart, dwEnd;
@@ -672,21 +621,17 @@ namespace TinyUI
 		SendMessage(m_hWND, EM_SETSEL, dwEnd + 1, dwEnd + 1);
 		SendMessage(m_hWND, EM_REPLACESEL, TRUE, (WPARAM)L"\n");
 		hRes = pRichEditOle->InsertObject(&reobject);
-		pObject->Release();
-		pObject = NULL;
-		pClientSite->Release();
-		pClientSite = NULL;
-		pStorage->Release();
-		pStorage = NULL;
-		pLockBytes->Release();
-		pLockBytes = NULL;
-		pRichEditOle->Release();
-		pRichEditOle = NULL;
-		if (FAILED(hRes))
-		{
-			return FALSE;
-		}
-		return TRUE;
+		SAFE_RELEASE(pObject);
+		SAFE_RELEASE(pStorage);
+		SAFE_RELEASE(pLockBytes);
+		SAFE_RELEASE(pRichEditOle);
+		return SUCCEEDED(hRes);
+	error:
+		SAFE_RELEASE(pObject);
+		SAFE_RELEASE(pStorage);
+		SAFE_RELEASE(pLockBytes);
+		SAFE_RELEASE(pRichEditOle);
+		return FALSE;
 	}
 	BOOL TinyRichTextBox::InsertImage(LPCTSTR pszFileName)
 	{

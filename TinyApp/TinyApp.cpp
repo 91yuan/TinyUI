@@ -736,9 +736,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	REGINSTALL1 pfnri = (REGINSTALL1)GetProcAddress(hinstAdvPack, "DllRegisterServer");
 	REGINSTALL pfnri1 = (REGINSTALL)GetProcAddress(hinstAdvPack, "DllGetClassObject");*/
 
-	ISmiley* ps = NULL;
+	/*ISmiley* ps = NULL;
 	HRESULT hrA = CoCreateInstance(CLSID_Smiley, NULL, CLSCTX_INPROC_SERVER, IID_ISmiley, (void**)&ps);
-	ps->LoadFile("E:\\test1.gif");
+	ps->Release();*/
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 
@@ -755,7 +755,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
-	CoUninitialize();// Õ∑≈COM
+
 	OleUninitialize();
 
 	return loopRes;

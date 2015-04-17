@@ -79,7 +79,7 @@ namespace TinyUI
 		TinyScopedPtr<TinyMenuItem> m_menuItem42;
 		TinyScopedPtr<TinyMenuItem> m_menuItem52;
 
-		TinyGIFDecode m_image;
+		TinyImage m_image;
 		INT m_index;
 	};
 }

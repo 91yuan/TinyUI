@@ -225,12 +225,12 @@ extern "C" {
 	//
 
 	extern stbi_uc *stbi_load_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp);
-	extern stbi_uc *stbi_load_gif_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp, size_t* count);
+	extern stbi_uc *stbi_load_from_memory_ex(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp, size_t* count);
 
 #ifndef STBI_NO_STDIO
 	extern stbi_uc *stbi_load(char const *filename, int *x, int *y, int *comp, int req_comp);
 	extern stbi_uc *stbi_load_from_file(FILE *f, int *x, int *y, int *comp, int req_comp);
-	extern stbi_uc *stbi_load_gif_from_file(FILE *f, int *x, int *y, int *comp, int req_comp, size_t* count);
+	extern stbi_uc *stbi_load_from_file_ex(FILE *f, int *x, int *y, int *comp, int req_comp, size_t* count);
 	// for stbi_load_from_file, file pointer is left pointing immediately after image
 #endif
 
@@ -450,7 +450,10 @@ static int stdio_read(void *user, char *data, int size)
 {
 	return (int)fread(data, 1, size, (FILE*)user);
 }
-
+static void stdio_skip_to_begin(void *user)
+{
+	fseek((FILE*)user, 0, SEEK_SET);
+}
 static void stdio_skip(void *user, int n)
 {
 	fseek((FILE*)user, n, SEEK_CUR);
@@ -571,6 +574,64 @@ static unsigned char *stbi_load_main(stbi *s, int *x, int *y, int *comp, int req
 	return epuc("unknown image type", "Image not of any known type, or corrupt");
 }
 
+static unsigned char *stbi_load_main_ex(stbi *s, int *x, int *y, int *comp, int req_comp, size_t* count)
+{
+	unsigned char* data = NULL;
+	if (stbi_jpeg_test(s))
+	{
+		data = stbi_jpeg_load(s, x, y, comp, req_comp);
+		if (data) *count = 1;
+		return data;
+	}
+	if (stbi_png_test(s))
+	{
+		data = stbi_png_load(s, x, y, comp, req_comp);
+		if (data) *count = 1;
+		return data;
+	}
+	if (stbi_bmp_test(s))
+	{
+		data = stbi_bmp_load(s, x, y, comp, req_comp);
+		if (data) *count = 1;
+		return data;
+	}
+	if (stbi_gif_test(s))
+	{
+		data = stbi_gif_load_ex(s, x, y, comp, req_comp, count);
+		if (!data) *count = 0;
+		return data;
+	}
+	if (stbi_psd_test(s))
+	{
+		data = stbi_psd_load(s, x, y, comp, req_comp);
+		if (data) *count = 1;
+		return data;
+	}
+	if (stbi_pic_test(s))
+	{
+		data = stbi_pic_load(s, x, y, comp, req_comp);
+		if (data) *count = 1;
+		return data;
+	}
+#ifndef STBI_NO_HDR
+	if (stbi_hdr_test(s)) {
+		float *hdr = stbi_hdr_load(s, x, y, comp, req_comp);
+		data = hdr_to_ldr(hdr, *x, *y, req_comp ? req_comp : *comp);
+		if (data) *count = 1;
+		return data;
+	}
+#endif
+	// test tga last because it's a crappy test!
+	if (stbi_tga_test(s))
+	{
+		data = stbi_tga_load(s, x, y, comp, req_comp);
+		if (data) *count = 1;
+		return data;
+	}
+	*count = 0;
+	return epuc("unknown image type", "Image not of any known type, or corrupt");
+}
+
 #ifndef STBI_NO_STDIO
 unsigned char *stbi_load(char const *filename, int *x, int *y, int *comp, int req_comp)
 {
@@ -595,13 +656,12 @@ unsigned char *stbi_load_from_file(FILE *f, int *x, int *y, int *comp, int req_c
 	return result;
 }
 
-unsigned char *stbi_load_gif_from_file(FILE *f, int *x, int *y, int *comp, int req_comp, size_t* count)
+unsigned char *stbi_load_from_file_ex(FILE *f, int *x, int *y, int *comp, int req_comp, size_t* count)
 {
-	unsigned char *result = NULL;
+	unsigned char *result;
 	stbi s;
 	start_file(&s, f);
-	if (stbi_gif_test(&s))
-		result = stbi_gif_load_ex(&s, x, y, comp, req_comp, count);
+	result = stbi_load_main_ex(&s, x, y, comp, req_comp, count);
 	if (result) {
 		// need to 'unget' all the characters in the IO buffer
 		fseek(f, -(int)(s.img_buffer_end - s.img_buffer), SEEK_CUR);
@@ -618,14 +678,11 @@ unsigned char *stbi_load_from_memory(stbi_uc const *buffer, int len, int *x, int
 	return stbi_load_main(&s, x, y, comp, req_comp);
 }
 
-unsigned char *stbi_load_gif_from_memory(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp, size_t* count)
+unsigned char *stbi_load_from_memory_ex(stbi_uc const *buffer, int len, int *x, int *y, int *comp, int req_comp, size_t* count)
 {
-	unsigned char *result = NULL;
 	stbi s;
 	start_mem(&s, buffer, len);
-	if (stbi_gif_test(&s))
-		result = stbi_gif_load_ex(&s, x, y, comp, req_comp, count);
-	return result;
+	return stbi_load_main_ex(&s, x, y, comp, req_comp, count);
 }
 
 
@@ -4310,7 +4367,7 @@ static stbi_uc *stbi_gif_load_ex(stbi *s, int *x, int *y, int *comp, int req_com
 	if (!u8) goto error;
 
 	p = data + 4 * g.w * g.h * (*count);
-	memcpy(p, (stbi__uint8*)delay, sizeof(stbi__uint32) * (*count));
+	memcpy(p, (stbi__uint8*)delay, sizeof(stbi__uint32)* (*count));
 
 	stbi_safe_free(delay);
 	stbi_safe_free(g.out);

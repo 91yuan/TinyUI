@@ -18,35 +18,19 @@ namespace TinyUI
 	public:
 		TinyImage();
 		~TinyImage();
-		operator HBITMAP() const;
+		operator HBITMAP() const;//默认第一帧
 		BOOL			Load(LPCSTR pz);
 		BOOL			Load(BYTE* p, DWORD size);
 		BOOL			Save(LPCSTR pz);//保存成BMP
-		TinySize		GetSize();
-		TinyRectangle	GetRectangle();
-	protected:
-		HBITMAP		m_hBitmap;
-		INT			m_cx;
-		INT			m_cy;
-	};
-	/// <summary>
-	/// 多帧GIF解码,解码成32位
-	/// </summary>
-	class TinyGIFDecode
-	{
-	public:
-		TinyGIFDecode();
-		~TinyGIFDecode();
-		BOOL			Load(LPCSTR pz);
-		BOOL			Load(BYTE* pv, DWORD size);
-		TinySize		GetSize();
 		size_t			GetFrameCount();
-		UINT			GetFrameDelay(INT index);
+		INT				GetFrameDelay(INT index);
 		HBITMAP			GetFrame(INT index);
+		TinySize		GetSize();
 		TinyRectangle	GetRectangle();
 	protected:
-		TinyArray<HBITMAP>   m_images;//解码后的GIF
+		TinyArray<HBITMAP>   m_images;
 		TinyArray<UINT>		 m_delays;//延时
+		HBITMAP				 m_hBitmap;
 		size_t				 m_count;//帧个数
 		INT					 m_cx;
 		INT					 m_cy;
