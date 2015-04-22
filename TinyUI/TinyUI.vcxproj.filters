@@ -67,6 +67,12 @@
     <Filter Include="源文件\Network">
       <UniqueIdentifier>{ac6f29a6-0362-47eb-941b-f7084c021f6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\Network\Json">
+      <UniqueIdentifier>{3ab3401a-7e19-4b82-935c-a891646185dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Network\Json">
+      <UniqueIdentifier>{af55b7ea-13f8-44d0-9fe6-19929445f012}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -270,6 +276,15 @@
     <ClInclude Include="Common\TinyLogging.h">
       <Filter>头文件\Common</Filter>
     </ClInclude>
+    <ClInclude Include="Network\TinyHttp.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\TinySocket.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\TinyCallback.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -471,6 +486,15 @@
       <Filter>源文件\Database</Filter>
     </ClCompile>
     <ClCompile Include="Common\TinyLogging.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinyHttp.cpp">
+      <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\TinySocket.cpp">
+      <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\TinyCallback.cpp">
       <Filter>源文件\Common</Filter>
     </ClCompile>
   </ItemGroup>

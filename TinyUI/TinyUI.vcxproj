@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common\TinyApplication.h" />
+    <ClInclude Include="Common\TinyCallback.h" />
     <ClInclude Include="Common\TinyCollection.h" />
     <ClInclude Include="Common\TinyCommon.h" />
     <ClInclude Include="Common\TinyDelegate.h" />
@@ -132,6 +133,8 @@
     <ClInclude Include="Database\TinySqlite.h" />
     <ClInclude Include="IO\TinyIO.h" />
     <ClInclude Include="Media\TinyWave.h" />
+    <ClInclude Include="Network\TinyHttp.h" />
+    <ClInclude Include="Network\TinySocket.h" />
     <ClInclude Include="Render\TinyGraphics.h" />
     <ClInclude Include="Render\TinyGraphicsRender.h" />
     <ClInclude Include="Render\TinyImage.h" />
@@ -151,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common\TinyApplication.cpp" />
+    <ClCompile Include="Common\TinyCallback.cpp" />
     <ClCompile Include="Common\TinyCollection.cpp" />
     <ClCompile Include="Common\TinyCommon.cpp" />
     <ClCompile Include="Common\TinyDelegate.cpp" />
@@ -200,6 +204,8 @@
     <ClCompile Include="Database\TinySqlite.cpp" />
     <ClCompile Include="IO\TinyIO.cpp" />
     <ClCompile Include="Media\TinyWave.cpp" />
+    <ClCompile Include="Network\TinyHttp.cpp" />
+    <ClCompile Include="Network\TinySocket.cpp" />
     <ClCompile Include="Render\stb_image.c" />
     <ClCompile Include="Render\TinyGraphics.cpp" />
     <ClCompile Include="Render\TinyGraphicsRender.cpp" />

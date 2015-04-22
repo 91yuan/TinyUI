@@ -23,28 +23,54 @@ namespace TinyUI
 		va_end(args);
 	}
 	//////////////////////////////////////////////////////////////////////////
-	TinyReference::TinyReference()
-		:m_cRef(1)
+	TinyReferenceBase::TinyReferenceBase()
+		:m_cRef(0)
 	{
 
 	}
-	TinyReference::~TinyReference()
+	TinyReferenceBase::~TinyReferenceBase()
 	{
 
 	}
-	void TinyReference::AddRef()
+	void TinyReferenceBase::AddRef() const
 	{
 		InterlockedIncrement(&m_cRef);
 	}
-	void TinyReference::Release()
+	BOOL TinyReferenceBase::Release() const
 	{
-		if (!InterlockedDecrement(&m_cRef))
-		{
-			delete this;
-		}
+		return !InterlockedDecrement(&m_cRef);
 	}
-	LONG TinyReference::GetReference()
+	LONG TinyReferenceBase::GetReference() const
 	{
 		return this->m_cRef;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	template<class T, typename Traits>
+	TinyReference<T, Traits>::TinyReference()
+	{
+
+	}
+	template<class T, typename Traits>
+	TinyReference<T, Traits>::~TinyReference()
+	{
+
+	}
+	template<class T, typename Traits>
+	void TinyReference<T, Traits>::AddRef() const
+	{
+		TinyReferenceBase::AddRef();
+	}
+	template<class T, typename Traits>
+	void TinyReference<T, Traits>::Release() const
+	{
+		if (TinyReferenceBase::Release())
+		{
+			Traits::Destruct(static_cast<const T*>(this));
+		}
+	}
+	template<class T, typename Traits>
+	void TinyReference<T, Traits>::Delete(const T* x)
+	{
+		delete x;
 	}
 };

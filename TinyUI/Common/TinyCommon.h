@@ -151,28 +151,57 @@ private:\
 	static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
 
 	//////////////////////////////////////////////////////////////////////////
+	template<class T>
+	class DefaultTinyReferenceTraits;
 	/// <summary>
-	/// 线程安全的引用计数类
+	/// 线程安全的引用计数基类类
 	/// </summary>
-	class TinyReference
+	class TinyReferenceBase
 	{
+		DISALLOW_COPY_AND_ASSIGN(TinyReferenceBase);
 	public:
-		TinyReference();
-		virtual ~TinyReference();
 		/// <summary>
 		/// 获得当前的引用计数
 		/// </summary>
-		LONG GetReference();
+		LONG GetReference() const;
 		/// <summary>
 		/// 引用+1
 		/// </summary>
-		void AddRef();
+		void AddRef() const;
 		/// <summary>
 		/// 释放
 		/// </summary>
-		void Release();
+		BOOL Release() const;
 	protected:
-		LONG	m_cRef;
+		TinyReferenceBase();
+		virtual ~TinyReferenceBase();
+		mutable LONG	m_cRef;
+	};
+	/// <summary>
+	/// 线程安全的引用计数类,可以显示提供引用析构的机会
+	/// </summary>
+	template<class T, typename Traits = DefaultTinyReferenceTraits<T>>
+	class TinyReference : public TinyReferenceBase
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyReference);
+	public:
+		TinyReference();
+		void AddRef() const;
+		void Release() const;
+	protected:
+		~TinyReference();
+	private:
+		friend struct DefaultTinyReferenceTraits<T>;
+		static void Delete(const T* x);
+	};
+	template<class T>
+	class DefaultTinyReferenceTraits
+	{
+	public:
+		static void Destruct(const T* x)
+		{
+			TinyReference<T, DefaultTinyReferenceTraits>::Delete(x);
+		}
 	};
 	/// <summary>
 	/// 智能指针
@@ -372,7 +401,7 @@ private:\
 		return _myP;
 	}
 	/// <summary>
-	/// 引用计数智能指针 
+	/// 引用计数智能指针,T必须显示实现AddRef,Release接口 
 	/// </summary>
 	template<class T>
 	class TinyScopedReferencePtr
@@ -393,7 +422,6 @@ private:\
 		T* Ptr() const;
 		operator T*() const;
 		T* operator->() const;
-		T* Release();
 		TinyScopedReferencePtr<T>& operator=(T* ps);
 		TinyScopedReferencePtr<T>& operator=(const TinyScopedReferencePtr<T>& s);
 		template<typename U>
@@ -451,30 +479,15 @@ private:\
 	{
 		return m_myP;
 	}
-	/// <summary>
-	/// 释放指针.
-	/// 返回对象当前拥有的指针. 如果指针为NULL, 返回NULL.
-	/// 操作完成后, 对象拥有一个NULL指针, 不再拥有任何对象.
-	/// </summary>
-	template<class T>
-	T* TinyScopedReferencePtr<T>::Release()
-	{
-		T* _ps = m_myP;
-		m_myP = NULL;
-		return _ps;
-	}
 	template<class T>
 	TinyScopedReferencePtr<T>& TinyScopedReferencePtr<T>::operator=(T* ps)
 	{
-		if (ps != NULL)
-		{
+		if (ps) 
 			ps->AddRef();
-		}
-		if (m_myP != NULL)
-		{
-			m_myP->Release();
-		}
-		m_myP = ps;
+		T* oldMyP = m_myP;
+		m_myP = p;
+		if (oldMyP) 
+			oldMyP->Release();
 		return *this;
 	}
 	template<class T>
@@ -485,7 +498,7 @@ private:\
 	template<class T>
 	void TinyScopedReferencePtr<T>::Swap(T** pp)
 	{
-		T* p = ptr_;
+		T* p = m_myP;
 		m_myP = *pp;
 		*pp = p;
 	}
