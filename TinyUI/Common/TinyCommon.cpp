@@ -45,32 +45,4 @@ namespace TinyUI
 		return this->m_cRef;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	template<class T, typename Traits>
-	TinyReference<T, Traits>::TinyReference()
-	{
-
-	}
-	template<class T, typename Traits>
-	TinyReference<T, Traits>::~TinyReference()
-	{
-
-	}
-	template<class T, typename Traits>
-	void TinyReference<T, Traits>::AddRef() const
-	{
-		TinyReferenceBase::AddRef();
-	}
-	template<class T, typename Traits>
-	void TinyReference<T, Traits>::Release() const
-	{
-		if (TinyReferenceBase::Release())
-		{
-			Traits::Destruct(static_cast<const T*>(this));
-		}
-	}
-	template<class T, typename Traits>
-	void TinyReference<T, Traits>::Delete(const T* x)
-	{
-		delete x;
-	}
 };

@@ -149,10 +149,233 @@ private:\
 #define ARRAYSIZE_UNSAFE(a) \
 	((sizeof(a) / sizeof(*(a))) / \
 	static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
-
 	//////////////////////////////////////////////////////////////////////////
-	template<class T>
-	class DefaultTinyReferenceTraits;
+	/// <summary>
+	/// 占位符空类型
+	/// </summary>
+	class NullType {};
+	template<typename T>
+	struct IsVoidType
+	{
+		enum{ Result = 0 };
+	};
+	template<>
+	struct IsVoidType<void>
+	{
+		enum{ Result = 1 };
+	};
+	template<typename T>
+	struct IsBoolType
+	{
+		enum{ Result = 0 };
+	};
+	template<>
+	struct IsBoolType<bool>
+	{
+		enum{ Result = 1 };
+	};
+	template <typename T>
+	struct IsReference
+	{
+		enum{ Result = 0 };
+	};
+	template <typename T>
+	struct IsReference<T&>
+	{
+		enum{ Result = 1 };
+	};
+	template <typename T>
+	struct IsPointer
+	{
+		enum { Result = 0 };
+	};
+	template <class T>
+	struct IsPointer<T*>
+	{
+		enum { Result = 1 };
+	};
+	template <class T>
+	struct IsPointer<T*&>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T>
+	struct IsFunctionPointer
+	{
+		enum{ Result = 0 };
+	};
+	template <typename T>
+	struct IsFunctionPointer<T(*)()>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename P01>
+	struct IsFunctionPointer<T(*)(P01)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename P01, typename P02>
+	struct IsFunctionPointer<T(*)(P01, P02)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename P01, typename P02, typename P03>
+	struct IsFunctionPointer<T(*)(P01, P02, P03)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename P01, typename P02, typename P03, typename P04>
+	struct IsFunctionPointer<T(*)(P01, P02, P03, P04)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T>
+	struct IsFunctionPointer<T(*)(...)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename P01>
+	struct IsFunctionPointer<T(*)(P01, ...)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename P01, typename P02>
+	struct IsFunctionPointer<T(*)(P01, P02, ...)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename P01, typename P02, typename P03>
+	struct IsFunctionPointer<T(*)(P01, P02, P03, ...)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename P01, typename P02, typename P03, typename P04>
+	struct IsFunctionPointer<T(*)(P01, P02, P03, P04, ...)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T>
+	struct IsMemberFunctionPointer
+	{
+		enum{ Result = 0 };
+	};
+	template <typename T, typename S>
+	struct IsMemberFunctionPointer<T(S::*)()>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01>
+	struct IsMemberFunctionPointer<T(S::*)(P01)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01, typename P02>
+	struct IsMemberFunctionPointer<T(S::*)(P01, P02)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01, typename P02, typename P03>
+	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01, typename P02, typename P03, typename P04>
+	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03, P04)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S>
+	struct IsMemberFunctionPointer<T(S::*)(...)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01>
+	struct IsMemberFunctionPointer<T(S::*)(P01, ...)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01, typename P02>
+	struct IsMemberFunctionPointer<T(S::*)(P01, P02, ...)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01, typename P02, typename P03>
+	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03, ...)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01, typename P02, typename P03, typename P04>
+	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03, P04, ...)>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S>
+	struct IsMemberFunctionPointer<T(S::*)() const>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01>
+	struct IsMemberFunctionPointer<T(S::*)(P01) const>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01, typename P02>
+	struct IsMemberFunctionPointer<T(S::*)(P01, P02) const>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01, typename P02, typename P03>
+	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03) const>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01, typename P02, typename P03, typename P04>
+	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03, P04) const>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S>
+	struct IsMemberFunctionPointer<T(S::*)(...) const>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01>
+	struct IsMemberFunctionPointer<T(S::*)(P01, ...) const>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01, typename P02>
+	struct IsMemberFunctionPointer<T(S::*)(P01, P02, ...) const>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01, typename P02, typename P03>
+	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03, ...) const>
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename S, typename P01, typename P02, typename P03, typename P04>
+	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03, P04, ...) const>
+	{
+		enum { Result = 1 };
+	};
+
+	template<typename T>
+	struct IsArrayType
+	{
+		enum { Result = 0 };
+	};
+	template<typename T>
+	struct IsArrayType<T[]>
+	{
+		enum { Result = 1 };
+	};
+	template<typename T, size_t n>
+	struct IsArrayType<T[n]>
+	{
+		enum { Result = 1 };
+	};
+	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
 	/// 线程安全的引用计数基类类
 	/// </summary>
@@ -177,23 +400,6 @@ private:\
 		virtual ~TinyReferenceBase();
 		mutable LONG	m_cRef;
 	};
-	/// <summary>
-	/// 线程安全的引用计数类,可以显示提供引用析构的机会
-	/// </summary>
-	template<class T, typename Traits = DefaultTinyReferenceTraits<T>>
-	class TinyReference : public TinyReferenceBase
-	{
-		DISALLOW_COPY_AND_ASSIGN(TinyReference);
-	public:
-		TinyReference();
-		void AddRef() const;
-		void Release() const;
-	protected:
-		~TinyReference();
-	private:
-		friend struct DefaultTinyReferenceTraits<T>;
-		static void Delete(const T* x);
-	};
 	template<class T>
 	class DefaultTinyReferenceTraits
 	{
@@ -203,6 +409,51 @@ private:\
 			TinyReference<T, DefaultTinyReferenceTraits>::Delete(x);
 		}
 	};
+	/// <summary>
+	/// 线程安全的引用计数类,可以显示提供引用析构的机会
+	/// </summary>
+	template<class T, typename Traits = DefaultTinyReferenceTraits<T>>
+	class TinyReference : public TinyReferenceBase
+	{
+		friend struct DefaultTinyReferenceTraits<T>;
+		DISALLOW_COPY_AND_ASSIGN(TinyReference);
+	public:
+		TinyReference();
+		void AddRef() const;
+		void Release() const;
+	protected:
+		~TinyReference();
+	private:
+		static void Delete(const T* x);
+	};
+	template<class T, typename Traits>
+	TinyReference<T, Traits>::TinyReference()
+	{
+
+	}
+	template<class T, typename Traits>
+	TinyReference<T, Traits>::~TinyReference()
+	{
+
+	}
+	template<class T, typename Traits>
+	void TinyReference<T, Traits>::AddRef() const
+	{
+		TinyReferenceBase::AddRef();
+	}
+	template<class T, typename Traits>
+	void TinyReference<T, Traits>::Release() const
+	{
+		if (TinyReferenceBase::Release())
+		{
+			Traits::Destruct(static_cast<const T*>(this));
+		}
+	}
+	template<class T, typename Traits>
+	void TinyReference<T, Traits>::Delete(const T* x)
+	{
+		delete x;
+	}
 	/// <summary>
 	/// 智能指针
 	/// </summary>
@@ -485,7 +736,7 @@ private:\
 		if (ps) 
 			ps->AddRef();
 		T* oldMyP = m_myP;
-		m_myP = p;
+		m_myP = ps;
 		if (oldMyP) 
 			oldMyP->Release();
 		return *this;
@@ -505,7 +756,7 @@ private:\
 	template<class T>
 	void TinyScopedReferencePtr<T>::Swap(TinyScopedReferencePtr<T>& s)
 	{
-		swap(&s.m_myP);
+		Swap(&s.m_myP);
 	}
 	/// <summary>
 	/// COM智能指针

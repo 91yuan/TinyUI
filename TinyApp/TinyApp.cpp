@@ -8,6 +8,7 @@
 #include "Database/TinyAdo.h"
 #include "Algorithm.h"
 #include "TinySmiley.h"
+#include "Common/TinyCallback.h"
 
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
@@ -628,6 +629,12 @@ TRACE("%d\n", &_array[0]);*/
 //}
 #pragma endregion
 
+int Add(int a, int b)
+{
+	MessageBox(NULL, "Add", "", MB_OK);
+	return (a + b);
+}
+
 EXTERN_C const GUID __declspec(selectany) IID_ISmiley =
 { 0x767F59D8, 0xA4DD, 0x4659, { 0xA6, 0xBC, 0x37, 0x69, 0xD2, 0x19, 0xF9, 0x02 } };
 
@@ -661,6 +668,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	}*/
 
 	HRESULT hRes = OleInitialize(NULL);
+
+	Callback<int(int, int)> abc = Bind(&Add);
+	abc.Run(10, 11);
 
 	/*INT _array[8] = { 10, 11, 13, 16, 21, 25, 27, 29 };
 	INT val = A1(_array, 9, 16);*/
