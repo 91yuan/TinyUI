@@ -412,10 +412,10 @@ private:\
 	/// <summary>
 	/// 线程安全的引用计数类,可以显示提供引用析构的机会
 	/// </summary>
-	template<class T, typename Traits = DefaultTinyReferenceTraits<T>>
+	template<typename T, typename Traits = DefaultTinyReferenceTraits<T>>
 	class TinyReference : public TinyReferenceBase
 	{
-		friend struct DefaultTinyReferenceTraits<T>;
+		friend class DefaultTinyReferenceTraits<T>;
 		DISALLOW_COPY_AND_ASSIGN(TinyReference);
 	public:
 		TinyReference();
