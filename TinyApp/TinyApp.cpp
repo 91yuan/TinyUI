@@ -644,6 +644,19 @@ int Add1(int a, int b, int c)
 class Test1
 {
 public:
+	Test1(int s)
+		:a(s)
+	{
+		TRACE("Test1构造函数\n");
+	}
+	Test1()
+	{
+		TRACE("Test1构造函数\n");
+	}
+	Test1(const Test1& other)
+	{
+		TRACE("Test1拷贝构造函数\n");
+	}
 	int Add(int a, int b)
 	{
 		MessageBox(NULL, "Add", "", MB_OK);
@@ -654,6 +667,7 @@ public:
 		MessageBox(NULL, "Add", "", MB_OK);
 		return (a + b + c);
 	}
+	int a;
 };
 
 EXTERN_C const GUID __declspec(selectany) IID_ISmiley =
@@ -690,15 +704,17 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	HRESULT hRes = OleInitialize(NULL);
 
-	Test1 test1;
+	//Test11 test1 = MakeTest1();
+	/*Test1 test1;
 	Callback<int(int, int)> abc = Bind(&Test1::Add, &test1);
-	abc.Run(10, 10);
-	Callback<int(int, int, int)> abc1 = Bind(&Test1::Add1, &test1);
-	abc1.Run(10, 10, 10);
-	Callback<int(int, int)> abc3 = Bind(&Add);
-	abc3.Run(10, 10);
-	Callback<int(int, int, int)> abc4 = Bind(&Add1);
-	abc4.Run(10, 10, 10);
+	abc.Run(10, 10);*/
+	//Callback<int(int, int, int)> abc1 = Bind(&Test1::Add1, &test1);
+	//abc1.Run(10, 10, 10);
+	//Callback<int(int, int)> abc3 = Bind(&Add);
+	//abc3.Run(10, 10);
+	//Callback<int(int, int, int)> abc4 = Bind(&Add1);
+	//abc4.Run(10, 10, 10);
+
 	//Callback<int(int, int)> abc1 = Bind(&Add);
 
 	/*typedef int (Test1::*Add)(int, int);

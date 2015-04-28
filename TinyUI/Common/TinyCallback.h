@@ -4,7 +4,7 @@
 namespace TinyUI
 {
 	/// <summary>
-	/// 运行时适配器
+	/// 运行时适配器类型萃取
 	/// </summary>
 	template <typename T>
 	class RunnableAdapter;
@@ -205,114 +205,118 @@ namespace TinyUI
 		typedef typename A3 A3Type;
 		typedef typename A4 A4Type;
 	};
-	//////////////////////////////////////////////////////////////////////////
-	class CallbackRunnableBase;
+	/// <summary>
+	/// 回调运行时基类
+	/// </summary>
+	class CallbackRunnableBase : public TinyReference < CallbackRunnableBase >
+	{
+	protected:
+		friend class TinyReference < CallbackRunnableBase > ;
+		virtual ~CallbackRunnableBase() {}
+	};
+
 	template <typename CallbackRunnableType, typename R>
-	struct Invoker;
+	struct Caller;
 	template <typename CallbackRunnableType, typename R>
-	struct Invoker<CallbackRunnableType, R(*)()>
+	struct Caller < CallbackRunnableType, R(*)() >
 	{
 		static R DoInvoke(CallbackRunnableBase* base)
 		{
-			CallbackRunnableType* invoker = static_cast<CallbackRunnableType*>(base);
-			return (*invoker->m_runnable)();
+			CallbackRunnableType* call = static_cast<CallbackRunnableType*>(base);
+			return (*call->m_runnable)();
 		}
 	};
 	template <typename CallbackRunnableType, typename R, typename A1>
-	struct Invoker<CallbackRunnableType, R(*)(A1)>
+	struct Caller < CallbackRunnableType, R(*)(A1) >
 	{
 		static R DoInvoke(CallbackRunnableBase* base, A1 a1)
 		{
-			CallbackRunnableType* invoker = static_cast<CallbackRunnableType*>(base);
-			return (*invoker->m_runnable)(a1);
+			CallbackRunnableType* call = static_cast<CallbackRunnableType*>(base);
+			return (*call->m_runnable)(a1);
 		}
 	};
 	template <typename CallbackRunnableType, typename R, typename A1, typename A2>
-	struct Invoker<CallbackRunnableType, R(*)(A1, A2)>
+	struct Caller < CallbackRunnableType, R(*)(A1, A2) >
 	{
 		static R DoInvoke(CallbackRunnableBase* base, A1 a1, A2 a2)
 		{
-			CallbackRunnableType* invoker = static_cast<CallbackRunnableType*>(base);
-			return (*invoker->m_runnable)(a1, a2);
+			CallbackRunnableType* call = static_cast<CallbackRunnableType*>(base);
+			return (*call->m_runnable)(a1, a2);
 		}
 	};
 	template <typename CallbackRunnableType, typename R, typename A1, typename A2, typename A3>
-	struct Invoker<CallbackRunnableType, R(*)(A1, A2, A3)>
+	struct Caller < CallbackRunnableType, R(*)(A1, A2, A3) >
 	{
 		static R DoInvoke(CallbackRunnableBase* base, A1 a1, A2 a2, A3 a3)
 		{
-			CallbackRunnableType* invoker = static_cast<CallbackRunnableType*>(base);
-			return (*invoker->m_runnable)(a1, a2, a3);
+			CallbackRunnableType* call = static_cast<CallbackRunnableType*>(base);
+			return (*call->m_runnable)(a1, a2, a3);
 		}
 	};
 	template <typename CallbackRunnableType, typename R, typename A1, typename A2, typename A3, typename A4>
-	struct Invoker<CallbackRunnableType, R(*)(A1, A2, A3, A4)>
+	struct Caller < CallbackRunnableType, R(*)(A1, A2, A3, A4) >
 	{
 		static R DoInvoke(CallbackRunnableBase* base, A1 a1, A2 a2, A3 a3, A4  a4)
 		{
-			CallbackRunnableType* invoker = static_cast<CallbackRunnableType*>(base);
-			return (*invoker->m_runnable)(a1, a2, a3, a4);
+			CallbackRunnableType* call = static_cast<CallbackRunnableType*>(base);
+			return (*call->m_runnable)(a1, a2, a3, a4);
 		}
 	};
 	template <typename CallbackRunnableType, typename R, typename T>
-	struct Invoker<CallbackRunnableType, R(T::*)()>
+	struct Caller < CallbackRunnableType, R(T::*)() >
 	{
 		static R DoInvoke(CallbackRunnableBase* base)
 		{
-			CallbackRunnableType* invoker = static_cast<CallbackRunnableType*>(base);
-			return ((invoker->m_instance)->*invoker->m_runnable)();
+			CallbackRunnableType* call = static_cast<CallbackRunnableType*>(base);
+			return ((call->m_instance)->*call->m_runnable)();
 		}
 	};
 	template <typename CallbackRunnableType, typename R, typename T, typename A1>
-	struct Invoker<CallbackRunnableType, R(T::*)(A1)>
+	struct Caller < CallbackRunnableType, R(T::*)(A1) >
 	{
 		static R DoInvoke(CallbackRunnableBase* base, A1 a1)
 		{
-			CallbackRunnableType* invoker = static_cast<CallbackRunnableType*>(base);
-			return ((invoker->m_instance)->*invoker->m_runnable)(a1);
+			CallbackRunnableType* call = static_cast<CallbackRunnableType*>(base);
+			return ((call->m_instance)->*call->m_runnable)(a1);
 		}
 	};
 	template <typename CallbackRunnableType, typename R, typename T, typename A1, typename A2>
-	struct Invoker<CallbackRunnableType, R(T::*)(A1, A2)>
+	struct Caller < CallbackRunnableType, R(T::*)(A1, A2) >
 	{
 		static R DoInvoke(CallbackRunnableBase* base, A1 a1, A2 a2)
 		{
-			CallbackRunnableType* invoker = static_cast<CallbackRunnableType*>(base);
-			return ((invoker->m_instance)->*invoker->m_runnable)(a1, a2);
+			CallbackRunnableType* call = static_cast<CallbackRunnableType*>(base);
+			return ((call->m_instance)->*call->m_runnable)(a1, a2);
 		}
 	};
 	template <typename CallbackRunnableType, typename R, typename T, typename A1, typename A2, typename A3>
-	struct Invoker<CallbackRunnableType, R(T::*)(A1, A2, A3)>
+	struct Caller < CallbackRunnableType, R(T::*)(A1, A2, A3) >
 	{
 		static R DoInvoke(CallbackRunnableBase* base, A1 a1, A2 a2, A3 a3)
 		{
-			CallbackRunnableType* invoker = static_cast<CallbackRunnableType*>(base);
-			return ((invoker->m_instance)->*invoker->m_runnable)(a1, a2, a3);
+			CallbackRunnableType* call = static_cast<CallbackRunnableType*>(base);
+			return ((call->m_instance)->*call->m_runnable)(a1, a2, a3);
 		}
 	};
 	template <typename CallbackRunnableType, typename R, typename T, typename A1, typename A2, typename A3, typename A4>
-	struct Invoker<CallbackRunnableType, R(T::*)(A1, A2, A3, A4)>
+	struct Caller < CallbackRunnableType, R(T::*)(A1, A2, A3, A4) >
 	{
 		static R DoInvoke(CallbackRunnableBase* base, A1 a1, A2 a2, A3 a3, A4 a4)
 		{
-			CallbackRunnableType* invoker = static_cast<CallbackRunnableType*>(base);
-			return ((invoker->m_instance)->*invoker->m_runnable)(a1, a2, a3, a4);
+			CallbackRunnableType* call = static_cast<CallbackRunnableType*>(base);
+			return ((call->m_instance)->*call->m_runnable)(a1, a2, a3, a4);
 		}
 	};
-
-	class CallbackRunnableBase : public TinyReference<CallbackRunnableBase>
-	{
-	protected:
-		friend class TinyReference<CallbackRunnableBase>;
-		virtual ~CallbackRunnableBase() {}
-	};
+	/// <summary>
+	/// 普通函数
+	/// </summary>
 	template <typename Runnable>
 	class CallbackRunnable0 : public CallbackRunnableBase
 	{
 	public:
 		typedef CallbackRunnable0 CallbackRunnableType;
 		typedef typename RunnableAdapter<Runnable>::RunType RunType;
-		typedef Invoker<CallbackRunnableType, RunType> Invoker;
+		typedef Caller<CallbackRunnableType, RunType> CallerType;
 
 		CallbackRunnable0(const Runnable& runnable)
 			: m_runnable(runnable)
@@ -333,20 +337,21 @@ namespace TinyUI
 	public:
 		typedef CallbackRunnable1 CallbackRunnableType;
 		typedef typename RunnableAdapter<Runnable>::RunType RunType;
-		typedef Invoker<CallbackRunnableType, RunType> Invoker;
-
+		typedef Caller<CallbackRunnableType, RunType> CallerType;
 		CallbackRunnable1(const Runnable& runnable, const Instance& instance)
 			: m_runnable(runnable),
 			m_instance(instance)
 		{
 		}
-
 		virtual ~CallbackRunnable1()
 		{
 		}
 		Runnable m_runnable;
 		Instance m_instance;
 	};
+	/// <summary>
+	/// 回调基类
+	/// </summary>
 	class CallbackBase
 	{
 	public:
@@ -354,28 +359,31 @@ namespace TinyUI
 		void Reset();
 	protected:
 		BOOL Equals(const CallbackBase& other) const;
-		typedef void(*InvokeFuncStorage)(void);
-		CallbackBase(InvokeFuncStorage polymorphic_invoke, TinyScopedReferencePtr<CallbackRunnableBase>* invoker_storage);
+		typedef void(*CallbackInvokeBase)(void);
+		CallbackBase(CallbackInvokeBase invoke, TinyScopedReferencePtr<CallbackRunnableBase>* caller);
 		~CallbackBase();
-		TinyScopedReferencePtr<CallbackRunnableBase> invoker_storage_;
-		InvokeFuncStorage polymorphic_invoke_;
+		TinyScopedReferencePtr<CallbackRunnableBase> m_caller;
+		CallbackInvokeBase m_invoke;
 	};
-
 	template<typename T>
-	struct CallbackOwner
+	struct CallbackHost
 	{
-		explicit CallbackOwner(T* invoker_storage)
-		: invoker_storage_(invoker_storage) {}
-		mutable TinyScopedReferencePtr<CallbackRunnableBase> invoker_storage_;
+		explicit CallbackHost(T* caller)
+			: m_caller(caller)
+		{
+			TRACE("调用CallbackHost构造函数\n");
+		}
+
+		mutable TinyScopedReferencePtr<CallbackRunnableBase> m_caller;
 	};
-
 	template<typename T>
-	CallbackOwner<T> MakeCallback(T* o)
+	CallbackHost<T> MakeCallback(T* o)
 	{
-		return CallbackOwner<T>(o);
+		return CallbackHost<T>(o);
 	}
-
-
+	/// <summary>
+	/// 回调
+	/// </summary>
 	template<typename Runnable>
 	class Callback;
 	template<typename R>
@@ -383,14 +391,12 @@ namespace TinyUI
 	{
 	public:
 		typedef R(*CallbackInvoke)(CallbackRunnableBase*);
-
 		Callback() : CallbackBase(NULL, NULL) {}
 		template <typename T>
-		Callback(const CallbackOwner<T>& invoker_holder)
-			: CallbackBase(
-			reinterpret_cast<InvokeFuncStorage>(&T::Invoker::DoInvoke),
-			&invoker_holder.invoker_storage_)
+		Callback(const CallbackHost<T>& host)
+			: CallbackBase(reinterpret_cast<CallbackInvokeBase>(&T::CallerType::DoInvoke), &host.m_caller)
 		{
+			TRACE("调用Callback构造函数\n");
 		}
 
 		BOOL Equals(const Callback& other) const
@@ -400,8 +406,8 @@ namespace TinyUI
 
 		R Run() const
 		{
-			CallbackInvoke invoke = reinterpret_cast<CallbackInvoke>(polymorphic_invoke_);
-			return invoke(invoker_storage_.Ptr());
+			CallbackInvoke invoke = reinterpret_cast<CallbackInvoke>(m_invoke);
+			return invoke(m_caller.Ptr());
 		}
 	};
 	template<typename R, typename A1>
@@ -412,10 +418,8 @@ namespace TinyUI
 
 		Callback() : CallbackBase(NULL, NULL) {}
 		template <typename T>
-		Callback(const CallbackOwner<T>& invoker_holder)
-			: CallbackBase(
-			reinterpret_cast<InvokeFuncStorage>(&T::Invoker::DoInvoke),
-			&invoker_holder.invoker_storage_)
+		Callback(const CallbackHost<T>& host)
+			: CallbackBase(reinterpret_cast<CallbackInvokeBase>(&T::CallerType::DoInvoke), &host.m_caller)
 		{
 		}
 
@@ -426,8 +430,8 @@ namespace TinyUI
 
 		R Run(A1 a1) const
 		{
-			CallbackInvoke invoke = reinterpret_cast<CallbackInvoke>(polymorphic_invoke_);
-			return invoke(invoker_storage_.Ptr(), a1);
+			CallbackInvoke invoke = reinterpret_cast<CallbackInvoke>(m_invoke);
+			return invoke(m_caller.Ptr(), a1);
 		}
 	};
 	template<typename R, typename A1, typename A2>
@@ -438,11 +442,10 @@ namespace TinyUI
 
 		Callback() : CallbackBase(NULL, NULL) {}
 		template <typename T>
-		Callback(const CallbackOwner<T>& invoker_holder)
-			: CallbackBase(
-			reinterpret_cast<InvokeFuncStorage>(&T::Invoker::DoInvoke),
-			&invoker_holder.invoker_storage_)
+		Callback(const CallbackHost<T>& host)
+			: CallbackBase(reinterpret_cast<CallbackInvokeBase>(&T::CallerType::DoInvoke), &host.m_caller)
 		{
+
 		}
 
 		BOOL Equals(const Callback& other) const
@@ -452,8 +455,8 @@ namespace TinyUI
 
 		R Run(A1 a1, A2 a2) const
 		{
-			CallbackInvoke invoke = reinterpret_cast<CallbackInvoke>(polymorphic_invoke_);
-			return invoke(invoker_storage_.Ptr(), a1, a2);
+			CallbackInvoke invoke = reinterpret_cast<CallbackInvoke>(m_invoke);
+			return invoke(m_caller.Ptr(), a1, a2);
 		}
 	};
 	template<typename R, typename A1, typename A2, typename A3>
@@ -464,10 +467,8 @@ namespace TinyUI
 
 		Callback() : CallbackBase(NULL, NULL) {}
 		template <typename T>
-		Callback(const CallbackOwner<T>& invoker_holder)
-			: CallbackBase(
-			reinterpret_cast<InvokeFuncStorage>(&T::Invoker::DoInvoke),
-			&invoker_holder.invoker_storage_)
+		Callback(const CallbackHost<T>& host)
+			: CallbackBase(reinterpret_cast<CallbackInvokeBase>(&T::CallerType::DoInvoke), &host.m_caller)
 		{
 		}
 
@@ -478,8 +479,8 @@ namespace TinyUI
 
 		R Run(A1 a1, A2 a2, A3 a3) const
 		{
-			CallbackInvoke invoke = reinterpret_cast<CallbackInvoke>(polymorphic_invoke_);
-			return invoke(invoker_storage_.Ptr(), a1, a2, a3);
+			CallbackInvoke invoke = reinterpret_cast<CallbackInvoke>(m_invoke);
+			return invoke(m_caller.Ptr(), a1, a2, a3);
 		}
 	};
 	template<typename R, typename A1, typename A2, typename A3, typename A4>
@@ -490,10 +491,8 @@ namespace TinyUI
 
 		Callback() : CallbackBase(NULL, NULL) {}
 		template <typename T>
-		Callback(const CallbackOwner<T>& invoker_holder)
-			: CallbackBase(
-			reinterpret_cast<InvokeFuncStorage>(&T::Invoker::DoInvoke),
-			&invoker_holder.invoker_storage_)
+		Callback(const CallbackHost<T>& host)
+			: CallbackBase(reinterpret_cast<CallbackInvokeBase>(&T::CallerType::DoInvoke), &host.m_caller)
 		{
 		}
 
@@ -504,22 +503,20 @@ namespace TinyUI
 
 		R Run(A1 a1, A2 a2, A3 a3, A4 a4) const
 		{
-			CallbackInvoke invoke = reinterpret_cast<CallbackInvoke>(polymorphic_invoke_);
-			return invoke(invoker_storage_.Ptr(), a1, a2, a3, a4);
+			CallbackInvoke invoke = reinterpret_cast<CallbackInvoke>(m_invoke);
+			return invoke(m_caller.Ptr(), a1, a2, a3, a4);
 		}
 	};
 
 	template<typename Runnable, typename Instance>
-	CallbackOwner<CallbackRunnable1<Runnable, Instance> >
-		Bind(const Runnable& runnable, const Instance& instance)
+	CallbackHost<CallbackRunnable1<Runnable, Instance> > Bind(const Runnable& runnable, const Instance& instance)
 	{
-			return MakeCallback(new CallbackRunnable1<Runnable, Instance>(runnable, instance));
-		}
+		return MakeCallback(new CallbackRunnable1<Runnable, Instance>(runnable, instance));
+	}
 	template<typename Runnable>
-	CallbackOwner<CallbackRunnable0<Runnable> >
-		Bind(const Runnable& runnable)
+	CallbackHost<CallbackRunnable0<Runnable> > Bind(const Runnable& runnable)
 	{
-			return MakeCallback(new CallbackRunnable0<Runnable>(runnable));
-		}
+		return MakeCallback(new CallbackRunnable0<Runnable>(runnable));
+	}
 };
 
