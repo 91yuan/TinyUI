@@ -634,6 +634,12 @@ int Add(int a, int b)
 	MessageBox(NULL, "Add", "", MB_OK);
 	return (a + b);
 }
+int Add1(int a, int b, int c)
+{
+	MessageBox(NULL, "Add", "", MB_OK);
+	return (a + b + c);
+}
+
 
 class Test1
 {
@@ -642,6 +648,11 @@ public:
 	{
 		MessageBox(NULL, "Add", "", MB_OK);
 		return (a + b);
+	}
+	int Add1(int a, int b, int c)
+	{
+		MessageBox(NULL, "Add", "", MB_OK);
+		return (a + b + c);
 	}
 };
 
@@ -679,10 +690,20 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	HRESULT hRes = OleInitialize(NULL);
 
-	typedef int (Test1::*Add)(int, int);
+	Test1 test1;
+	Callback<int(int, int)> abc = Bind(&Test1::Add, &test1);
+	abc.Run(10, 10);
+	Callback<int(int, int, int)> abc1 = Bind(&Test1::Add1, &test1);
+	abc1.Run(10, 10, 10);
+	Callback<int(int, int)> abc3 = Bind(&Add);
+	abc3.Run(10, 10);
+	Callback<int(int, int, int)> abc4 = Bind(&Add1);
+	abc4.Run(10, 10, 10);
+	//Callback<int(int, int)> abc1 = Bind(&Add);
 
+	/*typedef int (Test1::*Add)(int, int);
 	BOOL bRes = CallbackTypeTraits<int[5]>::IsPointer;
-	TRACE(typeid(CallbackTypeTraits<int[5]>::PointerType).name());
+	TRACE(typeid(CallbackTypeTraits<int[5]>::PointerType).name());*/
 
 	//Callback<int(int, int)> abc = Bind(&Add, 10, 10);
 	/*RunnableAdapter<int(*)(int, int)> abc(&Add);
