@@ -1,6 +1,7 @@
 #pragma once
 #include "TinyObject.h"
 #include <string>
+#include <vector>
 
 namespace TinyUI
 {
@@ -123,6 +124,31 @@ namespace TinyUI
 		size_t	_Myres;
 	};
 	//////////////////////////////////////////////////////////////////////////
+	enum TrimPositions
+	{
+		TRIM_NONE = 0,
+		TRIM_LEADING = 1 << 0,
+		TRIM_TRAILING = 1 << 1,
+		TRIM_ALL = TRIM_LEADING | TRIM_TRAILING,
+	};
+	const char kWhitespaceASCII[] =
+	{
+		0x09,
+		0x0A,
+		0x0B,
+		0x0C,
+		0x0D,
+		0x20,
+		0
+	};
+	template<typename STR>
+	TrimPositions TrimStringT(const STR& input, const typename STR::value_type trim_chars[], TrimPositions positions, STR* output);
+	BOOL TrimString(const std::string& input, const char trim_chars[], std::string* output);
+	TrimPositions TrimWhitespaceASCII(const std::string& input, TrimPositions positions, std::string* output);
+	TrimPositions TrimWhitespace(const std::string& input, TrimPositions positions, std::string* output);
+	template<typename STR>
+	static void SplitStringT(const STR& str, const typename STR::value_type s, bool trim_whitespace, std::vector<STR>* r);
+	void SplitString(const std::string& str, char sep, std::vector<std::string>* r);
 }
 
 

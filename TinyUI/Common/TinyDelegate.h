@@ -4,21 +4,6 @@
 
 namespace TinyUI
 {
-	/// <summary>
-	/// 类型列表
-	/// </summary>
-	template<class T1, class T2>
-	class TypeList
-	{
-		typedef T1 T1Type;
-		typedef T2 T2Type;
-	};
-	//////////////////////////////////////////////////////////////////////////
-#define TYPE_LIST0() NullType
-#define TYPE_LIST1(P1) TypeList<P1, NullType>
-#define TYPE_LIST2(P1, P2) TypeList<P1, TYPE_LIST1(P2)>
-#define TYPE_LIST3(P1, P2, P3) TypeList<P1, TYPE_LIST2(P2, P3)>
-#define TYPE_LIST4(P1, P2, P3, P4) TypeList<P1, TYPE_LIST3(P2, P3, P4)>
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
 	/// emplate_class< type( type1, type2, ... ) > a_class;
@@ -457,7 +442,6 @@ namespace TinyUI
 		{
 			if (!os.IsEmpty())
 			{
-				//显示调用基类赋值函数
 				BaseType::operator=(os);
 			}
 		}

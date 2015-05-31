@@ -271,7 +271,7 @@ HRESULT STDMETHODCALLTYPE TinySmiley::GetFrameCount(INT *pFrameCount)
 }
 HRESULT STDMETHODCALLTYPE TinySmiley::GetFrameDelay(INT iFrame, UINT *pFrameDelay)
 {
-	if (iFrame >= 0 && iFrame < m_delays.size())
+	if (iFrame >= 0 && iFrame < (INT)m_delays.size())
 	{
 		*pFrameDelay = m_delays[iFrame];
 		return S_OK;
@@ -286,7 +286,7 @@ HRESULT STDMETHODCALLTYPE TinySmiley::GetSize(LPSIZE pSize)
 }
 HRESULT STDMETHODCALLTYPE TinySmiley::Draw(HDC hdc, LPCRECT pRect, INT iFrame)
 {
-	if (iFrame < 0 || iFrame >= m_count) return S_FALSE;
+	if (iFrame < 0 || iFrame >= (INT)m_count) return S_FALSE;
 	HBITMAP hMenBmp = NULL;
 	HDC hMenDC = NULL;
 	RECT rect = *pRect;

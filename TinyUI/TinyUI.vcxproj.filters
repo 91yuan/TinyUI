@@ -279,11 +279,20 @@
     <ClInclude Include="Network\TinyHttp.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
+    <ClInclude Include="Common\TinyCallback.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
     <ClInclude Include="Network\TinySocket.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Common\TinyCallback.h">
-      <Filter>头文件\Common</Filter>
+    <ClInclude Include="IO\TinyTPool.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\TinyTaskQueue.h">
+      <Filter>头文件\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\TinyTaskItem.h">
+      <Filter>头文件\IO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -491,11 +500,20 @@
     <ClCompile Include="Network\TinyHttp.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
+    <ClCompile Include="Common\TinyCallback.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
     <ClCompile Include="Network\TinySocket.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
-    <ClCompile Include="Common\TinyCallback.cpp">
-      <Filter>源文件\Common</Filter>
+    <ClCompile Include="IO\TinyTPool.cpp">
+      <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyTaskQueue.cpp">
+      <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyTaskItem.cpp">
+      <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

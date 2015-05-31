@@ -231,7 +231,7 @@ namespace TinyUI
 	}
 	HBITMAP	TinyImage::GetFrame(INT index)
 	{
-		if (index < 0 || index >= m_count)
+		if (index < 0 || index >= (INT)m_count)
 		{
 			return NULL;
 		}
@@ -239,7 +239,7 @@ namespace TinyUI
 	}
 	INT	TinyImage::GetFrameDelay(INT index)
 	{
-		if (index < 0 || index >= m_count)
+		if (index < 0 || index >= (INT)m_count)
 		{
 			return -1;
 		}

@@ -6,7 +6,7 @@
 namespace TinyUI
 {
 	/// <summary>
-	/// Soekct类,基于重叠模型的socket
+	/// Soekct类
 	/// </summary>
 	class TinySocket
 	{

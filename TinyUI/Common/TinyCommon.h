@@ -160,7 +160,7 @@ private:\
 		enum{ Result = 0 };
 	};
 	template<>
-	struct IsVoidType<void>
+	struct IsVoidType < void >
 	{
 		enum{ Result = 1 };
 	};
@@ -170,7 +170,7 @@ private:\
 		enum{ Result = 0 };
 	};
 	template<>
-	struct IsBoolType<bool>
+	struct IsBoolType < bool >
 	{
 		enum{ Result = 1 };
 	};
@@ -180,7 +180,7 @@ private:\
 		enum{ Result = 0 };
 	};
 	template <typename T>
-	struct IsReference<T&>
+	struct IsReference < T& >
 	{
 		enum{ Result = 1 };
 	};
@@ -190,12 +190,12 @@ private:\
 		enum { Result = 0 };
 	};
 	template <class T>
-	struct IsPointer<T*>
+	struct IsPointer < T* >
 	{
 		enum { Result = 1 };
 	};
 	template <class T>
-	struct IsPointer<T*&>
+	struct IsPointer < T*& >
 	{
 		enum { Result = 1 };
 	};
@@ -205,52 +205,52 @@ private:\
 		enum{ Result = 0 };
 	};
 	template <typename T>
-	struct IsFunctionPointer<T(*)()>
+	struct IsFunctionPointer < T(*)() >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename P01>
-	struct IsFunctionPointer<T(*)(P01)>
+	struct IsFunctionPointer < T(*)(P01) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename P01, typename P02>
-	struct IsFunctionPointer<T(*)(P01, P02)>
+	struct IsFunctionPointer < T(*)(P01, P02) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename P01, typename P02, typename P03>
-	struct IsFunctionPointer<T(*)(P01, P02, P03)>
+	struct IsFunctionPointer < T(*)(P01, P02, P03) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename P01, typename P02, typename P03, typename P04>
-	struct IsFunctionPointer<T(*)(P01, P02, P03, P04)>
+	struct IsFunctionPointer < T(*)(P01, P02, P03, P04) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T>
-	struct IsFunctionPointer<T(*)(...)>
+	struct IsFunctionPointer < T(*)(...) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename P01>
-	struct IsFunctionPointer<T(*)(P01, ...)>
+	struct IsFunctionPointer < T(*)(P01, ...) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename P01, typename P02>
-	struct IsFunctionPointer<T(*)(P01, P02, ...)>
+	struct IsFunctionPointer < T(*)(P01, P02, ...) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename P01, typename P02, typename P03>
-	struct IsFunctionPointer<T(*)(P01, P02, P03, ...)>
+	struct IsFunctionPointer < T(*)(P01, P02, P03, ...) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename P01, typename P02, typename P03, typename P04>
-	struct IsFunctionPointer<T(*)(P01, P02, P03, P04, ...)>
+	struct IsFunctionPointer < T(*)(P01, P02, P03, P04, ...) >
 	{
 		enum { Result = 1 };
 	};
@@ -260,102 +260,102 @@ private:\
 		enum{ Result = 0 };
 	};
 	template <typename T, typename S>
-	struct IsMemberFunctionPointer<T(S::*)()>
+	struct IsMemberFunctionPointer < T(S::*)() >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01>
-	struct IsMemberFunctionPointer<T(S::*)(P01)>
+	struct IsMemberFunctionPointer < T(S::*)(P01) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01, typename P02>
-	struct IsMemberFunctionPointer<T(S::*)(P01, P02)>
+	struct IsMemberFunctionPointer < T(S::*)(P01, P02) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01, typename P02, typename P03>
-	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03)>
+	struct IsMemberFunctionPointer < T(S::*)(P01, P02, P03) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01, typename P02, typename P03, typename P04>
-	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03, P04)>
+	struct IsMemberFunctionPointer < T(S::*)(P01, P02, P03, P04) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S>
-	struct IsMemberFunctionPointer<T(S::*)(...)>
+	struct IsMemberFunctionPointer < T(S::*)(...) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01>
-	struct IsMemberFunctionPointer<T(S::*)(P01, ...)>
+	struct IsMemberFunctionPointer < T(S::*)(P01, ...) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01, typename P02>
-	struct IsMemberFunctionPointer<T(S::*)(P01, P02, ...)>
+	struct IsMemberFunctionPointer < T(S::*)(P01, P02, ...) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01, typename P02, typename P03>
-	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03, ...)>
+	struct IsMemberFunctionPointer < T(S::*)(P01, P02, P03, ...) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01, typename P02, typename P03, typename P04>
-	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03, P04, ...)>
+	struct IsMemberFunctionPointer < T(S::*)(P01, P02, P03, P04, ...) >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S>
-	struct IsMemberFunctionPointer<T(S::*)() const>
+	struct IsMemberFunctionPointer < T(S::*)() const >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01>
-	struct IsMemberFunctionPointer<T(S::*)(P01) const>
+	struct IsMemberFunctionPointer < T(S::*)(P01) const >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01, typename P02>
-	struct IsMemberFunctionPointer<T(S::*)(P01, P02) const>
+	struct IsMemberFunctionPointer < T(S::*)(P01, P02) const >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01, typename P02, typename P03>
-	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03) const>
+	struct IsMemberFunctionPointer < T(S::*)(P01, P02, P03) const >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01, typename P02, typename P03, typename P04>
-	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03, P04) const>
+	struct IsMemberFunctionPointer < T(S::*)(P01, P02, P03, P04) const >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S>
-	struct IsMemberFunctionPointer<T(S::*)(...) const>
+	struct IsMemberFunctionPointer < T(S::*)(...) const >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01>
-	struct IsMemberFunctionPointer<T(S::*)(P01, ...) const>
+	struct IsMemberFunctionPointer < T(S::*)(P01, ...) const >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01, typename P02>
-	struct IsMemberFunctionPointer<T(S::*)(P01, P02, ...) const>
+	struct IsMemberFunctionPointer < T(S::*)(P01, P02, ...) const >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01, typename P02, typename P03>
-	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03, ...) const>
+	struct IsMemberFunctionPointer < T(S::*)(P01, P02, P03, ...) const >
 	{
 		enum { Result = 1 };
 	};
 	template <typename T, typename S, typename P01, typename P02, typename P03, typename P04>
-	struct IsMemberFunctionPointer<T(S::*)(P01, P02, P03, P04, ...) const>
+	struct IsMemberFunctionPointer < T(S::*)(P01, P02, P03, P04, ...) const >
 	{
 		enum { Result = 1 };
 	};
@@ -366,15 +366,30 @@ private:\
 		enum { Result = 0 };
 	};
 	template<typename T>
-	struct IsArrayType<T[]>
+	struct IsArrayType < T[] >
 	{
 		enum { Result = 1 };
 	};
 	template<typename T, size_t n>
-	struct IsArrayType<T[n]>
+	struct IsArrayType < T[n] >
 	{
 		enum { Result = 1 };
 	};
+	/// <summary>
+	/// 类型列表
+	/// </summary>
+	template<class T1, class T2>
+	class TypeList
+	{
+		typedef T1 T1Type;
+		typedef T2 T2Type;
+	};
+	//////////////////////////////////////////////////////////////////////////
+#define TYPE_LIST0() NullType
+#define TYPE_LIST1(P1) TypeList<P1, NullType>
+#define TYPE_LIST2(P1, P2) TypeList<P1, TYPE_LIST1(P2)>
+#define TYPE_LIST3(P1, P2, P3) TypeList<P1, TYPE_LIST2(P2, P3)>
+#define TYPE_LIST4(P1, P2, P3, P4) TypeList<P1, TYPE_LIST3(P2, P3, P4)>
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
 	/// 线程安全的引用计数基类类
@@ -415,7 +430,7 @@ private:\
 	template<typename T, typename Traits = DefaultTinyReferenceTraits<T>>
 	class TinyReference : public TinyReferenceBase
 	{
-		friend class DefaultTinyReferenceTraits<T>;
+		friend class DefaultTinyReferenceTraits < T > ;
 		DISALLOW_COPY_AND_ASSIGN(TinyReference);
 	public:
 		TinyReference();
@@ -452,7 +467,7 @@ private:\
 	template<class T, typename Traits>
 	void TinyReference<T, Traits>::Delete(const T* x)
 	{
-		delete x;
+		SAFE_DELETE(x);
 	}
 	/// <summary>
 	/// 智能指针
@@ -688,7 +703,9 @@ private:\
 	template<class T>
 	TinyScopedReferencePtr<T>::TinyScopedReferencePtr()
 		:m_myP(NULL)
-	{}
+	{
+
+	}
 	template<class T>
 	TinyScopedReferencePtr<T>::TinyScopedReferencePtr(T* myP)
 		: m_myP(myP)
@@ -733,11 +750,11 @@ private:\
 	template<class T>
 	TinyScopedReferencePtr<T>& TinyScopedReferencePtr<T>::operator=(T* ps)
 	{
-		if (ps) 
+		if (ps)
 			ps->AddRef();
 		T* oldMyP = m_myP;
 		m_myP = ps;
-		if (oldMyP) 
+		if (oldMyP)
 			oldMyP->Release();
 		return *this;
 	}
@@ -759,6 +776,9 @@ private:\
 		Swap(&s.m_myP);
 	}
 	/// <summary>
+	/// 
+	/// </summary>
+	/// <summary>
 	/// COM智能指针
 	/// </summary>
 	template <class T>
@@ -778,6 +798,8 @@ private:\
 		T* operator=(T* lp);
 		T* operator=(const TinyComPtr<T>& lp);
 		BOOL operator!();
+	private:
+		static IUnknown*  ComPtrAssign(IUnknown** pp, IUnknown* lp);
 	};
 	template<class T>
 	TinyComPtr<T>::TinyComPtr(T* lp)
@@ -842,222 +864,26 @@ private:\
 	{
 		return (_myP == NULL) ? TRUE : FALSE;
 	}
-
-	//////////////////////////////////////////////////////////////////////////
-	struct list
+	template<class T>
+	IUnknown*  TinyComPtr<T>::ComPtrAssign(IUnknown** pp, IUnknown* lp)
 	{
-		list *NEXT;
-		list *PREV;
+		if (lp != NULL)
+			lp->AddRef();
+		if (*pp)
+			(*pp)->Release();
+		*pp = lp;
+		return lp;
+	}
+	/// <summary>
+	/// 禁止拷贝赋值类
+	/// </summary>
+	class noncopyable
+	{
+	protected:
+		noncopyable() = default;//函数定义编译器自动生成 C++11特性
+		~noncopyable() = default;
+	private:
+		noncopyable(const noncopyable& a) = delete;
+		noncopyable& operator=(const noncopyable&) = delete;
 	};
-#define LIST_POISON1	(( list *)0x00100100)
-#define LIST_POISON2	(( list *)0x00200200)
-	static inline void INIT_LIST(list *_list)
-	{
-		_list->NEXT = _list;
-		_list->PREV = _list;
-	}
-	static inline void __LIST_ADD(list *_new, list *prev, list *next)
-	{
-		next->PREV = _new;
-		_new->NEXT = next;
-		_new->PREV = prev;
-		prev->NEXT = _new;
-	}
-	/// <summary>
-	/// 添加到元素之后
-	/// </summary>
-	static inline void LIST_ADD_AFTER(list *_new, list *node)
-	{
-		__LIST_ADD(_new, node, node->NEXT);
-	}
-	/// <summary>
-	/// 添加到列表末尾
-	/// </summary>
-	static inline void LIST_ADD_BEFORE(list *_new, list *node)
-	{
-		__LIST_ADD(_new, node->PREV, node);
-	}
-
-	static inline void __LIST_DEL(list * prev, list * next)
-	{
-		next->PREV = prev;
-		prev->NEXT = next;
-	}
-	static inline void __LIST_DEL_ENTRY(list *entry)
-	{
-		__LIST_DEL(entry->PREV, entry->NEXT);
-	}
-	/// <summary>
-	/// 删除元素
-	/// </summary>
-	static inline void LIST_DEL(list *entry)
-	{
-		__LIST_DEL(entry->PREV, entry->NEXT);
-		entry->NEXT = LIST_POISON1;
-		entry->PREV = LIST_POISON2;
-	}
-	static inline void LIST_DEL_INIT(list *entry)
-	{
-		__LIST_DEL_ENTRY(entry);
-		INIT_LIST(entry);
-	}
-	/// <summary>
-	/// 移动节点到 node 之后
-	/// </summary>
-	static inline void LIST_MOVE_AFTER(list *_list, list *node)
-	{
-		__LIST_DEL_ENTRY(_list);
-		LIST_ADD_AFTER(_list, node);
-	}
-	/// <summary>
-	/// 移动节点到 node 之前
-	/// </summary>
-	static inline void LIST_MOVE_BEFORE(list *_list, list *node)
-	{
-		__LIST_DEL_ENTRY(_list);
-		LIST_ADD_BEFORE(_list, node);
-	}
-	/// <summary>
-	/// 是否最后一个节点
-	/// </summary>
-	static inline BOOL IS_LIST_LAST(const  list *_list, const  list *node)
-	{
-		return _list->NEXT == node;
-	}
-	/// <summary>
-	/// 列表是否为空
-	/// </summary>
-	static inline BOOL IS_LIST_EMPTY(const  list *node)
-	{
-		return node->NEXT == node;
-	}
-	/// <summary>
-	/// 旋转整个链表
-	/// </summary>
-	static inline void LIST_ROTATE_LEFT(list *node)
-	{
-		list *first;
-		if (!IS_LIST_EMPTY(node))
-		{
-			first = node->NEXT;
-			LIST_MOVE_BEFORE(first, node);
-		}
-	}
-	/// <summary>
-	/// 下一个节点
-	/// </summary>
-	static inline  list *LIST_NEXT(const  list *_list, const  list *entry)
-	{
-		list *res = entry->NEXT;
-		if (entry->NEXT == _list) res = NULL;
-		return res;
-	}
-	/// <summary>
-	/// 上一个节点
-	/// </summary>
-	static inline list *LIST_PREV(const  list *_list, const  list *entry)
-	{
-		list *res = entry->PREV;
-		if (entry->PREV == _list) res = NULL;
-		return res;
-	}
-	/// <summary>
-	/// 判断链表中是否只有一个节点
-	/// </summary>
-	static inline int IS_LIST_SINGULAR(const  list *node)
-	{
-		return !IS_LIST_EMPTY(node) && (node->NEXT == node->PREV);
-	}
-	static inline void __LIST_CUT_POSITION(list *_list, list *node, list *entry)
-	{
-		list *new_first = entry->NEXT;
-		_list->NEXT = node->NEXT;
-		_list->NEXT->PREV = _list;
-		_list->PREV = entry;
-		entry->NEXT = _list;
-		node->NEXT = new_first;
-		new_first->PREV = node;
-	}
-	/// <summary>
-	/// 将1个链表截断为2个链表
-	/// </summary>
-	static inline void LIST_CUT_POSITION(list *_list, list *node, list *entry)
-	{
-		if (IS_LIST_EMPTY(node))
-			return;
-		if (IS_LIST_SINGULAR(node) &&
-			(node->NEXT != entry && node != entry))
-			return;
-		if (entry == node)
-			INIT_LIST(_list);
-		else
-			__LIST_CUT_POSITION(_list, node, entry);
-	}
-	static inline void __LIST_SPLICE(const  list *_list, list *prev, list *next)
-	{
-		list *first = _list->NEXT;
-		list *last = _list->PREV;
-		first->PREV = prev;
-		prev->NEXT = first;
-		last->NEXT = next;
-		next->PREV = last;
-	}
-	/// <summary>
-	/// 将2个链表合并为1个链表, @list中的所有节点(不包括list)加入到 node 之后
-	/// </summary>
-	static inline void LIST_SPLICE_AFTER(const  list *_list, list *node)
-	{
-		if (!IS_LIST_EMPTY(_list))
-			__LIST_SPLICE(_list, node, node->NEXT);
-	}
-	/// <summary>
-	/// 将2个链表合并为1个链表, @list中的所有节点(不包括list)加入到 node 之前
-	/// </summary>
-	static inline void LIST_SPLICE_BEFORE(list *_list, list *node)
-	{
-		if (!IS_LIST_EMPTY(_list))
-			__LIST_SPLICE(_list, node->PREV, node);
-	}
-	static inline void LIST_SPLICE_AFTER_INIT(list *_list, list *node)
-	{
-		if (!IS_LIST_EMPTY(_list))
-		{
-			__LIST_SPLICE(_list, node, node->NEXT);
-			INIT_LIST(_list);
-		}
-	}
-	static inline void LIST_SPLICE_BEFORE_INIT(list *_list, list *node)
-	{
-		if (!IS_LIST_EMPTY(_list))
-		{
-			__LIST_SPLICE(_list, node->PREV, node);
-			INIT_LIST(_list);
-		}
-	}
-#define LIST_INIT(name) { &(name), &(name) }
-#define LIST_ENTRY(ptr, type, member) \
-	((type *)((char *)(ptr)-offsetof(type, member)))
-
-#define LIST_FIRST_ENTRY(ptr, type, member) \
-	LIST_ENTRY((ptr)->NEXT, type, member)
-
-#define LIST_LAST_ENTRY(ptr, type, member) \
-	LIST_ENTRY((ptr)->PREV, type, member)
-
-#define LIST_NEXT_ENTRY(pos,type, member) \
-	LIST_ENTRY((pos)->member.NEXT, type, member)
-
-#define LIST_PREV_ENTRY(pos,type, member) \
-	LIST_ENTRY((pos)->member.PREV, type, member)
-
-#define LIST_FOR_EACH(pos, node) \
-	for (pos = (node)->NEXT; pos != (node); pos = pos->NEXT)
-
-#define LIST_FOR_EACH_PREV(pos, node) \
-	for (pos = (node)->PREV; pos != (node); pos = pos->PREV)
-
-#define LIST_FOR_EACH_ENTRY(pos, node, type, member)	\
-	for (pos = LIST_FIRST_ENTRY(node, type, member);	\
-	&pos->member != (node);								\
-	pos = LIST_NEXT_ENTRY(pos, type, member))
 };

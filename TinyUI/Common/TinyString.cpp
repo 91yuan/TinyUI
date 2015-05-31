@@ -718,5 +718,82 @@ namespace TinyUI
 		return result;
 	}
 	//////////////////////////////////////////////////////////////////////////
+	template<typename STR>
+	TrimPositions TrimStringT(const STR& input,
+		const typename STR::value_type trim_chars[],
+		TrimPositions positions,
+		STR* output)
+	{
+		const typename STR::size_type last_char = input.length() - 1;
+		const typename STR::size_type first_good_char = (positions&TRIM_LEADING) ?
+			input.find_first_not_of(trim_chars) : 0;
+		const typename STR::size_type last_good_char = (positions&TRIM_TRAILING) ?
+			input.find_last_not_of(trim_chars) : last_char;
+		if (input.empty() || (first_good_char == STR::npos) || (last_good_char == STR::npos))
+		{
+			bool input_was_empty = input.empty();
+			output->clear();
+			return input_was_empty ? TRIM_NONE : positions;
+		}
+		*output = input.substr(first_good_char, last_good_char - first_good_char + 1);
+		return static_cast<TrimPositions>(
+			((first_good_char == 0) ? TRIM_NONE : TRIM_LEADING) |
+			((last_good_char == last_char) ? TRIM_NONE : TRIM_TRAILING));
+	}
+
+	BOOL TrimString(const std::string& input,
+		const char trim_chars[],
+		std::string* output)
+	{
+		return TrimStringT<std::string>(input, trim_chars, TRIM_ALL, output) != TRIM_NONE;
+	}
+	TrimPositions TrimWhitespaceASCII(const std::string& input,
+		TrimPositions positions,
+		std::string* output)
+	{
+		return TrimStringT(input, kWhitespaceASCII, positions, output);
+	}
+
+	TrimPositions TrimWhitespace(const std::string& input,
+		TrimPositions positions,
+		std::string* output)
+	{
+		return TrimWhitespaceASCII(input, positions, output);
+	}
+
+	template<typename STR>
+	static void SplitStringT(const STR& str,
+		const typename STR::value_type s,
+		bool trim_whitespace,
+		std::vector<STR>* r)
+	{
+		size_t last = 0;
+		size_t i;
+		size_t c = str.size();
+		for (i = 0; i <= c; ++i)
+		{
+			if (i == c || str[i] == s)
+			{
+				size_t len = i - last;
+				STR tmp = str.substr(last, len);
+				if (trim_whitespace)
+				{
+					STR t_tmp;
+					TrimWhitespace(tmp, TRIM_ALL, &t_tmp);
+					r->push_back(t_tmp);
+				}
+				else
+				{
+					r->push_back(tmp);
+				}
+				last = i + 1;
+			}
+		}
+	}
+
+	void SplitString(const std::string& str, char sep, std::vector<std::string>* r)
+	{
+		SplitStringT(str, sep, true, r);
+	}
 }
 

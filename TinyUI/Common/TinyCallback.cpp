@@ -6,27 +6,36 @@ namespace TinyUI
 {
 	BOOL CallbackBase::IsNull() const
 	{
-		return m_caller.Ptr() == NULL;
+		return m_storage.Ptr() == NULL;
 	}
 	void CallbackBase::Reset()
 	{
-		m_caller = NULL;
+		m_storage = NULL;
 		m_invoke = NULL;
 	}
-	BOOL CallbackBase::Equals(const CallbackBase& other) const
+	BOOL CallbackBase::operator==(const CallbackBase& other) const
 	{
-		return m_caller.Ptr() == other.m_caller.Ptr() &&
-			m_invoke == other.m_invoke;
+		return m_storage.Ptr() == other.m_storage.Ptr() && m_invoke == other.m_invoke;
 	}
-	CallbackBase::CallbackBase(CallbackInvokeBase invoke, TinyScopedReferencePtr<CallbackRunnableBase>* caller)
-		: m_invoke(invoke)
+	CallbackBase::CallbackBase(InvokeBase invoke, InvokerStorageBase* storage)
+		: m_invoke(invoke),
+		m_storage(storage)
 	{
-		TRACE("调用CallbackBase构造函数\n");
-		if (caller)
-		{
-			m_caller.Swap(*caller);
-		}
+
 	}
-	CallbackBase::~CallbackBase() {}
+	CallbackBase::CallbackBase(const CallbackBase& other)
+		: m_invoke(other.m_invoke),
+		m_storage(other.m_storage)
+	{
+	}
+	CallbackBase& CallbackBase::operator = (const CallbackBase& other)
+	{
+		m_invoke = other.m_invoke;
+		m_storage = other.m_storage;
+		return *this;
+	}
+	CallbackBase::~CallbackBase()
+	{
+	}
 };
 
