@@ -43,10 +43,11 @@ namespace TinyUI
 #ifndef ASSUME
 #define ASSUME(expr) do { ASSERT(expr); __analysis_assume(!!(expr)); } while(0)
 #endif // ASSUME
-
-#ifndef COMPILE_ASSERT
-#define COMPILE_ASSERT(exp, name) typedef int dummy##name [(exp) ? 1 : -1]
-#endif
+	template<bool>
+	struct CompileAssert {};
+#undef COMPILE_ASSERT
+#define COMPILE_ASSERT(expr, msg) \
+    typedef CompileAssert<(bool(expr))> msg[bool(expr)?1:-1]
 
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(p)  { if (p) { delete (p);  (p)=NULL; } }
@@ -359,7 +360,6 @@ private:\
 	{
 		enum { Result = 1 };
 	};
-
 	template<typename T>
 	struct IsArrayType
 	{
@@ -372,6 +372,16 @@ private:\
 	};
 	template<typename T, size_t n>
 	struct IsArrayType < T[n] >
+	{
+		enum { Result = 1 };
+	};
+	template <typename T, typename U>
+	struct IsSameType
+	{
+		enum { Result = 0 };
+	};
+	template <typename T>
+	struct IsSameType < T, T >
 	{
 		enum { Result = 1 };
 	};

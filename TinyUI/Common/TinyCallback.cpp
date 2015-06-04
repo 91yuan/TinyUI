@@ -30,8 +30,11 @@ namespace TinyUI
 	}
 	CallbackBase& CallbackBase::operator = (const CallbackBase& other)
 	{
-		m_invoke = other.m_invoke;
-		m_storage = other.m_storage;
+		if (&other != this)
+		{
+			m_invoke = other.m_invoke;
+			m_storage = other.m_storage;
+		}
 		return *this;
 	}
 	CallbackBase::~CallbackBase()

@@ -10,23 +10,27 @@ namespace TinyUI
 	/// http://blog.csdn.net/pongba/article/details/1560773
 	/// C++ 类型擦除 类似boost::any, 参考了Loki库实现
 	/// 模板R(T1,T2,...)函数类型退化成函数指针
+	/// 仿函数基类
 	/// </summary>
 	template<typename R>
-	class DelegateImplBase
+	class FunctorBase
 	{
 	public:
-		typedef DelegateImplBase<R> ImplType;
-		typedef R ReturnType;
-		typedef NullType Arg1;
-		typedef NullType Arg2;
-		typedef NullType Arg3;
-		typedef NullType Arg4;
-
-		DelegateImplBase(){};
-		virtual ~DelegateImplBase(){};
-		virtual DelegateImplBase* DoClone() const = 0;
-		virtual BOOL operator==(const DelegateImplBase&) const = 0;
-
+		typedef FunctorBase<R>	SelfType;
+		typedef R				ReturnType;
+		typedef NullType		A1Type;
+		typedef NullType		A2Type;
+		typedef NullType		A3Type;
+		typedef NullType		A4Type;
+	public:
+		FunctorBase() = default;
+		FunctorBase(const FunctorBase&) = default;
+		FunctorBase& operator=(const FunctorBase&) = default;
+		virtual ~FunctorBase(){};
+	public:
+		virtual FunctorBase* DoClone() const = 0;
+		virtual BOOL operator==(const FunctorBase&) const = 0;
+	public:
 		template <class U>
 		static U* Clone(U* pObj)
 		{
@@ -36,111 +40,118 @@ namespace TinyUI
 			return pClone;
 		}
 	};
+	/// <summary>
+	/// 仿函数实现类
+	/// </summary>
 	template<typename R, typename TList>
-	class DelegateImpl;
+	class Functor;
 	template<typename R>
-	class DelegateImpl<R, TYPE_LIST0()> : public DelegateImplBase<R>
+	class Functor<R, TYPE_LIST0()> : public FunctorBase < R >
 	{
 	public:
-		typedef R ReturnType;
+		typedef R	ReturnType;
 		virtual R operator()() = 0;
 	};
-	template <typename R, typename P1>
-	class DelegateImpl<R, TYPE_LIST1(P1)>: public DelegateImplBase<R>
+	template <typename R, typename A1>
+	class Functor<R, TYPE_LIST1(A1)> : public FunctorBase < R >
 	{
 	public:
-		typedef R ReturnType;
-		typedef typename P1 Arg1;
-		virtual R operator()(Arg1) = 0;
+		typedef R	ReturnType;
+		typedef A1  A1Type;
+		virtual R operator()(A1) = 0;
 	};
-	template <typename R, typename P1, typename P2>
-	class DelegateImpl<R, TYPE_LIST2(P1, P2)>: public DelegateImplBase<R>
+	template <typename R, typename A1, typename A2>
+	class Functor<R, TYPE_LIST2(A1, A2)> : public FunctorBase < R >
 	{
 	public:
-		typedef R ReturnType;
-		typedef typename P1 Arg1;
-		typedef typename P2 Arg2;
-		virtual R operator()(Arg1, Arg2) = 0;
+		typedef R	ReturnType;
+		typedef A1  A1Type;
+		typedef A2  A2Type;
+		virtual R operator()(A1, A2) = 0;
 	};
-	template <typename R, typename P1, typename P2, typename P3>
-	class DelegateImpl<R, TYPE_LIST3(P1, P2, P3)>: public DelegateImplBase<R>
+	template <typename R, typename A1, typename A2, typename A3>
+	class Functor<R, TYPE_LIST3(A1, A2, A3)> : public FunctorBase < R >
 	{
 	public:
-		typedef R ReturnType;
-		typedef typename P1 Arg1;
-		typedef typename P2 Arg2;
-		typedef typename P3 Arg3;
-		virtual R operator()(Arg1, Arg2, Arg3) = 0;
+		typedef R	ReturnType;
+		typedef A1  A1Type;
+		typedef A2  A2Type;
+		typedef A3  A3Type;
+		virtual R operator()(A1, A2, A3) = 0;
 	};
-	template <typename R, typename P1, typename P2, typename P3, typename P4>
-	class DelegateImpl<R, TYPE_LIST4(P1, P2, P3, P4)>: public DelegateImplBase<R>
+	template <typename R, typename A1, typename A2, typename A3, typename A4>
+	class Functor<R, TYPE_LIST4(A1, A2, A3, A4)> : public FunctorBase < R >
 	{
 	public:
-		typedef R ReturnType;
-		typedef typename P1 Arg1;
-		typedef typename P2 Arg2;
-		typedef typename P3 Arg3;
-		typedef typename P4 Arg4;
-		virtual R operator()(Arg1, Arg2, Arg3, Arg4) = 0;
+		typedef R	ReturnType;
+		typedef A1  A1Type;
+		typedef A2  A2Type;
+		typedef A3  A3Type;
+		typedef A4  A4Type;
+		virtual R operator()(A1, A2, A3, A4) = 0;
 	};
 	//////////////////////////////////////////////////////////////////////////
-	/// <summary>
-	/// 普通函数
-	/// </summary>
+	template<typename R, typename TList, typename FunctionType, typename InstanceType, typename Placeholder>
+	class Function;
 	template<typename R, typename TList, typename FunctionType>
-	class Function1 : public DelegateImpl<R, TList>
+	class Function<R, TList, FunctionType, TYPE_LIST0(), TYPE_LIST0()> : public Functor < R, TList >
 	{
 	public:
-		typedef DelegateImpl<R, TList> BaseType;//基类类型
-		typedef typename BaseType::ReturnType ReturnType;
-		typedef typename BaseType::Arg1 Arg1;
-		typedef typename BaseType::Arg2 Arg2;
-		typedef typename BaseType::Arg3 Arg3;
-		typedef typename BaseType::Arg4 Arg4;
-
-		Function1(const FunctionType& fType)
+		typedef Functor<R, TList> FunctorType;
+		typedef typename FunctorType::ReturnType	ReturnType;
+		typedef typename FunctorType::A1Type		A1Type;
+		typedef typename FunctorType::A2Type		A2Type;
+		typedef typename FunctorType::A3Type		A3Type;
+		typedef typename FunctorType::A4Type		A4Type;
+	public:
+		Function(const FunctionType& fType)
 			: m_fType(fType)
 		{
 
 		}
-		Function1(const Function1& _other)
-			:m_fType(_other.m_fType)
+		Function(const Function& other)
+			:m_fType(other.m_fType)
 		{
-
 		}
-		virtual Function1* DoClone() const
+		Function& operator = (const Function& other)
 		{
-			return new Function1(*this);
+			if (&other != this)
+			{
+				m_fType = other.m_fType;
+			}
+			return *this;
 		}
-
-		BOOL operator==(const typename BaseType::ImplType& implType) const
+		virtual Function* DoClone() const
 		{
-			if (typeid(*this) != typeid(implType))
+			return new Function(*this);
+		}
+	public:
+		BOOL operator==(const typename FunctorType::SelfType& fType) const
+		{
+			if (typeid(*this) != typeid(fType))
 			{
 				return FALSE;
 			}
-
-			const Function1& s = static_cast<const Function1&>(implType);
+			const Function& s = static_cast<const Function&>(fType);
 			return  m_fType == s.m_fType;
 		}
-
 		ReturnType operator()()
 		{
 			return m_fType();
 		}
-		ReturnType operator()(Arg1 p1)
+		ReturnType operator()(A1Type p1)
 		{
 			return m_fType(p1);
 		}
-		ReturnType operator()(Arg1 p1, Arg2 p2)
+		ReturnType operator()(A1Type p1, A2Type p2)
 		{
 			return m_fType(p1, p2);
 		}
-		ReturnType operator()(Arg1 p1, Arg2 p2, Arg3 p3)
+		ReturnType operator()(A1Type p1, A2Type p2, A3Type p3)
 		{
 			return m_fType(p1, p2, p3);
 		}
-		ReturnType operator()(Arg1 p1, Arg2 p2, Arg3 p3, Arg4 p4)
+		ReturnType operator()(A1Type p1, A2Type p2, A3Type p3, A4Type p4)
 		{
 			return m_fType(p1, p2, p3, p4);
 		}
@@ -151,56 +162,65 @@ namespace TinyUI
 	/// 成员函数
 	/// </summary>
 	template <typename R, typename TList, typename InstanceType, typename FunctionType>
-	class Function2 : public DelegateImpl<R, TList>
+	class Function<R, TList, InstanceType, FunctionType, TYPE_LIST0()> : public Functor < R, TList >
 	{
 	public:
-		typedef DelegateImpl<R, TList> BaseType;//基类类型
-		typedef typename BaseType::ReturnType ReturnType;
-		typedef typename BaseType::Arg1 Arg1;
-		typedef typename BaseType::Arg2 Arg2;
-		typedef typename BaseType::Arg3 Arg3;
-		typedef typename BaseType::Arg4 Arg4;
-
-		Function2(const InstanceType& iType, FunctionType mType)
+		typedef Functor<R, TList> FunctorType;
+		typedef typename FunctorType::ReturnType	ReturnType;
+		typedef typename FunctorType::A1Type		A1Type;
+		typedef typename FunctorType::A2Type		A2Type;
+		typedef typename FunctorType::A3Type		A3Type;
+		typedef typename FunctorType::A4Type		A4Type;
+	public:
+		Function(const InstanceType& iType, FunctionType mType)
 			: m_iType(iType), m_mType(mType)
 
 		{
 		}
-		Function2(const Function2& f2)
-			:m_iType(f2.m_iType), m_mType(f2.m_mType)
+		Function(const Function& other)
+			:m_iType(other.m_iType), m_mType(other.m_mType)
 		{
 		}
-		virtual Function2* DoClone() const
+		Function& operator = (const Function& other)
 		{
-			return new Function2(*this);
+			if (&other != this)
+			{
+				m_fType = other.m_fType;
+				m_iType = other.m_iType;
+			}
+			return *this;
 		}
-		BOOL operator==(const typename BaseType::ImplType& implType) const
+		virtual Function* DoClone() const
 		{
-			if (typeid(*this) != typeid(implType))
+			return new Function(*this);
+		}
+	public:
+		BOOL operator==(const typename FunctorType::SelfType& fType) const
+		{
+			if (typeid(*this) != typeid(fType))
 			{
 				return FALSE;
 			}
-			const Function2& s = static_cast<const Function2&>(implType);
+			const Function& s = static_cast<const Function&>(fType);
 			return  m_iType == s.m_iType && m_mType == s.m_mType;
 		}
-
 		ReturnType operator()()
 		{
 			return ((*m_iType).*m_mType)();
 		}
-		ReturnType operator()(Arg1 p1)
+		ReturnType operator()(A1Type p1)
 		{
 			return ((*m_iType).*m_mType)(p1);
 		}
-		ReturnType operator()(Arg1 p1, Arg2 p2)
+		ReturnType operator()(A1Type p1, A2Type p2)
 		{
 			return ((*m_iType).*m_mType)(p1, p2);
 		}
-		ReturnType operator()(Arg1 p1, Arg2 p2, Arg3 p3)
+		ReturnType operator()(A1Type p1, A2Type p2, A3Type p3)
 		{
 			return ((*m_iType).*m_mType)(p1, p2, p3);
 		}
-		ReturnType operator()(Arg1 p1, Arg2 p2, Arg3 p3, Arg4 p4)
+		ReturnType operator()(A1Type p1, A2Type p2, A3Type p3, A4Type p4)
 		{
 			return ((*m_iType).*m_mType)(p1, p2, p3, p4);
 		}
@@ -216,28 +236,39 @@ namespace TinyUI
 	class DelegateBase
 	{
 	public:
-		typedef R ReturnType;
-		typedef DelegateImpl<R, TList> ImplType;
-		typedef typename ImplType::Arg1 Arg1;
-		typedef typename ImplType::Arg2 Arg2;
-		typedef typename ImplType::Arg3 Arg3;
-		typedef typename ImplType::Arg4 Arg4;
-
+		typedef R								ReturnType;
+		typedef Functor<R, TList>				FunctorType;
+		typedef typename FunctorType::A1Type	A1Type;
+		typedef typename FunctorType::A2Type	A2Type;
+		typedef typename FunctorType::A3Type	A3Type;
+		typedef typename FunctorType::A4Type	A4Type;
+	public:
 		DelegateBase()
 			:m_my(NULL)
 		{
 
 		}
 		DelegateBase(const DelegateBase& db)
-			:m_my(ImplType::Clone(db.m_my.Ptr()))
+			:m_my(FunctorType::Clone(db.m_my.Ptr()))
 		{
+		}
+		DelegateBase& operator=(const DelegateBase& other)
+		{
+			if (&other != this)
+			{
+				DelegateBase copy(other);
+				FunctorType* ps = m_my.Release();
+				m_my.Reset(copy.m_my.Release());
+				copy.m_my.Reset(ps);
+			}
+			return *this;
 		}
 		/// <summary>
 		/// 普通函数类型
 		/// </summary>
 		template <typename FunctionType>
 		DelegateBase(FunctionType fType)
-			: m_my(new Function1<R, TList, FunctionType>(fType))
+			: m_my(new Function<R, TList, FunctionType, TYPE_LIST0(), TYPE_LIST0()>(fType))
 		{
 
 		}
@@ -246,7 +277,7 @@ namespace TinyUI
 		/// </summary>
 		template <class InstanceType, typename FunctionType>
 		DelegateBase(const InstanceType& iType, FunctionType mType)
-			: m_my(new Function2<R, TList, InstanceType, FunctionType>(iType, mType))
+			: m_my(new Function<R, TList, InstanceType, FunctionType, TYPE_LIST0()>(iType, mType))
 		{
 
 		}
@@ -256,7 +287,7 @@ namespace TinyUI
 		template <typename FunctionType>
 		void BindDelegate(FunctionType fType)
 		{
-			m_my.Reset(new Function1<R, TList, FunctionType>(fType));
+			m_my.Reset(new Function<R, TList, FunctionType, TYPE_LIST0(), TYPE_LIST0()>(fType));
 		}
 		/// <summary>
 		/// 绑定成员函数
@@ -264,7 +295,7 @@ namespace TinyUI
 		template <class InstanceType, typename FunctionType>
 		void BindDelegate(const InstanceType& iType, FunctionType mType)
 		{
-			m_my.Reset(new Function2<R, TList, InstanceType, FunctionType>(iType, mType));
+			m_my.Reset(new Function<R, TList, InstanceType, FunctionType, TYPE_LIST0()>(iType, mType));
 		}
 		/// <summary>
 		/// 判断是都为空
@@ -280,52 +311,45 @@ namespace TinyUI
 		{
 			m_my.Reset(NULL);
 		}
-		DelegateBase& operator=(const DelegateBase& os)
+	public:
+		BOOL operator==(const DelegateBase& other) const
 		{
-			DelegateBase copy(os);
-			ImplType* ps = m_my.Release();
-			m_my.Reset(copy.m_my.Release());
-			copy.m_my.Reset(ps);
-			return *this;
-		}
-		BOOL operator==(const DelegateBase& os) const
-		{
-			if (m_my.Ptr() == NULL && os.m_my.Ptr() == NULL)
+			if (m_my.Ptr() == NULL && other.m_my.Ptr() == NULL)
 			{
 				return TRUE;
 			}
-			if (m_my.Ptr() != NULL && os.m_my.Ptr() != NULL)
+			if (m_my.Ptr() != NULL && other.m_my.Ptr() != NULL)
 			{
-				return (*m_my.Ptr()) == *(os.m_my.Ptr());
+				return (*m_my.Ptr()) == *(other.m_my.Ptr());
 			}
 			return FALSE;
 		}
-		BOOL operator!=(const DelegateBase& os) const
+		BOOL operator!=(const DelegateBase& other) const
 		{
-			return !(*this == os);
+			return !(*this == other);
 		}
 		ReturnType operator()() const
 		{
 			return (*m_my)();
 		}
-		ReturnType operator()(Arg1 p1) const
+		ReturnType operator()(A1Type p1) const
 		{
 			return (*m_my)(p1);
 		}
-		ReturnType operator()(Arg1 p1, Arg2 p2) const
+		ReturnType operator()(A1Type p1, A2Type p2) const
 		{
 			return (*m_my)(p1, p2);
 		}
-		ReturnType operator()(Arg1 p1, Arg2 p2, Arg3 p3) const
+		ReturnType operator()(A1Type p1, A2Type p2, A3Type p3) const
 		{
 			return (*m_my)(p1, p2, p3);
 		}
-		ReturnType operator()(Arg1 p1, Arg2 p2, Arg3 p3, Arg4 p4) const
+		ReturnType operator()(A1Type p1, A2Type p2, A3Type p3, A4Type p4) const
 		{
 			return (*m_my)(p1, p2, p3, p4);
 		}
 	private:
-		TinyAutoPtr<ImplType>	m_my;
+		TinyAutoPtr<FunctorType>	m_my;
 	};
 	//////////////////////////////////////////////////////////////////////////
 	/// <summary>
@@ -334,7 +358,7 @@ namespace TinyUI
 	template<typename R = void>
 	class Delegate;
 	template<typename R>
-	class Delegate<R()> : public DelegateBase<R, TYPE_LIST0()>
+	class Delegate<R()> : public DelegateBase < R, TYPE_LIST0() >
 	{
 	public:
 		typedef DelegateBase<R, TYPE_LIST0()> BaseType;
@@ -345,7 +369,6 @@ namespace TinyUI
 		{
 			if (!os.IsEmpty())
 			{
-				//显示调用基类赋值函数
 				BaseType::operator=(os);
 			}
 		}
@@ -359,7 +382,7 @@ namespace TinyUI
 		}
 	};
 	template<typename R, typename P1>
-	class Delegate<R(P1)>:public DelegateBase<R, TYPE_LIST1(P1)>
+	class Delegate<R(P1)> :public DelegateBase < R, TYPE_LIST1(P1) >
 	{
 	public:
 		typedef DelegateBase<R, TYPE_LIST1(P1)> BaseType;
@@ -383,7 +406,7 @@ namespace TinyUI
 		}
 	};
 	template<typename R, typename P1, typename P2>
-	class Delegate<R(P1, P2)>:public DelegateBase<R, TYPE_LIST2(P1, P2)>
+	class Delegate<R(P1, P2)> :public DelegateBase < R, TYPE_LIST2(P1, P2) >
 	{
 	public:
 		typedef DelegateBase<R, TYPE_LIST2(P1, P2)> BaseType;
@@ -407,7 +430,7 @@ namespace TinyUI
 		}
 	};
 	template<typename R, typename P1, typename P2, typename P3>
-	class Delegate<R(P1, P2, P3)>:public DelegateBase<R, TYPE_LIST3(P1, P2, P3)>
+	class Delegate<R(P1, P2, P3)> :public DelegateBase < R, TYPE_LIST3(P1, P2, P3) >
 	{
 	public:
 		typedef DelegateBase<R, TYPE_LIST3(P1, P2, P3)> BaseType;
@@ -431,7 +454,7 @@ namespace TinyUI
 		}
 	};
 	template<typename R, typename P1, typename P2, typename P3, typename P4>
-	class Delegate<R(P1, P2, P3, P4)> : public DelegateBase<R, TYPE_LIST4(P1, P2, P3, P4)>
+	class Delegate<R(P1, P2, P3, P4)> : public DelegateBase < R, TYPE_LIST4(P1, P2, P3, P4) >
 	{
 	public:
 		typedef DelegateBase<R, TYPE_LIST4(P1, P2, P3, P4)> BaseType;

@@ -13,16 +13,6 @@
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
 
-class TestA
-{
-public:
-	TestA(){};
-	int ShowA(int a, int b)
-	{
-		return a + b;
-	}
-};
-
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -31,9 +21,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	TestA testA;
-
-	Callback<int(int, int)> abc1 = Bind(&TestA::ShowA, &testA);
 
 	HRESULT hRes = OleInitialize(NULL);
 

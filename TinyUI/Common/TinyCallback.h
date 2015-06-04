@@ -202,6 +202,8 @@ namespace TinyUI
 	template <typename InvokerStorage, typename R>
 	struct Invoker < InvokerStorage, R(*)() >
 	{
+		typedef R(*DoInvokeType)(InvokerStorageBase*);
+
 		static R DoInvoke(InvokerStorageBase* base)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
@@ -211,6 +213,8 @@ namespace TinyUI
 	template <typename InvokerStorage, typename R, typename A1>
 	struct Invoker < InvokerStorage, R(*)(A1) >
 	{
+		typedef R(*DoInvokeType)(InvokerStorageBase*, A1);
+
 		static R DoInvoke(InvokerStorageBase* base, A1 a1)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
@@ -220,6 +224,8 @@ namespace TinyUI
 	template <typename InvokerStorage, typename R, typename A1, typename A2>
 	struct Invoker < InvokerStorage, R(*)(A1, A2) >
 	{
+		typedef R(*DoInvokeType)(InvokerStorageBase*, A1, A2);
+
 		static R DoInvoke(InvokerStorageBase* base, A1 a1, A2 a2)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
@@ -229,6 +235,8 @@ namespace TinyUI
 	template <typename InvokerStorage, typename R, typename A1, typename A2, typename A3>
 	struct Invoker < InvokerStorage, R(*)(A1, A2, A3) >
 	{
+		typedef R(*DoInvokeType)(InvokerStorageBase*, A1, A2, A3);
+
 		static R DoInvoke(InvokerStorageBase* base, A1 a1, A2 a2, A3 a3)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
@@ -238,6 +246,8 @@ namespace TinyUI
 	template <typename InvokerStorage, typename R, typename A1, typename A2, typename A3, typename A4>
 	struct Invoker < InvokerStorage, R(*)(A1, A2, A3, A4) >
 	{
+		typedef R(*DoInvokeType)(InvokerStorageBase*, A1, A2, A3, A4);
+
 		static R DoInvoke(InvokerStorageBase* base, A1 a1, A2 a2, A3 a3, A4  a4)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
@@ -247,6 +257,8 @@ namespace TinyUI
 	template <typename InvokerStorage, typename R, typename T>
 	struct Invoker < InvokerStorage, R(T::*)() >
 	{
+		typedef R(*DoInvokeType)(InvokerStorageBase*);
+
 		static R DoInvoke(InvokerStorageBase* base)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
@@ -256,6 +268,8 @@ namespace TinyUI
 	template <typename InvokerStorage, typename R, typename T, typename A1>
 	struct Invoker < InvokerStorage, R(T::*)(A1) >
 	{
+		typedef R(*DoInvokeType)(InvokerStorageBase*, A1);
+
 		static R DoInvoke(InvokerStorageBase* base, A1 a1)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
@@ -265,6 +279,8 @@ namespace TinyUI
 	template <typename InvokerStorage, typename R, typename T, typename A1, typename A2>
 	struct Invoker < InvokerStorage, R(T::*)(A1, A2) >
 	{
+		typedef R(*DoInvokeType)(InvokerStorageBase*, A1, A2);
+
 		static R DoInvoke(InvokerStorageBase* base, A1 a1, A2 a2)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
@@ -274,6 +290,8 @@ namespace TinyUI
 	template <typename InvokerStorage, typename R, typename T, typename A1, typename A2, typename A3>
 	struct Invoker < InvokerStorage, R(T::*)(A1, A2, A3) >
 	{
+		typedef R(*DoInvokeType)(InvokerStorageBase*, A1, A2, A3);
+
 		static R DoInvoke(InvokerStorageBase* base, A1 a1, A2 a2, A3 a3)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
@@ -283,6 +301,8 @@ namespace TinyUI
 	template <typename InvokerStorage, typename R, typename T, typename A1, typename A2, typename A3, typename A4>
 	struct Invoker < InvokerStorage, R(T::*)(A1, A2, A3, A4) >
 	{
+		typedef R(*DoInvokeType)(InvokerStorageBase*, A1, A2, A3, A4);
+
 		static R DoInvoke(InvokerStorageBase* base, A1 a1, A2 a2, A3 a3, A4 a4)
 		{
 			InvokerStorage* call = static_cast<InvokerStorage*>(base);
@@ -366,6 +386,7 @@ namespace TinyUI
 	{
 		return Caller<T>(o);
 	}
+
 	/// <summary>
 	/// 回调实现类
 	/// </summary>
@@ -381,11 +402,14 @@ namespace TinyUI
 
 		}
 		template<typename InvokerStorage>
-		Callback(const Caller<InvokerStorage>& caller) : CallbackBase(reinterpret_cast<InvokeBase>(&InvokerStorage::InvokerType::DoInvoke), &caller.m_storage)
+		Callback(const Caller<InvokerStorage>& caller)
+			: CallbackBase(reinterpret_cast<InvokeBase>(&InvokerStorage::InvokerType::DoInvoke), &caller.m_storage)
 		{
-
+			COMPILE_ASSERT((IsSameType<InvokeFunction, typename InvokerStorage::InvokerType::DoInvokeType>::Result),
+				callback_type_not_match);
 		}
-		Callback(const Callback& callback) : CallbackBase(callback)
+		Callback(const Callback& callback)
+			: CallbackBase(callback)
 		{
 
 		}
@@ -397,16 +421,6 @@ namespace TinyUI
 		BOOL operator == (const Callback& other) const
 		{
 			return CallbackBase::operator==(other);
-		}
-		template <typename FunctionType>
-		static Callback MakeCallback(const FunctionType& runnable)
-		{
-			return Callback(new InvokerStorage<FunctionType, TYPE_LIST0(), TYPE_LIST0()>(runnable, instance));
-		}
-		template <typename FunctionType, typename InstanceType>
-		static Callback MakeCallback(const FunctionType& runnable, const InstanceType& instance)
-		{
-			return Callback(new InvokerStorage<FunctionType, InstanceType, TYPE_LIST0()>(runnable, instance));
 		}
 	public:
 		R operator()() const
@@ -425,11 +439,14 @@ namespace TinyUI
 
 		}
 		template<typename InvokerStorage>
-		Callback(const Caller<InvokerStorage>& caller) : CallbackBase(reinterpret_cast<InvokeBase>(&InvokerStorage::InvokerType::DoInvoke), &caller.m_storage)
+		Callback(const Caller<InvokerStorage>& caller)
+			: CallbackBase(reinterpret_cast<InvokeBase>(&InvokerStorage::InvokerType::DoInvoke), caller.m_storage.Ptr())
 		{
-
+			COMPILE_ASSERT((IsSameType<InvokeFunction, typename InvokerStorage::InvokerType::DoInvokeType>::Result),
+				callback_type_not_match);
 		}
-		Callback(const Callback& callback) : CallbackBase(callback)
+		Callback(const Callback& callback)
+			: CallbackBase(callback)
 		{
 
 		}
@@ -441,16 +458,6 @@ namespace TinyUI
 		BOOL operator == (const Callback& other) const
 		{
 			return CallbackBase::operator==(other);
-		}
-		template <typename FunctionType>
-		static Callback MakeCallback(const FunctionType& runnable)
-		{
-			return Callback(new InvokerStorage<FunctionType, TYPE_LIST0(), TYPE_LIST0()>(runnable, instance));
-		}
-		template <typename FunctionType, typename InstanceType>
-		static Callback MakeCallback(const FunctionType& runnable, const InstanceType& instance)
-		{
-			return Callback(new InvokerStorage<FunctionType, InstanceType, TYPE_LIST0()>(runnable, instance));
 		}
 	public:
 		R operator()(A1 a1) const
@@ -469,11 +476,14 @@ namespace TinyUI
 
 		}
 		template<typename InvokerStorage>
-		Callback(const Caller<InvokerStorage>& caller) : CallbackBase(reinterpret_cast<InvokeBase>(&InvokerStorage::InvokerType::DoInvoke), caller.m_storage.Ptr())
+		Callback(const Caller<InvokerStorage>& caller)
+			: CallbackBase(reinterpret_cast<InvokeBase>(&InvokerStorage::InvokerType::DoInvoke), caller.m_storage.Ptr())
 		{
-
+			COMPILE_ASSERT((IsSameType<InvokeFunction, typename InvokerStorage::InvokerType::DoInvokeType>::Result),
+				callback_type_not_match);
 		}
-		Callback(const Callback& callback) : CallbackBase(callback)
+		Callback(const Callback& callback)
+			: CallbackBase(callback)
 		{
 
 		}
@@ -485,16 +495,6 @@ namespace TinyUI
 		BOOL operator == (const Callback& other) const
 		{
 			return CallbackBase::operator==(other);
-		}
-		template <typename FunctionType>
-		static Callback MakeCallback(const FunctionType& runnable)
-		{
-			return Callback(new InvokerStorage<FunctionType, TYPE_LIST0(), TYPE_LIST0()>(runnable, instance));
-		}
-		template <typename FunctionType, typename InstanceType>
-		static Callback MakeCallback(const FunctionType& runnable, const InstanceType& instance)
-		{
-			return Callback(new InvokerStorage<FunctionType, InstanceType, TYPE_LIST0()>(runnable, instance));
 		}
 	public:
 		R operator()(A1 a1, A2 a2) const
@@ -513,9 +513,11 @@ namespace TinyUI
 
 		}
 		template<typename InvokerStorage>
-		Callback(const Caller<InvokerStorage>& caller) : CallbackBase(reinterpret_cast<InvokeBase>(&InvokerStorage::InvokerType::DoInvoke), &caller.m_storage)
+		Callback(const Caller<InvokerStorage>& caller)
+			: CallbackBase(reinterpret_cast<InvokeBase>(&InvokerStorage::InvokerType::DoInvoke), &caller.m_storage)
 		{
-
+			COMPILE_ASSERT((IsSameType<InvokeFunction, typename InvokerStorage::InvokerType::DoInvokeType>::Result),
+				callback_type_not_match);
 		}
 		Callback(const Callback& callback) : CallbackBase(callback)
 		{
@@ -547,9 +549,11 @@ namespace TinyUI
 
 		}
 		template<typename InvokerStorage>
-		Callback(const Caller<InvokerStorage>& caller) : CallbackBase(reinterpret_cast<InvokeBase>(&InvokerStorage::InvokerType::DoInvoke), &caller.m_storage)
+		Callback(const Caller<InvokerStorage>& caller)
+			: CallbackBase(reinterpret_cast<InvokeBase>(&InvokerStorage::InvokerType::DoInvoke), &caller.m_storage)
 		{
-
+			COMPILE_ASSERT((IsSameType<InvokeFunction, typename InvokerStorage::InvokerType::DoInvokeType>::Result),
+				callback_type_not_match);
 		}
 		Callback(const Callback& callback) : CallbackBase(callback)
 		{
@@ -564,16 +568,6 @@ namespace TinyUI
 		{
 			return CallbackBase::operator==(other);
 		}
-		template <typename FunctionType>
-		static Callback MakeCallback(const FunctionType& runnable)
-		{
-			return Callback(new InvokerStorage<FunctionType, TYPE_LIST0(), TYPE_LIST0()>(runnable, instance));
-		}
-		template <typename FunctionType, typename InstanceType>
-		static Callback MakeCallback(const FunctionType& runnable, const InstanceType& instance)
-		{
-			return Callback(new InvokerStorage<FunctionType, InstanceType, TYPE_LIST0()>(runnable, instance));
-		}
 	public:
 		R operator()(A1 a1, A2 a2, A3 a3, A4 a4) const
 		{
@@ -586,7 +580,7 @@ namespace TinyUI
 	/// 绑定函数
 	/// </summary>
 	template <typename FunctionType>
-	Caller<InvokerStorage<FunctionType, TYPE_LIST0(), TYPE_LIST0()>> Bind(const FunctionType& runnable)
+	Caller<InvokerStorage<FunctionType, TYPE_LIST0(), TYPE_LIST0()>> BindCallback(const FunctionType& runnable)
 	{
 		return MakeCaller(new InvokerStorage<FunctionType, TYPE_LIST0(), TYPE_LIST0()>(runnable));
 	};
@@ -594,7 +588,7 @@ namespace TinyUI
 	/// 绑定成员函数
 	/// </summary>
 	template <typename FunctionType, typename InstanceType>
-	Caller<InvokerStorage<FunctionType, InstanceType, TYPE_LIST0()>> Bind(const FunctionType& runnable, const InstanceType& instance)
+	Caller<InvokerStorage<FunctionType, InstanceType, TYPE_LIST0()>> BindCallback(const FunctionType& runnable, const InstanceType& instance)
 	{
 		return MakeCaller(new InvokerStorage<FunctionType, InstanceType, TYPE_LIST0()>(runnable, instance));
 	};
