@@ -13,6 +13,11 @@
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
 
+//class TestA : public TinyReference<TestA>
+//{
+//
+//};
+
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -21,6 +26,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
+	/*TestA* pa = new TestA();
+	TinyScopedReferencePtr<TestA> psa(pa);
+	TinyScopedReferencePtr<TestA> psb(pa);*/
 
 	HRESULT hRes = OleInitialize(NULL);
 

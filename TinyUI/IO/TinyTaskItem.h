@@ -6,6 +6,9 @@ namespace TinyUI
 	/// <summary>
 	/// C++ ÈÎÎñÏî
 	/// </summary>
+	class TaskItem
+	{
 
+	};
 };
 

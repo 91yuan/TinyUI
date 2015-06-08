@@ -133,7 +133,7 @@
     <ClInclude Include="Database\TinySqlite.h" />
     <ClInclude Include="IO\TinyIO.h" />
     <ClInclude Include="IO\TinyTaskItem.h" />
-    <ClInclude Include="IO\TinyTPool.h" />
+    <ClInclude Include="IO\TinyIOService.h" />
     <ClInclude Include="IO\TinyTaskQueue.h" />
     <ClInclude Include="Media\TinyWave.h" />
     <ClInclude Include="Network\TinyHttp.h" />
@@ -207,7 +207,7 @@
     <ClCompile Include="Database\TinySqlite.cpp" />
     <ClCompile Include="IO\TinyIO.cpp" />
     <ClCompile Include="IO\TinyTaskItem.cpp" />
-    <ClCompile Include="IO\TinyTPool.cpp" />
+    <ClCompile Include="IO\TinyIOService.cpp" />
     <ClCompile Include="IO\TinyTaskQueue.cpp" />
     <ClCompile Include="Media\TinyWave.cpp" />
     <ClCompile Include="Network\TinyHttp.cpp" />
