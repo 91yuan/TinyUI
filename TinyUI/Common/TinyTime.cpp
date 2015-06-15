@@ -1,4 +1,6 @@
 #include "../stdafx.h"
+#include <algorithm>
+#include <limits>
 #include "TinyTime.h"
 #pragma comment(lib, "comsupp.lib") 
 
@@ -981,6 +983,343 @@ namespace TinyUI
 		_tcsftime(lpszTemp, 256, pFormat, &tmTemp);
 		TinyString str(lpszTemp);
 		SAFE_DELETE_ARRAY(lpszTemp);
-		return str;//一个构造和拷贝的代价
+		return str;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	const INT64 Timespan::MILLISECONDS = 1000;
+	const INT64 Timespan::SECONDS = 1000 * Timespan::MILLISECONDS;
+	const INT64 Timespan::MINUTES = 60 * Timespan::SECONDS;
+	const INT64 Timespan::HOURS = 60 * Timespan::MINUTES;
+	const INT64 Timespan::DAYS = 24 * Timespan::HOURS;
+	Timespan::Timespan() :
+		m_span(0)
+	{
+	}
+	Timespan::Timespan(INT64 microSeconds) :
+		m_span(microSeconds)
+	{
+	}
+	Timespan::Timespan(long seconds, long microSeconds) :
+		m_span(INT64(seconds)*SECONDS + microSeconds)
+	{
+	}
+	Timespan::Timespan(int days, int hours, int minutes, int seconds, int microSeconds) :
+		m_span(INT64(microSeconds) + INT64(seconds)*SECONDS + INT64(minutes)*MINUTES + INT64(hours)*HOURS + INT64(days)*DAYS)
+	{
+	}
+	Timespan::Timespan(const Timespan& timespan) :
+		m_span(timespan.m_span)
+	{
+	}
+	Timespan::~Timespan()
+	{
+	}
+	Timespan& Timespan::operator = (const Timespan& timespan)
+	{
+		m_span = timespan.m_span;
+		return *this;
+	}
+	Timespan& Timespan::operator = (INT64 microSeconds)
+	{
+		m_span = microSeconds;
+		return *this;
+	}
+	Timespan& Timespan::Assign(int days, int hours, int minutes, int seconds, int microSeconds)
+	{
+		m_span = INT64(microSeconds) + INT64(seconds)*SECONDS + INT64(minutes)*MINUTES + INT64(hours)*HOURS + INT64(days)*DAYS;
+		return *this;
+	}
+	Timespan& Timespan::Assign(long seconds, long microSeconds)
+	{
+		m_span = INT64(seconds)*SECONDS + INT64(microSeconds);
+		return *this;
+	}
+	void Timespan::Swap(Timespan& timespan)
+	{
+		std::swap(m_span, timespan.m_span);
+	}
+	Timespan Timespan::operator + (const Timespan& d) const
+	{
+		return Timespan(m_span + d.m_span);
+	}
+	Timespan Timespan::operator - (const Timespan& d) const
+	{
+		return Timespan(m_span - d.m_span);
+	}
+	Timespan& Timespan::operator += (const Timespan& d)
+	{
+		m_span += d.m_span;
+		return *this;
+	}
+	Timespan& Timespan::operator -= (const Timespan& d)
+	{
+		m_span -= d.m_span;
+		return *this;
+	}
+	Timespan Timespan::operator + (INT64 microSeconds) const
+	{
+		return Timespan(m_span + microSeconds);
+	}
+	Timespan Timespan::operator - (INT64 microSeconds) const
+	{
+		return Timespan(m_span - microSeconds);
+	}
+	Timespan& Timespan::operator += (INT64 microSeconds)
+	{
+		m_span += microSeconds;
+		return *this;
+	}
+	Timespan& Timespan::operator -= (INT64 microSeconds)
+	{
+		m_span -= microSeconds;
+		return *this;
+	}
+	inline INT Timespan::Days() const
+	{
+		return INT(m_span / DAYS);
+	}
+	inline INT Timespan::Hours() const
+	{
+		return INT((m_span / HOURS) % 24);
+	}
+	inline INT Timespan::TotalHours() const
+	{
+		return int(m_span / HOURS);
+	}
+	inline INT Timespan::Minutes() const
+	{
+		return int((m_span / MINUTES) % 60);
+	}
+	inline INT Timespan::TotalMinutes() const
+	{
+		return INT(m_span / MINUTES);
+	}
+	inline INT Timespan::Seconds() const
+	{
+		return INT((m_span / SECONDS) % 60);
+	}
+	inline INT Timespan::TotalSeconds() const
+	{
+		return INT(m_span / SECONDS);
+	}
+	inline INT Timespan::Milliseconds() const
+	{
+		return int((m_span / MILLISECONDS) % 1000);
+	}
+	inline INT64 Timespan::TotalMilliseconds() const
+	{
+		return m_span / MILLISECONDS;
+	}
+	inline INT Timespan::Microseconds() const
+	{
+		return int(m_span % 1000);
+	}
+	inline INT64 Timespan::TotalMicroseconds() const
+	{
+		return m_span;
+	}
+	inline BOOL Timespan::operator == (const Timespan& ts) const
+	{
+		return m_span == ts.m_span;
+	}
+	inline BOOL Timespan::operator != (const Timespan& ts) const
+	{
+		return m_span != ts.m_span;
+	}
+	inline BOOL Timespan::operator >  (const Timespan& ts) const
+	{
+		return m_span > ts.m_span;
+	}
+	inline BOOL Timespan::operator >= (const Timespan& ts) const
+	{
+		return m_span >= ts.m_span;
+	}
+	inline BOOL Timespan::operator <  (const Timespan& ts) const
+	{
+		return m_span < ts.m_span;
+	}
+	inline BOOL Timespan::operator <= (const Timespan& ts) const
+	{
+		return m_span <= ts.m_span;
+	}
+	inline BOOL Timespan::operator == (INT64 microSeconds) const
+	{
+		return m_span == microSeconds;
+	}
+	inline BOOL Timespan::operator != (INT64 microSeconds) const
+	{
+		return m_span != microSeconds;
+	}
+	inline BOOL Timespan::operator >  (INT64 microSeconds) const
+	{
+		return m_span > microSeconds;
+	}
+	inline BOOL Timespan::operator >= (INT64 microSeconds) const
+	{
+		return m_span >= microSeconds;
+	}
+	inline BOOL Timespan::operator <  (INT64 microSeconds) const
+	{
+		return m_span < microSeconds;
+	}
+	inline BOOL Timespan::operator <= (INT64 microSeconds) const
+	{
+		return m_span <= microSeconds;
+	}
+	inline void Swap(Timespan& s1, Timespan& s2)
+	{
+		s1.Swap(s2);
+	}
+	//////////////////////////////////////////////////////////////////////////
+	const INT64 Timestamp::TIMEVAL_MIN = (std::numeric_limits<INT64>::min)();
+	const INT64 Timestamp::TIMEVAL_MAX = (std::numeric_limits<INT64>::max)();
+	Timestamp::Timestamp()
+	{
+		GetTime();
+	}
+	Timestamp::Timestamp(INT64 tv)
+	{
+		_ts = tv;
+	}
+	Timestamp::Timestamp(const Timestamp& other)
+	{
+		_ts = other._ts;
+	}
+	Timestamp::~Timestamp()
+	{
+	}
+	Timestamp& Timestamp::operator = (const Timestamp& other)
+	{
+		_ts = other._ts;
+		return *this;
+	}
+	Timestamp& Timestamp::operator = (INT64 tv)
+	{
+		_ts = tv;
+		return *this;
+	}
+	void Timestamp::GetTime()
+	{
+		FILETIME ft;
+		GetSystemTimeAsFileTime(&ft);
+		ULARGE_INTEGER epoch; 
+		epoch.LowPart = 0xD53E8000;
+		epoch.HighPart = 0x019DB1DE;
+		ULARGE_INTEGER ts;
+		ts.LowPart = ft.dwLowDateTime;
+		ts.HighPart = ft.dwHighDateTime;
+		ts.QuadPart -= epoch.QuadPart;
+		_ts = ts.QuadPart / 10;
+	}
+	void Timestamp::Swap(Timestamp& timestamp)
+	{
+		std::swap(_ts, timestamp._ts);
+	}
+	Timestamp Timestamp::FromEpochTime(std::time_t t)
+	{
+		return Timestamp(INT64(t)*Resolution());
+	}
+	Timestamp Timestamp::FromUTCTime(INT64 val)
+	{
+		val -= (INT64(0x01b21dd2) << 32) + 0x13814000;
+		val /= 10;
+		return Timestamp(val);
+	}
+	Timestamp  Timestamp::operator +  (const Timespan& span) const
+	{
+		return *this + span.TotalMicroseconds();
+	}
+	Timestamp  Timestamp::operator -  (const Timespan& span) const
+	{
+		return *this - span.TotalMicroseconds();
+	}
+	Timestamp& Timestamp::operator += (const Timespan& span)
+	{
+		return *this += span.TotalMicroseconds();
+	}
+	Timestamp& Timestamp::operator -= (const Timespan& span)
+	{
+		return *this -= span.TotalMicroseconds();
+	}
+	inline BOOL Timestamp::operator == (const Timestamp& ts) const
+	{
+		return _ts == ts._ts;
+	}
+	inline BOOL Timestamp::operator != (const Timestamp& ts) const
+	{
+		return _ts != ts._ts;
+	}
+	inline BOOL Timestamp::operator >  (const Timestamp& ts) const
+	{
+		return _ts > ts._ts;
+	}
+	inline BOOL Timestamp::operator >= (const Timestamp& ts) const
+	{
+		return _ts >= ts._ts;
+	}
+	inline BOOL Timestamp::operator <  (const Timestamp& ts) const
+	{
+		return _ts < ts._ts;
+	}
+	inline BOOL Timestamp::operator <= (const Timestamp& ts) const
+	{
+		return _ts <= ts._ts;
+	}
+	inline Timestamp Timestamp::operator + (INT64 d) const
+	{
+		return Timestamp(_ts + d);
+	}
+	inline Timestamp Timestamp::operator - (INT64 d) const
+	{
+		return Timestamp(_ts - d);
+	}
+	inline INT64 Timestamp::operator - (const Timestamp& ts) const
+	{
+		return _ts - ts._ts;
+	}
+	inline Timestamp& Timestamp::operator += (INT64 d)
+	{
+		_ts += d;
+		return *this;
+	}
+	inline Timestamp& Timestamp::operator -= (INT64 d)
+	{
+		_ts -= d;
+		return *this;
+	}
+	inline std::time_t Timestamp::GetEpochTime() const
+	{
+		return std::time_t(_ts / Resolution());
+	}
+	inline INT64 Timestamp::GetUTCTime() const
+	{
+		return _ts * 10 + (INT64(0x01b21dd2) << 32) + 0x13814000;
+	}
+	inline INT64 Timestamp::GetEpochMicroseconds() const
+	{
+		return _ts;
+	}
+	inline INT64 Timestamp::GetElapsed() const
+	{
+		Timestamp now;
+		return now - *this;
+	}
+	inline BOOL Timestamp::IsElapsed(INT64 interval) const
+	{
+		Timestamp now;
+		INT64 diff = now - *this;
+		return diff >= interval;
+	}
+	inline INT64 Timestamp::Resolution()
+	{
+		return 1000000;
+	}
+	inline void swap(Timestamp& s1, Timestamp& s2)
+	{
+		s1.Swap(s2);
+	}
+	inline INT64 Timestamp::raw() const
+	{
+		return _ts;
 	}
 }

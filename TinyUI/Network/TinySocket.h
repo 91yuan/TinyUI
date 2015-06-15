@@ -6,45 +6,31 @@
 
 namespace TinyUI
 {
-	typedef Callback<void(INT)> CompleteCallback;
-	/// <summary>
-	/// IO»º³å
-	/// </summary>
-	class ScopeIO : public TinyReference < ScopeIO >
+	class Socket
 	{
 	public:
-		ScopeIO();
-		explicit ScopeIO(INT size);
-		CHAR* Ptr();
-	protected:
-		explicit ScopeIO(CHAR* data);
-		virtual ~ScopeIO();
-		CHAR* m_data;
-	};
-	/// <summary>
-	/// Soekct»ùÀà
-	/// </summary>
-	class TinySocket
-	{
-		DISALLOW_COPY_AND_ASSIGN(TinySocket);
+		typedef std::vector<Socket> SocketList;
+		enum SelectMode
+		{
+			SELECT_READ = 1,
+			SELECT_WRITE = 2,
+			SELECT_ERROR = 4
+		};
+		Socket();
+		Socket(const Socket& socket);
+		Socket& operator = (const Socket& socket);
+		virtual ~Socket();
 	public:
-		BOOL		Open();
-		BOOL		Close();
-		BOOL		Accept(TinySocket& socket, sockaddr& address);
-		BOOL		Bind(sockaddr& address);
-		BOOL		Connect(sockaddr& address, CompleteCallback);
-		BOOL		Listen(INT backlog);
-		virtual INT Read(ScopeIO* ps, INT size, const CompleteCallback& callback) = 0;
-		virtual INT Write(ScopeIO* ps, INT size, const CompleteCallback& callback) = 0;
-		INT			GetLastError();
+		BOOL operator == (const Socket& socket) const;
+		BOOL operator != (const Socket& socket) const;
+		BOOL operator <  (const Socket& socket) const;
+		BOOL operator <= (const Socket& socket) const;
+		BOOL operator >  (const Socket& socket) const;
+		BOOL operator >= (const Socket& socket) const;
 	public:
-		operator SOCKET() const;
-		BOOL operator==(TinySocket& socket);
-	protected:
-		SOCKET		m_socket;
-		INT			m_addressFamily;
-		INT			m_type;
-		INT			m_protocol;
+		void Close();
+		static int select(SocketList& readList, SocketList& writeList, SocketList& exceptList, const Timespan& timeout);
 	};
+
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <time.h>
+#include <ctime>
 #include "TinyString.h"
 #ifndef __oledb_h__
 struct tagDBTIMESTAMP;
@@ -229,5 +230,103 @@ namespace TinyUI
 		void CheckRange();
 		BOOL ConvertSystemTimeToVariantTime(const SYSTEMTIME& systimeSrc);
 	};
-
+	/// <summary>
+	/// 时间间隔
+	/// </summary>
+	class Timespan
+	{
+	public:
+		Timespan();
+		Timespan(INT64 microseconds);
+		Timespan(LONG seconds, LONG microseconds);
+		Timespan(INT days, INT hours, INT minutes, INT seconds, INT microSeconds);
+		Timespan(const Timespan& timespan);
+		~Timespan();
+		Timespan& operator = (const Timespan& timespan);
+		Timespan& operator = (INT64 microseconds);
+		Timespan& Assign(INT days, INT hours, INT minutes, INT seconds, INT microSeconds);
+		Timespan& Assign(LONG seconds, LONG microseconds);
+		void Swap(Timespan& timespan);
+		BOOL operator == (const Timespan& ts) const;
+		BOOL operator != (const Timespan& ts) const;
+		BOOL operator >  (const Timespan& ts) const;
+		BOOL operator >= (const Timespan& ts) const;
+		BOOL operator <  (const Timespan& ts) const;
+		BOOL operator <= (const Timespan& ts) const;
+		BOOL operator == (INT64 microSeconds) const;
+		BOOL operator != (INT64 microSeconds) const;
+		BOOL operator >  (INT64 microSeconds) const;
+		BOOL operator >= (INT64 microSeconds) const;
+		BOOL operator <  (INT64 microSeconds) const;
+		BOOL operator <= (INT64 microSeconds) const;
+		Timespan operator + (const Timespan& d) const;
+		Timespan operator - (const Timespan& d) const;
+		Timespan& operator += (const Timespan& d);
+		Timespan& operator -= (const Timespan& d);
+		Timespan operator + (INT64 microSeconds) const;
+		Timespan operator - (INT64 microSeconds) const;
+		Timespan& operator += (INT64 microSeconds);
+		Timespan& operator -= (INT64 microSeconds);
+		INT Days() const;
+		INT Hours() const;
+		INT TotalHours() const;
+		INT Minutes() const;
+		INT TotalMinutes() const;
+		INT Seconds() const;
+		INT TotalSeconds() const;
+		INT Milliseconds() const;
+		INT64 TotalMilliseconds() const;
+		INT Microseconds() const;
+		INT64 TotalMicroseconds() const;
+		static const INT64 MILLISECONDS;
+		static const INT64 SECONDS;
+		static const INT64 MINUTES;
+		static const INT64 HOURS;
+		static const INT64 DAYS;
+	private:
+		INT64 m_span;
+	};
+	/// <summary>
+	/// 时间戮
+	/// </summary>
+	class Timestamp
+	{
+	public:
+		static const INT64 TIMEVAL_MIN; 
+		static const INT64 TIMEVAL_MAX; 
+		Timestamp();
+		Timestamp(INT64 tv);
+		Timestamp(const Timestamp& other);
+		~Timestamp();
+		Timestamp& operator = (const Timestamp& other);
+		Timestamp& operator = (INT64 tv);
+		void Swap(Timestamp& timestamp);
+		BOOL operator == (const Timestamp& ts) const;
+		BOOL operator != (const Timestamp& ts) const;
+		BOOL operator >  (const Timestamp& ts) const;
+		BOOL operator >= (const Timestamp& ts) const;
+		BOOL operator <  (const Timestamp& ts) const;
+		BOOL operator <= (const Timestamp& ts) const;
+		Timestamp  operator +  (INT64 d) const;
+		Timestamp  operator +  (const Timespan& span) const;
+		Timestamp  operator -  (INT64 d) const;
+		Timestamp  operator -  (const Timespan& span) const;
+		INT64   operator -  (const Timestamp& ts) const;
+		Timestamp& operator += (INT64 d);
+		Timestamp& operator += (const Timespan& span);
+		Timestamp& operator -= (INT64 d);
+		Timestamp& operator -= (const Timespan& span);
+		std::time_t GetEpochTime() const;
+		INT64 GetUTCTime() const;
+		INT64 GetEpochMicroseconds() const;
+		INT64 GetElapsed() const;
+		BOOL IsElapsed(INT64 interval) const;
+		INT64 raw() const;
+		static Timestamp FromEpochTime(std::time_t t);
+		static Timestamp FromUTCTime(INT64 val);
+		static INT64 Resolution();
+	private:
+		void GetTime();
+		INT64 _ts;
+	};
 }
