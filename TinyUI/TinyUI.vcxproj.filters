@@ -285,14 +285,8 @@
     <ClInclude Include="Network\TinySocket.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
-    <ClInclude Include="IO\TinyTaskQueue.h">
-      <Filter>头文件\IO</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\TinyTaskItem.h">
-      <Filter>头文件\IO</Filter>
-    </ClInclude>
-    <ClInclude Include="IO\TinyIOService.h">
-      <Filter>头文件\IO</Filter>
+    <ClInclude Include="Network\TinyProactorIO.h">
+      <Filter>头文件\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -506,14 +500,8 @@
     <ClCompile Include="Network\TinySocket.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
-    <ClCompile Include="IO\TinyTaskQueue.cpp">
-      <Filter>源文件\IO</Filter>
-    </ClCompile>
-    <ClCompile Include="IO\TinyTaskItem.cpp">
-      <Filter>源文件\IO</Filter>
-    </ClCompile>
-    <ClCompile Include="IO\TinyIOService.cpp">
-      <Filter>源文件\IO</Filter>
+    <ClCompile Include="Network\TinyProactorIO.cpp">
+      <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

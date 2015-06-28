@@ -32,6 +32,8 @@ using namespace Gdiplus;
 namespace TinyUI
 {
 	//////////////////////////////////////////////////////////////////////////
+
+#define OVERRIDE override;
 #ifndef ASSERT
 #define ASSERT(expr) _ASSERTE(expr)
 #endif 
