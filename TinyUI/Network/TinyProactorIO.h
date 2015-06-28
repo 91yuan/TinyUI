@@ -11,7 +11,7 @@ using namespace std;
 namespace TinyUI
 {
 	class TinyProactorIO;
-	typedef Callback<void(TinyProactorIO*)> CompletionCallback;
+	typedef Callback<void(TinyProactorIO*)> TaskCallback;
 	/// <summary>
 	/// Proactor模型
 	/// </summary>
@@ -21,7 +21,7 @@ namespace TinyUI
 		TinyProactorIO();
 		virtual ~TinyProactorIO();
 		operator HANDLE() const;
-		BOOL	Initialize(DWORD dwConcurrent, CompletionCallback cb);
+		BOOL	Initialize(DWORD dwConcurrent, TaskCallback cb);
 		BOOL	Attach(HANDLE handle);
 		HANDLE	Detach();
 	private:
@@ -30,7 +30,7 @@ namespace TinyUI
 		HANDLE							m_hIOCP;
 		DWORD							m_dwConcurrent;
 		TinyArray<HANDLE>				m_tasks;
-		CompletionCallback				m_completionCb;
+		TaskCallback				m_completionCb;
 	};
 }
 

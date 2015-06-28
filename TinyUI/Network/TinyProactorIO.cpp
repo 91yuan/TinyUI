@@ -10,7 +10,7 @@ namespace TinyUI
 	{
 
 	}
-	BOOL TinyProactorIO::Initialize(DWORD dwConcurrent, CompletionCallback cb)
+	BOOL TinyProactorIO::Initialize(DWORD dwConcurrent, TaskCallback cb)
 	{
 		m_dwConcurrent = dwConcurrent;
 		m_completionCb = cb;
