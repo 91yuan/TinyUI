@@ -10,22 +10,48 @@ namespace TinyUI
 	{
 
 	}
-	BOOL TinyProactorIO::Initialize(DWORD dwConcurrent, TaskCallback cb)
+	BOOL TinyProactorIO::Open(DWORD dwConcurrent, TaskCallback cb)
 	{
 		m_dwConcurrent = dwConcurrent;
 		m_completionCb = cb;
 		m_hIOCP = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, m_dwConcurrent);
-		for (INT i = 0; i < m_dwConcurrent; i++)
+		for (DWORD i = 0; i < m_dwConcurrent; i++)
 		{
 			m_tasks.Add((HANDLE)_beginthreadex(NULL, 0, &DoTask, this, 0, 0));
 		}
 		return m_hIOCP != NULL;
+	}
+	BOOL TinyProactorIO::Cancel()
+	{
+		if (m_hIOCP != NULL)
+		{
+			if (FARPROC CancelIoExPtr = ::GetProcAddress(
+				::GetModuleHandleA("KERNEL32"), "CancelIoEx"))
+			{
+				typedef BOOL(WINAPI* CancelIoEx)(HANDLE, LPOVERLAPPED);
+				CancelIoEx cancelIoEx = (CancelIoEx)CancelIoExPtr;
+				return cancelIoEx(m_hIOCP, NULL);
+			}
+		}
+		return FALSE;
+	}
+	void TinyProactorIO::Close()
+	{
+		if (m_hIOCP != NULL)
+		{
+			CloseHandle(m_hIOCP);
+			m_hIOCP = NULL;
+		}
 	}
 	TinyProactorIO::~TinyProactorIO()
 	{
 		Detach();
 	}
 	TinyProactorIO::operator HANDLE() const
+	{
+		return m_hIOCP;
+	}
+	HANDLE	TinyProactorIO::Handle() const
 	{
 		return m_hIOCP;
 	}
@@ -53,5 +79,42 @@ namespace TinyUI
 		TinyProactorIO* io = static_cast<TinyProactorIO*>(ps);
 		io->m_completionCb(io);
 		return 0;
+	}
+	//////////////////////////////////////////////////////////////////////////
+	IOCPOperation::IOCPOperation()
+	{
+		Reset();
+	}
+	IOCPOperation::~IOCPOperation()
+	{
+
+	}
+	void IOCPOperation::Complete(TinyProactorIO& owner, const DWORD dwError, DWORD dwBytestransferred)
+	{
+		if (!CompleteCallback.IsNull())
+		{
+			CompleteCallback(owner, dwError, dwBytestransferred);
+		}
+	}
+	void IOCPOperation::Pending(TinyProactorIO& owner, const DWORD dwError, DWORD dwBytestransferred)
+	{
+		if (!PendingCallback.IsNull())
+		{
+			PendingCallback(owner, dwError, dwBytestransferred);
+		}
+	}
+	void IOCPOperation::Reset()
+	{
+		Internal = 0;
+		InternalHigh = 0;
+		Offset = 0;
+		OffsetHigh = 0;
+		hEvent = 0;
+	}
+	CHAR* IOCPOperation::Alloc(size_t size)
+	{
+		CHAR* buffer = new CHAR[size];
+		m_buffer.Reset(buffer);
+		return buffer;
 	}
 }

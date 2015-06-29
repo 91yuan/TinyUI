@@ -5,6 +5,7 @@
 #include "TinyApp.h"
 #include "Control/TinyFrameUI.h"
 #include "Windowless/TinyVisualHWND.h"
+#include "Network/TinySocket.h"
 #include "Database/TinyAdo.h"
 #include <algorithm>
 #include "TinySmiley.h"
@@ -21,6 +22,15 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
+
+	WSADATA   wsd;
+	WSAStartup(MAKEWORD(2, 2), &wsd);
+
+	TCPServer server;
+	server.Open("192.168.1.102", 5001);
+	IOCPOperation ops;
+	ProactorSocket socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	server.BeginAccept(ops, socket);
 
 	HRESULT hRes = OleInitialize(NULL);
 
@@ -41,6 +51,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	TinyApplication::GetInstance()->Uninitialize();
 
 	OleUninitialize();
+
+	WSACleanup();
 
 	return loopRes;
 };

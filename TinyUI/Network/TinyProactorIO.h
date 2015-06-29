@@ -21,7 +21,10 @@ namespace TinyUI
 		TinyProactorIO();
 		virtual ~TinyProactorIO();
 		operator HANDLE() const;
-		BOOL	Initialize(DWORD dwConcurrent, TaskCallback cb);
+		HANDLE	Handle() const;
+		BOOL	Open(DWORD dwConcurrent, TaskCallback cb);
+		BOOL	Cancel();
+		void	Close();
 		BOOL	Attach(HANDLE handle);
 		HANDLE	Detach();
 	private:
@@ -31,6 +34,24 @@ namespace TinyUI
 		DWORD							m_dwConcurrent;
 		TinyArray<HANDLE>				m_tasks;
 		TaskCallback				m_completionCb;
+	};
+	/// <summary>
+	/// IOCP操作
+	/// </summary>
+	class IOCPOperation : public OVERLAPPED
+	{
+	public:
+		IOCPOperation();
+		~IOCPOperation();
+		void	Complete(TinyProactorIO& owner, const DWORD dwError, DWORD dwBytestransferred);
+		void	Pending(TinyProactorIO& owner, const DWORD dwError, DWORD dwBytestransferred);
+		void	Reset();
+		CHAR*	Alloc(size_t size);
+	protected:
+		Callback<void(TinyProactorIO& owner, const DWORD dwError, DWORD dwBytestransferred)> CompleteCallback;
+		Callback<void(TinyProactorIO& owner, const DWORD dwError, DWORD dwBytestransferred)> PendingCallback;
+	private:
+		TinyScopedArray<CHAR> m_buffer;
 	};
 }
 

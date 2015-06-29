@@ -5,30 +5,7 @@
 
 namespace TinyUI
 {
-	extern "C"
-	{
-		void SocketIO::SetOperation(DWORD dwOperation)
-		{
-			m_dwOperation = dwOperation;
-		}
-		DWORD SocketIO::GetOperation()
-		{
-			return m_dwOperation;
-		}
-		SocketIO::SocketIO()
-		{
-			hEvent = WSACreateEvent();
-			if (hEvent == NULL) throw("SocketIO创建事件失败!");
-		}
-		SocketIO::~SocketIO()
-		{
-			if (hEvent != NULL)
-			{
-				CloseHandle(hEvent);
-				hEvent = NULL;
-			}
-		}
-	}
+
 	//////////////////////////////////////////////////////////////////////////
 	ProactorSocket::ProactorSocket(INT af, INT type, INT protocol)
 	{
@@ -76,21 +53,15 @@ namespace TinyUI
 	}
 	void ProactorSocket::Close()
 	{
-		closesocket(m_socket);
-		m_socket = INVALID_SOCKET;
+		if (m_socket != INVALID_SOCKET)
+		{
+			closesocket(m_socket);
+			m_socket = INVALID_SOCKET;
+		}
 	}
 	void ProactorSocket::SetRemoteAddress(SOCKADDR_IN remoteAddress)
 	{
 		memcpy_s(&m_remoteAddress, sizeof(SOCKADDR_IN), &remoteAddress, 1);
-	}
-	//////////////////////////////////////////////////////////////////////////
-	BOOL AcceptSocketIO::Initialize(INT af, INT type, INT pr)
-	{
-		m_socket = new ProactorSocket(af, type, pr);
-	}
-	ProactorSocket*	AcceptSocketIO::GetSocket() const
-	{
-		return m_socket;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TCPServer::TCPServer()
@@ -106,37 +77,39 @@ namespace TinyUI
 	}
 	void TCPServer::OnTask(TinyProactorIO* ps)
 	{
+		DWORD dwNumberOfBytesTransferred = 0;
+		LPOVERLAPPED oa = NULL;
+		ULONG_PTR    sclient = 0;
 		for (;;)
 		{
-			DWORD dwNumberOfBytesTransferred;
-			SocketIO* socketIOPtr = NULL;
-			if (!GetQueuedCompletionStatus(ps, &dwNumberOfBytesTransferred, 0, (LPOVERLAPPED*)&socketIOPtr, INFINITE))
+			if (GetQueuedCompletionStatus(ps->Handle(), &dwNumberOfBytesTransferred, (ULONG_PTR*)&sclient, (LPOVERLAPPED*)&oa, INFINITE))
 			{
-				return;
+				TRACE("GetQueuedCompletionStatus成功~\n");
+				//OVERLAPPED_PLUS* oap = reinterpret_cast<OVERLAPPED_PLUS*>(ps);
+				//SocketIO<ProactorSocket*>* socketIO = reinterpret_cast<SocketIO<ProactorSocket*>*>(oap->IO);
+				//DWORD dwOperation = socketIO->GetOperation();
+				//switch (dwOperation)
+				//{
+				//case OP_ACCEPT:
+				//	TRACE("OP_ACCEPT\n");
+				//	//DoAccept(socketIOPtr, dwNumberOfBytesTransferred);
+				//	break;
+				//case OP_RECV:
+				//	TRACE("OP_RECV\n");
+				//	break;
+				//case OP_SEND:
+				//	TRACE("OP_SEND\n");
+				//	break;
+				//default:
+				//	TRACE("无效的SocketIO~\n");
+				//	break;
+				//}
 			}
-			DWORD dwOperation = socketIOPtr->GetOperation();
-			switch (dwOperation)
-			{
-			case OP_ACCEPT:
-				DoAccept(static_cast<AcceptSocketIO*>(socketIOPtr), dwNumberOfBytesTransferred);
-				break;
-			case OP_RECV:
-				TRACE("OP_RECV\n");
-				break;
-			case OP_SEND:
-				TRACE("OP_SEND\n");
-				break;
-			default:
-				TRACE("无效的SocketIO~\n");
-				break;
-			}
+			DWORD error = GetLastError();
+			TRACE("GetQueuedCompletionStatus失败~\n");
 		}
 	}
-	void TCPServer::DoAccept(AcceptSocketIO* socketIO, DWORD dwNumberOfBytesTransferred)
-	{
-		TRACE("OP_ACCEPT\n");
-	}
-	BOOL TCPServer::Initialize(LPCSTR ips, USHORT port)
+	BOOL TCPServer::Open(LPCSTR address, USHORT port)
 	{
 		DWORD dwBytes = 0;
 		GUID guidAcceptEx = WSAID_ACCEPTEX;
@@ -167,15 +140,13 @@ namespace TinyUI
 			this->Close();
 			return FALSE;
 		}
-		m_taskCb = BindCallback(&OnTask, this);
-		SYSTEM_INFO info = { 0 };
-		GetSystemInfo(&info);
-		m_proactorIO.Initialize(info.dwNumberOfProcessors, m_taskCb);
-		sockaddr_in address = { 0 };
-		address.sin_family = AF_INET;
-		address.sin_port = htons(port);
-		address.sin_addr.s_addr = inet_addr(ips);
-		if (bind(m_socket, (SOCKADDR *)&address, sizeof(sockaddr_in)) == SOCKET_ERROR)
+		m_taskCb = BindCallback(&TCPServer::OnTask, this);
+		m_proactorIO.Open(1, m_taskCb);
+		sockaddr_in addr = { 0 };
+		addr.sin_family = AF_INET;
+		addr.sin_port = htons(port);
+		addr.sin_addr.s_addr = inet_addr(address);
+		if (bind(m_socket, (SOCKADDR *)&addr, sizeof(sockaddr_in)) == SOCKET_ERROR)
 		{
 			this->Close();
 			return FALSE;
@@ -191,29 +162,31 @@ namespace TinyUI
 	/// <summary>
 	/// 异步请求
 	/// </summary>
-	BOOL TCPServer::BeginAccept()
+	BOOL TCPServer::BeginAccept(IOCPOperation& operation, ProactorSocket& socket)
 	{
-		AcceptSocketIO* socketIO = new AcceptSocketIO(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (socketIO != NULL)
+		if (socket.IsAvailible())
 		{
-			CHAR outputBuffer[1024];
-			DWORD dwBytes;
+			DWORD dwReceiveDataLength = 1024;
+			CHAR* outputBuffer = operation.Alloc(1024);
+			DWORD dwBytes = 0;
 			if (!m_lpfnAcceptEx(m_socket,
-				socketIO->GetSocket()->Handle(),
+				socket,
 				outputBuffer,
-				0,
+				dwReceiveDataLength - ((sizeof(SOCKADDR_STORAGE) + 16) * 2),
 				sizeof(sockaddr_in) + 16,
 				sizeof(sockaddr_in) + 16,
 				&dwBytes,
-				(LPOVERLAPPED)&socketIO))
+				(LPOVERLAPPED)&operation))
 			{
 				if (WSAGetLastError() != WSA_IO_PENDING)
 				{
 					this->Close();
+					TRACE("AcceptEx失败~\n");
 					return FALSE;
 				}
-				return TRUE;
 			}
+			TRACE("AcceptEx成功~\n");
+			return TRUE;
 		}
 		return FALSE;
 	}
