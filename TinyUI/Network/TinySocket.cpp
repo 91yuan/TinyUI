@@ -5,8 +5,6 @@
 
 namespace TinyUI
 {
-
-	//////////////////////////////////////////////////////////////////////////
 	ProactorSocket::ProactorSocket()
 		:m_socket(NULL)
 	{
@@ -72,8 +70,17 @@ namespace TinyUI
 		memcpy_s(&m_remoteAddress, sizeof(SOCKADDR_IN), &remoteAddress, 1);
 	}
 	//////////////////////////////////////////////////////////////////////////
+	AcceptOP::AcceptOP()
+	{
+		m_dwOP = OP_ACCEPT;
+	}
+	CHAR*	AcceptOP::data()
+	{
+		return m_data;
+	}
+	//////////////////////////////////////////////////////////////////////////
 	TCPServer::TCPServer()
-		:ProactorSocket(AF_INET, SOCK_STREAM, 0),
+		: ProactorSocket(AF_INET, SOCK_STREAM, 0),
 		m_lpfnAcceptEx(NULL),
 		m_lpfnGetAcceptExSockaddrs(NULL)
 	{
@@ -91,29 +98,40 @@ namespace TinyUI
 		{
 			if (GetQueuedCompletionStatus(ps, &dwNumberOfBytesTransferred, (ULONG_PTR*)&completionKey, (LPOVERLAPPED*)&oa, INFINITE))
 			{
-				TRACE("GetQueuedCompletionStatus成功~\n");
-				//OVERLAPPED_PLUS* oap = reinterpret_cast<OVERLAPPED_PLUS*>(ps);
-				//SocketIO<ProactorSocket*>* socketIO = reinterpret_cast<SocketIO<ProactorSocket*>*>(oap->IO);
-				//DWORD dwOperation = socketIO->GetOperation();
-				//switch (dwOperation)
-				//{
-				//case OP_ACCEPT:
-				//	TRACE("OP_ACCEPT\n");
-				//	//DoAccept(socketIOPtr, dwNumberOfBytesTransferred);
-				//	break;
-				//case OP_RECV:
-				//	TRACE("OP_RECV\n");
-				//	break;
-				//case OP_SEND:
-				//	TRACE("OP_SEND\n");
-				//	break;
-				//default:
-				//	TRACE("无效的SocketIO~\n");
-				//	break;
-				//}
+				Operation* op = reinterpret_cast<Operation*>(oa);
+				DWORD dwOperation = op->GetOperation();
+				switch (dwOperation)
+				{
+				case OP_ACCEPT:
+				{
+					AcceptOP * acceptOP = reinterpret_cast<AcceptOP*>(oa);
+					LPSOCKADDR localAddress = 0;
+					INT localAddressLength = 0;
+					LPSOCKADDR remoteAddress = 0;
+					INT remoteAddressLength = 0;
+					m_lpfnGetAcceptExSockaddrs((LPVOID)acceptOP->data(),
+						0,
+						sizeof(sockaddr_in) + 16,
+						sizeof(sockaddr_in) + 16,
+						&localAddress,
+						&localAddressLength,
+						&remoteAddress,
+						&remoteAddressLength);
+					acceptOP->Complete(ps, 0, 0);
+				}
+				break;
+				case OP_RECV:
+				{
+
+				}
+				break;
+				case OP_SEND:
+				{
+
+				}
+				break;
+				}
 			}
-			DWORD error = GetLastError();
-			TRACE("GetQueuedCompletionStatus失败~\n");
 		}
 	}
 	BOOL TCPServer::Open(LPCSTR address, USHORT port)
@@ -182,17 +200,15 @@ namespace TinyUI
 	/// <summary>
 	/// 异步请求
 	/// </summary>
-	BOOL TCPServer::BeginAccept(IOCPOperation& operation, ProactorSocket& socket)
+	BOOL TCPServer::BeginAccept(ProactorSocket& socket, Operation& operation)
 	{
 		if (socket.IsAvailible())
 		{
-			DWORD dwReceiveDataLength = 1024;
-			CHAR* outputBuffer = operation.Alloc(1024);
+			AcceptOP& aop = reinterpret_cast<AcceptOP&>(operation);
 			DWORD dwBytes = 0;
 			if (!m_lpfnAcceptEx(m_socket,
 				socket,
-				outputBuffer,
-				//dwReceiveDataLength - ((sizeof(SOCKADDR_STORAGE) + 16) * 2)
+				(LPVOID)aop.data(),
 				0,
 				sizeof(sockaddr_in) + 16,
 				sizeof(sockaddr_in) + 16,

@@ -81,29 +81,38 @@ namespace TinyUI
 		return 0;
 	}
 	//////////////////////////////////////////////////////////////////////////
-	IOCPOperation::IOCPOperation()
+	Operation::Operation()
+		:m_dwOP(0)
 	{
 		Reset();
 	}
-	IOCPOperation::~IOCPOperation()
+	Operation::~Operation()
 	{
 
 	}
-	void IOCPOperation::Complete(TinyProactorIO& owner, const DWORD dwError, DWORD dwBytestransferred)
+	void Operation::Complete(TinyProactorIO& owner, DWORD dwBytestransferred, DWORD dwError)
 	{
 		if (!CompleteCallback.IsNull())
 		{
-			CompleteCallback(owner, dwError, dwBytestransferred);
+			CompleteCallback(owner, dwBytestransferred, dwError);
 		}
 	}
-	void IOCPOperation::Pending(TinyProactorIO& owner, const DWORD dwError, DWORD dwBytestransferred)
+	void Operation::Pending(TinyProactorIO& owner, DWORD dwBytestransferred, DWORD dwError)
 	{
 		if (!PendingCallback.IsNull())
 		{
-			PendingCallback(owner, dwError, dwBytestransferred);
+			PendingCallback(owner, dwBytestransferred, dwError);
 		}
 	}
-	void IOCPOperation::Reset()
+	void Operation::SetOperation(DWORD	dwOP)
+	{
+		m_dwOP = dwOP;
+	}
+	DWORD Operation::GetOperation()
+	{
+		return m_dwOP;
+	}
+	void Operation::Reset()
 	{
 		Internal = 0;
 		InternalHigh = 0;
@@ -111,19 +120,5 @@ namespace TinyUI
 		OffsetHigh = 0;
 		hEvent = 0;
 	}
-	CHAR* IOCPOperation::Alloc(size_t size)
-	{
-		try
-		{
-			CHAR* buffer = new CHAR[size];
-			m_buffer.Reset(new CHAR[size]);
-			return buffer;
-		}
-		catch (exception& e)
-		{
-			TRACE(e.what());
-			TRACE("\n");
-		}
-		return NULL;
-	}
+
 }

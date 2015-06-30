@@ -35,23 +35,24 @@ namespace TinyUI
 		TinyArray<HANDLE>				m_tasks;
 		TaskCallback					m_completionCb;
 	};
+	class ProactorSocket;
 	/// <summary>
-	/// IOCP操作
+	/// 操作类
 	/// </summary>
-	class IOCPOperation : public OVERLAPPED
+	class Operation : public OVERLAPPED
 	{
 	public:
-		IOCPOperation();
-		~IOCPOperation();
-		void	Complete(TinyProactorIO& owner, const DWORD dwError, DWORD dwBytestransferred);
-		void	Pending(TinyProactorIO& owner, const DWORD dwError, DWORD dwBytestransferred);
+		Operation();
+		~Operation();
+		void	Complete(TinyProactorIO& owner, DWORD dwBytestransferred, DWORD dwError);
+		void	Pending(TinyProactorIO& owner, DWORD dwBytestransferred, DWORD dwError);
 		void	Reset();
-		CHAR*	Alloc(size_t size);
+		void	SetOperation(DWORD	m_dwOP);
+		DWORD	GetOperation();
 	protected:
-		Callback<void(TinyProactorIO& owner, const DWORD dwError, DWORD dwBytestransferred)> CompleteCallback;
-		Callback<void(TinyProactorIO& owner, const DWORD dwError, DWORD dwBytestransferred)> PendingCallback;
-	private:
-		TinyScopedArray<CHAR> m_buffer;
+		Callback<void(TinyProactorIO& owner, DWORD dwBytestransferred, DWORD dwError)> CompleteCallback;
+		Callback<void(TinyProactorIO& owner, DWORD dwBytestransferred, DWORD dwError)> PendingCallback;
+		DWORD		m_dwOP;
 	};
 }
 

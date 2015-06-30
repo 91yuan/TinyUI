@@ -24,13 +24,13 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 
-	IOCPOperation ops;
+	AcceptOP aop;
 	ProactorSocket socket(AF_INET, SOCK_STREAM, 0);
 
 	TCPServer server;
-	if (server.Open("192.168.1.76", 9530))
+	if (server.Open("192.168.1.102", 5001))
 	{
-		server.BeginAccept(ops, socket);
+		server.BeginAccept(socket, aop);
 	}
 
 	HRESULT hRes = OleInitialize(NULL);

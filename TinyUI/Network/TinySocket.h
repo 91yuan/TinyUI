@@ -38,6 +38,17 @@ namespace TinyUI
 		SOCKADDR_IN m_remoteAddress;
 	};
 	/// <summary>
+	/// Accept²Ù×÷
+	/// </summary>
+	class AcceptOP : public Operation
+	{
+	public:
+		AcceptOP();
+		CHAR*	data();
+	private:
+		CHAR	m_data[(sizeof(SOCKADDR_IN) + 16) * 2];
+	};
+	/// <summary>
 	/// TCP·þÎñÆ÷
 	/// </summary>
 	class TCPServer : public ProactorSocket
@@ -48,7 +59,7 @@ namespace TinyUI
 		~TCPServer();
 	public:
 		BOOL Open(LPCSTR ips, USHORT port);
-		BOOL BeginAccept(IOCPOperation& operation, ProactorSocket& socket);
+		BOOL BeginAccept(ProactorSocket& socket, Operation& operation);
 		BOOL BeginSend();
 		BOOL BeginReceive();
 	private:
