@@ -77,7 +77,7 @@ namespace TinyUI
 	{
 		ASSERT(ps);
 		TinyProactorIO* io = static_cast<TinyProactorIO*>(ps);
-		io->m_completionCb(io);
+		io->m_completionCb(*io);
 		return 0;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -113,8 +113,17 @@ namespace TinyUI
 	}
 	CHAR* IOCPOperation::Alloc(size_t size)
 	{
-		CHAR* buffer = new CHAR[size];
-		m_buffer.Reset(buffer);
-		return buffer;
+		try
+		{
+			CHAR* buffer = new CHAR[size];
+			m_buffer.Reset(new CHAR[size]);
+			return buffer;
+		}
+		catch (exception& e)
+		{
+			TRACE(e.what());
+			TRACE("\n");
+		}
+		return NULL;
 	}
 }

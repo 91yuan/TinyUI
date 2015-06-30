@@ -19,9 +19,11 @@ namespace TinyUI
 	class ProactorSocket : public TinyReference < ProactorSocket >
 	{
 	public:
-		explicit ProactorSocket(INT af, INT type, INT pr);
-		ProactorSocket(const SOCKET socket);
+		ProactorSocket();
+		ProactorSocket(INT af, INT type, INT protocol);
+		explicit ProactorSocket(SOCKET socket);
 		ProactorSocket(const ProactorSocket& socket);
+		ProactorSocket& operator= (const ProactorSocket& socket);
 		virtual ~ProactorSocket();
 		operator SOCKET() const;
 		SOCKET	Handle() const;
@@ -53,9 +55,8 @@ namespace TinyUI
 		TinyProactorIO				m_proactorIO;
 		LPFN_ACCEPTEX				m_lpfnAcceptEx;
 		LPFN_GETACCEPTEXSOCKADDRS	m_lpfnGetAcceptExSockaddrs;
-		TaskCallback				m_taskCb;//任务回调
 	private:
-		void OnTask(TinyProactorIO* ps);
+		void OnTask(TinyProactorIO& ps);
 	};
 }
 

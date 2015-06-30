@@ -7,21 +7,29 @@ namespace TinyUI
 {
 
 	//////////////////////////////////////////////////////////////////////////
-	ProactorSocket::ProactorSocket(INT af, INT type, INT protocol)
-	{
-		memset(&m_remoteAddress, 0, sizeof(SOCKADDR_IN));
-		m_socket = WSASocket(af, type, protocol, NULL, NULL, WSA_FLAG_OVERLAPPED);
-		if (m_socket == INVALID_SOCKET) throw("WSASocketÊ§°Ü!");
-	}
-	ProactorSocket::ProactorSocket(const SOCKET socket)
-		:m_socket(socket)
+	ProactorSocket::ProactorSocket()
+		:m_socket(NULL)
 	{
 
+	}
+	ProactorSocket::ProactorSocket(INT af, INT type, INT protocol)
+		: m_socket(WSASocket(af, type, protocol, NULL, NULL, WSA_FLAG_OVERLAPPED))
+	{
+	}
+	ProactorSocket::ProactorSocket(SOCKET socket)
+		: m_socket(socket)
+	{
+		memset(&m_remoteAddress, 0, sizeof(SOCKADDR_IN));
 	}
 	ProactorSocket::ProactorSocket(const ProactorSocket& socket)
 		: m_socket(socket.m_socket)
 	{
 
+	}
+	ProactorSocket& ProactorSocket::operator = (const ProactorSocket& socket)
+	{
+		m_socket = socket.m_socket;
+		return *this;
 	}
 	ProactorSocket::~ProactorSocket()
 	{
@@ -65,24 +73,23 @@ namespace TinyUI
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TCPServer::TCPServer()
-		:ProactorSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP),
+		:ProactorSocket(AF_INET, SOCK_STREAM, 0),
 		m_lpfnAcceptEx(NULL),
 		m_lpfnGetAcceptExSockaddrs(NULL)
 	{
-
 	}
 	TCPServer::~TCPServer()
 	{
 
 	}
-	void TCPServer::OnTask(TinyProactorIO* ps)
+	void TCPServer::OnTask(TinyProactorIO& ps)
 	{
 		DWORD dwNumberOfBytesTransferred = 0;
 		LPOVERLAPPED oa = NULL;
-		ULONG_PTR    sclient = 0;
+		ULONG_PTR  completionKey = 0;
 		for (;;)
 		{
-			if (GetQueuedCompletionStatus(ps->Handle(), &dwNumberOfBytesTransferred, (ULONG_PTR*)&sclient, (LPOVERLAPPED*)&oa, INFINITE))
+			if (GetQueuedCompletionStatus(ps, &dwNumberOfBytesTransferred, (ULONG_PTR*)&completionKey, (LPOVERLAPPED*)&oa, INFINITE))
 			{
 				TRACE("GetQueuedCompletionStatus³É¹¦~\n");
 				//OVERLAPPED_PLUS* oap = reinterpret_cast<OVERLAPPED_PLUS*>(ps);
@@ -123,6 +130,7 @@ namespace TinyUI
 			NULL,
 			NULL))
 		{
+			TRACE("AcceptEx ERROR\n");
 			this->Close();
 			return FALSE;
 		}
@@ -137,26 +145,38 @@ namespace TinyUI
 			NULL,
 			NULL))
 		{
+			TRACE("GetAcceptExSockaddrs ERROR\n");
 			this->Close();
 			return FALSE;
 		}
-		m_taskCb = BindCallback(&TCPServer::OnTask, this);
-		m_proactorIO.Open(1, m_taskCb);
+		BOOL bRes = m_proactorIO.Open(1, BindCallback(&TCPServer::OnTask, this));
+		if (!bRes)
+		{
+			this->Close();
+			return FALSE;
+		}
+		bRes = m_proactorIO.Attach((HANDLE)m_socket);
+		if (!bRes)
+		{
+			this->Close();
+			return FALSE;
+		}
 		sockaddr_in addr = { 0 };
 		addr.sin_family = AF_INET;
 		addr.sin_port = htons(port);
 		addr.sin_addr.s_addr = inet_addr(address);
 		if (bind(m_socket, (SOCKADDR *)&addr, sizeof(sockaddr_in)) == SOCKET_ERROR)
 		{
+			TRACE("bind ERROR\n");
 			this->Close();
 			return FALSE;
 		}
-		if (listen(m_socket, SOMAXCONN) == SOCKET_ERROR)
+		if (listen(m_socket, 5) == SOCKET_ERROR)
 		{
+			TRACE("listen ERROR\n");
 			this->Close();
 			return FALSE;
 		}
-
 		return TRUE;
 	}
 	/// <summary>
@@ -172,7 +192,8 @@ namespace TinyUI
 			if (!m_lpfnAcceptEx(m_socket,
 				socket,
 				outputBuffer,
-				dwReceiveDataLength - ((sizeof(SOCKADDR_STORAGE) + 16) * 2),
+				//dwReceiveDataLength - ((sizeof(SOCKADDR_STORAGE) + 16) * 2)
+				0,
 				sizeof(sockaddr_in) + 16,
 				sizeof(sockaddr_in) + 16,
 				&dwBytes,

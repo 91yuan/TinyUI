@@ -11,7 +11,7 @@ using namespace std;
 namespace TinyUI
 {
 	class TinyProactorIO;
-	typedef Callback<void(TinyProactorIO*)> TaskCallback;
+	typedef Callback<void(TinyProactorIO&)> TaskCallback;
 	/// <summary>
 	/// Proactor模型
 	/// </summary>
@@ -33,7 +33,7 @@ namespace TinyUI
 		HANDLE							m_hIOCP;
 		DWORD							m_dwConcurrent;
 		TinyArray<HANDLE>				m_tasks;
-		TaskCallback				m_completionCb;
+		TaskCallback					m_completionCb;
 	};
 	/// <summary>
 	/// IOCP操作

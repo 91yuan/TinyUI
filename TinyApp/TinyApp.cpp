@@ -9,8 +9,6 @@
 #include "Database/TinyAdo.h"
 #include <algorithm>
 #include "TinySmiley.h"
-#include "Common/TinyCallback.h"
-
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
 
@@ -26,11 +24,14 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 
-	TCPServer server;
-	server.Open("192.168.1.102", 5001);
 	IOCPOperation ops;
-	ProactorSocket socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	server.BeginAccept(ops, socket);
+	ProactorSocket socket(AF_INET, SOCK_STREAM, 0);
+
+	TCPServer server;
+	if (server.Open("192.168.1.76", 9530))
+	{
+		server.BeginAccept(ops, socket);
+	}
 
 	HRESULT hRes = OleInitialize(NULL);
 

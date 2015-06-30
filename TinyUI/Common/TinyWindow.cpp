@@ -86,8 +86,7 @@ namespace TinyUI
 	}
 	BOOL TinyWindow::Create(HWND hParent, INT x, INT y, INT cx, INT cy)
 	{
-		BOOL result;
-		ASSERT(m_hWND == NULL);
+		BOOL result = FALSE;
 		result = m_thunk.Initialize(NULL, NULL);
 		if (result == FALSE)
 		{
