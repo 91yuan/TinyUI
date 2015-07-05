@@ -12,7 +12,6 @@
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
 
-
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	LPTSTR    lpCmdLine,
@@ -24,14 +23,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 
-	AcceptOP aop;
-	ProactorSocket socket(AF_INET, SOCK_STREAM, 0);
 
-	TCPServer server;
-	if (server.Open("192.168.1.102", 5001))
-	{
-		server.BeginAccept(socket, aop);
-	}
 
 	HRESULT hRes = OleInitialize(NULL);
 
