@@ -33,7 +33,8 @@ namespace TinyUI
 {
 	//////////////////////////////////////////////////////////////////////////
 
-#define OVERRIDE override;
+#define OVERRIDE override
+#define NO_VTABLE _declspec(novtable)
 #ifndef ASSERT
 #define ASSERT(expr) _ASSERTE(expr)
 #endif 
