@@ -26,7 +26,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	/*WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);*/
 	
-	TinyTreeMap<INT, INT> map;
+	TinyTreeMap<INT, INT> map(2);
 	srand(1000);
 	for (INT i = 0; i < 1000; i++)
 	{

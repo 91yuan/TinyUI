@@ -4,23 +4,25 @@
 
 namespace TinyUI
 {
-	TinyPlex* PASCAL TinyPlex::Create(TinyPlex*& ps, UINT_PTR max, UINT_PTR size)
+	TinyPlex* PASCAL TinyPlex::Create(TinyPlex*& ps, UINT_PTR nMax, UINT_PTR nElementSize)
 	{
-		ASSERT(max > 0 && size > 0);
-		TinyPlex* p = (TinyPlex*) new BYTE[sizeof(TinyPlex) + max * size];
-		p->nextPtr = ps;
-		ps = p;
-		return p;
+		ASSERT(nMax > 0 && nElementSize > 0);
+		TinyPlex* pPlex = (TinyPlex*)malloc(sizeof(TinyPlex) + nMax * nElementSize);
+		if (pPlex == NULL) return NULL;
+		pPlex->pNext = ps;
+		ps = pPlex;
+		return pPlex;
 	}
 	void TinyPlex::Destory()
 	{
-		TinyPlex* ps = this;
-		while (ps != NULL)
+		TinyPlex* pPlex = NULL;
+		pPlex = this;
+		while (pPlex != NULL)
 		{
-			BYTE* bytes = (BYTE*)ps;
-			TinyPlex* nextPtr = ps->nextPtr;
-			delete[] bytes;
-			ps = nextPtr;
+			TinyPlex* pNext = NULL;
+			pNext = pPlex->pNext;
+			free(pPlex);
+			pPlex = pNext;
 		}
 	}
 }
