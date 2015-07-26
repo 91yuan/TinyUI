@@ -523,7 +523,7 @@ namespace TinyUI
 	template<class K, class V>
 	TinyTreeMap<K, V>::~TinyTreeMap()
 	{
-		RemovePostOrder(m_pRoot);
+		RemoveAll();
 	}
 	template<class K, class V>
 	void TinyTreeMap<K, V>::Remove(K key)

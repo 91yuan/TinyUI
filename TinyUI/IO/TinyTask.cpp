@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-//#include "vld.h"
+#include "vld.h"
 #include <process.h>
 #include "TinyTask.h"
 

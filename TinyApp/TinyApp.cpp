@@ -29,7 +29,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	
 	
 	srand(1000000);
-	TinyTreeMap<INT, INT> map(100);
+	TinyTreeMap<INT, INT> map(10);
 	DWORD dwTime = GetTickCount();
 	for (INT i = 0; i < 1000000; i++)
 	{
