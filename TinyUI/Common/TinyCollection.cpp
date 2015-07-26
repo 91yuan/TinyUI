@@ -1,28 +1,28 @@
 ﻿#include "../stdafx.h"
 #include "TinyCollection.h"
-
+#include <exception>
 
 namespace TinyUI
 {
+#define DEBUG_NEW new(THIS_FILE, __LINE__);
 	TinyPlex* PASCAL TinyPlex::Create(TinyPlex*& ps, UINT_PTR nMax, UINT_PTR nElementSize)
 	{
 		ASSERT(nMax > 0 && nElementSize > 0);
-		TinyPlex* pPlex = (TinyPlex*)malloc(sizeof(TinyPlex) + nMax * nElementSize);
-		if (pPlex == NULL) return NULL;
-		pPlex->pNext = ps;
-		ps = pPlex;
-		return pPlex;
+		TinyPlex* p = (TinyPlex*)new BYTE[sizeof(TinyPlex) + nMax * nElementSize];
+		if (p == NULL) return NULL;
+		p->pNext = ps;
+		ps = p;
+		return p;
 	}
 	void TinyPlex::Destory()
 	{
-		TinyPlex* pPlex = NULL;
-		pPlex = this;
-		while (pPlex != NULL)
+		TinyPlex* p = this;
+		while (p != NULL)
 		{
-			TinyPlex* pNext = NULL;
-			pNext = pPlex->pNext;
-			free(pPlex);
-			pPlex = pNext;
+			BYTE* bytes = (BYTE*)p;
+			TinyPlex* pNext = p->pNext;
+			delete[] bytes;
+			p = pNext;
 		}
 	}
 }

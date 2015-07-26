@@ -441,8 +441,9 @@ namespace TinyUI
 		return m_value[index];
 	}
 	/// <summary>
-	/// Plex内存池
+	/// 内存池
 	/// </summary>
+#pragma pack(push, 4)
 	struct NO_VTABLE TinyPlex
 	{
 		TinyPlex* pNext;
@@ -450,6 +451,7 @@ namespace TinyUI
 		static TinyPlex* PASCAL Create(TinyPlex*& ps, UINT_PTR nMax, UINT_PTR nElementSize);
 		void Destory();
 	};
+#pragma pack(pop)
 	/// <summary>
 	/// TreeMap结构红黑树实现
 	/// </summary>
@@ -460,13 +462,13 @@ namespace TinyUI
 		class TinyNode
 		{
 		public:
-			BOOL		m_bColor;
 			K			m_key;
 			V			m_value;
+			BOOL		m_bColor;
 			TinyNode*	m_pLeft;
 			TinyNode*	m_pRight;
 			TinyNode*	m_pParent;
-			TinyNode*	m_pNextNode;
+			TinyNode*	m_pFreeNode;//节点内存链表
 		public:
 			TinyNode(K key, V value)
 				:m_pLeft(NULL),
@@ -577,20 +579,20 @@ namespace TinyUI
 	{
 		if (m_pFree == NULL)
 		{
-			TinyPlex* pPlex = TinyPlex::Create(m_pBlocks, m_dwBlockSize, sizeof(TinyPlex));
-			if (pPlex == NULL) return FALSE;
+			TinyPlex* pPlex = TinyPlex::Create(m_pBlocks, m_dwBlockSize, sizeof(TinyNode));
+			if (pPlex == NULL) return NULL;
 			TinyNode* pNode = static_cast<TinyNode*>(pPlex->data());
 			pNode += m_dwBlockSize - 1;
-			for (INT i = m_dwBlockSize - 1; i >= 0; i--)
+			for (INT_PTR iBlock = m_dwBlockSize - 1; iBlock >= 0; iBlock--)
 			{
-				pNode->m_pNextNode = m_pFree;
+				pNode->m_pFreeNode = m_pFree;
 				m_pFree = pNode;
 				pNode--;
 			}
 		}
 		TinyNode* pNewNode = m_pFree;
 		::new(pNewNode)TinyNode(key, value);
-		m_pFree = m_pFree->m_pNextNode;
+		m_pFree = m_pFree->m_pFreeNode;
 		m_dwCount++;
 		return pNewNode;
 	}
@@ -598,7 +600,7 @@ namespace TinyUI
 	void TinyTreeMap<K, V>::FreeNode(TinyNode* pNode)
 	{
 		pNode->~TinyNode();
-		pNode->m_pNextNode = m_pFree;
+		pNode->m_pFreeNode = m_pFree;
 		m_pFree = pNode;
 		m_dwCount--;
 	}

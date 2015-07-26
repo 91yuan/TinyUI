@@ -9,6 +9,7 @@
 #include "Network/TinyConnector.h"
 #include <algorithm>
 #include "TinySmiley.h"
+#include <map>
 
 #include <boost/intrusive/rbtree.hpp>
 
@@ -26,13 +27,25 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	/*WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);*/
 	
-	TinyTreeMap<INT, INT> map(2);
-	srand(1000);
-	for (INT i = 0; i < 1000; i++)
+	
+	srand(1000000);
+	TinyTreeMap<INT, INT> map(100);
+	DWORD dwTime = GetTickCount();
+	for (INT i = 0; i < 1000000; i++)
 	{
 		map.Add(rand(), rand());
 	}
-	map.inOrder();
+	DWORD dwTime1 = GetTickCount();
+	TRACE("TinyTreeMapÃëÊý: %d\n", (dwTime1 - dwTime) / 1000);
+
+	std::map<INT, INT> maps;
+	dwTime = GetTickCount();
+	for (INT i = 0; i < 1000000; i++)
+	{
+		maps.insert(make_pair(rand(), rand()));
+	}
+	dwTime1 = GetTickCount();
+	TRACE("std::mapÃëÊý: %d\n", (dwTime1 - dwTime) / 1000);
 	/*INT abc[10] = { 11, 2, 13, 14, 25, 36, 17, 98, 49, 10 };
 	INT abc1[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 	INT abc3 = 100;
