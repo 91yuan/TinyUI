@@ -452,66 +452,103 @@ namespace TinyUI
 		void Destory();
 	};
 #pragma pack(pop)
+	struct __ITERATOR{};//保存迭代器的内部指针
+	typedef __ITERATOR* ITERATOR;
+	/// <summary>
+	/// 类型萃取
+	/// </summary>
+	template<class T>
+	class DefaultTraits
+	{
+	public:
+		typedef const T&	CONST_ARGTYPE;
+		typedef T&			ARGTYPE;
+		static INT  Compare(const T& element1, const T& element2)
+		{
+			if (element1 < element2)
+				return (-1);
+			else if (element1 == element2)
+				return (0);
+			else
+				return (1);
+		}
+	};
 	/// <summary>
 	/// TreeMap结构红黑树实现
 	/// </summary>
-	template<class K, class V>
+	template<class K, class V, class KTraits = DefaultTraits< K >, class VTraits = DefaultTraits< V >>
 	class TinyTreeMap
 	{
 		DISALLOW_COPY_AND_ASSIGN(TinyTreeMap)
-		class TinyNode
+	protected:
+		typedef typename KTraits::CONST_ARGTYPE	CONST_KTYPE;
+		typedef typename KTraits::ARGTYPE		KTYPE;
+		typedef typename VTraits::CONST_ARGTYPE	CONST_VTYPE;
+		typedef typename VTraits::ARGTYPE		VTYPE;
+	protected:
+		class TinyNode : public __ITERATOR
 		{
+			DISALLOW_COPY_AND_ASSIGN(TinyNode)
 		public:
-			K			m_key;
+			const K		m_key;
 			V			m_value;
 			BOOL		m_bColor;
 			TinyNode*	m_pLeft;
 			TinyNode*	m_pRight;
 			TinyNode*	m_pParent;
-			TinyNode*	m_pFreeNode;//节点内存链表
+			TinyNode*	m_pFree;
 		public:
-			TinyNode(K key, V value)
-				:m_pLeft(NULL),
+			TinyNode(CONST_KTYPE key, VTYPE value)
+				: m_key(key),
+				m_value(value),
+				m_pLeft(NULL),
 				m_pRight(NULL),
 				m_pParent(NULL),
-				m_key(key),
-				m_value(value),
 				m_bColor(FALSE)
 			{
 
 			}
 		};
-	private:
+	protected:
 		TinyPlex*	m_pBlocks;
 		TinyNode*	m_pRoot;
 		TinyNode*	m_pFree;
 		DWORD		m_dwBlockSize;
 		DWORD		m_dwCount;
-	private:
+	protected:
 		void RotateL(TinyNode* pNode);
 		void RotateR(TinyNode* pNode);
+		void Add(TinyNode* pNode);
 		void AddFixup(TinyNode* pNode);
 		void Remove(TinyNode* pNode);
 		void RemoveFixup(TinyNode* pNode, TinyNode* parent);
-		void RemovePostOrder(TinyNode* pNode);
-		typename TinyTreeMap<K, V>::TinyNode* Find(TinyNode* pNode, K key);
-		typename TinyTreeMap<K, V>::TinyNode* NewNode(K key, V value);
+		void RemovePostOrder(TinyNode* pNode);//后序遍历
+		typename TinyTreeMap<K, V, KTraits, VTraits>::TinyNode* Find(TinyNode* pNode, CONST_KTYPE key);
+		typename TinyTreeMap<K, V, KTraits, VTraits>::TinyNode* NewNode(CONST_KTYPE key, VTYPE value);
 		void FreeNode(TinyNode* pNode);
 	public:
-		TinyTreeMap(DWORD dwBlockSize = 10);
+		explicit TinyTreeMap(DWORD dwBlockSize = 10);
 		~TinyTreeMap();
 		DWORD GetCount() const;
-		void Add(K key, V value);
-		void Remove(K key);
+		BOOL IsEmpty() const;
+		void Add(CONST_KTYPE key, VTYPE value);
+		void Remove(CONST_KTYPE key);
 		void RemoveAll();
-		V* Lookup(K key);
-		void SetAt(K key, V value);
-		V* operator[](K key);
-		void inOrder(TinyNode* node) const;
-		void inOrder() const;
+		void SetAt(CONST_KTYPE key, VTYPE value);
+		V& Lookup(CONST_KTYPE key);
+		const V& Lookup(CONST_KTYPE key) const;
+		V& operator[](CONST_KTYPE key);
+		const V& operator[](CONST_KTYPE key) const;
+		const K& GetKeyAt(ITERATOR pos) const;
+		const V& GetValueAt(ITERATOR pos) const;
+		ITERATOR Find(CONST_KTYPE key);
+		ITERATOR First() const;
+		ITERATOR Last() const;
+		ITERATOR Next(ITERATOR pos) const;
+		ITERATOR Prev(ITERATOR pos) const;
 	};
-	template<class K, class V>
-	TinyTreeMap<K, V>::TinyTreeMap(DWORD dwBlockSize)
+	template<class K, class V, class KTraits, class VTraits>
+	TinyTreeMap<K, V, KTraits, VTraits>::TinyTreeMap(DWORD dwBlockSize)
 		:m_pRoot(NULL),
 		m_pBlocks(NULL),
 		m_dwBlockSize(dwBlockSize),
@@ -520,13 +557,13 @@ namespace TinyUI
 	{
 
 	}
-	template<class K, class V>
-	TinyTreeMap<K, V>::~TinyTreeMap()
+	template<class K, class V, class KTraits, class VTraits>
+	TinyTreeMap<K, V, KTraits, VTraits>::~TinyTreeMap()
 	{
 		RemoveAll();
 	}
-	template<class K, class V>
-	void TinyTreeMap<K, V>::Remove(K key)
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyTreeMap<K, V, KTraits, VTraits>::Remove(CONST_KTYPE key)
 	{
 		TinyNode* node = Find(m_pRoot, key);
 		if (node != NULL)
@@ -534,21 +571,18 @@ namespace TinyUI
 			Remove(node);
 		}
 	}
-	template<class K, class V>
-	void TinyTreeMap<K, V>::RemoveAll()
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyTreeMap<K, V, KTraits, VTraits>::RemoveAll()
 	{
-		if (m_pRoot != NULL)
-		{
-			RemovePostOrder(m_pRoot);
-		}
+		RemovePostOrder(m_pRoot);
 		m_dwCount = 0;
 		m_pBlocks->Destory();
 		m_pBlocks = NULL;
 		m_pFree = NULL;
 		m_pRoot = NULL;
 	}
-	template<class K, class V>
-	V* TinyTreeMap<K, V>::Lookup(K key)
+	template<class K, class V, class KTraits, class VTraits>
+	V& TinyTreeMap<K, V, KTraits, VTraits>::Lookup(CONST_KTYPE key)
 	{
 		TinyNode* node = Find(m_pRoot, key);
 		if (node != NULL)
@@ -556,8 +590,8 @@ namespace TinyUI
 			return node->value_;
 		}
 	}
-	template<class K, class V>
-	V* TinyTreeMap<K, V>::operator[](K key)
+	template<class K, class V, class KTraits, class VTraits>
+	const V& TinyTreeMap<K, V, KTraits, VTraits>::Lookup(CONST_KTYPE key) const
 	{
 		TinyNode* node = Find(m_pRoot, key);
 		if (node != NULL)
@@ -565,8 +599,26 @@ namespace TinyUI
 			return node->value_;
 		}
 	}
-	template<class K, class V>
-	void TinyTreeMap<K, V>::SetAt(K key, V value)
+	template<class K, class V, class KTraits, class VTraits>
+	V& TinyTreeMap<K, V, KTraits, VTraits>::operator[](CONST_KTYPE key)
+	{
+		TinyNode* node = Find(m_pRoot, key);
+		if (node != NULL)
+		{
+			return node->value_;
+		}
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	const V& TinyTreeMap<K, V, KTraits, VTraits>::operator[](CONST_KTYPE key) const
+	{
+		TinyNode* node = Find(m_pRoot, key);
+		if (node != NULL)
+		{
+			return node->value_;
+		}
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyTreeMap<K, V, KTraits, VTraits>::SetAt(CONST_KTYPE key, VTYPE value)
 	{
 		TinyNode* node = Find(m_pRoot, key);
 		if (node != NULL)
@@ -574,8 +626,8 @@ namespace TinyUI
 			node->value_ = value;
 		}
 	}
-	template<class K, class V>
-	typename TinyTreeMap<K, V>::TinyNode* TinyTreeMap<K, V>::NewNode(K key, V value)
+	template<class K, class V, class KTraits, class VTraits>
+	typename TinyTreeMap<K, V, KTraits, VTraits>::TinyNode* TinyTreeMap<K, V, KTraits, VTraits>::NewNode(CONST_KTYPE key, VTYPE value)
 	{
 		if (m_pFree == NULL)
 		{
@@ -585,40 +637,57 @@ namespace TinyUI
 			pNode += m_dwBlockSize - 1;
 			for (INT_PTR iBlock = m_dwBlockSize - 1; iBlock >= 0; iBlock--)
 			{
-				pNode->m_pFreeNode = m_pFree;
+				pNode->m_pFree = m_pFree;
 				m_pFree = pNode;
 				pNode--;
 			}
 		}
-		TinyNode* pNewNode = m_pFree;
-		::new(pNewNode)TinyNode(key, value);
-		m_pFree = m_pFree->m_pFreeNode;
+		TinyNode* pNew = m_pFree;
+		::new(pNew)TinyNode(key, value);
+		m_pFree = m_pFree->m_pFree;
 		m_dwCount++;
-		return pNewNode;
+		return pNew;
 	}
-	template<class K, class V>
-	void TinyTreeMap<K, V>::FreeNode(TinyNode* pNode)
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyTreeMap<K, V, KTraits, VTraits>::FreeNode(TinyNode* pNode)
 	{
 		pNode->~TinyNode();
-		pNode->m_pFreeNode = m_pFree;
+		pNode->m_pFree = m_pFree;
 		m_pFree = pNode;
 		m_dwCount--;
 	}
-	template<class K, class V>
-	DWORD TinyTreeMap<K, V>::GetCount() const
+	template<class K, class V, class KTraits, class VTraits>
+	DWORD TinyTreeMap<K, V, KTraits, VTraits>::GetCount() const
 	{
 		return m_dwCount;
 	}
-	template<class K, class V>
-	void TinyTreeMap<K, V>::Add(K key, V value)
+	template<class K, class V, class KTraits, class VTraits>
+	BOOL TinyTreeMap<K, V, KTraits, VTraits>::IsEmpty() const
 	{
-		TinyNode* pNew = NewNode(key, value);
+		return m_dwCount == 0;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyTreeMap<K, V, KTraits, VTraits>::Add(CONST_KTYPE key, VTYPE value)
+	{
+		TinyNode* pNode = Find(m_pRoot, key);
+		if (pNode == NULL)
+		{
+			TinyNode* pNew = NewNode(key, value);
+			if (pNew != NULL)
+			{
+				Add(pNew);
+			}
+		}
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyTreeMap<K, V, KTraits, VTraits>::Add(TinyNode* pNew)
+	{
 		TinyNode* pX = this->m_pRoot;
 		TinyNode* pY = NULL;
 		while (pX != NULL)
 		{
 			pY = pX;
-			if (key <= pX->m_key)
+			if (KTraits::Compare(pNew->m_key, pX->m_key) <= 0)
 				pX = pX->m_pLeft;
 			else
 				pX = pX->m_pRight;
@@ -628,7 +697,7 @@ namespace TinyUI
 		{
 			m_pRoot = pNew;
 		}
-		else if (key <= pY->m_key)
+		else if (KTraits::Compare(pNew->m_key, pY->m_key) <= 0)
 		{
 			pY->m_pLeft = pNew;
 		}
@@ -639,76 +708,76 @@ namespace TinyUI
 		pNew->m_bColor = TRUE;
 		AddFixup(pNew);
 	}
-	template<class K, class V>
-	void TinyTreeMap<K, V>::AddFixup(TinyNode* pNode)
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyTreeMap<K, V, KTraits, VTraits>::AddFixup(TinyNode* pNode)
 	{
 		TinyNode *pParent = NULL;
-		TinyNode *pGrandpa = NULL;
+		TinyNode *pGparent = NULL;
 		while ((pParent = pNode->m_pParent) && pParent->m_bColor)
 		{
-			pGrandpa = pParent->m_pParent;
-			if (pParent == pGrandpa->m_pLeft)
+			pGparent = pParent->m_pParent;
+			if (pParent == pGparent->m_pLeft)
 			{
-				TinyNode *pUncle = pGrandpa->m_pRight;
+				register TinyNode *pUncle = pGparent->m_pRight;
 				if (pUncle && pUncle->m_bColor)
 				{
 					pUncle->m_bColor = FALSE;
 					pParent->m_bColor = FALSE;
-					pGrandpa->m_bColor = TRUE;
-					pNode = pGrandpa;
+					pGparent->m_bColor = TRUE;
+					pNode = pGparent;
 					continue;
 				}
 				if (pParent->m_pRight == pNode)
 				{
-					TinyNode *pTemp = NULL;
+					register TinyNode *pTemp = NULL;
 					RotateL(pParent);
 					pTemp = pParent;
 					pParent = pNode;
 					pNode = pTemp;
 				}
 				pParent->m_bColor = FALSE;
-				pGrandpa->m_bColor = TRUE;
-				RotateR(pGrandpa);
+				pGparent->m_bColor = TRUE;
+				RotateR(pGparent);
 			}
 			else
 			{
-				TinyNode *pUncle = pGrandpa->m_pLeft;
+				register TinyNode *pUncle = pGparent->m_pLeft;
 				if (pUncle && pUncle->m_bColor)
 				{
 					pUncle->m_bColor = FALSE;
 					pParent->m_bColor = FALSE;
-					pGrandpa->m_bColor = TRUE;
-					pNode = pGrandpa;
+					pGparent->m_bColor = TRUE;
+					pNode = pGparent;
 					continue;
 				}
 				if (pParent->m_pLeft == pNode)
 				{
-					TinyNode *ps = NULL;
+					register TinyNode *ps = NULL;
 					RotateR(pParent);
 					ps = pParent;
 					pParent = pNode;
 					pNode = ps;
 				}
 				pParent->m_bColor = FALSE;
-				pGrandpa->m_bColor = TRUE;
-				RotateL(pGrandpa);
+				pGparent->m_bColor = TRUE;
+				RotateL(pGparent);
 			}
 		}
 		m_pRoot->m_bColor = FALSE;
 	}
-	template<class K, class V>
-	void TinyTreeMap<K, V>::Remove(TinyNode* pNode)
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyTreeMap<K, V, KTraits, VTraits>::Remove(TinyNode* pNode)
 	{
-		TinyNode *pX = NULL;
-		TinyNode *pY = NULL;
+		TinyNode *pChild = NULL;
+		TinyNode *pParent = NULL;
 		BOOL bColor = FALSE;
 		if (!pNode->m_pLeft)
 		{
-			pX = pNode->m_pRight;
+			pChild = pNode->m_pRight;
 		}
 		else if (!pNode->m_pRight)
 		{
-			pX = pNode->m_pLeft;
+			pChild = pNode->m_pLeft;
 		}
 		else
 		{
@@ -730,20 +799,20 @@ namespace TinyUI
 			{
 				m_pRoot = pNode;
 			}
-			pX = pNode->m_pRight;
-			pY = pNode->m_pParent;
+			pChild = pNode->m_pRight;
+			pParent = pNode->m_pParent;
 			bColor = pNode->m_bColor;
-			if (pY == pOld)
+			if (pParent == pOld)
 			{
-				pY = pNode;
+				pParent = pNode;
 			}
 			else
 			{
-				if (pX != NULL)
+				if (pChild != NULL)
 				{
-					pX->m_pParent = pY;
+					pChild->m_pParent = pParent;
 				}
-				pY->m_pLeft = pX;
+				pParent->m_pLeft = pChild;
 				pNode->m_pRight = pOld->m_pRight;
 				pOld->m_pRight->m_pParent = pNode;
 			}
@@ -751,36 +820,35 @@ namespace TinyUI
 			pNode->m_bColor = pOld->m_bColor;
 			pNode->m_pLeft = pOld->m_pLeft;
 			pOld->m_pLeft->m_pParent = pNode;
-			goto bColor;
+			goto LABEL;
 		}
 
-		pY = pNode->m_pParent;
+		pParent = pNode->m_pParent;
 		bColor = pNode->m_bColor;
-		if (pX != NULL)
+		if (pChild != NULL)
 		{
-			pX->m_pParent = pY;
+			pChild->m_pParent = pParent;
 		}
-		if (pY != NULL)
+		if (pParent != NULL)
 		{
-			if (pY->m_pLeft == pNode)
-				pY->m_pLeft = pX;
+			if (pParent->m_pLeft == pNode)
+				pParent->m_pLeft = pChild;
 			else
-				pY->m_pRight = pX;
+				pParent->m_pRight = pChild;
 		}
 		else
 		{
-			m_pRoot = pX;
+			m_pRoot = pChild;
 		}
-	bColor:
+	LABEL:
 		if (bColor == FALSE)
 		{
-			RemoveFixup(pX, pY);
+			RemoveFixup(pChild, pParent);
 		}
-
 		FreeNode(pNode);
 	}
-	template<class K, class V>
-	void TinyTreeMap<K, V>::RemoveFixup(TinyNode* pNode, TinyNode* pParent)
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyTreeMap<K, V, KTraits, VTraits>::RemoveFixup(TinyNode* pNode, TinyNode* pParent)
 	{
 		TinyNode *pOther = NULL;
 		while ((!pNode || !pNode->m_bColor) && pNode != m_pRoot)
@@ -859,12 +927,12 @@ namespace TinyUI
 			pNode->m_bColor = FALSE;
 		}
 	};
-	template<class K, class V>
-	typename TinyTreeMap<K, V>::TinyNode* TinyTreeMap<K, V>::Find(TinyNode* pNode, K key)
+	template<class K, class V, class KTraits, class VTraits>
+	typename TinyTreeMap<K, V, KTraits, VTraits>::TinyNode* TinyTreeMap<K, V, KTraits, VTraits>::Find(TinyNode* pNode, CONST_KTYPE key)
 	{
-		while (pNode != NULL &&  pNode->m_key != key)
+		while (pNode != NULL && KTraits::Compare(key, pNode->m_key) != 0)
 		{
-			if (key < pNode->m_key)
+			if (KTraits::Compare(key, pNode->m_key) < 0)
 			{
 				pNode = pNode->m_pLeft;
 			}
@@ -875,8 +943,8 @@ namespace TinyUI
 		}
 		return pNode;
 	};
-	template<class K, class V>
-	void TinyTreeMap<K, V>::RotateL(TinyNode* pNode)
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyTreeMap<K, V, KTraits, VTraits>::RotateL(TinyNode* pNode)
 	{
 		TinyNode* pRight = pNode->m_pRight;
 		TinyNode* pParent = pNode->m_pParent;
@@ -886,7 +954,7 @@ namespace TinyUI
 		}
 		pRight->m_pLeft = pNode;
 		pRight->m_pParent = pParent;
-		if (pParent)
+		if (pParent != NULL)
 		{
 			if (pNode == pParent->m_pLeft)
 				pParent->m_pLeft = pRight;
@@ -899,8 +967,8 @@ namespace TinyUI
 		}
 		pNode->m_pParent = pRight;
 	}
-	template<class K, class V>
-	void TinyTreeMap<K, V>::RotateR(TinyNode* pNode)
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyTreeMap<K, V, KTraits, VTraits>::RotateR(TinyNode* pNode)
 	{
 		TinyNode *pLeft = pNode->m_pLeft;
 		TinyNode *pParent = pNode->m_pParent;
@@ -910,7 +978,7 @@ namespace TinyUI
 		}
 		pLeft->m_pRight = pNode;
 		pLeft->m_pParent = pParent;
-		if (pParent)
+		if (pParent != NULL)
 		{
 			if (pNode == pParent->m_pRight)
 				pParent->m_pRight = pLeft;
@@ -923,27 +991,89 @@ namespace TinyUI
 		}
 		pNode->m_pParent = pLeft;
 	}
-	template<class K, class V>
-	void TinyTreeMap<K, V>::RemovePostOrder(TinyNode* pNode)
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyTreeMap<K, V, KTraits, VTraits>::RemovePostOrder(TinyNode* pNode)
 	{
 		if (pNode == NULL) return;
 		RemovePostOrder(pNode->m_pLeft);
 		RemovePostOrder(pNode->m_pRight);
 		FreeNode(pNode);
 	}
-	template<class K, class V>
-	void TinyTreeMap<K, V>::inOrder(TinyNode* node) const
+	template<class K, class V, class KTraits, class VTraits>
+	ITERATOR TinyTreeMap<K, V, KTraits, VTraits>::Find(CONST_KTYPE key)
 	{
-		if (node != NULL)
-		{
-			inOrder(node->m_pLeft);
-			TRACE("node key:%d,value:%d\n", node->m_key, node->m_value);
-			inOrder(node->m_pRight);
-		}
+		return static_cast<ITERATOR>(Find(m_pRoot, key));
 	}
-	template<class K, class V>
-	void TinyTreeMap<K, V>::inOrder() const
+	template<class K, class V, class KTraits, class VTraits>
+	const K& TinyTreeMap<K, V, KTraits, VTraits>::GetKeyAt(ITERATOR pos) const
 	{
-		inOrder(m_pRoot);
+		ASSERT(pos);
+		TinyNode* pNode = static_cast <TinyNode*>(pos);
+		return pNode->m_key;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	const V& TinyTreeMap<K, V, KTraits, VTraits>::GetValueAt(ITERATOR pos) const
+	{
+		ASSERT(pos);
+		TinyNode* pNode = static_cast <TinyNode*>(pos);
+		return pNode->m_value;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	ITERATOR TinyTreeMap<K, V, KTraits, VTraits>::First() const
+	{
+		TinyNode* pNode = NULL;
+		pNode = m_pRoot;
+		if (!pNode)
+			return NULL;
+		while (pNode->m_pLeft != NULL)
+			pNode = pNode->m_pLeft;
+		return pNode;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	ITERATOR TinyTreeMap<K, V, KTraits, VTraits>::Last() const
+	{
+		TinyNode* pNode = NULL;
+		pNode = m_pRoot;
+		if (!pNode)
+			return NULL;
+		while (pNode->m_pRight != NULL)
+			pNode = pNode->m_pRight;
+		return pNode;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	ITERATOR TinyTreeMap<K, V, KTraits, VTraits>::Next(ITERATOR pos) const
+	{
+		TinyNode* pNode = static_cast<TinyNode*>(pos);
+		if (pNode->m_pParent == pNode)
+			return NULL;
+		if (pNode->m_pRight != NULL)
+		{
+			pNode = pNode->m_pRight;
+			while (pNode->m_pLeft != NULL)
+				pNode = pNode->m_pLeft;
+			return pNode;
+		}
+		TinyNode* pParent = NULL;
+		while ((pParent = pNode->m_pParent) && pNode == pParent->m_pRight)
+			pNode = pParent;
+		return pParent;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	ITERATOR TinyTreeMap<K, V, KTraits, VTraits>::Prev(ITERATOR pos) const
+	{
+		TinyNode* pNode = static_cast<TinyNode*>(pos);
+		if (pNode->m_pParent == pNode)
+			return NULL;
+		if (pNode->m_pLeft != NULL)
+		{
+			pNode = pNode->m_pLeft;
+			while (pNode->m_pRight != NULL)
+				pNode = pNode->m_pRight;
+			return pNode;
+		}
+		TinyNode* pParent = NULL;
+		while ((pParent = pNode->m_pParent) && pNode == pParent->m_pLeft)
+			pNode = pParent;
+		return pParent;
 	}
 }

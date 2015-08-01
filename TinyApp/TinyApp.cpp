@@ -26,26 +26,51 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	/*WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);*/
-	
-	
-	srand(1000000);
+
+
+	srand(1000);
 	TinyTreeMap<INT, INT> map(10);
 	DWORD dwTime = GetTickCount();
-	for (INT i = 0; i < 1000000; i++)
+	int rand1 = 0;
+	int rand2 = 0;
+	for (INT i = 0; i < 1000; i++)
 	{
-		map.Add(rand(), rand());
+		rand1 = rand();
+		rand2 = rand();
+		//TRACE("rand1:%d,rand2:%d\n", rand1, rand2);
+		map.Add(rand1, rand2);
+		//map.inOrder();
 	}
-	DWORD dwTime1 = GetTickCount();
+	ITERATOR pos = NULL;
+	for (pos = map.First(); pos != NULL; pos = map.Next(pos))
+	{
+		int a = map.GetKeyAt(pos);
+		int b = map.GetValueAt(pos);
+		TRACE("Key:%d,Value:%d\n", a, b);
+	}
+	/*DWORD dwTime1 = GetTickCount();
 	TRACE("TinyTreeMap秒数: %d\n", (dwTime1 - dwTime) / 1000);
+
+	dwTime = GetTickCount();
+	map.RemoveAll();
+	dwTime1 = GetTickCount();
+	TRACE("TinyTreeMap RemoveAll秒数: %d\n", (dwTime1 - dwTime) / 1000);
 
 	std::map<INT, INT> maps;
 	dwTime = GetTickCount();
 	for (INT i = 0; i < 1000000; i++)
 	{
-		maps.insert(make_pair(rand(), rand()));
+	maps.insert(make_pair(rand(), rand()));
 	}
 	dwTime1 = GetTickCount();
 	TRACE("std::map秒数: %d\n", (dwTime1 - dwTime) / 1000);
+
+	dwTime = GetTickCount();
+	maps.erase(maps.begin(), maps.end());
+	dwTime1 = GetTickCount();
+	TRACE("std::map clear秒数: %d\n", (dwTime1 - dwTime) / 1000);*/
+	//map.inOrder();
+
 	/*INT abc[10] = { 11, 2, 13, 14, 25, 36, 17, 98, 49, 10 };
 	INT abc1[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 	INT abc3 = 100;
@@ -53,7 +78,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	srand(1000);
 	for (INT i = 0; i < 1000; i++)
 	{
-		map.Add(rand(), rand());
+	map.Add(rand(), rand());
 	}
 	map.inOrder();*/
 	//map1.Add(abc[0], abc1[0]);
@@ -68,8 +93,6 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	//map.Add(abc[7], abc1[7]);
 	//map.Add(abc[8], abc1[8]);
 	//map.SetValue(abc[2], abc3);
-	
-
 	HRESULT hRes = OleInitialize(NULL);
 
 	::DefWindowProc(NULL, 0, 0, 0L);
