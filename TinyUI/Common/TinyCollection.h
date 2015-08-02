@@ -474,7 +474,7 @@ namespace TinyUI
 		}
 	};
 	/// <summary>
-	/// TreeMap结构红黑树实现
+	/// TreeMap红黑树实现
 	/// </summary>
 	template<class K, class V, class KTraits = DefaultTraits< K >, class VTraits = DefaultTraits< V >>
 	class TinyTreeMap
@@ -535,10 +535,10 @@ namespace TinyUI
 		void Remove(CONST_KTYPE key);
 		void RemoveAll();
 		void SetAt(CONST_KTYPE key, VTYPE value);
-		V& Lookup(CONST_KTYPE key);
-		const V& Lookup(CONST_KTYPE key) const;
-		V& operator[](CONST_KTYPE key);
-		const V& operator[](CONST_KTYPE key) const;
+		V* Lookup(CONST_KTYPE key);
+		const V* Lookup(CONST_KTYPE key) const;
+		V* operator[](CONST_KTYPE key);
+		const V* operator[](CONST_KTYPE key) const;
 		const K& GetKeyAt(ITERATOR pos) const;
 		const V& GetValueAt(ITERATOR pos) const;
 		ITERATOR Find(CONST_KTYPE key);
@@ -576,46 +576,53 @@ namespace TinyUI
 	{
 		RemovePostOrder(m_pRoot);
 		m_dwCount = 0;
-		m_pBlocks->Destory();
-		m_pBlocks = NULL;
+		if (m_pBlocks != NULL)
+		{
+			m_pBlocks->Destory();
+			m_pBlocks = NULL;
+		}
 		m_pFree = NULL;
 		m_pRoot = NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	V& TinyTreeMap<K, V, KTraits, VTraits>::Lookup(CONST_KTYPE key)
+	V* TinyTreeMap<K, V, KTraits, VTraits>::Lookup(CONST_KTYPE key)
 	{
 		TinyNode* node = Find(m_pRoot, key);
 		if (node != NULL)
 		{
-			return node->value_;
+			return &(node->m_value);
 		}
+		return NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	const V& TinyTreeMap<K, V, KTraits, VTraits>::Lookup(CONST_KTYPE key) const
+	const V* TinyTreeMap<K, V, KTraits, VTraits>::Lookup(CONST_KTYPE key) const
 	{
 		TinyNode* node = Find(m_pRoot, key);
 		if (node != NULL)
 		{
-			return node->value_;
+			return &(node->m_value);
 		}
+		return NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	V& TinyTreeMap<K, V, KTraits, VTraits>::operator[](CONST_KTYPE key)
+	V* TinyTreeMap<K, V, KTraits, VTraits>::operator[](CONST_KTYPE key)
 	{
 		TinyNode* node = Find(m_pRoot, key);
 		if (node != NULL)
 		{
-			return node->value_;
+			return &(node->m_value);
 		}
+		return NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	const V& TinyTreeMap<K, V, KTraits, VTraits>::operator[](CONST_KTYPE key) const
+	const V* TinyTreeMap<K, V, KTraits, VTraits>::operator[](CONST_KTYPE key) const
 	{
 		TinyNode* node = Find(m_pRoot, key);
 		if (node != NULL)
 		{
-			return node->value_;
+			return &(node->m_value);
 		}
+		return NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyTreeMap<K, V, KTraits, VTraits>::SetAt(CONST_KTYPE key, VTYPE value)
@@ -623,7 +630,7 @@ namespace TinyUI
 		TinyNode* node = Find(m_pRoot, key);
 		if (node != NULL)
 		{
-			node->value_ = value;
+			node->m_value = value;
 		}
 	}
 	template<class K, class V, class KTraits, class VTraits>
@@ -1075,5 +1082,65 @@ namespace TinyUI
 		while ((pParent = pNode->m_pParent) && pNode == pParent->m_pLeft)
 			pNode = pParent;
 		return pParent;
+	}
+	/// <summary>
+	/// HashMap实现
+	/// </summary>
+	template<class K, class V, class KTraits = DefaultTraits< K >, class VTraits = DefaultTraits< V >>
+	class TinyHashMap
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyHashMap)
+	protected:
+		typedef typename KTraits::CONST_ARGTYPE	CONST_KTYPE;
+		typedef typename KTraits::ARGTYPE		KTYPE;
+		typedef typename VTraits::CONST_ARGTYPE	CONST_VTYPE;
+		typedef typename VTraits::ARGTYPE		VTYPE;
+	protected:
+		class TinyHashNode :public __ITERATOR
+		{
+			DISALLOW_COPY_AND_ASSIGN(TinyHashNode)
+		public:
+			const K		m_key;
+			V			m_value;
+		public:
+			TinyHashNode(CONST_KTYPE key, VTYPE value)
+				: m_key(key),
+				m_value(value)
+			{
+			}
+		};
+	protected:
+		TinyPlex*	m_pBlocks;
+		DWORD		m_dwBlockSize;
+		DWORD		m_dwCount;
+	public:
+		explicit TinyHashMap(DWORD dwBlockSize = 10);
+		~TinyHashMap();
+		void RemoveAll();
+	};
+	template<class K, class V, class KTraits, class VTraits>
+	TinyHashMap<K, V, KTraits, VTraits>::TinyHashMap(DWORD dwBlockSize)
+		:m_dwBlockSize(dwBlockSize),
+		m_dwCount(0),
+		m_pBlocks(NULL)
+	{
+
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	TinyHashMap<K, V, KTraits, VTraits>::~TinyHashMap()
+	{
+
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	void TinyHashMap<K, V, KTraits, VTraits>::RemoveAll()
+	{
+		m_dwCount = 0;
+		if (m_pBlocks != NULL)
+		{
+			m_pBlocks->Destory();
+			m_pBlocks = NULL;
+		}
+		m_pFree = NULL;
+		m_pRoot = NULL;
 	}
 }

@@ -35,8 +35,8 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	int rand2 = 0;
 	for (INT i = 0; i < 1000; i++)
 	{
-		rand1 = rand();
-		rand2 = rand();
+		rand1 = i;
+		rand2 = i;
 		//TRACE("rand1:%d,rand2:%d\n", rand1, rand2);
 		map.Add(rand1, rand2);
 		//map.inOrder();
@@ -48,6 +48,9 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 		int b = map.GetValueAt(pos);
 		TRACE("Key:%d,Value:%d\n", a, b);
 	}
+	int a = 10;
+	int* b = map.Lookup(a);
+	TRACE("%d\n", *b);
 	/*DWORD dwTime1 = GetTickCount();
 	TRACE("TinyTreeMapÃëÊý: %d\n", (dwTime1 - dwTime) / 1000);
 
