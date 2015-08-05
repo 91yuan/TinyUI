@@ -1,5 +1,6 @@
 #pragma once
 #include "TinyCommon.h"
+#include <math.h>
 
 namespace TinyUI
 {
@@ -576,11 +577,8 @@ namespace TinyUI
 	{
 		RemovePostOrder(m_pRoot);
 		m_dwCount = 0;
-		if (m_pBlocks != NULL)
-		{
-			m_pBlocks->Destory();
-			m_pBlocks = NULL;
-		}
+		m_pBlocks->Destory();
+		m_pBlocks = NULL;
 		m_pFree = NULL;
 		m_pRoot = NULL;
 	}
@@ -1084,6 +1082,27 @@ namespace TinyUI
 		return pParent;
 	}
 	/// <summary>
+	/// Prime¿‡
+	/// </summary>
+	INT primes[] = {
+		3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 293, 353, 431, 521, 631, 761, 919,
+		1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 5839, 7013, 8419, 10103, 12143, 14591,
+		17519, 21023, 25229, 30293, 36353, 43627, 52361, 62851, 75431, 90523, 108631, 130363, 156437,
+		187751, 225307, 270371, 324449, 389357, 467237, 560689, 672827, 807403, 968897, 1162687, 1395263,
+		1674319, 2009191, 2411033, 2893249, 3471899, 4166287, 4999559, 5999471, 7199369 };
+	class TinyPrime
+	{
+	public:
+		static const INT MaxValue = 0x7FFFFFFF;
+		static const INT HashPrime = 101;
+		static const int MaxPrimeArrayLength = 0x7FEFFFFD;
+	public:
+		static BOOL IsPrime(INT candidate);
+		static INT GetPrime(INT min);
+		static INT GetMinPrime();
+		static INT ExpandPrime(INT oldSize);
+	};
+	/// <summary>
 	/// HashMap µœ÷
 	/// </summary>
 	template<class K, class V, class KTraits = DefaultTraits< K >, class VTraits = DefaultTraits< V >>
@@ -1100,12 +1119,15 @@ namespace TinyUI
 		{
 			DISALLOW_COPY_AND_ASSIGN(TinyHashNode)
 		public:
-			const K		m_key;
-			V			m_value;
+			const K			m_key;
+			V				m_value;
+			INT				m_hashCode;
+			INT				m_nextIndex;
 		public:
 			TinyHashNode(CONST_KTYPE key, VTYPE value)
 				: m_key(key),
-				m_value(value)
+				m_value(value),
+				m_pNext(NULL)
 			{
 			}
 		};
@@ -1113,6 +1135,8 @@ namespace TinyUI
 		TinyPlex*	m_pBlocks;
 		DWORD		m_dwBlockSize;
 		DWORD		m_dwCount;
+	protected:
+
 	public:
 		explicit TinyHashMap(DWORD dwBlockSize = 10);
 		~TinyHashMap();
@@ -1129,17 +1153,14 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	TinyHashMap<K, V, KTraits, VTraits>::~TinyHashMap()
 	{
-
+		RemoveAll();
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyHashMap<K, V, KTraits, VTraits>::RemoveAll()
 	{
 		m_dwCount = 0;
-		if (m_pBlocks != NULL)
-		{
-			m_pBlocks->Destory();
-			m_pBlocks = NULL;
-		}
+		m_pBlocks->Destory();
+		m_pBlocks = NULL;
 		m_pFree = NULL;
 		m_pRoot = NULL;
 	}

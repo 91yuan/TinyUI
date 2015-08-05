@@ -28,29 +28,29 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSAStartup(MAKEWORD(2, 2), &wsd);*/
 
 
-	srand(1000);
-	TinyTreeMap<INT, INT> map(10);
-	DWORD dwTime = GetTickCount();
-	int rand1 = 0;
-	int rand2 = 0;
-	for (INT i = 0; i < 1000; i++)
-	{
-		rand1 = i;
-		rand2 = i;
-		//TRACE("rand1:%d,rand2:%d\n", rand1, rand2);
-		map.Add(rand1, rand2);
-		//map.inOrder();
-	}
-	ITERATOR pos = NULL;
+	//srand(1000);
+	//TinyTreeMap<INT, INT> map(1000000);
+	//DWORD dwTime = GetTickCount();
+	//int rand1 = 0;
+	//int rand2 = 0;
+	//for (INT i = 0; i < 1000000; i++)
+	//{
+	//	rand1 = i;
+	//	rand2 = i;
+	//	//TRACE("rand1:%d,rand2:%d\n", rand1, rand2);
+	//	map.Add(rand1, rand2);
+	//	//map.inOrder();
+	//}
+	/*ITERATOR pos = NULL;
 	for (pos = map.First(); pos != NULL; pos = map.Next(pos))
 	{
-		int a = map.GetKeyAt(pos);
-		int b = map.GetValueAt(pos);
-		TRACE("Key:%d,Value:%d\n", a, b);
+	int a = map.GetKeyAt(pos);
+	int b = map.GetValueAt(pos);
+	TRACE("Key:%d,Value:%d\n", a, b);
 	}
 	int a = 10;
 	int* b = map.Lookup(a);
-	TRACE("%d\n", *b);
+	TRACE("%d\n", *b);*/
 	/*DWORD dwTime1 = GetTickCount();
 	TRACE("TinyTreeMapÃëÊý: %d\n", (dwTime1 - dwTime) / 1000);
 
