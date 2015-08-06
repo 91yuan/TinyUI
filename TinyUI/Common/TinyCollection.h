@@ -481,7 +481,7 @@ namespace TinyUI
 	class TinyTreeMap
 	{
 		DISALLOW_COPY_AND_ASSIGN(TinyTreeMap)
-	protected:
+	public:
 		typedef typename KTraits::CONST_ARGTYPE	CONST_KTYPE;
 		typedef typename KTraits::ARGTYPE		KTYPE;
 		typedef typename VTraits::CONST_ARGTYPE	CONST_VTYPE;
@@ -734,11 +734,11 @@ namespace TinyUI
 				}
 				if (pParent->m_pRight == pNode)
 				{
-					register TinyNode *pTemp = NULL;
+					register TinyNode *ps = NULL;
 					RotateL(pParent);
-					pTemp = pParent;
+					ps = pParent;
 					pParent = pNode;
-					pNode = pTemp;
+					pNode = ps;
 				}
 				pParent->m_bColor = FALSE;
 				pGparent->m_bColor = TRUE;
@@ -1082,86 +1082,180 @@ namespace TinyUI
 		return pParent;
 	}
 	/// <summary>
+	/// 双向链表
+	/// </summary>
+	template<class V, class VTraits = DefaultTraits<V> >
+	class TinyLinkList
+	{
+		DISALLOW_COPY_AND_ASSIGN(TinyLinkList)
+	public:
+		typedef typename VTraits::CONST_ARGTYPE CONST_VTYPE;
+		typedef typename VTraits::ARGTYPE		VTYPE;
+	protected:
+		class TinyNode : public __ITERATOR
+		{
+		public:
+			V			m_value;
+			TinyNode*	m_pNext;
+			TinyNode*	m_pPrev;
+		public:
+			TinyNode(CONST_VTYPE value)
+				:m_value(value),
+				m_pNext(NULL),
+				m_pPrev(NULL)
+			{
+
+			}
+		};
+	public:
+		TinyLinkList(DWORD dwBlockSize);
+		~TinyLinkList();
+		DWORD GetCount() const;
+		BOOL IsEmpty() const;
+	protected:
+		typename TinyLinkList<V, VTraits>::TinyNode* NewNode(TinyNode* pPrev, TinyNode* pNext, CONST_VTYPE value);
+		void FreeNode(TinyNode* pNode);
+	protected:
+		TinyPlex*	m_pBlocks;
+		DWORD		m_dwCount;
+		DWORD		m_dwBlockSize;
+		TinyNode*	m_pFree;
+		TinyNode*	m_pFirst;
+		TinyNode*	m_pLast;
+	};
+	template<class V, class VTraits>
+	TinyLinkList<V, VTraits>::TinyLinkList(DWORD dwBlockSize)
+		:m_dwBlockSize(dwBlockSize),
+		m_dwCount(0),
+		m_pBlocks(NULL),
+		m_pFree(NULL),
+		m_pFirst(NULL),
+		m_pLast(NULL)
+	{
+
+	}
+	template<class V, class VTraits>
+	typename TinyLinkList<V, VTraits>::TinyNode* TinyLinkList<V, VTraits>::NewNode(TinyNode* pPrev, TinyNode* pNext, CONST_VTYPE value)
+	{
+		if (m_pFree == NULL)
+		{
+			TinyPlex* pPlex = TinyPlex::Create(m_pBlocks, m_dwBlockSize, sizeof(TinyNode));
+			if (pPlex == NULL) return NULL;
+			TinyNode* pNode = static_cast<TinyNode*>(pPlex->data());
+			pNode += m_dwBlockSize - 1;
+			for (INT_PTR iBlock = m_dwBlockSize - 1; iBlock >= 0; iBlock--)
+			{
+				pNode->m_pFree = m_pFree;
+				m_pFree = pNode;
+				pNode--;
+			}
+		}
+		TinyNode* pNewNode = m_pFree;
+		TinyNode* pNextFree = m_pFree->m_pNext;
+		::new(pNewNode)TinyNode(value);
+		m_pFree = pNextFree;
+		pNewNode->m_pPrev = pPrev;
+		pNewNode->m_pNext = pNext;
+		m_dwCount++;
+		return(pNewNode);
+	}
+	template<class V, class VTraits>
+	void TinyLinkList<V, VTraits>::FreeNode(TinyNode* pNode)
+	{
+
+	}
+	template<class V, class VTraits>
+	DWORD TinyLinkList<V, VTraits>::GetCount() const
+	{
+		return m_dwCount;
+	}
+	template<class V, class VTraits>
+	BOOL TinyLinkList<V, VTraits>::IsEmpty() const
+	{
+		return m_dwCount == 0;
+	}
+
+	/// <summary>
 	/// Prime类
 	/// </summary>
-	INT primes[] = {
+	/*INT primes[] = {
 		3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 293, 353, 431, 521, 631, 761, 919,
 		1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 5839, 7013, 8419, 10103, 12143, 14591,
 		17519, 21023, 25229, 30293, 36353, 43627, 52361, 62851, 75431, 90523, 108631, 130363, 156437,
 		187751, 225307, 270371, 324449, 389357, 467237, 560689, 672827, 807403, 968897, 1162687, 1395263,
 		1674319, 2009191, 2411033, 2893249, 3471899, 4166287, 4999559, 5999471, 7199369 };
-	class TinyPrime
-	{
-	public:
+		class TinyPrime
+		{
+		public:
 		static const INT MaxValue = 0x7FFFFFFF;
 		static const INT HashPrime = 101;
 		static const int MaxPrimeArrayLength = 0x7FEFFFFD;
-	public:
+		public:
 		static BOOL IsPrime(INT candidate);
 		static INT GetPrime(INT min);
 		static INT GetMinPrime();
 		static INT ExpandPrime(INT oldSize);
-	};
-	/// <summary>
-	/// HashMap实现
-	/// </summary>
-	template<class K, class V, class KTraits = DefaultTraits< K >, class VTraits = DefaultTraits< V >>
-	class TinyHashMap
-	{
+		};
+		/// <summary>
+		/// HashMap实现
+		/// </summary>
+		template<class K, class V, class KTraits = DefaultTraits< K >, class VTraits = DefaultTraits< V >>
+		class TinyHashMap
+		{
 		DISALLOW_COPY_AND_ASSIGN(TinyHashMap)
-	protected:
+		protected:
 		typedef typename KTraits::CONST_ARGTYPE	CONST_KTYPE;
 		typedef typename KTraits::ARGTYPE		KTYPE;
 		typedef typename VTraits::CONST_ARGTYPE	CONST_VTYPE;
 		typedef typename VTraits::ARGTYPE		VTYPE;
-	protected:
+		protected:
 		class TinyHashNode :public __ITERATOR
 		{
-			DISALLOW_COPY_AND_ASSIGN(TinyHashNode)
+		DISALLOW_COPY_AND_ASSIGN(TinyHashNode)
 		public:
-			const K			m_key;
-			V				m_value;
-			INT				m_hashCode;
-			INT				m_nextIndex;
+		const K			m_key;
+		V				m_value;
+		INT				m_hashCode;
+		INT				m_nextIndex;
 		public:
-			TinyHashNode(CONST_KTYPE key, VTYPE value)
-				: m_key(key),
-				m_value(value),
-				m_pNext(NULL)
-			{
-			}
+		TinyHashNode(CONST_KTYPE key, VTYPE value)
+		: m_key(key),
+		m_value(value),
+		m_pNext(NULL)
+		{
+		}
 		};
-	protected:
+		protected:
 		TinyPlex*	m_pBlocks;
 		DWORD		m_dwBlockSize;
 		DWORD		m_dwCount;
-	protected:
+		protected:
 
-	public:
+		public:
 		explicit TinyHashMap(DWORD dwBlockSize = 10);
 		~TinyHashMap();
 		void RemoveAll();
-	};
-	template<class K, class V, class KTraits, class VTraits>
-	TinyHashMap<K, V, KTraits, VTraits>::TinyHashMap(DWORD dwBlockSize)
+		};
+		template<class K, class V, class KTraits, class VTraits>
+		TinyHashMap<K, V, KTraits, VTraits>::TinyHashMap(DWORD dwBlockSize)
 		:m_dwBlockSize(dwBlockSize),
 		m_dwCount(0),
 		m_pBlocks(NULL)
-	{
+		{
 
-	}
-	template<class K, class V, class KTraits, class VTraits>
-	TinyHashMap<K, V, KTraits, VTraits>::~TinyHashMap()
-	{
+		}
+		template<class K, class V, class KTraits, class VTraits>
+		TinyHashMap<K, V, KTraits, VTraits>::~TinyHashMap()
+		{
 		RemoveAll();
-	}
-	template<class K, class V, class KTraits, class VTraits>
-	void TinyHashMap<K, V, KTraits, VTraits>::RemoveAll()
-	{
+		}
+		template<class K, class V, class KTraits, class VTraits>
+		void TinyHashMap<K, V, KTraits, VTraits>::RemoveAll()
+		{
 		m_dwCount = 0;
 		m_pBlocks->Destory();
 		m_pBlocks = NULL;
 		m_pFree = NULL;
 		m_pRoot = NULL;
-	}
+		}*/
 }
