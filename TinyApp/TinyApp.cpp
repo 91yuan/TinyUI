@@ -12,8 +12,33 @@
 #pragma comment(lib,"TinyUI.lib")
 using namespace TinyUI;
 
-
-
+class ListV
+{
+public:
+	ListV()
+	{
+		TRACE("ListV默认构造函数\n");
+	}
+	ListV(const ListV& other)
+	{
+		TRACE("ListV拷贝构造函数\n");
+	}
+	ListV& operator=(const ListV& other)
+	{
+		TRACE("ListV赋值构造函数\n");
+	}
+};
+template<>
+class DefaultTraits < ListV >
+{
+public:
+	typedef const ListV&	CONST_ARGTYPE;
+	typedef ListV&			ARGTYPE;
+	static INT  Compare(const ListV& element1, const ListV& element2)
+	{
+		return 0;
+	}
+};
 
 
 INT APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -26,8 +51,16 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
-	
+
 	HRESULT hRes = OleInitialize(NULL);
+
+	ListV listV1;
+
+	TinyLinkList<ListV> linkList;
+	linkList.AddFirst(listV1);
+
+	const ListV& abc = linkList.GetAt(linkList.Lookup(listV1, NULL));
+	TRACE("listV1:%d,abc:%d\n",&listV1,&abc);
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 

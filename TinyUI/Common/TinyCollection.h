@@ -1098,20 +1098,35 @@ namespace TinyUI
 			V			m_value;
 			TinyNode*	m_pNext;
 			TinyNode*	m_pPrev;
+			TinyNode*	m_pFree;
 		public:
 			TinyNode(CONST_VTYPE value)
 				:m_value(value),
 				m_pNext(NULL),
-				m_pPrev(NULL)
+				m_pPrev(NULL),
+				m_pFree(NULL)
 			{
 
 			}
 		};
 	public:
-		TinyLinkList(DWORD dwBlockSize);
+		TinyLinkList(DWORD dwBlockSize = 10);
 		~TinyLinkList();
 		DWORD GetCount() const;
 		BOOL IsEmpty() const;
+		ITERATOR AddFirst(CONST_VTYPE value);
+		ITERATOR AddLast(CONST_VTYPE value);
+		void RemoveFirst();
+		void RemoveLast();
+		ITERATOR InsertBefore(ITERATOR pos, CONST_VTYPE value);
+		ITERATOR InsertAfter(ITERATOR pos, CONST_VTYPE value);
+		ITERATOR Lookup(CONST_VTYPE value, ITERATOR posStartAfter) const;
+		ITERATOR First() const;
+		ITERATOR Last() const;
+		ITERATOR Next(ITERATOR pos) const;
+		ITERATOR Prev(ITERATOR pos) const;
+		const V& GetAt(ITERATOR pos) const;
+		void RemoveAll();
 	protected:
 		typename TinyLinkList<V, VTraits>::TinyNode* NewNode(TinyNode* pPrev, TinyNode* pNext, CONST_VTYPE value);
 		void FreeNode(TinyNode* pNode);
@@ -1133,6 +1148,32 @@ namespace TinyUI
 		m_pLast(NULL)
 	{
 
+	}
+	template<class V, class VTraits>
+	TinyLinkList<V, VTraits>::~TinyLinkList()
+	{
+		RemoveAll();
+	}
+	template<class V, class VTraits>
+	void TinyLinkList<V, VTraits>::RemoveAll()
+	{
+		while (m_dwCount > 0)
+		{
+			TinyNode* ps = m_pFirst;
+			if (ps != NULL)
+			{
+				FreeNode(ps);
+			}
+			m_pFirst = m_pFirst->m_pNext;
+		}
+		m_pFirst = NULL;
+		m_pLast = NULL;
+		m_pFree = NULL;
+		if (m_pBlocks != NULL)
+		{
+			m_pBlocks->Destory();
+			m_pBlocks = NULL;
+		}
 	}
 	template<class V, class VTraits>
 	typename TinyLinkList<V, VTraits>::TinyNode* TinyLinkList<V, VTraits>::NewNode(TinyNode* pPrev, TinyNode* pNext, CONST_VTYPE value)
@@ -1162,7 +1203,10 @@ namespace TinyUI
 	template<class V, class VTraits>
 	void TinyLinkList<V, VTraits>::FreeNode(TinyNode* pNode)
 	{
-
+		pNode->~TinyNode();
+		pNode->m_pNext = m_pFree;
+		m_pFree = pNode;
+		m_dwCount--;
 	}
 	template<class V, class VTraits>
 	DWORD TinyLinkList<V, VTraits>::GetCount() const
@@ -1174,88 +1218,161 @@ namespace TinyUI
 	{
 		return m_dwCount == 0;
 	}
-
-	/// <summary>
-	/// Prime¿‡
-	/// </summary>
-	/*INT primes[] = {
-		3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 293, 353, 431, 521, 631, 761, 919,
-		1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 5839, 7013, 8419, 10103, 12143, 14591,
-		17519, 21023, 25229, 30293, 36353, 43627, 52361, 62851, 75431, 90523, 108631, 130363, 156437,
-		187751, 225307, 270371, 324449, 389357, 467237, 560689, 672827, 807403, 968897, 1162687, 1395263,
-		1674319, 2009191, 2411033, 2893249, 3471899, 4166287, 4999559, 5999471, 7199369 };
-		class TinyPrime
+	template<class V, class VTraits>
+	ITERATOR TinyLinkList<V, VTraits>::AddFirst(CONST_VTYPE value)
+	{
+		TinyNode* pNode = NewNode(NULL, m_pFirst, value);
+		if (m_pFirst != NULL)
 		{
-		public:
-		static const INT MaxValue = 0x7FFFFFFF;
-		static const INT HashPrime = 101;
-		static const int MaxPrimeArrayLength = 0x7FEFFFFD;
-		public:
-		static BOOL IsPrime(INT candidate);
-		static INT GetPrime(INT min);
-		static INT GetMinPrime();
-		static INT ExpandPrime(INT oldSize);
-		};
-		/// <summary>
-		/// HashMap µœ÷
-		/// </summary>
-		template<class K, class V, class KTraits = DefaultTraits< K >, class VTraits = DefaultTraits< V >>
-		class TinyHashMap
-		{
-		DISALLOW_COPY_AND_ASSIGN(TinyHashMap)
-		protected:
-		typedef typename KTraits::CONST_ARGTYPE	CONST_KTYPE;
-		typedef typename KTraits::ARGTYPE		KTYPE;
-		typedef typename VTraits::CONST_ARGTYPE	CONST_VTYPE;
-		typedef typename VTraits::ARGTYPE		VTYPE;
-		protected:
-		class TinyHashNode :public __ITERATOR
-		{
-		DISALLOW_COPY_AND_ASSIGN(TinyHashNode)
-		public:
-		const K			m_key;
-		V				m_value;
-		INT				m_hashCode;
-		INT				m_nextIndex;
-		public:
-		TinyHashNode(CONST_KTYPE key, VTYPE value)
-		: m_key(key),
-		m_value(value),
-		m_pNext(NULL)
-		{
+			m_pFirst->m_pPrev = pNode;
 		}
-		};
-		protected:
-		TinyPlex*	m_pBlocks;
-		DWORD		m_dwBlockSize;
-		DWORD		m_dwCount;
-		protected:
-
-		public:
-		explicit TinyHashMap(DWORD dwBlockSize = 10);
-		~TinyHashMap();
-		void RemoveAll();
-		};
-		template<class K, class V, class KTraits, class VTraits>
-		TinyHashMap<K, V, KTraits, VTraits>::TinyHashMap(DWORD dwBlockSize)
-		:m_dwBlockSize(dwBlockSize),
-		m_dwCount(0),
-		m_pBlocks(NULL)
+		else
 		{
-
+			m_pLast = pNode;
 		}
-		template<class K, class V, class KTraits, class VTraits>
-		TinyHashMap<K, V, KTraits, VTraits>::~TinyHashMap()
+		m_pFirst = pNode;
+		return(ITERATOR(pNode));
+	}
+	template<class V, class VTraits>
+	ITERATOR TinyLinkList<V, VTraits>::AddLast(CONST_VTYPE value)
+	{
+		TinyNode* pNode = NewNode(m_pLast, NULL, value);
+		if (m_pTail != NULL)
 		{
-		RemoveAll();
+			m_pLast->m_pNext = pNode;
 		}
-		template<class K, class V, class KTraits, class VTraits>
-		void TinyHashMap<K, V, KTraits, VTraits>::RemoveAll()
+		else
 		{
-		m_dwCount = 0;
-		m_pBlocks->Destory();
-		m_pBlocks = NULL;
-		m_pFree = NULL;
-		m_pRoot = NULL;
-		}*/
+			m_pFirst = pNode;
+		}
+		m_pLast = pNode;
+		return(ITERATOR(pNode));
+	}
+	template<class V, class VTraits>
+	void TinyLinkList<V, VTraits>::RemoveFirst()
+	{
+		TinyNode* pNode = m_pFirst;
+		m_pFirst = pNode->m_pNext;
+		if (m_pFirst != NULL)
+		{
+			m_pFirst->m_pPrev = NULL;
+		}
+		else
+		{
+			m_pLast = NULL;
+		}
+		FreeNode(pNode);
+	}
+	template<class V, class VTraits>
+	void TinyLinkList<V, VTraits>::RemoveLast()
+	{
+		TinyNode* pNode = m_pLast;
+		m_pLast = pNode->m_pPrev;
+		if (m_pLast != NULL)
+		{
+			m_pLast->m_pNext = NULL;
+		}
+		else
+		{
+			m_pFirst = NULL;
+		}
+		FreeNode(pNode);
+	}
+	template<class V, class VTraits>
+	ITERATOR TinyLinkList<V, VTraits>::InsertBefore(ITERATOR pos, CONST_VTYPE value)
+	{
+		if (pos == NULL)
+		{
+			return AddFirst(value);
+		}
+		TinyNode* pOldNode = static_cast<TinyNode*>(pos);
+		TinyNode* pNewNode = NewNode(value, pOldNode->m_pPrev, pOldNode);
+		if (pOldNode->m_pPrev != NULL)
+		{
+			pOldNode->m_pPrev->m_pNext = pNewNode;
+		}
+		else
+		{
+			m_pFirst = pNewNode;
+		}
+		pOldNode->m_pPrev = pNewNode;
+
+		return(ITERATOR(pNewNode));
+	}
+	template<class V, class VTraits>
+	ITERATOR TinyLinkList<V, VTraits>::InsertAfter(ITERATOR pos, CONST_VTYPE value)
+	{
+		if (pos == NULL)
+		{
+			return AddLast(value);
+		}
+		TinyNode* pOldNode = static_cast<TinyNode*>(pos);
+		TinyNode* pNewNode = NewNode(value, pOldNode, pOldNode->m_pNext);
+		if (pOldNode->m_pNext != NULL)
+		{
+			pOldNode->m_pNext->m_pPrev = pNewNode;
+		}
+		else
+		{
+			m_pLast = pNewNode;
+		}
+		pOldNode->m_pNext = pNewNode;
+		return(ITERATOR(pNewNode));
+	}
+	template<class V, class VTraits>
+	ITERATOR TinyLinkList< V, VTraits>::Lookup(CONST_VTYPE value, ITERATOR posStartAfter) const
+	{
+		TinyNode* pNode = static_cast<TinyNode*>(posStartAfter);
+		if (pNode == NULL)
+		{
+			pNode = m_pFirst;
+		}
+		else
+		{
+			pNode = pNode->m_pNext;
+		}
+		for (; pNode != NULL; pNode = pNode->m_pNext)
+		{
+			if (VTraits::Compare(pNode->m_value, value) == 0)
+				return(ITERATOR(pNode));
+		}
+		return(NULL);
+	}
+	template<class V, class VTraits>
+	ITERATOR TinyLinkList< V, VTraits>::First() const
+	{
+		return ITERATOR(m_pFirst);
+	}
+	template<class V, class VTraits>
+	ITERATOR TinyLinkList< V, VTraits>::Last() const
+	{
+		return ITERATOR(m_pLast);
+	}
+	template<class V, class VTraits>
+	ITERATOR TinyLinkList< V, VTraits>::Next(ITERATOR pos) const
+	{
+		TinyNode* pNode = static_cast<TinyNode*>(pos);
+		if (pNode != NULL)
+		{
+			return ITERATOR(pNode->m_pNext);
+		}
+		return NULL;
+	}
+	template<class V, class VTraits>
+	ITERATOR TinyLinkList< V, VTraits>::Prev(ITERATOR pos) const
+	{
+		TinyNode* pNode = static_cast<TinyNode*>(pos);
+		if (pNode != NULL)
+		{
+			return ITERATOR(pNode->m_pPrev);
+		}
+		return NULL;
+	}
+	template<class V, class VTraits>
+	const V& TinyLinkList< V, VTraits>::GetAt(ITERATOR pos) const
+	{
+		ASSERT(pos);
+		TinyNode* pNode = static_cast<TinyNode*>(pos);
+		return pNode->m_value;
+	}
 }
