@@ -16,27 +16,64 @@ class ListV
 {
 public:
 	ListV()
+		:V(0)
 	{
 		TRACE("ListV默认构造函数\n");
 	}
-	ListV(const ListV& other)
+	~ListV()
 	{
-		TRACE("ListV拷贝构造函数\n");
+		TRACE("ListV析构函数:%d\n",V);
+	}
+	explicit ListV(INT v)
+		:V(v)
+	{
+		TRACE("ListV构造函数:%d\n",V);
+	}
+	ListV(const ListV& other)
+		:V(other.V)
+	{
+		TRACE("ListV拷贝构造函数:%d\n",V);
 	}
 	ListV& operator=(const ListV& other)
 	{
 		TRACE("ListV赋值构造函数\n");
+		return *this;
 	}
+	//ListV(ListV&& other)
+	//	:V(other.V)
+	//{
+	//	TRACE("ListV移动构造函数\n");
+	//}
+
+	static ListV GetV(INT v)
+	{
+		return ListV(v);
+	}
+
+	static ListV GetV1(INT v)
+	{
+		ListV v1(v);
+		return v1;
+	}
+
+public:
+	INT V;
 };
 template<>
 class DefaultTraits < ListV >
 {
 public:
-	typedef const ListV&	CONST_ARGTYPE;
-	typedef ListV&			ARGTYPE;
 	static INT  Compare(const ListV& element1, const ListV& element2)
 	{
-		return 0;
+		if (element1.V == element2.V)
+		{
+			return 0;
+		}
+		else if (element1.V > element2.V)
+		{
+			return 1;
+		}
+		return -1;
 	}
 };
 
@@ -54,13 +91,25 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	HRESULT hRes = OleInitialize(NULL);
 
-	ListV listV1;
+	//ListV v = ListV::GetV(5);
+	//ListV v = ListV::GetV(5);
+	ListV v1 = ListV::GetV1(6);
+	//v1 = ListV::GetV1(6);
+	//v1 = ListV::GetV1(6);
+	/*TinyLinkList<ListV> linkList;
+	for (INT i = 0; i < 10; i++)
+	{
+	ListV v1(i);
+	linkList.InsertFirst(v1);
+	}
+	ListV v1 = linkList.GetAt(linkList.Lookup(ListV(5), NULL));*/
+	/*ListV listV1;
 
 	TinyLinkList<ListV> linkList;
 	linkList.AddFirst(listV1);
 
 	const ListV& abc = linkList.GetAt(linkList.Lookup(listV1, NULL));
-	TRACE("listV1:%d,abc:%d\n",&listV1,&abc);
+	TRACE("listV1:%d,abc:%d\n",&listV1,&abc);*/
 
 	::DefWindowProc(NULL, 0, 0, 0L);
 

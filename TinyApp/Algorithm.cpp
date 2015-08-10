@@ -25,6 +25,7 @@ INT A1(INT _array[], INT size, INT key)
 			min = mid + 1;
 		}
 	}
+	return 0;
 };
 /// <summary>
 /// ц╟ещеепР
