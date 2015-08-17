@@ -6,15 +6,18 @@
 namespace TinyUI
 {
 	/// <summary>
-	/// 可视化元素
+	/// 画布类
 	/// </summary>
-	class TinyVisual
+	class TinyCanvas
 	{
+	public:
+		TinyCanvas();
+		~TinyCanvas();
+		BOOL InitializeDC(HDC hDC);
 	private:
-		TinyVisual*		m_pParent;
-		TinyLinkList<TinyVisual*> m_visuals;//UI元素链表
+		HDC m_hDC;
 	};
-}
+};
 
 
 
