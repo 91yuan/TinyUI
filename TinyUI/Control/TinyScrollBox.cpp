@@ -29,12 +29,13 @@ namespace TinyUI
 		bHandled = FALSE;
 		PAINTSTRUCT ps = { 0 };
 		HDC hDC = BeginPaint(m_hWND, &ps);
+		SetGraphicsMode(hDC, GM_ADVANCED);
 
 		TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
 		RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
 		FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
-		DrawScrollBar(memdc, m_si.iTrackHitTest, FALSE);
+		DrawScrollBar(memdc, m_si.iTrackHitTest, FALSE); 
 
 		memdc.Render(paintRC, paintRC, FALSE);
 		EndPaint(m_hWND, &ps);

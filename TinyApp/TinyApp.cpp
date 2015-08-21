@@ -39,11 +39,11 @@ public:
 		TRACE("ListV赋值构造函数\n");
 		return *this;
 	}
-	//ListV(ListV&& other)
-	//	:V(other.V)
-	//{
-	//	TRACE("ListV移动构造函数\n");
-	//}
+	ListV(ListV&& other)
+		:V(other.V)
+	{
+		TRACE("ListV移动构造函数\n");
+	}
 
 	static ListV GetV(INT v)
 	{
@@ -93,7 +93,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	//ListV v = ListV::GetV(5);
 	//ListV v = ListV::GetV(5);
-	ListV v1 = ListV::GetV1(6);
+	//ListV v1 = ListV::GetV1(6);
 	//v1 = ListV::GetV1(6);
 	//v1 = ListV::GetV1(6);
 	/*TinyLinkList<ListV> linkList;
@@ -117,7 +117,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
-	TinyFrameUI uiImpl;
+	TinyVisualHWND uiImpl;
 	uiImpl.Create(NULL, 50, 50, 400, 500);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();

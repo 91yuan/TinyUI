@@ -5,7 +5,7 @@
 namespace TinyUI
 {
 	/// <summary>
-	/// 图片类只支持单针
+	/// 图片类
 	///     N=#comp     components
 	///       1           grey
 	///       2           grey, alpha

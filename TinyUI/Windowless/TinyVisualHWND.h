@@ -5,7 +5,29 @@
 
 namespace TinyUI
 {
-	
+	class TinyVisualHWND : public TinyControl
+	{
+		DECLARE_DYNAMIC(TinyVisualHWND)
+	public:
+		TinyVisualHWND();
+		~TinyVisualHWND();
+		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
+		virtual DWORD RetrieveStyle();
+		virtual DWORD RetrieveExStyle();
+		virtual LPCSTR RetrieveClassName();
+		virtual LPCSTR RetrieveTitle();
+		virtual HICON RetrieveIcon();
+		virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	private:
+		void DrawImage(TinyDC& dc,TinyImage& image);
+	private:
+		SIZE m_size;
+		TinyImage m_image;
+	};
 }
 
 
