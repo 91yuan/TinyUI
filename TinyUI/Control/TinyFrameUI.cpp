@@ -53,7 +53,7 @@ namespace TinyUI
 	{
 		bHandled = FALSE;
 
-		/*m_btn.Create(m_hWND, 250, 10, 100, 23);
+		m_btn.Create(m_hWND, 280, 10, 100, 23);
 		m_btn.SetText("…Ë÷√");
 		m_fs_Click.BindDelegate(this, &TinyFrameUI::ClickSetting);
 		m_btn.Click += &m_fs_Click;
@@ -94,7 +94,7 @@ namespace TinyUI
 		m_fs_Pop.BindDelegate(this, &TinyFrameUI::ClickPop);
 		m_btnPop.Click += &m_fs_Pop;
 
-		CreateMenuBox();*/
+		CreateMenuBox();
 
 		//m_image.Load("E:\\123.png");
 
@@ -159,7 +159,7 @@ namespace TinyUI
 	{
 		bHandled = FALSE;
 
-		//m_scroll.PosChange -= &m_fs_PosChange;
+		m_scroll.PosChange -= &m_fs_PosChange;
 		m_btn.Click -= &m_fs_Click;
 
 		return FALSE;
@@ -169,32 +169,32 @@ namespace TinyUI
 	{
 		bHandled = FALSE;
 
-		PAINTSTRUCT s;
-		HDC hDC = BeginPaint(m_hWND, &s);
+		//PAINTSTRUCT s;
+		//HDC hDC = BeginPaint(m_hWND, &s);
 
-		//TinyDC dc;
-		//dc.Attach(hDC);
+		////TinyDC dc;
+		////dc.Attach(hDC);
 
-		//TinyDC dcMem;
-		//dcMem.CreateCompatibleDC(hDC);
-		//BITMAP bitmap = { 0 };
-		//GetObject(m_image.GetFrame(m_index), sizeof(BITMAP), (LPSTR)&bitmap);
-		//DWORD a = sizeof(BITMAPFILEHEADER);
-		///*DWORD scanline = (bitmap.bmWidth * bitmap.bmBitsPixel + 31) / 32 * 4;
-		//DWORD size = scanline  * bitmap.bmHeight;*/
+		////TinyDC dcMem;
+		////dcMem.CreateCompatibleDC(hDC);
+		////BITMAP bitmap = { 0 };
+		////GetObject(m_image.GetFrame(m_index), sizeof(BITMAP), (LPSTR)&bitmap);
+		////DWORD a = sizeof(BITMAPFILEHEADER);
+		/////*DWORD scanline = (bitmap.bmWidth * bitmap.bmBitsPixel + 31) / 32 * 4;
+		////DWORD size = scanline  * bitmap.bmHeight;*/
 
-		//HBITMAP hOldBmp = (HBITMAP)dcMem.SelectObject(m_image.GetFrame(m_index));
-		//dc.BitBlt(0, 0, 274, 274, dcMem, 0, 0, SRCCOPY);
-		//dcMem.SelectObject(hOldBmp);
+		////HBITMAP hOldBmp = (HBITMAP)dcMem.SelectObject(m_image.GetFrame(m_index));
+		////dc.BitBlt(0, 0, 274, 274, dcMem, 0, 0, SRCCOPY);
+		////dcMem.SelectObject(hOldBmp);
 
-		///*TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
-		//TinyMemDC memdc1(memdc, m_image[1]);
-		//RECT rect = { 0, 0, 97, 97 };
-		//memdc1.Render(rect, m_image.GetRectangle(), TRUE);*/
+		/////*TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
+		////TinyMemDC memdc1(memdc, m_image[1]);
+		////RECT rect = { 0, 0, 97, 97 };
+		////memdc1.Render(rect, m_image.GetRectangle(), TRUE);*/
 
-		//dc.Detach();
+		////dc.Detach();
 
-		EndPaint(m_hWND, &s);
+		//EndPaint(m_hWND, &s);
 
 		return FALSE;
 	}
@@ -238,15 +238,15 @@ namespace TinyUI
 	}
 	void TinyFrameUI::ClickSetting(void* ps, INT cmd)
 	{
-		/*if (m_index == (m_image.GetFrameCount() - 1))
+		/*f (m_index == (m_image.GetFrameCount() - 1))
 		{
-			m_index = 0;
+		m_index = 0;
 		}
 		else
 		{
-			m_index++;
-		}
-		::InvalidateRect(m_hWND, NULL, FALSE);*/
+		m_index++;
+		}*/
+		::InvalidateRect(m_hWND, NULL, FALSE);
 		TinyString str(20);
 		m_txtPos.GetText(str.STR(), str.GetSize());
 		INT iPos = atoi(str.STR());

@@ -249,17 +249,17 @@ namespace TinyUI
 	{
 		bHandled = FALSE;
 		//上箭头
-		m_images[0].Load("E:\\ScrollBar\\arrow_up_normal.png");
-		m_images[1].Load("E:\\ScrollBar\\arrow_up_hover.png");
-		m_images[2].Load("E:\\ScrollBar\\arrow_up_press.png");
+		m_images[0].Load("D:\\Dev\\resource\\ScrollBar\\arrow_up_normal.png");
+		m_images[1].Load("D:\\Dev\\resource\\ScrollBar\\arrow_up_hover.png");
+		m_images[2].Load("D:\\Dev\\resource\\ScrollBar\\arrow_up_press.png");
 		//下箭头
-		m_images[3].Load("E:\\ScrollBar\\arrow_down_normal.png");
-		m_images[4].Load("E:\\ScrollBar\\arrow_down_hover.png");
-		m_images[5].Load("E:\\ScrollBar\\arrow_down_press.png");
+		m_images[3].Load("D:\\Dev\\resource\\ScrollBar\\arrow_down_normal.png");
+		m_images[4].Load("D:\\Dev\\resource\\ScrollBar\\arrow_down_hover.png");
+		m_images[5].Load("D:\\Dev\\resource\\ScrollBar\\arrow_down_press.png");
 		//划块
-		m_images[6].Load("E:\\ScrollBar\\scrollbar_groove.png");
-		m_images[7].Load("E:\\ScrollBar\\scrollbar_normal.png");
-		m_images[8].Load("E:\\ScrollBar\\scrollbar_hover.png");
+		m_images[6].Load("D:\\Dev\\resource\\ScrollBar\\scrollbar_groove.png");
+		m_images[7].Load("D:\\Dev\\resource\\ScrollBar\\scrollbar_normal.png");
+		m_images[8].Load("D:\\Dev\\resource\\ScrollBar\\scrollbar_hover.png");
 
 		return FALSE;
 	}

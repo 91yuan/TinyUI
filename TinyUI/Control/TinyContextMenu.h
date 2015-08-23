@@ -74,7 +74,7 @@ namespace TinyUI
 		BOOL Unpopup();
 		Event<void(TinyMenuItem*)> Click;
 	private:
-		TinyMenuItem*		GetAt(POINT& pt);
+		TinyMenuItem*	GetAt(POINT& pt);
 		BOOL InstallMessageHook();
 		BOOL UninstallMessageHook();
 		void Recalculate(RECT& rect);

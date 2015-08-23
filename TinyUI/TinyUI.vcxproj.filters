@@ -288,11 +288,14 @@
     <ClInclude Include="Network\TinyConnector.h">
       <Filter>头文件\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyTransform.h">
-      <Filter>头文件\Windowless</Filter>
+    <ClInclude Include="Render\TinyCanvas.h">
+      <Filter>头文件\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyCanvas.h">
-      <Filter>头文件\Windowless</Filter>
+    <ClInclude Include="Windowless\TinyTransform.h">
+      <Filter>头文件\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\TinyTransform.h">
+      <Filter>头文件\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -509,11 +512,11 @@
     <ClCompile Include="Network\TinyConnector.cpp">
       <Filter>源文件\Network</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyTransform.cpp">
-      <Filter>源文件\Windowless</Filter>
+    <ClCompile Include="Render\TinyCanvas.cpp">
+      <Filter>源文件\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyCanvas.cpp">
-      <Filter>源文件\Windowless</Filter>
+    <ClCompile Include="Render\TinyTransform.cpp">
+      <Filter>源文件\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1184,8 +1184,7 @@ namespace TinyUI
 	}
 #pragma endregion
 	TinyMemDC::TinyMemDC(HDC hDC, INT cx, INT cy)
-		:m_hDestDC(hDC)
-		, m_hOldBitmap(NULL)
+		:m_hDestDC(hDC), m_hOldBitmap(NULL)
 	{
 		m_size.cx = cx;
 		m_size.cy = cy;
@@ -1599,7 +1598,7 @@ namespace TinyUI
 			hOldPalette = ::SelectPalette(hDC, (HPALETTE)hPalette, FALSE);
 			RealizePalette(hDC);
 		}
-		GetDIBits(hDC, m_hBITMAP, 0, (UINT)bitmap.bmHeight, (LPSTR)lpbi + sizeof(BITMAPINFOHEADER)+dwPaletteSize, (BITMAPINFO *)lpbi, DIB_RGB_COLORS);
+		GetDIBits(hDC, m_hBITMAP, 0, (UINT)bitmap.bmHeight, (LPSTR)lpbi + sizeof(BITMAPINFOHEADER) + dwPaletteSize, (BITMAPINFO *)lpbi, DIB_RGB_COLORS);
 		if (hOldPalette)
 		{
 			::SelectPalette(hDC, (HPALETTE)hOldPalette, TRUE);
@@ -1609,11 +1608,11 @@ namespace TinyUI
 		hFile = CreateFile(pzFile, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 		if (hFile == INVALID_HANDLE_VALUE) return FALSE;
 		bmfHdr.bfType = 0x4D42; // "BM" 
-		dwDIBSize = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+dwPaletteSize + dwBmBitsSize;
+		dwDIBSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + dwPaletteSize + dwBmBitsSize;
 		bmfHdr.bfSize = dwDIBSize;
 		bmfHdr.bfReserved1 = 0;
 		bmfHdr.bfReserved2 = 0;
-		bmfHdr.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER)+(DWORD)sizeof(BITMAPINFOHEADER)+dwPaletteSize;
+		bmfHdr.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) + (DWORD)sizeof(BITMAPINFOHEADER) + dwPaletteSize;
 		WriteFile(hFile, (LPSTR)&bmfHdr, sizeof(BITMAPFILEHEADER), &dwWritten, NULL);
 		GlobalUnlock(hDib);
 		GlobalFree(hDib);
