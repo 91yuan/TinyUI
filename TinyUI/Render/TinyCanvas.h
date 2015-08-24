@@ -6,6 +6,9 @@
 
 namespace TinyUI
 {
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 	/// <summary>
 	/// 画布类
 	/// </summary>
@@ -16,6 +19,14 @@ namespace TinyUI
 		TinyCanvas(HDC hDC);
 		~TinyCanvas();
 		BOOL InitializeDC(HDC hDC);
+		/// <summary>
+		/// 设置画板铅笔
+		/// </summary>
+		HPEN SelectPen(HPEN hPen);
+		/// <summary>
+		/// 设置画板画刷
+		/// </summary>
+		HBRUSH SelectBrush(HBRUSH hBrush);
 		/// <summary>
 		/// 平移变换
 		/// </summary>
@@ -49,45 +60,81 @@ namespace TinyUI
 		/// </summary>
 		BOOL DrawImage(TinyImage& image, RECT destRect, INT srcX, INT srcY, INT srcCX, INT srcCY);
 		/// <summary>
-		/// 绘制线
+		/// 绘制9宫格中间矩形和4个角大小不变其余的拉伸
+		/// </summary>
+		BOOL DrawImage(TinyImage& image, RECT dstPaint, RECT srcPaint, RECT srcCenter);
+		/// <summary>
+		/// 绘制线(必须设置铅笔)
 		/// </summary>
 		BOOL DrawLine(INT sx, INT sy, INT dx, INT dy);
 		/// <summary>
-		/// 绘制线
+		/// 绘制线(必须设置铅笔)
 		/// </summary>
 		BOOL DrawLine(POINT pt1, POINT pt2);
 		/// <summary>
-		/// 绘制多条曲线
+		/// 绘制多条曲线(必须设置铅笔)
 		/// </summary>
 		BOOL DrawLines(POINT* pts, INT size);
 		/// <summary>
-		/// 绘制矩形
+		/// 绘制多边形(必须设置铅笔)
+		/// </summary>
+		BOOL DrawPolygon(POINT* pts, INT size);
+		/// <summary>
+		/// 绘制矩形(必须设置铅笔)
 		/// </summary>
 		BOOL DrawRectangle(RECT rect);
 		/// <summary>
-		/// 绘制矩形
+		/// 绘制矩形(必须设置铅笔)
 		/// </summary>
 		BOOL DrawRectangle(INT x, INT y, INT cx, INT cy);
 		/// <summary>
-		/// 绘制圆弧
+		/// 绘制圆弧(必须设置铅笔)
 		/// </summary>
-		BOOL DrawArc(RECT rect, FLOAT startAngle, FLOAT sweepAngle);
+		BOOL DrawArc(INT x, INT y, INT radius, FLOAT startAngle, FLOAT sweepAngle);
 		/// <summary>
-		/// 绘制圆弧
+		/// 绘制扇形(必须设置铅笔)
 		/// </summary>
-		BOOL DrawArc(INT x, INT y, INT cx, INT cy, FLOAT startAngle, FLOAT sweepAngle);
+		BOOL DrawPie(INT x, INT y, INT radius, FLOAT startAngle, FLOAT sweepAngle);
 		/// <summary>
-		/// 绘制贝塞尔曲线
+		/// 绘制贝塞尔曲线(必须设置铅笔)
 		/// </summary>
 		BOOL DrawBeziers(POINT* pts, INT size);
 		/// <summary>
-		/// 绘制椭圆
+		/// 绘制椭圆(必须设置铅笔)
 		/// </summary>
 		BOOL DrawEllipse(RECT rect);
 		/// <summary>
-		/// 绘制椭圆
+		/// 绘制椭圆(必须设置铅笔)
 		/// </summary>
 		BOOL DrawEllipse(INT x, INT y, INT cx, INT cy);
+		/// <summary>
+		/// 填充扇形(必须设置画刷)
+		/// </summary>
+		BOOL FillPie(INT x, INT y, INT cx, INT cy, FLOAT startAngle, FLOAT sweepAngle);
+		/// <summary>
+		/// 填充多边形(必须设置画刷)
+		/// </summary>
+		BOOL FillPolygon(POINT* pts, INT size);
+		/// <summary>
+		/// 填充矩形(必须设置画刷)
+		/// </summary>
+		BOOL FillRectangle(RECT rect);
+		/// <summary>
+		/// 填充矩形(必须设置画刷)
+		/// </summary>
+		BOOL FillRectangle(INT x, INT y, INT cx, INT cy);
+		/// <summary>
+		/// 填充椭圆(必须设置画刷)
+		/// </summary>
+		BOOL FillEllipse(INT x, INT y, INT cx, INT cy);
+		/// <summary>
+		/// 填充椭圆(必须设置画刷)
+		/// </summary>
+		BOOL FillEllipse(RECT rect);
+		/// <summary>
+		/// 填充区域(必须设置画刷)
+		/// </summary>
+		BOOL FillRegion(HRGN hRgn);
 		/// <summary>
 		/// 设置裁剪区域
 		/// </summary>
@@ -148,8 +195,18 @@ namespace TinyUI
 		/// 返回可见的裁剪区域是否为空
 		/// </summary>
 		BOOL IsVisibleClipEmpty() const;
+		/// <summary>
+		/// 返回当前画布矩形是否可见
+		/// </summary>
+		BOOL IsVisible(RECT rect);
+		/// <summary>
+		/// 返回当前画布矩形是否可见
+		/// </summary>
+		BOOL IsVisible(POINT pt);
 	private:
 		HDC			m_hDC;
+		HPEN		m_hPen;
+		HBRUSH		m_hBrush;
 		INT			m_iSave;
 		TinyMatrix	m_matrix;
 	};

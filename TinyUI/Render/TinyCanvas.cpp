@@ -3,13 +3,22 @@
 
 namespace TinyUI
 {
+	static inline INT GDI_ROUND(DOUBLE val)
+	{
+		return (INT)floor(val + 0.5);
+	}
+
 	TinyCanvas::TinyCanvas(HDC hDC)
-		:m_hDC(hDC)
+		:m_hDC(hDC),
+		m_hPen(NULL),
+		m_hBrush(NULL)
 	{
 		InitializeDC(hDC);
 	}
 	TinyCanvas::TinyCanvas()
-		: m_hDC(NULL)
+		: m_hDC(NULL),
+		m_hPen(NULL),
+		m_hBrush(NULL)
 	{
 
 	}
@@ -44,8 +53,27 @@ namespace TinyUI
 		if (!res) return FALSE;
 		res = SetROP2(m_hDC, R2_COPYPEN);
 		if (!res) return FALSE;
-		GetWorldTransform(m_hDC, &m_matrix);
+		res = GetWorldTransform(m_hDC, &m_matrix);
+		if (!res) return FALSE;
+		m_hPen = (HPEN)GetCurrentObject(m_hDC, OBJ_PEN);
+		m_hBrush = (HBRUSH)GetCurrentObject(m_hDC, OBJ_BRUSH);
 		return TRUE;
+	}
+	HPEN TinyCanvas::SelectPen(HPEN hPen)
+	{
+		if (m_hPen != hPen)
+		{
+			m_hPen = hPen;
+			return (HPEN)SelectObject(m_hDC, hPen);
+		}
+	}
+	HBRUSH TinyCanvas::SelectBrush(HBRUSH hBrush)
+	{
+		if (m_hBrush != hBrush)
+		{
+			m_hBrush = hBrush;
+			return (HBRUSH)SelectObject(m_hDC, hBrush);
+		}
 	}
 	BOOL TinyCanvas::DrawImage(TinyImage& image, INT x, INT y)
 	{
@@ -73,6 +101,12 @@ namespace TinyUI
 		src.SetRect(srcX, srcY, srcX + srcCX, srcY + srcCY);
 		return menDC.Render(destRect, src, TRUE);
 	}
+	BOOL TinyCanvas::DrawImage(TinyImage& image, RECT dstPaint, RECT srcPaint, RECT srcCenter)
+	{
+		if (!m_hDC) return FALSE;
+		TinyMemDC menDC(m_hDC, image);
+		return menDC.Render(dstPaint, srcPaint, srcCenter, TRUE);
+	}
 	BOOL TinyCanvas::DrawLine(INT sx, INT sy, INT dx, INT dy)
 	{
 		if (!m_hDC) return FALSE;
@@ -98,29 +132,33 @@ namespace TinyUI
 		if (!m_hDC) return FALSE;
 		return Polyline(m_hDC, pts, size);
 	}
-	BOOL TinyCanvas::DrawArc(RECT rect, FLOAT startAngle, FLOAT sweepAngle)
+	BOOL TinyCanvas::DrawPolygon(POINT* pts, INT size)
 	{
 		if (!m_hDC) return FALSE;
-		INT cx = abs(rect.right - rect.left);
-		INT cy = abs(rect.bottom - rect.top);
-		DWORD radius = (DWORD)sqrt(cx*cx + cy*cy);
-		POINT pt;
-		if (MoveToEx(m_hDC, rect.left, rect.top, &pt))
-		{
-			return AngleArc(m_hDC, rect.left, rect.top, radius, startAngle, sweepAngle);
-		}
-		return FALSE;
+		return Polygon(m_hDC, pts, size);
 	}
-	BOOL TinyCanvas::DrawArc(INT x, INT y, INT cx, INT cy, FLOAT startAngle, FLOAT sweepAngle)
+	BOOL TinyCanvas::DrawArc(INT x, INT y, INT radius, FLOAT startAngle, FLOAT sweepAngle)
 	{
 		if (!m_hDC) return FALSE;
-		DWORD radius = (DWORD)sqrt(cx*cx + cy*cy);
 		POINT pt;
-		if (MoveToEx(m_hDC, x, y, &pt))
+		INT x1 = GDI_ROUND(x + cos(startAngle * M_PI / 180) * radius);
+		INT y1 = GDI_ROUND(y - sin(startAngle * M_PI / 180) * radius);
+		if (MoveToEx(m_hDC, x1, y1, &pt))
 		{
 			return AngleArc(m_hDC, x, y, radius, startAngle, sweepAngle);
 		}
 		return FALSE;
+	}
+	BOOL TinyCanvas::DrawPie(INT x, INT y, INT radius, FLOAT startAngle, FLOAT sweepAngle)
+	{
+		INT x1 = GDI_ROUND(x + cos(startAngle * M_PI / 180) * radius);
+		INT y1 = GDI_ROUND(y - sin(startAngle * M_PI / 180) * radius);
+		INT x2 = GDI_ROUND(x + cos((startAngle + sweepAngle) * M_PI / 180) * radius);
+		INT y2 = GDI_ROUND(y - sin((startAngle + sweepAngle) * M_PI / 180) * radius);
+		INT iArc = SetArcDirection(m_hDC, sweepAngle >= 0 ? AD_COUNTERCLOCKWISE : AD_CLOCKWISE);
+		BOOL bRes = Pie(m_hDC, x - radius, y - radius, x + radius, y + radius, x1, y1, x2, y2);
+		SetArcDirection(m_hDC, iArc);
+		return bRes;
 	}
 	BOOL TinyCanvas::DrawRectangle(RECT rect)
 	{
@@ -146,6 +184,48 @@ namespace TinyUI
 	{
 		if (!m_hDC) return FALSE;
 		return Ellipse(m_hDC, x, y, x + cx, y + cy);
+	}
+	BOOL TinyCanvas::FillPie(INT x, INT y, INT cx, INT cy, FLOAT startAngle, FLOAT sweepAngle)
+	{
+		DWORD radius = (DWORD)sqrt(cx * cx + cy * cy);
+		INT x1 = GDI_ROUND(x + cos(startAngle * M_PI / 180) * radius);
+		INT y1 = GDI_ROUND(y - sin(startAngle * M_PI / 180) * radius);
+		INT x2 = GDI_ROUND(x + cos((startAngle + sweepAngle) * M_PI / 180) * radius);
+		INT y2 = GDI_ROUND(y - sin((startAngle + sweepAngle) * M_PI / 180) * radius);
+		INT iArc = SetArcDirection(m_hDC, sweepAngle >= 0 ? AD_COUNTERCLOCKWISE : AD_CLOCKWISE);
+		BOOL bRes = Pie(m_hDC, x - radius, y - radius, x + radius, y + radius, x1, y1, x2, y2);
+		SetArcDirection(m_hDC, iArc);
+		return bRes;
+	}
+	BOOL TinyCanvas::FillPolygon(POINT* pts, INT size)
+	{
+		if (!m_hDC) return FALSE;
+		return Polygon(m_hDC, pts, size);
+	}
+	BOOL TinyCanvas::FillEllipse(INT x, INT y, INT cx, INT cy)
+	{
+		if (!m_hDC) return FALSE;
+		return Ellipse(m_hDC, x, y, x + cx, y + cy);
+	}
+	BOOL TinyCanvas::FillEllipse(RECT rect)
+	{
+		if (!m_hDC) return FALSE;
+		return Ellipse(m_hDC, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+	}
+	BOOL TinyCanvas::FillRectangle(RECT rect)
+	{
+		if (!m_hDC) return FALSE;
+		return PatBlt(m_hDC, rect.left, rect.top, abs(rect.right - rect.left), abs(rect.bottom - rect.top), PATCOPY);
+	}
+	BOOL TinyCanvas::FillRectangle(INT x, INT y, INT cx, INT cy)
+	{
+		if (!m_hDC) return FALSE;
+		return PatBlt(m_hDC, x, y, cx, cy, PATCOPY);
+	}
+	BOOL TinyCanvas::FillRegion(HRGN hRgn)
+	{
+		if (!m_hDC || !hRgn) return FALSE;
+		return PaintRgn(m_hDC, hRgn);
 	}
 	BOOL TinyCanvas::SetClip(RECT rect)
 	{
@@ -275,6 +355,16 @@ namespace TinyUI
 		if (!m_hDC) return FALSE;
 		RECT rect = { 0 };
 		return GetClipBox(m_hDC, &rect) == NULLREGION;
+	}
+	BOOL TinyCanvas::IsVisible(POINT pt)
+	{
+		if (!m_hDC) return FALSE;
+		return PtVisible(m_hDC, pt.x, pt.y);
+	}
+	BOOL TinyCanvas::IsVisible(RECT rect)
+	{
+		if (!m_hDC) return FALSE;
+		return RectVisible(m_hDC, &rect);
 	}
 	BOOL TinyCanvas::TranslateTransform(FLOAT x, FLOAT y)
 	{

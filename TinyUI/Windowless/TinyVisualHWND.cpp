@@ -45,17 +45,19 @@ namespace TinyUI
 
 		TinyCanvas canvas(hDC);
 
-		POINT pts[5];
-		pts[0].x = 10; 
-		pts[0].y  = 10; 
-		pts[1].x  = 60;
-		pts[1].y  = 10;  
-		pts[2].x  = 10; 
-		pts[2].y  = 100;
-		pts[3].x = 60;
-		pts[3].y = 100; 
+		//canvas.DrawRectangle(100, 100, 100, 100);
+		canvas.DrawPie(100, 100, 100, 30, 60);
 
-		canvas.DrawBeziers(pts, 3);
+		///*POINT pts[5];
+		//pts[0].x = 10; 
+		//pts[0].y  = 10; 
+		//pts[1].x  = 60;
+		//pts[1].y  = 10;  
+		//pts[2].x  = 10; 
+		//pts[2].y  = 100;
+		//pts[3].x = 60;
+		//pts[3].y = 100; 
+		//canvas.DrawBeziers(pts, 3);*/
 		//canvas.DrawRectangle(100, 100, 100, 100);
 		//canvas.DrawArc(100, 100, 100, 100, 0, 30);
 		//canvas.DrawLine(10, 10, 100, 100);
