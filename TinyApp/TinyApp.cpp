@@ -90,27 +90,21 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 
 	HRESULT hRes = OleInitialize(NULL);
-
-	//ListV v = ListV::GetV(5);
-	//ListV v = ListV::GetV(5);
-	//ListV v1 = ListV::GetV1(6);
-	//v1 = ListV::GetV1(6);
-	//v1 = ListV::GetV1(6);
-	/*TinyLinkList<ListV> linkList;
-	for (INT i = 0; i < 10; i++)
-	{
-	ListV v1(i);
-	linkList.InsertFirst(v1);
-	}
-	ListV v1 = linkList.GetAt(linkList.Lookup(ListV(5), NULL));*/
-	/*ListV listV1;
-
+	
 	TinyLinkList<ListV> linkList;
-	linkList.AddFirst(listV1);
-
-	const ListV& abc = linkList.GetAt(linkList.Lookup(listV1, NULL));
-	TRACE("listV1:%d,abc:%d\n",&listV1,&abc);*/
-
+	for (int i = 0; i < 100;i++)
+	{
+ 		ListV lv(i);
+		if (i == 99)
+		{
+			linkList.InsertFirst(lv);
+		}
+		else
+		{
+			linkList.InsertFirst(lv);
+		}
+	}
+	//CList
 	::DefWindowProc(NULL, 0, 0, 0L);
 
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));

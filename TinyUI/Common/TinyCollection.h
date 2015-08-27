@@ -562,11 +562,11 @@ namespace TinyUI
 			}
 		}
 		TinyEntry* pNew = m_pEntry;
-		::new(pNew)TinyEntry(value);
 		m_pEntry = m_pEntry->m_pEntry;
 		pNew->m_pPrev = pPrev;
 		pNew->m_pNext = pNext;
 		m_dwCount++;
+		::new(pNew)TinyEntry(value);
 		return(pNew);
 	}
 	template<typename T, typename Traits>
@@ -704,14 +704,9 @@ namespace TinyUI
 	template<typename T, typename Traits>
 	void TinyLinkList< T, Traits>::RemoveAll()
 	{
-		while (m_dwCount > 0)
+		for (TinyEntry* ps = m_pFirst; ps != NULL; ps = ps->m_pEntry)
 		{
-			TinyEntry* ps = m_pFirst;
-			if (ps != NULL)
-			{
-				Delete(ps);
-			}
-			m_pFirst = m_pFirst->m_pNext;
+			Delete(ps);
 		}
 		m_pFirst = NULL;
 		m_pLast = NULL;

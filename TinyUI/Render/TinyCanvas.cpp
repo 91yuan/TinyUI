@@ -66,6 +66,7 @@ namespace TinyUI
 			m_hPen = hPen;
 			return (HPEN)SelectObject(m_hDC, hPen);
 		}
+		return m_hPen;
 	}
 	HBRUSH TinyCanvas::SelectBrush(HBRUSH hBrush)
 	{
@@ -74,6 +75,7 @@ namespace TinyUI
 			m_hBrush = hBrush;
 			return (HBRUSH)SelectObject(m_hDC, hBrush);
 		}
+		return m_hBrush;
 	}
 	BOOL TinyCanvas::DrawImage(TinyImage& image, INT x, INT y)
 	{
