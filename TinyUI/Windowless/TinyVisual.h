@@ -13,12 +13,12 @@ namespace TinyUI
 	public:
 		TinyVisual();
 	private:
-		TinyVisual*		m_pParent;
-		TinyVisual*		m_pChildren;
-		TinyVisual*		m_pNextFocus;
-		TinyVisual*		m_pPrevFocus;
 		BOOL			m_visible;
 		BOOL			m_enable;
+		TinyVisual*		m_pParent;
+		TinyVisual*		m_pChildren;
+		TinyVisual*		m_pNext;
+		TinyVisual*		m_pPrev;
 		TinyLinkList<TinyVisual*> m_visuals;//UIÔªËØÁ´±í
 	};
 }

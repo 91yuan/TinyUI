@@ -45,8 +45,8 @@ namespace TinyUI
 
 		TinyCanvas canvas(hDC);
 
-		//canvas.DrawRectangle(100, 100, 100, 100);
-		canvas.DrawPie(100, 100, 100, 30, 60);
+		canvas.DrawRectangle(100, 100, 100, 100);
+		canvas.DrawArc(100, 100, 100, 100, 10, 70);
 
 		///*POINT pts[5];
 		//pts[0].x = 10; 

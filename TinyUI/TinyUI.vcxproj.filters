@@ -147,9 +147,6 @@
     <ClInclude Include="Render\TinyGraphics.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Render\TinyGraphicsRender.h">
-      <Filter>头文件\Render</Filter>
-    </ClInclude>
     <ClInclude Include="Render\TinyRichUI.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
@@ -291,9 +288,6 @@
     <ClInclude Include="Render\TinyCanvas.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyTransform.h">
-      <Filter>头文件\Render</Filter>
-    </ClInclude>
     <ClInclude Include="Render\TinyTransform.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
@@ -426,9 +420,6 @@
       <Filter>源文件\Media</Filter>
     </ClCompile>
     <ClCompile Include="Render\TinyGraphics.cpp">
-      <Filter>源文件\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="Render\TinyGraphicsRender.cpp">
       <Filter>源文件\Render</Filter>
     </ClCompile>
     <ClCompile Include="Render\TinyRichUI.cpp">

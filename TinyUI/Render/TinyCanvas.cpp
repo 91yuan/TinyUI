@@ -8,23 +8,118 @@ namespace TinyUI
 		return (INT)floor(val + 0.5);
 	}
 
+	RGBQUAD RGBtoHSL(RGBQUAD lRGBColor)
+	{
+		BYTE R, G, B;
+		BYTE H, L, S;
+		BYTE cMax, cMin;
+		WORD Rdelta, Gdelta, Bdelta;
+
+		R = lRGBColor.rgbRed;
+		G = lRGBColor.rgbGreen;
+		B = lRGBColor.rgbBlue;
+
+		cMax = max(max(R, G), B);
+		cMin = min(min(R, G), B);
+		L = (BYTE)((((cMax + cMin)*HSLMAX) + RGBMAX) / (2 * RGBMAX));
+
+		if (cMax == cMin)
+		{
+			S = 0;
+			H = HSLUNDEFINED;
+		}
+		else
+		{
+			if (L <= (HSLMAX / 2))
+				S = (BYTE)((((cMax - cMin)*HSLMAX) + ((cMax + cMin) / 2)) / (cMax + cMin));
+			else
+				S = (BYTE)((((cMax - cMin)*HSLMAX) + ((2 * RGBMAX - cMax - cMin) / 2)) / (2 * RGBMAX - cMax - cMin));
+			/* hue */
+			Rdelta = (WORD)((((cMax - R)*(HSLMAX / 6)) + ((cMax - cMin) / 2)) / (cMax - cMin));
+			Gdelta = (WORD)((((cMax - G)*(HSLMAX / 6)) + ((cMax - cMin) / 2)) / (cMax - cMin));
+			Bdelta = (WORD)((((cMax - B)*(HSLMAX / 6)) + ((cMax - cMin) / 2)) / (cMax - cMin));
+
+			if (R == cMax)
+				H = (BYTE)(Bdelta - Gdelta);
+			else if (G == cMax)
+				H = (BYTE)((HSLMAX / 3) + Rdelta - Bdelta);
+			else
+				H = (BYTE)(((2 * HSLMAX) / 3) + Gdelta - Rdelta);
+
+			if (H > HSLMAX) H -= HSLMAX;
+		}
+
+		RGBQUAD hsl = { L, S, H, 0 };
+		return hsl;
+	}
+	FLOAT HUEtoRGB(FLOAT n1, FLOAT n2, FLOAT hue)
+	{
+		FLOAT rValue;
+
+		if (hue > 360)
+			hue = hue - 360;
+		else if (hue < 0)
+			hue = hue + 360;
+
+		if (hue < 60)
+			rValue = n1 + (n2 - n1)*hue / 60.0f;
+		else if (hue < 180)
+			rValue = n2;
+		else if (hue < 240)
+			rValue = n1 + (n2 - n1)*(240 - hue) / 60;
+		else
+			rValue = n1;
+
+		return rValue;
+	}
+	RGBQUAD HSLtoRGB(RGBQUAD lHSLColor)
+	{
+		FLOAT h, s, l;
+		FLOAT m1, m2;
+		BYTE r, g, b;
+
+		h = (FLOAT)lHSLColor.rgbRed * 360.0f / 255.0f;
+		s = (FLOAT)lHSLColor.rgbGreen / 255.0f;
+		l = (FLOAT)lHSLColor.rgbBlue / 255.0f;
+
+		if (l <= 0.5) m2 = l * (1 + s);
+		else m2 = l + s - l*s;
+
+		m1 = 2 * l - m2;
+
+		if (s == 0)
+		{
+			r = g = b = (BYTE)(l * 255.0f);
+		}
+		else
+		{
+			r = (BYTE)(HUEtoRGB(m1, m2, h + 120) * 255.0f);
+			g = (BYTE)(HUEtoRGB(m1, m2, h) * 255.0f);
+			b = (BYTE)(HUEtoRGB(m1, m2, h - 120) * 255.0f);
+		}
+		RGBQUAD rgb = { b, g, r, 0 };
+		return rgb;
+	}
+
 	TinyCanvas::TinyCanvas(HDC hDC)
 		:m_hDC(hDC),
 		m_hPen(NULL),
-		m_hBrush(NULL)
+		m_hBrush(NULL),
+		m_iSave(0)
 	{
 		InitializeDC(hDC);
 	}
 	TinyCanvas::TinyCanvas()
 		: m_hDC(NULL),
 		m_hPen(NULL),
-		m_hBrush(NULL)
+		m_hBrush(NULL),
+		m_iSave(0)
 	{
 
 	}
 	TinyCanvas::~TinyCanvas()
 	{
-		if (m_hDC != NULL)
+		if (m_hDC != NULL && m_iSave != 0)
 		{
 			RestoreDC(m_hDC, m_iSave);
 		}
@@ -59,7 +154,7 @@ namespace TinyUI
 		m_hBrush = (HBRUSH)GetCurrentObject(m_hDC, OBJ_BRUSH);
 		return TRUE;
 	}
-	HPEN TinyCanvas::SelectPen(HPEN hPen)
+	HPEN TinyCanvas::SetPen(HPEN hPen)
 	{
 		if (m_hPen != hPen)
 		{
@@ -68,7 +163,7 @@ namespace TinyUI
 		}
 		return m_hPen;
 	}
-	HBRUSH TinyCanvas::SelectBrush(HBRUSH hBrush)
+	HBRUSH TinyCanvas::SetBrush(HBRUSH hBrush)
 	{
 		if (m_hBrush != hBrush)
 		{
@@ -114,9 +209,7 @@ namespace TinyUI
 		if (!m_hDC) return FALSE;
 		POINT ps;
 		if (MoveToEx(m_hDC, sx, sy, &ps))
-		{
 			return LineTo(m_hDC, dx, dy);
-		}
 		return FALSE;
 	}
 	BOOL TinyCanvas::DrawLine(POINT pt1, POINT pt2)
@@ -124,9 +217,7 @@ namespace TinyUI
 		if (!m_hDC) return FALSE;
 		POINT ps;
 		if (MoveToEx(m_hDC, pt1.x, pt1.y, &ps))
-		{
 			return LineTo(m_hDC, pt2.x, pt2.y);
-		}
 		return FALSE;
 	}
 	BOOL TinyCanvas::DrawLines(POINT* pts, INT size)
@@ -151,8 +242,26 @@ namespace TinyUI
 		}
 		return FALSE;
 	}
+	BOOL TinyCanvas::DrawArc(INT x, INT y, INT cx, INT cy, FLOAT startAngle, FLOAT sweepAngle)
+	{
+		if (!m_hDC) return FALSE;
+		INT x1, x2, y1, y2;
+		/*DOUBLE tancx1 = cy / tan(startAngle * M_PI / 180);
+		DOUBLE tancy1 = cx * tan(startAngle * M_PI / 180);
+		x1 = tancy1 <= cy ? (x + cx) : GDI_ROUND(tancy1 + x);
+		y1 = tancy1 <= cy ? GDI_ROUND(y + tancy1) : (y + cy);
+		DOUBLE tancx2 = cy / tan((startAngle + sweepAngle)*M_PI / 180);
+		DOUBLE tancy2 = cx * tan((startAngle + sweepAngle)*M_PI / 180);
+		x2 = tancy2 <= cy ? (x + cx) : GDI_ROUND(tancy2 + x);
+		y2 = tancy2 <= cy ? GDI_ROUND(y + tancy2) : (y + cy);*/
+		INT iArc = SetArcDirection(m_hDC, sweepAngle >= 0 ? AD_COUNTERCLOCKWISE : AD_CLOCKWISE);
+		BOOL bRes = Arc(m_hDC, x, y, x + cx, y + cy, x1, y1, x2, y2);
+		SetArcDirection(m_hDC, iArc);
+		return TRUE;
+	}
 	BOOL TinyCanvas::DrawPie(INT x, INT y, INT radius, FLOAT startAngle, FLOAT sweepAngle)
 	{
+		if (!m_hDC) return FALSE;
 		INT x1 = GDI_ROUND(x + cos(startAngle * M_PI / 180) * radius);
 		INT y1 = GDI_ROUND(y - sin(startAngle * M_PI / 180) * radius);
 		INT x2 = GDI_ROUND(x + cos((startAngle + sweepAngle) * M_PI / 180) * radius);
@@ -161,6 +270,23 @@ namespace TinyUI
 		BOOL bRes = Pie(m_hDC, x - radius, y - radius, x + radius, y + radius, x1, y1, x2, y2);
 		SetArcDirection(m_hDC, iArc);
 		return bRes;
+	}
+	BOOL TinyCanvas::DrawPie(INT x, INT y, INT cx, INT cy, FLOAT startAngle, FLOAT sweepAngle)
+	{
+		if (!m_hDC) return FALSE;
+		INT x1, x2, y1, y2;
+		/*DOUBLE tancx1 = cy / tan(startAngle * M_PI / 180);
+		DOUBLE tancy1 = cx * tan(startAngle * M_PI / 180);
+		x1 = tancy1 <= cy ? (x + cx) : GDI_ROUND(tancy1 + x);
+		y1 = tancy1 <= cy ? GDI_ROUND(y + tancy1) : (y + cy);
+		DOUBLE tancx2 = cy / tan((startAngle + sweepAngle)*M_PI / 180);
+		DOUBLE tancy2 = cx * tan((startAngle + sweepAngle)*M_PI / 180);
+		x2 = tancy2 <= cy ? (x + cx) : GDI_ROUND(tancy2 + x);
+		y2 = tancy2 <= cy ? GDI_ROUND(y + tancy2) : (y + cy);*/
+		INT iArc = SetArcDirection(m_hDC, sweepAngle >= 0 ? AD_COUNTERCLOCKWISE : AD_CLOCKWISE);
+		BOOL bRes = Pie(m_hDC, x, y, x + cx, y + cy, x1, y1, x2, y2);
+		SetArcDirection(m_hDC, iArc);
+		return TRUE;
 	}
 	BOOL TinyCanvas::DrawRectangle(RECT rect)
 	{

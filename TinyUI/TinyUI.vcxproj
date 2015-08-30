@@ -138,7 +138,6 @@
     <ClInclude Include="Network\TinyConnector.h" />
     <ClInclude Include="Network\TinyAcceptor.h" />
     <ClInclude Include="Render\TinyGraphics.h" />
-    <ClInclude Include="Render\TinyGraphicsRender.h" />
     <ClInclude Include="Render\TinyImage.h" />
     <ClInclude Include="Render\TinyRichUI.h" />
     <ClInclude Include="Render\TinyTheme.h" />
@@ -148,7 +147,6 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Render\TinyCanvas.h" />
     <ClInclude Include="Windowless\TinyLayout.h" />
-    <ClInclude Include="Windowless\TinyTransform.h" />
     <ClInclude Include="Windowless\TinyVisual.h" />
     <ClInclude Include="Windowless\TinyVisualEvent.h" />
     <ClInclude Include="Windowless\TinyVisualHWND.h" />
@@ -214,7 +212,6 @@
     <ClCompile Include="Network\TinyAcceptor.cpp" />
     <ClCompile Include="Render\stb_image.c" />
     <ClCompile Include="Render\TinyGraphics.cpp" />
-    <ClCompile Include="Render\TinyGraphicsRender.cpp" />
     <ClCompile Include="Render\TinyImage.cpp" />
     <ClCompile Include="Render\TinyRichUI.cpp" />
     <ClCompile Include="Render\TinyTheme.cpp" />

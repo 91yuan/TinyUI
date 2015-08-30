@@ -7,8 +7,29 @@
 namespace TinyUI
 {
 #ifndef M_PI
-#define M_PI 3.14159265358979323846
+#define M_PI	3.14159265358979323846
 #endif
+#ifndef M_PI_2
+#define M_PI_2	1.57079632679489661923
+#endif
+#ifndef M_PI_4
+#define M_PI_4	0.785398163397448309616
+#endif
+#define  HSLMAX			255   
+#define  RGBMAX			255  
+#define HSLUNDEFINED	(HSLMAX*2/3)
+	/// <summary>
+	/// RGBtoHSL
+	/// </summary>
+	RGBQUAD RGBtoHSL(RGBQUAD lRGBColor);
+	/// <summary>
+	/// HUEtoRGB
+	/// </summary>
+	FLOAT HUEtoRGB(FLOAT n1, FLOAT n2, FLOAT hue);
+	/// <summary>
+	/// HSLtoRGB
+	/// </summary>
+	RGBQUAD HSLtoRGB(RGBQUAD lHSLColor);
 	/// <summary>
 	/// 画布类
 	/// </summary>
@@ -22,11 +43,11 @@ namespace TinyUI
 		/// <summary>
 		/// 设置画板铅笔
 		/// </summary>
-		HPEN SelectPen(HPEN hPen);
+		HPEN SetPen(HPEN hPen);
 		/// <summary>
 		/// 设置画板画刷
 		/// </summary>
-		HBRUSH SelectBrush(HBRUSH hBrush);
+		HBRUSH SetBrush(HBRUSH hBrush);
 		/// <summary>
 		/// 平移变换
 		/// </summary>
@@ -76,11 +97,11 @@ namespace TinyUI
 		/// </summary>
 		BOOL DrawLines(POINT* pts, INT size);
 		/// <summary>
-		/// 绘制多边形(必须设置铅笔)
+		/// 绘制多条曲线(必须设置铅笔)
 		/// </summary>
 		BOOL DrawPolygon(POINT* pts, INT size);
 		/// <summary>
-		/// 绘制矩形(必须设置铅笔)
+		/// 绘制线(必须设置铅笔)
 		/// </summary>
 		BOOL DrawRectangle(RECT rect);
 		/// <summary>
@@ -92,9 +113,17 @@ namespace TinyUI
 		/// </summary>
 		BOOL DrawArc(INT x, INT y, INT radius, FLOAT startAngle, FLOAT sweepAngle);
 		/// <summary>
-		/// 绘制扇形(必须设置铅笔)
+		/// 绘制弧度(必须设置铅笔)
+		/// </summary>
+		BOOL DrawArc(INT x, INT y, INT cx, INT cy, FLOAT startAngle, FLOAT sweepAngle);
+		/// <summary>
+		/// 绘制圆扇形(必须设置铅笔)
 		/// </summary>
 		BOOL DrawPie(INT x, INT y, INT radius, FLOAT startAngle, FLOAT sweepAngle);
+		/// <summary>
+		/// 绘制扇形(必须设置铅笔)
+		/// </summary>
+		BOOL DrawPie(INT x, INT y, INT cx, INT cy, FLOAT startAngle, FLOAT sweepAngle);
 		/// <summary>
 		/// 绘制贝塞尔曲线(必须设置铅笔)
 		/// </summary>
