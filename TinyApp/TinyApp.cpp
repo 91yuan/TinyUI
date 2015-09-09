@@ -90,20 +90,40 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 
 	HRESULT hRes = OleInitialize(NULL);
-	
+	 
 	TinyLinkList<ListV> linkList;
-	for (int i = 0; i < 100;i++)
+	for (int i = 0; i < 100; i++)
 	{
- 		ListV lv(i);
+		ListV lv(i);
 		if (i == 99)
 		{
-			linkList.InsertFirst(lv);
+			linkList.InsertLast(lv);
 		}
 		else
 		{
-			linkList.InsertFirst(lv);
+			linkList.InsertLast(lv);
 		}
 	}
+	ITERATOR a = linkList.First();
+	while (a)
+	{
+		TRACE("V:%d\n", linkList.GetAt(a).V);
+		a = linkList.Next(a);
+	}
+	ListV v(45);
+	a = linkList.Lookup(v);
+	TRACE("V-Lookup:%d\n", linkList.GetAt(a).V);
+	linkList.RemoveAt(a);
+	a = linkList.First();
+	while (a)
+	{
+		TRACE("V:%d\n", linkList.GetAt(a).V);
+		a = linkList.Next(a);
+	}
+	linkList.RemoveAll();
+	/*ListV v(49);
+	ITERATOR os = linkList.Lookup(v, NULL);
+	ListV& lv = linkList.GetAt(os);*/
 	//CList
 	::DefWindowProc(NULL, 0, 0, 0L);
 

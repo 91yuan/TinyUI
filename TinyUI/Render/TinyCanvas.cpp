@@ -246,14 +246,14 @@ namespace TinyUI
 	{
 		if (!m_hDC) return FALSE;
 		INT x1, x2, y1, y2;
-		/*DOUBLE tancx1 = cy / tan(startAngle * M_PI / 180);
+		DOUBLE tancx1 = cy / tan(startAngle * M_PI / 180);
 		DOUBLE tancy1 = cx * tan(startAngle * M_PI / 180);
 		x1 = tancy1 <= cy ? (x + cx) : GDI_ROUND(tancy1 + x);
 		y1 = tancy1 <= cy ? GDI_ROUND(y + tancy1) : (y + cy);
 		DOUBLE tancx2 = cy / tan((startAngle + sweepAngle)*M_PI / 180);
 		DOUBLE tancy2 = cx * tan((startAngle + sweepAngle)*M_PI / 180);
 		x2 = tancy2 <= cy ? (x + cx) : GDI_ROUND(tancy2 + x);
-		y2 = tancy2 <= cy ? GDI_ROUND(y + tancy2) : (y + cy);*/
+		y2 = tancy2 <= cy ? GDI_ROUND(y + tancy2) : (y + cy);
 		INT iArc = SetArcDirection(m_hDC, sweepAngle >= 0 ? AD_COUNTERCLOCKWISE : AD_CLOCKWISE);
 		BOOL bRes = Arc(m_hDC, x, y, x + cx, y + cy, x1, y1, x2, y2);
 		SetArcDirection(m_hDC, iArc);
@@ -275,14 +275,14 @@ namespace TinyUI
 	{
 		if (!m_hDC) return FALSE;
 		INT x1, x2, y1, y2;
-		/*DOUBLE tancx1 = cy / tan(startAngle * M_PI / 180);
+		DOUBLE tancx1 = cy / tan(startAngle * M_PI / 180);
 		DOUBLE tancy1 = cx * tan(startAngle * M_PI / 180);
 		x1 = tancy1 <= cy ? (x + cx) : GDI_ROUND(tancy1 + x);
 		y1 = tancy1 <= cy ? GDI_ROUND(y + tancy1) : (y + cy);
 		DOUBLE tancx2 = cy / tan((startAngle + sweepAngle)*M_PI / 180);
 		DOUBLE tancy2 = cx * tan((startAngle + sweepAngle)*M_PI / 180);
 		x2 = tancy2 <= cy ? (x + cx) : GDI_ROUND(tancy2 + x);
-		y2 = tancy2 <= cy ? GDI_ROUND(y + tancy2) : (y + cy);*/
+		y2 = tancy2 <= cy ? GDI_ROUND(y + tancy2) : (y + cy);
 		INT iArc = SetArcDirection(m_hDC, sweepAngle >= 0 ? AD_COUNTERCLOCKWISE : AD_CLOCKWISE);
 		BOOL bRes = Pie(m_hDC, x, y, x + cx, y + cy, x1, y1, x2, y2);
 		SetArcDirection(m_hDC, iArc);

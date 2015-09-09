@@ -19,7 +19,7 @@ namespace TinyUI
 		TinyVisual*		m_pChildren;
 		TinyVisual*		m_pNext;
 		TinyVisual*		m_pPrev;
-		TinyLinkList<TinyVisual*> m_visuals;//UI元素链表
+		//TinyLinkList<TinyVisual*> m_visuals;//UI元素链表
 	};
 }
 

@@ -489,12 +489,9 @@ namespace TinyUI
 			T			m_value;
 			TinyEntry*	m_pNext;
 			TinyEntry*	m_pPrev;
-			TinyEntry*	m_pEntry;
 		public:
 			TinyEntry(const T& value)
-				:m_value(value),
-				m_pNext(NULL),
-				m_pPrev(NULL)
+				:m_value(value)
 			{
 
 			}
@@ -503,24 +500,24 @@ namespace TinyUI
 		explicit TinyLinkList(DWORD dwSize = 10);
 		~TinyLinkList();
 		ITERATOR operator[](const T& value) const;
-		DWORD GetCount() const;
+		DWORD GetSize() const;
 		BOOL IsEmpty() const;
 		ITERATOR InsertFirst(const T& value);
 		ITERATOR InsertLast(const T& value);
 		ITERATOR InsertBefore(ITERATOR pos, const T& value);
 		ITERATOR InsertAfter(ITERATOR pos, const T& value);
-		ITERATOR Lookup(const T& value, ITERATOR pos) const;
+		ITERATOR Lookup(const T& value, ITERATOR pos = NULL) const;
 		ITERATOR First() const;
 		ITERATOR Last() const;
 		ITERATOR Next(ITERATOR pos) const;
 		ITERATOR Prev(ITERATOR pos) const;
 		T& GetAt(ITERATOR pos);
-		const T& GetAt(ITERATOR pos) const;
-		void RemoveAt(ITERATOR pos);
+		const T& GetAt(ITERATOR pos) const throw();
+		BOOL RemoveAt(ITERATOR pos) throw();
 		void RemoveAll();
 	private:
 		typename TinyLinkList<T, Traits>::TinyEntry* New(TinyEntry* pPrev, TinyEntry* pNext, const T& value);
-		void Delete(TinyEntry* ps);
+		BOOL Delete(TinyEntry* ps);
 	private:
 		DWORD		m_dwBlockSize;
 		DWORD		m_dwCount;
@@ -556,13 +553,13 @@ namespace TinyUI
 			ps += m_dwBlockSize - 1;
 			for (INT_PTR iBlock = m_dwBlockSize - 1; iBlock >= 0; iBlock--)
 			{
-				ps->m_pEntry = m_pEntry;
+				ps->m_pNext = m_pEntry;
 				m_pEntry = ps;
 				ps--;
 			}
 		}
 		TinyEntry* pNew = m_pEntry;
-		m_pEntry = m_pEntry->m_pEntry;
+		m_pEntry = m_pEntry->m_pNext;
 		pNew->m_pPrev = pPrev;
 		pNew->m_pNext = pNext;
 		m_dwCount++;
@@ -570,12 +567,14 @@ namespace TinyUI
 		return(pNew);
 	}
 	template<typename T, typename Traits>
-	void TinyLinkList<T, Traits>::Delete(TinyEntry* ps)
+	BOOL TinyLinkList<T, Traits>::Delete(TinyEntry* ps)
 	{
+		if (!ps) return FALSE;
 		ps->~TinyEntry();
 		ps->m_pNext = m_pEntry;
 		m_pEntry = ps;
 		m_dwCount--;
+		return TRUE;
 	}
 	template<typename T, typename Traits>
 	ITERATOR TinyLinkList<T, Traits>::InsertFirst(const T& value)
@@ -673,7 +672,7 @@ namespace TinyUI
 		return NULL;
 	}
 	template<typename T, typename Traits>
-	const T& TinyLinkList< T, Traits>::GetAt(ITERATOR pos) const
+	const T& TinyLinkList< T, Traits>::GetAt(ITERATOR pos) const throw()
 	{
 		ASSERT(pos);
 		TinyEntry* ps = static_cast<TinyEntry*>(pos);
@@ -687,9 +686,9 @@ namespace TinyUI
 		return ps->m_value;
 	}
 	template<typename T, typename Traits>
-	void TinyLinkList< T, Traits>::RemoveAt(ITERATOR pos)
+	BOOL TinyLinkList< T, Traits>::RemoveAt(ITERATOR pos) throw()
 	{
-		ASSERT(pos);
+		if (!pos) return FALSE;
 		TinyEntry* ps = static_cast<TinyEntry*>(pos);
 		if (ps == m_pFirst)
 			m_pFirst = ps->m_pNext;
@@ -699,13 +698,16 @@ namespace TinyUI
 			m_pLast = ps->m_pPrev;
 		else
 			ps->m_pNext->m_pPrev = ps->m_pPrev;
-		Delete(ps);
+		return Delete(ps);
 	}
 	template<typename T, typename Traits>
 	void TinyLinkList< T, Traits>::RemoveAll()
 	{
-		for (TinyEntry* ps = m_pFirst; ps != NULL; ps = ps->m_pEntry)
+		while (m_dwCount > 0)
 		{
+			TinyEntry* ps = m_pFirst;
+			ASSERT(ps);
+			m_pFirst = ps->m_pNext;
 			Delete(ps);
 		}
 		m_pFirst = NULL;
@@ -715,7 +717,7 @@ namespace TinyUI
 		m_pBlocks = NULL;
 	}
 	template<typename T, typename Traits>
-	DWORD TinyLinkList< T, Traits>::GetCount() const
+	DWORD TinyLinkList< T, Traits>::GetSize() const
 	{
 		return m_dwCount;
 	}
@@ -763,7 +765,7 @@ namespace TinyUI
 		explicit TinyTreeMap(DWORD dwBlockSize = 10);
 		~TinyTreeMap();
 		ITERATOR operator[](const K& key) const;
-		DWORD GetCount() const;
+		DWORD GetSize() const;
 		BOOL IsEmpty() const;
 		ITERATOR Add(const K& key, V& value);
 		void Remove(const K& key);
@@ -780,13 +782,12 @@ namespace TinyUI
 		ITERATOR Prev(ITERATOR pos) const;
 	private:
 		typename TinyTreeMap<K, V, KTraits, VTraits>::TinyEntry* New(const K& key, V& value);
-		void Delete(TinyEntry* ps);
 		typename TinyTreeMap<K, V, KTraits, VTraits>::TinyEntry* Lookup(TinyEntry* ps, const K& key);
 		void RotateL(TinyEntry* ps);
 		void RotateR(TinyEntry* ps);
 		void Add(TinyEntry* ps);
 		void AddFixup(TinyEntry* ps);
-		void RemoveRecursion(TinyEntry* ps);
+		void Delete(TinyEntry* ps);
 		void Remove(TinyEntry* ps);
 		void RemoveFixup(TinyEntry* ps, TinyEntry* pParent);
 	private:
@@ -812,7 +813,7 @@ namespace TinyUI
 		RemoveAll();
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	DWORD TinyTreeMap<K, V, KTraits, VTraits>::GetCount() const
+	DWORD TinyTreeMap<K, V, KTraits, VTraits>::GetSize() const
 	{
 		return m_dwCount;
 	}
@@ -837,19 +838,11 @@ namespace TinyUI
 				ps--;
 			}
 		}
-		TinyNode* pNew = m_pEntry;
-		::new(pNew)TinyNode(key, value);
+		TinyEntry* pNew = m_pEntry;
+		::new(pNew)TinyEntry(key, value);
 		m_pEntry = m_pEntry->m_pEntry;
 		m_dwCount++;
 		return pNew;
-	}
-	template<class K, class V, class KTraits, class VTraits>
-	void TinyTreeMap<K, V, KTraits, VTraits>::Delete(TinyEntry* ps)
-	{
-		ps->~TinyEntry();
-		ps->m_pEntry = m_pEntry;
-		m_pEntry = ps;
-		m_dwCount--;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyTreeMap<K, V, KTraits, VTraits>::Remove(const K& key)
@@ -863,7 +856,7 @@ namespace TinyUI
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyTreeMap<K, V, KTraits, VTraits>::RemoveAll()
 	{
-		RemoveRecursion(m_pRoot);
+		Delete(m_pRoot);
 		m_dwCount = 0;
 		m_pBlocks->Destory();
 		m_pBlocks = NULL;
@@ -947,7 +940,7 @@ namespace TinyUI
 			}
 			else
 			{
-				register TinyNode *pUncle = pGparent->m_pLeft;
+				register TinyEntry *pUncle = pGparent->m_pLeft;
 				if (pUncle && pUncle->m_bColor)
 				{
 					pUncle->m_bColor = FALSE;
@@ -958,7 +951,7 @@ namespace TinyUI
 				}
 				if (pParent->m_pLeft == ps)
 				{
-					register TinyNode *ps = NULL;
+					register TinyEntry *ps = NULL;
 					RotateR(pParent);
 					ps = pParent;
 					pParent = ps;
@@ -972,18 +965,23 @@ namespace TinyUI
 		m_pRoot->m_bColor = FALSE;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	void TinyTreeMap<K, V, KTraits, VTraits>::RemoveRecursion(TinyEntry* ps)
+	void TinyTreeMap<K, V, KTraits, VTraits>::Delete(TinyEntry* ps)
 	{
-		if (ps == NULL) return;
-		RemoveRecursion(ps->m_pLeft);
-		RemoveRecursion(ps->m_pRight);
-		Delete(ps);
+		if (ps != NULL)
+		{
+			Delete(ps->m_pLeft);
+			Delete(ps->m_pRight);
+			ps->~TinyEntry();
+			ps->m_pEntry = m_pEntry;
+			m_pEntry = ps;
+			m_dwCount--;
+		}
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyTreeMap<K, V, KTraits, VTraits>::Remove(TinyEntry* ps)
 	{
-		TinyNode *pChild = NULL;
-		TinyNode *pParent = NULL;
+		TinyEntry *pChild = NULL;
+		TinyEntry *pParent = NULL;
 		BOOL bColor = FALSE;
 		if (!ps->m_pLeft)
 		{
@@ -995,8 +993,8 @@ namespace TinyUI
 		}
 		else
 		{
-			TinyNode *pOld = ps;
-			TinyNode *pLeft = NULL;
+			TinyEntry *pOld = ps;
+			TinyEntry *pLeft = NULL;
 			ps = ps->m_pRight;
 			while ((pLeft = ps->m_pLeft) != NULL)
 			{
@@ -1055,11 +1053,14 @@ namespace TinyUI
 			m_pRoot = pChild;
 		}
 	LABEL:
-		if (bColor == FALSE)
+		if (!bColor)
 		{
 			RemoveFixup(pChild, pParent);
 		}
-		Delete(ps);
+		ps->~TinyEntry();
+		ps->m_pEntry = m_pEntry;
+		m_pEntry = ps;
+		m_dwCount--;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyTreeMap<K, V, KTraits, VTraits>::RemoveFixup(TinyEntry* ps, TinyEntry* pParent)
