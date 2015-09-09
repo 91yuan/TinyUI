@@ -772,7 +772,6 @@ namespace TinyUI
 		void RemoveAll();
 		ITERATOR Lookup(const K& key);
 		ITERATOR SetAt(const K& key, V& value);
-		K& GetKeyAt(ITERATOR pos);
 		V& GetValueAt(ITERATOR pos);
 		const K& GetKeyAt(ITERATOR pos) const;
 		const V& GetValueAt(ITERATOR pos) const;
@@ -823,7 +822,7 @@ namespace TinyUI
 		return m_dwCount == 0;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	typename TinyTreeMap<K, V, KTraits, VTraits>::TinyEntry* New(const K& key, V& value)
+	typename TinyTreeMap<K, V, KTraits, VTraits>::TinyEntry* TinyTreeMap<K, V, KTraits, VTraits>::New(const K& key, V& value)
 	{
 		if (m_pEntry == NULL)
 		{
@@ -860,7 +859,7 @@ namespace TinyUI
 		m_dwCount = 0;
 		m_pBlocks->Destory();
 		m_pBlocks = NULL;
-		m_pFree = NULL;
+		m_pEntry = NULL;
 		m_pRoot = NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
@@ -879,7 +878,7 @@ namespace TinyUI
 		return NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	void TinyTreeMap<K, V, KTraits, VTraits>::Add(TinyEntry* ps)
+	void TinyTreeMap<K, V, KTraits, VTraits>::Add(TinyEntry* pNew)
 	{
 		TinyEntry* pX = m_pRoot;
 		TinyEntry* pY = NULL;
@@ -1192,12 +1191,11 @@ namespace TinyUI
 	ITERATOR TinyTreeMap<K, V, KTraits, VTraits>::Lookup(const K& key)
 	{
 		if (!m_pRoot) return NULL;
-		return Lookup(key, ITERATOR(m_pRoot));
+		return Lookup(m_pRoot, key);
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	typename TinyTreeMap<K, V, KTraits, VTraits>::TinyEntry* TinyTreeMap<K, V, KTraits, VTraits>::Lookup(TinyEntry* ps, const K& key)
 	{
-		ASSERT(ps);
 		while (ps != NULL && KTraits::Compare(key, ps->m_key) != 0)
 		{
 			if (KTraits::Compare(key, ps->m_key) < 0)
@@ -1210,13 +1208,6 @@ namespace TinyUI
 			}
 		}
 		return ps;
-	}
-	template<class K, class V, class KTraits, class VTraits>
-	K& TinyTreeMap<K, V, KTraits, VTraits>::GetKeyAt(ITERATOR pos)
-	{
-		ASSERT(pos);
-		TinyEntry* ps = static_cast <TinyEntry*>(pos);
-		return ps->m_key;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	V& TinyTreeMap<K, V, KTraits, VTraits>::GetValueAt(ITERATOR pos)

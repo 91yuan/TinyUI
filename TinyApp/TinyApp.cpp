@@ -91,7 +91,29 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	HRESULT hRes = OleInitialize(NULL);
 	 
-	TinyLinkList<ListV> linkList;
+	TinyTreeMap<INT, ListV> maps;
+	for (int i = 0; i < 100; i++)
+	{
+		ListV lv(i);
+		if (i == 99)
+		{
+			maps.Add(i, lv);
+		}
+		else
+		{
+			maps.Add(i, lv);
+		}
+	}
+	ITERATOR a = maps.First();
+	while (a)
+	{
+		INT k = maps.GetKeyAt(a);
+		TRACE("K:%d,V:%d\n",k , maps.GetValueAt(a).V);
+		a = maps.Next(a);
+	}
+	INT v = 45;
+	a = maps.Lookup(v);
+	/*TinyLinkList<ListV> linkList;
 	for (int i = 0; i < 100; i++)
 	{
 		ListV lv(i);
@@ -120,7 +142,7 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 		TRACE("V:%d\n", linkList.GetAt(a).V);
 		a = linkList.Next(a);
 	}
-	linkList.RemoveAll();
+	linkList.RemoveAll();*/
 	/*ListV v(49);
 	ITERATOR os = linkList.Lookup(v, NULL);
 	ListV& lv = linkList.GetAt(os);*/
