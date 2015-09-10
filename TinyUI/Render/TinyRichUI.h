@@ -19,6 +19,15 @@ namespace TinyUI
 		0x11ce,
 		{ 0xa8, 0x9e, 0x00, 0xaa, 0x00, 0x6c, 0xad, 0xc5 }
 	};
+
+#define LY_PER_INCH   1440
+#define HIMETRIC_PER_INCH   2540
+#define MAP_PIX_TO_LOGHIM(x,ppli)   MulDiv(HIMETRIC_PER_INCH, (x), (ppli))
+#define MAP_LOGHIM_TO_PIX(x,ppli)   MulDiv((ppli), (x), HIMETRIC_PER_INCH)
+	LONG HimetricXtoDX(LONG xHimetric, LONG xPerInch);
+	LONG HimetricYtoDY(LONG yHimetric, LONG yPerInch);
+	LONG DXtoHimetricX(LONG dx, LONG xPerInch);
+	LONG DYtoHimetricY(LONG dy, LONG yPerInch);
 	/// <summary>
 	/// 无窗口富文本渲染
 	/// </summary>
@@ -27,7 +36,8 @@ namespace TinyUI
 	public:
 		TinyRichUI();
 		~TinyRichUI();
-		HRESULT Create();//创建接口
+		HRESULT Create(HWND hWND);//创建接口
+		HRESULT SetCharFormat(CHARFORMATW * pcf, HFONT hFont);
 		/************************************************************************/
 		/*ITextHost                                                             */
 		/************************************************************************/
@@ -93,6 +103,8 @@ namespace TinyUI
 	private:
 		LONG			m_cRef;
 		ITextServices	*m_pts;//富文本接口
+		DWORD			m_dwStyle;
+		HWND			m_hWND;
 	};
 }
 

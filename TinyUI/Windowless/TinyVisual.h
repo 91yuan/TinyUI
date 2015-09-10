@@ -19,7 +19,6 @@ namespace TinyUI
 		TinyVisual*		m_pChildren;
 		TinyVisual*		m_pNext;
 		TinyVisual*		m_pPrev;
-		//TinyLinkList<TinyVisual*> m_visuals;//UIÔªËØÁ´±í
 	};
 }
 

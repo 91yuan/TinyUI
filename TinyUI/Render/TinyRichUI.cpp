@@ -3,9 +3,27 @@
 
 namespace TinyUI
 {
+	LONG HimetricXtoDX(LONG xHimetric, LONG xPerInch)
+	{
+		return (LONG)MulDiv(xHimetric, xPerInch, HIMETRIC_PER_INCH);
+	}
+	LONG HimetricYtoDY(LONG yHimetric, LONG yPerInch)
+	{
+		return (LONG)MulDiv(yHimetric, yPerInch, HIMETRIC_PER_INCH);
+	}
+	LONG DXtoHimetricX(LONG dx, LONG xPerInch)
+	{
+		return (LONG)MulDiv(dx, HIMETRIC_PER_INCH, xPerInch);
+	}
+	LONG DYtoHimetricY(LONG dy, LONG yPerInch)
+	{
+		return (LONG)MulDiv(dy, HIMETRIC_PER_INCH, yPerInch);
+	}
+	//////////////////////////////////////////////////////////////////////////
 	TinyRichUI::TinyRichUI()
 		:m_cRef(1),
-		m_pts(NULL)
+		m_pts(NULL),
+		m_hWND(NULL)
 	{
 
 	}
@@ -15,9 +33,10 @@ namespace TinyUI
 	{
 
 	}
-	HRESULT TinyRichUI::Create()
+	HRESULT TinyRichUI::Create(HWND hWND)
 	{
 		HRESULT hRes = S_OK;
+		this->m_hWND = hWND;
 		IUnknown* pUnknown = NULL;
 		hRes = CreateTextServices(NULL, static_cast<ITextHost*>(this), &pUnknown);
 		if (hRes == S_OK)
@@ -26,6 +45,44 @@ namespace TinyUI
 			pUnknown->Release();
 		}
 		return hRes;
+	}
+	HRESULT TinyRichUI::SetCharFormat(CHARFORMATW * pcf, HFONT hFont)
+	{
+		HWND hwnd;
+		LOGFONT lf;
+		HDC hdc;
+		LONG yPixPerInch;
+		if (!hFont)
+			hFont = (HFONT)GetStockObject(SYSTEM_FONT);
+		if (!GetObject(hFont, sizeof(LOGFONT), &lf))
+			return E_FAIL;
+		pcf->cbSize = sizeof(CHARFORMAT2);
+		hwnd = GetDesktopWindow();
+		hdc = GetDC(hwnd);
+		yPixPerInch = GetDeviceCaps(hdc, LOGPIXELSY);
+		pcf->yHeight = lf.lfHeight * LY_PER_INCH / yPixPerInch;
+		ReleaseDC(hwnd, hdc);
+
+		pcf->yOffset = 0;
+		pcf->crTextColor = 0;
+
+		pcf->dwEffects = CFM_EFFECTS | CFE_AUTOBACKCOLOR;
+		pcf->dwEffects &= ~(CFE_PROTECTED | CFE_LINK);
+
+		if (lf.lfWeight < FW_BOLD)
+			pcf->dwEffects &= ~CFE_BOLD;
+		if (!lf.lfItalic)
+			pcf->dwEffects &= ~CFE_ITALIC;
+		if (!lf.lfUnderline)
+			pcf->dwEffects &= ~CFE_UNDERLINE;
+		if (!lf.lfStrikeOut)
+			pcf->dwEffects &= ~CFE_STRIKEOUT;
+
+		pcf->dwMask = CFM_ALL | CFM_BACKCOLOR;
+		pcf->bCharSet = lf.lfCharSet;
+		pcf->bPitchAndFamily = lf.lfPitchAndFamily;
+		MultiByteToWideChar(CP_ACP, 0, lf.lfFaceName, LF_FACESIZE, pcf->szFaceName, LF_FACESIZE);
+		return S_OK;
 	}
 	HRESULT STDMETHODCALLTYPE TinyRichUI::QueryInterface(REFIID riid, void **ppvObject)
 	{
@@ -56,12 +113,12 @@ namespace TinyUI
 	}
 	HDC TinyRichUI::TxGetDC()
 	{
-		return FALSE;
+		return ::GetDC(m_hWND);
 	}
 
 	INT TinyRichUI::TxReleaseDC(HDC hdc)
 	{
-		return FALSE;
+		return ::ReleaseDC(m_hWND, hdc);
 	}
 
 	BOOL TinyRichUI::TxShowScrollBar(INT fnBar, BOOL fShow)
@@ -86,27 +143,29 @@ namespace TinyUI
 
 	void TinyRichUI::TxInvalidateRect(LPCRECT prc, BOOL fMode)
 	{
-		
+
 	}
 
 	void TinyRichUI::TxViewChange(BOOL fUpdate)
 	{
-		
+
 	}
 
 	BOOL TinyRichUI::TxCreateCaret(HBITMAP hbmp, INT xWidth, INT yHeight)
 	{
-		return FALSE;
+		return ::CreateCaret(m_hWND, hbmp, xWidth, yHeight);
 	}
 
 	BOOL TinyRichUI::TxShowCaret(BOOL fShow)
 	{
-		return FALSE;
+		if (fShow)
+			return ::ShowCaret(m_hWND);
+		return ::HideCaret(m_hWND);
 	}
 
 	BOOL TinyRichUI::TxSetCaretPos(INT x, INT y)
 	{
-		return FALSE;
+		return ::SetCaretPos(x, y);
 	}
 
 	BOOL TinyRichUI::TxSetTimer(UINT idTimer, UINT uTimeout)
@@ -116,22 +175,21 @@ namespace TinyUI
 
 	void TinyRichUI::TxKillTimer(UINT idTimer)
 	{
-		
+
 	}
 
 	void TinyRichUI::TxScrollWindowEx(INT dx, INT dy, LPCRECT lprcScroll, LPCRECT lprcClip, HRGN hrgnUpdate, LPRECT lprcUpdate, UINT fuScroll)
 	{
-		
+
 	}
 
 	void TinyRichUI::TxSetCapture(BOOL fCapture)
 	{
-		
 	}
 
 	void TinyRichUI::TxSetFocus()
 	{
-		
+
 	}
 
 	void TinyRichUI::TxSetCursor(HCURSOR hcur, BOOL fText)
@@ -199,7 +257,7 @@ namespace TinyUI
 		return FALSE;
 	}
 
-	HRESULT TinyRichUI::TxGetPasswordChar( TCHAR *pch)
+	HRESULT TinyRichUI::TxGetPasswordChar(TCHAR *pch)
 	{
 		return FALSE;
 	}
@@ -241,7 +299,7 @@ namespace TinyUI
 
 	void TinyRichUI::TxImmReleaseContext(HIMC himc)
 	{
-		
+
 	}
 
 	HRESULT TinyRichUI::TxGetSelectionBarWidth(LONG *lSelBarWidth)
@@ -281,7 +339,7 @@ namespace TinyUI
 
 	void TinyRichUI::TxFreeTextServicesNotification()
 	{
-		
+
 	}
 
 	HRESULT TinyRichUI::TxGetEditStyle(DWORD dwItem, DWORD *pdwData)
