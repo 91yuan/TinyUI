@@ -23,7 +23,7 @@ namespace TinyUI
 		void RemoveAll();
 		INT GetSize() const;
 	private:
-		TinyTreeMap<T, V> m_handleMap;
+		TinyMap<T, V> m_handleMap;
 	};
 	template<class T, class V>
 	TinyHandleMap<T, V>::TinyHandleMap()
