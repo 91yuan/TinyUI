@@ -38,7 +38,7 @@ namespace TinyUI
 		HINSTANCE Handle() throw();
 		BOOL AddMessageLoop(TinyMessageLoop* pMsgLoop);
 		BOOL RemoveMessageLoop();
-		TinyMessageLoop* GetMessageLoop(DWORD dwThreadID = ::GetCurrentThreadId()) const;
+		TinyMessageLoop* GetMessageLoop(DWORD dwThreadID = ::GetCurrentThreadId());
 		BOOL Initialize(HINSTANCE m_hInstance, LPTSTR m_lpCmdLine, INT m_nCmdShow, LPCTSTR lpTableName);
 		BOOL Uninitialize();
 	public:
@@ -53,7 +53,7 @@ namespace TinyUI
 		TinyHandleMap<HRGN, TinyHandleHRGN*>&				GetMapHRGN();
 		TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*>&	GetMapHIMAGELIST();
 	private:
-		TinyMap<DWORD, TinyMessageLoop*> m_msgLoops;
+		TinyTreeMap<DWORD, TinyMessageLoop*> m_msgLoops;
 	private:
 		TinyHandleMap<HWND, TinyHandleHWND*>			m_MapHWND;
 		TinyHandleMap<HMENU, TinyHandleHMENU*>			m_MapHMENU;

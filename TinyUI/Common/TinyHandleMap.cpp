@@ -55,7 +55,7 @@ namespace TinyUI
 	TinyHandleHWND* TinyHandleHWND::Lookup(HWND hWND)
 	{
 		TinyHandleMap<HWND, TinyHandleHWND*>& map = TinyApplication::GetInstance()->GetMapHWND();
-		return map.Lookup(hWND);
+		return *map.Lookup(hWND);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyHandleHMENU::TinyHandleHMENU()
@@ -109,7 +109,7 @@ namespace TinyUI
 	TinyHandleHMENU* TinyHandleHMENU::Lookup(HMENU hMENU)
 	{
 		TinyHandleMap<HMENU, TinyHandleHMENU*>& map = TinyApplication::GetInstance()->GetMapHMENU();
-		return map.Lookup(hMENU);
+		return *map.Lookup(hMENU);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyHandleHDC::TinyHandleHDC()
@@ -163,7 +163,7 @@ namespace TinyUI
 	TinyHandleHDC* TinyHandleHDC::Lookup(HDC hDC)
 	{
 		TinyHandleMap<HDC, TinyHandleHDC*>& map = TinyApplication::GetInstance()->GetMapHDC();
-		return map.Lookup(hDC);
+		return *map.Lookup(hDC);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyHandleHBITMAP::TinyHandleHBITMAP()
@@ -217,7 +217,7 @@ namespace TinyUI
 	TinyHandleHBITMAP* TinyHandleHBITMAP::Lookup(HBITMAP hBITMAP)
 	{
 		TinyHandleMap<HBITMAP, TinyHandleHBITMAP*>& map = TinyApplication::GetInstance()->GetMapHBITMAP();
-		return map.Lookup(hBITMAP);
+		return *map.Lookup(hBITMAP);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyHandleHFONT::TinyHandleHFONT()
@@ -271,7 +271,7 @@ namespace TinyUI
 	TinyHandleHFONT* TinyHandleHFONT::Lookup(HFONT hFONT)
 	{
 		TinyHandleMap<HFONT, TinyHandleHFONT*>& map = TinyApplication::GetInstance()->GetMapHFONT();
-		return  map.Lookup(hFONT);
+		return *map.Lookup(hFONT);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyHandleHPEN::TinyHandleHPEN()
@@ -301,10 +301,7 @@ namespace TinyUI
 	}
 	BOOL TinyHandleHPEN::Attach(HPEN hPEN)
 	{
-		if (hPEN == NULL)
-		{
-			return FALSE;
-		}
+		if (!hPEN == NULL) return FALSE;
 		m_hPEN = hPEN;
 		TinyHandleMap<HPEN, TinyHandleHPEN*>& map = TinyApplication::GetInstance()->GetMapHPEN();
 		TinyHandleHPEN* ps = this;
@@ -325,7 +322,7 @@ namespace TinyUI
 	TinyHandleHPEN* TinyHandleHPEN::Lookup(HPEN hPEN)
 	{
 		TinyHandleMap<HPEN, TinyHandleHPEN*>& map = TinyApplication::GetInstance()->GetMapHPEN();
-		return map.Lookup(hPEN);
+		return *map.Lookup(hPEN);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyHandleHBRUSH::TinyHandleHBRUSH()
@@ -355,10 +352,7 @@ namespace TinyUI
 	}
 	BOOL TinyHandleHBRUSH::Attach(HBRUSH hBRUSH)
 	{
-		if (hBRUSH == NULL)
-		{
-			return FALSE;
-		}
+		if (!hBRUSH == NULL) return FALSE;
 		m_hBRUSH = hBRUSH;
 		TinyHandleMap<HBRUSH, TinyHandleHBRUSH*>& map = TinyApplication::GetInstance()->GetMapHBRUSH();
 		TinyHandleHBRUSH* ps = this;
@@ -379,7 +373,7 @@ namespace TinyUI
 	TinyHandleHBRUSH* TinyHandleHBRUSH::Lookup(HBRUSH hBRUSH)
 	{
 		TinyHandleMap<HBRUSH, TinyHandleHBRUSH*>& map = TinyApplication::GetInstance()->GetMapHBRUSH();
-		return map.Lookup(hBRUSH);
+		return *map.Lookup(hBRUSH);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyHandleHPALETTE::TinyHandleHPALETTE()
@@ -409,10 +403,7 @@ namespace TinyUI
 	}
 	BOOL TinyHandleHPALETTE::Attach(HPALETTE hPALETTE)
 	{
-		if (hPALETTE == NULL)
-		{
-			return FALSE;
-		}
+		if (!hPALETTE == NULL) return FALSE;
 		m_hPALETTE = hPALETTE;
 		TinyHandleMap<HPALETTE, TinyHandleHPALETTE*>& map = TinyApplication::GetInstance()->GetMapHPALETTE();
 		TinyHandleHPALETTE* ps = this;
@@ -433,7 +424,7 @@ namespace TinyUI
 	TinyHandleHPALETTE* TinyHandleHPALETTE::Lookup(HPALETTE hPALETTE)
 	{
 		TinyHandleMap<HPALETTE, TinyHandleHPALETTE*>& map = TinyApplication::GetInstance()->GetMapHPALETTE();
-		return map.Lookup(hPALETTE);
+		return *map.Lookup(hPALETTE);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyHandleHRGN::TinyHandleHRGN()
@@ -463,10 +454,7 @@ namespace TinyUI
 	}
 	BOOL TinyHandleHRGN::Attach(HRGN hHRGN)
 	{
-		if (hHRGN == NULL)
-		{
-			return FALSE;
-		}
+		if (!hHRGN) return FALSE;
 		m_hHRGN = hHRGN;
 		TinyHandleMap<HRGN, TinyHandleHRGN*>& map = TinyApplication::GetInstance()->GetMapHRGN();
 		TinyHandleHRGN* ps = this;
@@ -487,7 +475,7 @@ namespace TinyUI
 	TinyHandleHRGN* TinyHandleHRGN::Lookup(HRGN hRGN)
 	{
 		TinyHandleMap<HRGN, TinyHandleHRGN*>& map = TinyApplication::GetInstance()->GetMapHRGN();
-		return map.Lookup(hRGN);
+		return *map.Lookup(hRGN);
 	}
 	//////////////////////////////////////////////////////////////////////////
 	TinyHandleHIMAGELIST::TinyHandleHIMAGELIST()
@@ -517,10 +505,7 @@ namespace TinyUI
 	}
 	BOOL TinyHandleHIMAGELIST::Attach(HIMAGELIST hIMAGELIST)
 	{
-		if (hIMAGELIST == NULL)
-		{
-			return FALSE;
-		}
+		if (!hIMAGELIST) return FALSE;
 		m_hIMAGELIST = hIMAGELIST;
 		TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*>& map = TinyApplication::GetInstance()->GetMapHIMAGELIST();
 		TinyHandleHIMAGELIST* ps = this;
@@ -541,6 +526,6 @@ namespace TinyUI
 	TinyHandleHIMAGELIST* TinyHandleHIMAGELIST::Lookup(HIMAGELIST hIMAGELIST)
 	{
 		TinyHandleMap<HIMAGELIST, TinyHandleHIMAGELIST*>& map = TinyApplication::GetInstance()->GetMapHIMAGELIST();
-		return map.Lookup(hIMAGELIST);
+		return *map.Lookup(hIMAGELIST);
 	}
 }

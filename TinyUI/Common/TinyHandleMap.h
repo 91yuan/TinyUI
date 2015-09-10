@@ -10,19 +10,20 @@ namespace TinyUI
 	template<class T = HANDLE, class V = void*>
 	class TinyHandleMap
 	{
+		DISALLOW_COPY_AND_ASSIGN(TinyHandleMap)
 	public:
 		TinyHandleMap();
 		~TinyHandleMap();
-		V Lookup(T& _key);
-		V operator[](T& _key);
-		V operator[](INT _index);
-		void Add(T& _key, V& _value);
-		void Remove(T& _key);
+		V* Lookup(const T& _key);
+		const V* Lookup(const T& _key) const;
+		V* operator[](const T& _key);
+		const V* operator[](const T& _key) const;
+		void Add(const T& _key, V& _value);
+		void Remove(const T& _key);
 		void RemoveAll();
 		INT GetSize() const;
-		DISALLOW_COPY_AND_ASSIGN(TinyHandleMap)
 	private:
-		TinyMap<T, V> m_handleMap;
+		TinyTreeMap<T, V> m_handleMap;
 	};
 	template<class T, class V>
 	TinyHandleMap<T, V>::TinyHandleMap()
@@ -35,27 +36,32 @@ namespace TinyUI
 
 	}
 	template<class T, class V>
-	V TinyHandleMap<T, V>::Lookup(T& _key)
+	V* TinyHandleMap<T, V>::Lookup(const T& _key)
 	{
-		return m_handleMap.Lookup(_key);
+		return m_handleMap.GetValue(_key);
 	}
 	template<class T, class V>
-	V TinyHandleMap<T, V>::operator[](T& _key)
+	const V* TinyHandleMap<T, V>::Lookup(const T& _key) const
 	{
-		return m_handleMap.Lookup(_key);
+		return m_handleMap.GetValue(_key);
 	}
 	template<class T, class V>
-	V TinyHandleMap<T, V>::operator[](INT _index)
+	V* TinyHandleMap<T, V>::operator[](const T& _key)
 	{
-		return m_handleMap.GetValueAt(_index);
+		return m_handleMap.GetValue(_key);
 	}
 	template<class T, class V>
-	void TinyHandleMap<T, V>::Add(T& _key, V& _value)
+	const V* TinyHandleMap<T, V>::operator[](const T& _key) const
+	{
+		return m_handleMap.GetValue(_key);
+	}
+	template<class T, class V>
+	void TinyHandleMap<T, V>::Add(const T& _key, V& _value)
 	{
 		m_handleMap.Add(_key, _value);
 	}
 	template<class T, class V>
-	void TinyHandleMap<T, V>::Remove(T& _key)
+	void TinyHandleMap<T, V>::Remove(const T& _key)
 	{
 		m_handleMap.Remove(_key);
 	}
@@ -72,7 +78,7 @@ namespace TinyUI
 	/// <summary>
 	/// ´°¿Ú¾ä±úÀà
 	/// </summary>
-	class TinyHandleHWND : public TinyWindowMsg, public TinyMessageFilter
+	class TinyHandleHWND :public TinyWindowMsg, public TinyMessageFilter
 	{
 	public:
 		TinyHandleHWND();

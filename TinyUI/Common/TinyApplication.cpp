@@ -42,7 +42,7 @@ namespace TinyUI
 		}
 		ASSERT(pMsgLoop != NULL);
 		ASSERT(m_msgLoops.Lookup(::GetCurrentThreadId()) == NULL);
-		BOOL bRet = m_msgLoops.Add(::GetCurrentThreadId(), pMsgLoop);
+		BOOL bRet = m_msgLoops.Add(::GetCurrentThreadId(), pMsgLoop) != NULL;
 		section.Unlock();
 		return bRet;
 	}
@@ -61,7 +61,7 @@ namespace TinyUI
 		section.Uninitialize();
 		return bRet;
 	}
-	TinyMessageLoop* TinyApplication::GetMessageLoop(DWORD dwThreadID) const
+	TinyMessageLoop* TinyApplication::GetMessageLoop(DWORD dwThreadID)
 	{
 		TinyCriticalSection section;
 		section.Initialize();
@@ -71,7 +71,7 @@ namespace TinyUI
 			ASSERT(FALSE);
 			return NULL;
 		}
-		TinyMessageLoop* ps = m_msgLoops.Lookup(dwThreadID);
+		TinyMessageLoop* ps = *m_msgLoops.GetValue(dwThreadID);
 		section.Unlock();
 		section.Uninitialize();
 		return ps;

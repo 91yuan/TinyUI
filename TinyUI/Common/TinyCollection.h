@@ -768,13 +768,16 @@ namespace TinyUI
 		DWORD GetSize() const;
 		BOOL IsEmpty() const;
 		ITERATOR Add(const K& key, V& value);
-		void Remove(const K& key);
+		BOOL Remove(const K& key);
 		void RemoveAll();
 		ITERATOR Lookup(const K& key);
+		const ITERATOR Lookup(const K& key) const;
 		ITERATOR SetAt(const K& key, V& value);
-		V& GetValueAt(ITERATOR pos);
-		const K& GetKeyAt(ITERATOR pos) const;
-		const V& GetValueAt(ITERATOR pos) const;
+		V* GetValueAt(ITERATOR pos);
+		V* GetValue(const K& key);
+		const K* GetKeyAt(ITERATOR pos) const;
+		const V* GetValueAt(ITERATOR pos) const;
+		const V* GetValue(const K& key) const;
 		ITERATOR First() const;
 		ITERATOR Last() const;
 		ITERATOR Next(ITERATOR pos) const;
@@ -844,13 +847,15 @@ namespace TinyUI
 		return pNew;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	void TinyTreeMap<K, V, KTraits, VTraits>::Remove(const K& key)
+	BOOL TinyTreeMap<K, V, KTraits, VTraits>::Remove(const K& key)
 	{
 		TinyEntry* ps = Lookup(m_pRoot, key);
 		if (ps != NULL)
 		{
 			Remove(ps);
+			return TRUE;
 		}
+		return FALSE;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	void TinyTreeMap<K, V, KTraits, VTraits>::RemoveAll()
@@ -1194,6 +1199,12 @@ namespace TinyUI
 		return Lookup(m_pRoot, key);
 	}
 	template<class K, class V, class KTraits, class VTraits>
+	const ITERATOR TinyTreeMap<K, V, KTraits, VTraits>::Lookup(const K& key) const
+	{
+		if (!m_pRoot) return NULL;
+		return Lookup(m_pRoot, key);
+	}
+	template<class K, class V, class KTraits, class VTraits>
 	typename TinyTreeMap<K, V, KTraits, VTraits>::TinyEntry* TinyTreeMap<K, V, KTraits, VTraits>::Lookup(TinyEntry* ps, const K& key)
 	{
 		while (ps != NULL && KTraits::Compare(key, ps->m_key) != 0)
@@ -1210,25 +1221,42 @@ namespace TinyUI
 		return ps;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	V& TinyTreeMap<K, V, KTraits, VTraits>::GetValueAt(ITERATOR pos)
+	V* TinyTreeMap<K, V, KTraits, VTraits>::GetValueAt(ITERATOR pos)
 	{
-		ASSERT(pos);
+		if (!pos) return NULL;
 		TinyEntry* ps = static_cast <TinyEntry*>(pos);
-		return ps->m_value;
+		if (!ps) return NULL;
+		return &ps->m_value;
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	const K& TinyTreeMap<K, V, KTraits, VTraits>::GetKeyAt(ITERATOR pos) const
+	V* TinyTreeMap<K, V, KTraits, VTraits>::GetValue(const K& key)
 	{
-		ASSERT(pos);
-		TinyEntry* ps = static_cast <TinyEntry*>(pos);
-		return ps->m_key;
+		ITERATOR pos = Lookup(key);
+		if (!pos) return NULL;
+		return GetValueAt(pos);
 	}
 	template<class K, class V, class KTraits, class VTraits>
-	const V& TinyTreeMap<K, V, KTraits, VTraits>::GetValueAt(ITERATOR pos) const
+	const K* TinyTreeMap<K, V, KTraits, VTraits>::GetKeyAt(ITERATOR pos) const
 	{
-		ASSERT(pos);
+		if (!pos) return NULL;
 		TinyEntry* ps = static_cast <TinyEntry*>(pos);
-		return ps->m_value;
+		if (!ps) return NULL;
+		return &ps->m_key;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	const V* TinyTreeMap<K, V, KTraits, VTraits>::GetValueAt(ITERATOR pos) const
+	{
+		if (!pos) return NULL;
+		TinyEntry* ps = static_cast <TinyEntry*>(pos);
+		if (!ps) return NULL;
+		return &ps->m_value;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	const V* TinyTreeMap<K, V, KTraits, VTraits>::GetValue(const K& key) const
+	{
+		ITERATOR pos = Lookup(key);
+		if (!pos) return NULL;
+		return GetValueAt(pos);
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	ITERATOR TinyTreeMap<K, V, KTraits, VTraits>::First() const

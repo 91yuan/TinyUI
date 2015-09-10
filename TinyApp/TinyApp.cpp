@@ -91,28 +91,28 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	HRESULT hRes = OleInitialize(NULL);
 	 
-	TinyTreeMap<INT, ListV> maps;
+	/*TinyTreeMap<INT, ListV> maps;
 	for (int i = 0; i < 100; i++)
 	{
-		ListV lv(i);
-		if (i == 99)
-		{
-			maps.Add(i, lv);
-		}
-		else
-		{
-			maps.Add(i, lv);
-		}
+	ListV lv(i);
+	if (i == 99)
+	{
+	maps.Add(i, lv);
+	}
+	else
+	{
+	maps.Add(i, lv);
+	}
 	}
 	ITERATOR a = maps.First();
 	while (a)
 	{
-		INT k = maps.GetKeyAt(a);
-		TRACE("K:%d,V:%d\n",k , maps.GetValueAt(a).V);
-		a = maps.Next(a);
+	INT k = maps.GetKeyAt(a);
+	TRACE("K:%d,V:%d\n",k , maps.GetValueAt(a).V);
+	a = maps.Next(a);
 	}
 	INT v = 45;
-	a = maps.Lookup(v);
+	a = maps.Lookup(v);*/
 	/*TinyLinkList<ListV> linkList;
 	for (int i = 0; i < 100; i++)
 	{
