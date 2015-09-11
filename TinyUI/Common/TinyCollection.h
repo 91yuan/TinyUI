@@ -506,7 +506,7 @@ namespace TinyUI
 		ITERATOR InsertLast(const T& value);
 		ITERATOR InsertBefore(ITERATOR pos, const T& value);
 		ITERATOR InsertAfter(ITERATOR pos, const T& value);
-		ITERATOR Lookup(const T& value, ITERATOR pos = NULL) const;
+		ITERATOR Lookup(const T& value, ITERATOR pos = NULL) const throw();
 		ITERATOR First() const;
 		ITERATOR Last() const;
 		ITERATOR Next(ITERATOR pos) const;
@@ -627,7 +627,7 @@ namespace TinyUI
 		return(ITERATOR(pNew));
 	}
 	template<typename T, typename Traits>
-	ITERATOR TinyLinkList<T, Traits>::Lookup(const T& value, ITERATOR pos) const
+	ITERATOR TinyLinkList<T, Traits>::Lookup(const T& value, ITERATOR pos) const throw()
 	{
 		TinyEntry* ps = static_cast<TinyEntry*>(pos);
 		if (ps == NULL)

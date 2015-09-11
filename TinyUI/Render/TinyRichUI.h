@@ -37,7 +37,6 @@ namespace TinyUI
 		TinyRichUI();
 		~TinyRichUI();
 		HRESULT Create(HWND hWND);//创建接口
-		HRESULT SetCharFormat(CHARFORMATW * pcf, HFONT hFont);
 		/************************************************************************/
 		/*ITextHost                                                             */
 		/************************************************************************/

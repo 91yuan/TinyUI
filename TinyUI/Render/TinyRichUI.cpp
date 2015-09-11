@@ -46,44 +46,6 @@ namespace TinyUI
 		}
 		return hRes;
 	}
-	HRESULT TinyRichUI::SetCharFormat(CHARFORMATW * pcf, HFONT hFont)
-	{
-		HWND hwnd;
-		LOGFONT lf;
-		HDC hdc;
-		LONG yPixPerInch;
-		if (!hFont)
-			hFont = (HFONT)GetStockObject(SYSTEM_FONT);
-		if (!GetObject(hFont, sizeof(LOGFONT), &lf))
-			return E_FAIL;
-		pcf->cbSize = sizeof(CHARFORMAT2);
-		hwnd = GetDesktopWindow();
-		hdc = GetDC(hwnd);
-		yPixPerInch = GetDeviceCaps(hdc, LOGPIXELSY);
-		pcf->yHeight = lf.lfHeight * LY_PER_INCH / yPixPerInch;
-		ReleaseDC(hwnd, hdc);
-
-		pcf->yOffset = 0;
-		pcf->crTextColor = 0;
-
-		pcf->dwEffects = CFM_EFFECTS | CFE_AUTOBACKCOLOR;
-		pcf->dwEffects &= ~(CFE_PROTECTED | CFE_LINK);
-
-		if (lf.lfWeight < FW_BOLD)
-			pcf->dwEffects &= ~CFE_BOLD;
-		if (!lf.lfItalic)
-			pcf->dwEffects &= ~CFE_ITALIC;
-		if (!lf.lfUnderline)
-			pcf->dwEffects &= ~CFE_UNDERLINE;
-		if (!lf.lfStrikeOut)
-			pcf->dwEffects &= ~CFE_STRIKEOUT;
-
-		pcf->dwMask = CFM_ALL | CFM_BACKCOLOR;
-		pcf->bCharSet = lf.lfCharSet;
-		pcf->bPitchAndFamily = lf.lfPitchAndFamily;
-		MultiByteToWideChar(CP_ACP, 0, lf.lfFaceName, LF_FACESIZE, pcf->szFaceName, LF_FACESIZE);
-		return S_OK;
-	}
 	HRESULT STDMETHODCALLTYPE TinyRichUI::QueryInterface(REFIID riid, void **ppvObject)
 	{
 		if (IsEqualIID(riid, IID_ITextHost) || IsEqualIID(riid, IID_IUnknown))

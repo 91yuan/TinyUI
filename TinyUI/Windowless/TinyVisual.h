@@ -10,15 +10,29 @@ namespace TinyUI
 	/// </summary>
 	class TinyVisual
 	{
+		DISALLOW_COPY_AND_ASSIGN(TinyVisual);
 	public:
 		TinyVisual();
+		~TinyVisual();
+		BOOL	Create(TinyVisual* pParent, INT x, INT y, INT cx, INT cy, DWORD dwStyle);
+		BOOL	IsVisible() const;
+		BOOL	IsEnable() const;
+		void	SetStyle(DWORD dwStyle);
+		DWORD	GetStyle() const;
+		
+	public:
+		static BOOL	SetVisualPos(TinyVisual* _this, TinyVisual* pInsertAfter, INT x, INT y, INT cx, INT cy, UINT nFlags);
+		static TinyVisual*	GetVisual(TinyVisual* _this,DWORD dwCMD);
+	public:
+		virtual void Layout();
 	private:
-		BOOL			m_visible;
-		BOOL			m_enable;
+		DWORD			m_dwStyle;
+		RECT			m_bounds;
 		TinyVisual*		m_pParent;
 		TinyVisual*		m_pChildren;
 		TinyVisual*		m_pNext;
 		TinyVisual*		m_pPrev;
+		TinyLinkList<TinyVisual*> m_list;
 	};
 }
 

@@ -23,10 +23,7 @@ namespace TinyUI
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 	private:
-		void DrawImage(TinyDC& dc,TinyImage& image);
-	private:
 		SIZE m_size;
-		TinyImage m_image;
 	};
 }
 

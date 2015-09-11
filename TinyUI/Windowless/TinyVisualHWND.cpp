@@ -43,52 +43,7 @@ namespace TinyUI
 		PAINTSTRUCT ps = { 0 };
 		HDC hDC = BeginPaint(m_hWND, &ps);
 
-		TinyCanvas canvas(hDC);
-
-		canvas.DrawRectangle(100, 100, 100, 100);
-		canvas.DrawArc(100, 100, 100, 100, 10, 70);
-
-		///*POINT pts[5];
-		//pts[0].x = 10; 
-		//pts[0].y  = 10; 
-		//pts[1].x  = 60;
-		//pts[1].y  = 10;  
-		//pts[2].x  = 10; 
-		//pts[2].y  = 100;
-		//pts[3].x = 60;
-		//pts[3].y = 100; 
-		//canvas.DrawBeziers(pts, 3);*/
-		//canvas.DrawRectangle(100, 100, 100, 100);
-		//canvas.DrawArc(100, 100, 100, 100, 0, 30);
-		//canvas.DrawLine(10, 10, 100, 100);
-
-		//POINT pos[5];
-		//pos[0].x = 10;
-		//pos[0].y = 15;
-
-		//pos[1].x = 56;
-		//pos[1].y = 70;
-
-		//pos[2].x = 100;
-		//pos[2].y = 100;
-
-		//pos[3].x = 100;
-		//pos[3].y = 200;
-
-		//canvas.DrawLines(pos,4);
-		/*canvas.Translate(100, 100);
-		canvas.Rotate(45);
-		canvas.DrawImage(m_image, 0, 0);*/
-		/*TinyRectangle dst(10, 10, 82, 65);
-		canvas.DrawImage(m_image, dst, 0, 0, 72, 55);*/
-		//INT iSave = SaveDC(hDC);
-		//TinyMemDC memdc(hDC, m_size.cx, m_size.cy);
-		//RECT paintRC = { 0, 0, m_size.cx, m_size.cy };
-		//FillRect(memdc, &paintRC, (HBRUSH)GetStockObject(WHITE_BRUSH));
-		//DrawImage(memdc, m_image);
-		//memdc.Render(paintRC, paintRC, FALSE);
-		//RestoreDC(hDC, iSave);
-
+		
 		EndPaint(m_hWND, &ps);
 		return FALSE;
 	}
@@ -114,28 +69,7 @@ namespace TinyUI
 	LRESULT TinyVisualHWND::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
-		m_image.Load("D:\\sunflower.png");
+
 		return FALSE;
-	}
-
-	void TinyVisualHWND::DrawImage(TinyDC& dc, TinyImage& image)
-	{
-
-		/*TinyMemDC memdc1(dc, image);
-		INT iSave = dc.SaveDC();
-		dc.SetGraphicsMode(GM_ADVANCED);
-		TinyMatrix marix;
-		dc.GetWorldTransform(&marix);
-		marix.SetTranslate(200, 200);
-		marix.SetScale(1, 1);
-		marix.SetRotate(180);
-		dc.SetWorldTransform(&marix);
-		TinyRectangle rect = image.GetRectangle();
-		dc.SetBkColor(RGB(128, 128, 128));
-		dc.Rectangle(&rect);
-		dc.MoveTo(0, 0);
-		dc.LineTo(200, 200);
-		memdc1.Render(rect, rect, TRUE);
-		dc.RestoreDC(iSave);*/
 	}
 }
