@@ -29,54 +29,26 @@ namespace TinyUI
 	{
 		return m_dwStyle;
 	}
-	TinyVisual*	TinyVisual::GetVisual(TinyVisual* _this,DWORD dwCMD)
+	TinyVisual*	TinyVisual::GetParent()
+	{
+		return this->m_pParent;
+	}
+	TinyVisual* TinyVisual::GetVisual(TinyVisual* _this, DWORD dwCMD)
 	{
 		switch (dwCMD)
 		{
 		case GW_HWNDNEXT:
-			break;
+			return _this->m_pNext;
 		case GW_HWNDPREV:
-			break;
+			return _this->m_pPrev;
 		case GW_HWNDFIRST:
-			break;
+			return NULL;
 		case GW_HWNDLAST:
-			break;
+			return NULL;
 		default:
 			break;
 		}
-	}
-	BOOL TinyVisual::SetVisualPos(TinyVisual* _this,TinyVisual* pInsertAfter, INT x, INT y, INT cx, INT cy, UINT nFlags)
-	{
-
-		/*ITERATOR pos = m_list.Lookup(pInsertAfter);
-		if (nFlags & SWP_HIDEWINDOW)
-		{
-		m_dwStyle &= ~WS_VISIBLE;
-		}
-		if (nFlags & SWP_SHOWWINDOW)
-		{
-		m_dwStyle |= WS_VISIBLE;
-		}
-		TinyRectangle bounds = m_bounds;
-		if (nFlags & SWP_NOMOVE)
-		{
-		bounds.right = bounds.left + cx;
-		bounds.bottom = bounds.top + cy;
-		}
-		if (nFlags & SWP_NOSIZE)
-		{
-		TinySize size = bounds.Size();
-		bounds.left = x;
-		bounds.top = y;
-		bounds.right = x + size.cx;
-		bounds.bottom = y + size.cy;
-		}
-		if (nFlags & SWP_NOZORDER)
-		{
-		m_list.InsertFirst();
-		}
-		this->m_bounds = bounds;*/
-		return FALSE;
+		return NULL;
 	}
 	BOOL TinyVisual::IsVisible() const
 	{

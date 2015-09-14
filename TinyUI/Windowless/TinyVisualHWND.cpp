@@ -6,8 +6,9 @@
 namespace TinyUI
 {
 	TinyVisualHWND::TinyVisualHWND()
+		:m_desktop(NULL)
 	{
-
+		
 	}
 	TinyVisualHWND::~TinyVisualHWND()
 	{
@@ -71,5 +72,20 @@ namespace TinyUI
 		bHandled = FALSE;
 
 		return FALSE;
+	}
+
+	BOOL TinyVisualHWND::Add(TinyVisual* ps)
+	{
+		if (!ps) return FALSE;
+		return m_visuals.InsertLast(ps) != NULL;
+	}
+	BOOL TinyVisualHWND::Remove(TinyVisual* ps)
+	{
+		if (!ps) return FALSE;
+		return m_visuals.RemoveAt((ITERATOR)ps);
+	}
+	void TinyVisualHWND::RemoveAll()
+	{
+		m_visuals.RemoveAll();
 	}
 }

@@ -22,8 +22,14 @@ namespace TinyUI
 		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
+	public:
+		BOOL	Add(TinyVisual* ps);
+		BOOL	Remove(TinyVisual* ps);
+		void	RemoveAll();
 	private:
-		SIZE m_size;
+		SIZE		m_size;
+		TinyVisual*	m_desktop;
+		static TinyLinkList<TinyVisual*> m_visuals;
 	};
 }
 
