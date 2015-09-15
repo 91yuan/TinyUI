@@ -5,41 +5,37 @@
 
 namespace TinyUI
 {
-#define BEGIN_attribute
-
 	class TinyVisual;
-	class TinyVisualRoot;
 	/// <summary>
 	/// 可视化元素
 	/// </summary>
-	class TinyVisual
+	class TinyVisual : public TinyObject
 	{
+		DECLARE_DYNAMIC(TinyVisual);
 		DISALLOW_COPY_AND_ASSIGN(TinyVisual);
 	public:
 		TinyVisual();
 		~TinyVisual();
-		BOOL	Create(TinyVisual* pParent, INT x, INT y, INT cx, INT cy, DWORD dwStyle);
-		BOOL	IsVisible() const;
-		BOOL	IsEnable() const;
-		void	SetStyle(DWORD dwStyle);
-		DWORD	GetStyle() const;
-		TinyVisual*	GetParent();
+		BOOL		IsVisible() const;
+		BOOL		IsEnable() const;
+		void		SetVisible(BOOL	vis);
+		void		SetEnable(BOOL enable);
+		RECT		GetBounds() const;
 	public:
-		BOOL	Add(TinyVisual* ps);
-		BOOL	Remove(TinyVisual* ps);
-		void	RemoveAll();
+		BOOL		Add(TinyVisual* ps);
+		BOOL		Remove(TinyVisual* ps);
+		void		RemoveAll();
+		DWORD		GetSize() const;
 	public:
 		virtual void Layout();
 	protected:
-		DWORD						m_dwStyle;
-		RECT						m_bounds;
-		TinyString					m_name;
-		TinyString					m_text;
-		TinyVisual*					m_pParent;
-		TinyVisual*					m_pChildren;
-		TinyVisual*					m_pNext;
-		TinyVisual*					m_pPrev;
-		TinyLinkList<TinyVisual*>	m_visuals;
+		BOOL						visible_;
+		BOOL						enable_;
+		RECT						bounds_;//客户端区域
+		TinyString					name_;
+		TinyString					text_;
+		TinyVisual*					parent_;
+		TinyLinkList<TinyVisual*>	visuals_;
 	};
 }
 

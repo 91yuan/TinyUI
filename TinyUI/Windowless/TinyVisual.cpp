@@ -4,60 +4,64 @@
 namespace TinyUI
 {
 	TinyVisual::TinyVisual()
-		:m_pParent(NULL),
-		m_pChildren(NULL),
-		m_pNext(NULL),
-		m_pPrev(NULL),
-		m_dwStyle(WS_VISIBLE)
+		:parent_(NULL)
 	{
-		memset(&m_bounds, 0, sizeof(RECT));
+		memset(&client_bounds_, 0, sizeof(RECT));
 	}
 	TinyVisual::~TinyVisual()
 	{
 
 	}
-	BOOL TinyVisual::Create(TinyVisual* pParent, INT x, INT y, INT cx, INT cy, DWORD dwStyle)
+	void TinyVisual::SetVisible(BOOL vis)
 	{
-		this->m_pParent = pParent;
-		return FALSE;
+		if (vis != visible_)
+		{
+			vis = visible_;
+			Layout();
+		}
 	}
-	void TinyVisual::SetStyle(DWORD dwStyle)
+	void TinyVisual::SetEnable(BOOL enable)
 	{
-		m_dwStyle = dwStyle;
+		if (enable_ != enable)
+		{
+			enable_ = enable;
+			Layout();
+		}
 	}
-	DWORD TinyVisual::GetStyle() const
-	{
-		return m_dwStyle;
-	}
-	TinyVisual*	TinyVisual::GetParent()
-	{
-		return this->m_pParent;
-	}
-
 	BOOL TinyVisual::Add(TinyVisual* ps)
 	{
 		if (!ps) return FALSE;
-		return m_visuals.InsertLast(ps) != NULL;
+		ps->parent_ = this;
+		return this->visuals_.InsertLast(ps) != NULL;
 	}
 	BOOL TinyVisual::Remove(TinyVisual* ps)
 	{
 		if (!ps) return FALSE;
-		return m_visuals.RemoveAt((ITERATOR)ps);
+		ps->parent_ = NULL;
+		return this->visuals_.RemoveAt((ITERATOR)ps);
 	}
 	void TinyVisual::RemoveAll()
 	{
-		m_visuals.RemoveAll();
+		this->visuals_.RemoveAll();
+	}
+	DWORD	TinyVisual::GetSize() const
+	{
+		return this->visuals_.GetSize();
 	}
 	BOOL TinyVisual::IsVisible() const
 	{
-		return m_dwStyle & WS_VISIBLE;
+		return this->visible_;
 	}
 	BOOL TinyVisual::IsEnable() const
 	{
-		return !(m_dwStyle & WS_DISABLED);
+		return this->enable_;
 	}
 	void TinyVisual::Layout()
 	{
 
+	}
+	RECT TinyVisual::GetBounds() const
+	{
+		return bounds_;
 	}
 }

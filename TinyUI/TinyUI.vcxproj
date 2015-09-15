@@ -147,6 +147,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Render\TinyCanvas.h" />
     <ClInclude Include="Windowless\TinyCaptionUI.h" />
+    <ClInclude Include="Windowless\TinyVisualRoot.h" />
     <ClInclude Include="Windowless\TinyVisualFactory.h" />
     <ClInclude Include="Windowless\TinyLayout.h" />
     <ClInclude Include="Windowless\TinyVisual.h" />
@@ -224,6 +225,7 @@
     </ClCompile>
     <ClCompile Include="Render\TinyCanvas.cpp" />
     <ClCompile Include="Windowless\TinyCaptionUI.cpp" />
+    <ClCompile Include="Windowless\TinyVisualRoot.cpp" />
     <ClCompile Include="Windowless\TinyVisualFactory.cpp" />
     <ClCompile Include="Windowless\TinyLayout.cpp" />
     <ClCompile Include="Windowless\TinyVisual.cpp" />

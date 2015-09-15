@@ -297,6 +297,9 @@
     <ClInclude Include="Windowless\TinyCaptionUI.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualRoot.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -519,6 +522,9 @@
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
     <ClCompile Include="Windowless\TinyCaptionUI.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualRoot.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
