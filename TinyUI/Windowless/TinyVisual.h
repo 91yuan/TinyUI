@@ -7,6 +7,8 @@ namespace TinyUI
 {
 #define BEGIN_attribute
 
+	class TinyVisual;
+	class TinyVisualRoot;
 	/// <summary>
 	/// 可视化元素
 	/// </summary>
@@ -23,17 +25,21 @@ namespace TinyUI
 		DWORD	GetStyle() const;
 		TinyVisual*	GetParent();
 	public:
-		static TinyVisual* GetVisual(TinyVisual* _this,DWORD dwCMD);
+		BOOL	Add(TinyVisual* ps);
+		BOOL	Remove(TinyVisual* ps);
+		void	RemoveAll();
 	public:
 		virtual void Layout();
-	private:
+	protected:
 		DWORD						m_dwStyle;
 		RECT						m_bounds;
+		TinyString					m_name;
+		TinyString					m_text;
 		TinyVisual*					m_pParent;
 		TinyVisual*					m_pChildren;
 		TinyVisual*					m_pNext;
 		TinyVisual*					m_pPrev;
-		TinyLinkList<TinyVisual*>	m_list;
+		TinyLinkList<TinyVisual*>	m_visuals;
 	};
 }
 

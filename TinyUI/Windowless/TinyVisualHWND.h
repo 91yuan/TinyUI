@@ -5,31 +5,26 @@
 
 namespace TinyUI
 {
-	class TinyVisualHWND : public TinyControl
+	class TinyVisual;
+	class TinyVisualHWND : public TinyControl, public TinyVisual
 	{
 		DECLARE_DYNAMIC(TinyVisualHWND)
 	public:
 		TinyVisualHWND();
 		~TinyVisualHWND();
 		BOOL Create(HWND hParent, INT x, INT y, INT cx, INT cy);
-		virtual DWORD RetrieveStyle();
-		virtual DWORD RetrieveExStyle();
-		virtual LPCSTR RetrieveClassName();
-		virtual LPCSTR RetrieveTitle();
-		virtual HICON RetrieveIcon();
+		virtual DWORD RetrieveStyle() OVERRIDE;
+		virtual DWORD RetrieveExStyle() OVERRIDE;
+		virtual LPCSTR RetrieveClassName() OVERRIDE;
+		virtual LPCSTR RetrieveTitle() OVERRIDE;
+		virtual HICON RetrieveIcon() OVERRIDE;
 		virtual LRESULT OnPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		virtual LRESULT OnErasebkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
 		virtual LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) OVERRIDE;
-	public:
-		BOOL	Add(TinyVisual* ps);
-		BOOL	Remove(TinyVisual* ps);
-		void	RemoveAll();
 	private:
 		SIZE		m_size;
-		TinyVisual*	m_desktop;
-		static TinyLinkList<TinyVisual*> m_visuals;
 	};
 }
 

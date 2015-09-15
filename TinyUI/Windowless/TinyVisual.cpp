@@ -33,22 +33,20 @@ namespace TinyUI
 	{
 		return this->m_pParent;
 	}
-	TinyVisual* TinyVisual::GetVisual(TinyVisual* _this, DWORD dwCMD)
+
+	BOOL TinyVisual::Add(TinyVisual* ps)
 	{
-		switch (dwCMD)
-		{
-		case GW_HWNDNEXT:
-			return _this->m_pNext;
-		case GW_HWNDPREV:
-			return _this->m_pPrev;
-		case GW_HWNDFIRST:
-			return NULL;
-		case GW_HWNDLAST:
-			return NULL;
-		default:
-			break;
-		}
-		return NULL;
+		if (!ps) return FALSE;
+		return m_visuals.InsertLast(ps) != NULL;
+	}
+	BOOL TinyVisual::Remove(TinyVisual* ps)
+	{
+		if (!ps) return FALSE;
+		return m_visuals.RemoveAt((ITERATOR)ps);
+	}
+	void TinyVisual::RemoveAll()
+	{
+		m_visuals.RemoveAll();
 	}
 	BOOL TinyVisual::IsVisible() const
 	{

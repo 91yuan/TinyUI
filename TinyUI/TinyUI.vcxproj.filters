@@ -291,6 +291,12 @@
     <ClInclude Include="Render\TinyTransform.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualFactory.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyCaptionUI.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -508,6 +514,12 @@
     </ClCompile>
     <ClCompile Include="Render\TinyTransform.cpp">
       <Filter>源文件\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualFactory.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyCaptionUI.cpp">
+      <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
