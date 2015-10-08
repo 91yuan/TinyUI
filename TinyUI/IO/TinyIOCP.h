@@ -17,7 +17,7 @@ namespace TinyUI
 	{
 	public:
 		TinyIOCP(DWORD dwConcurrent = 1);
-		virtual ~TinyIOCP();
+		~TinyIOCP();
 		operator HANDLE() const;
 		HANDLE		Handle() const;
 		BOOL		Register(HANDLE hFileHandle, ULONG_PTR completionKey);
@@ -25,6 +25,8 @@ namespace TinyUI
 		void		Close();
 		HANDLE		GetFileHandle() const;
 		ULONG_PTR	GetCompletionKey() const;
+	public:
+		typedef BOOL(WINAPI* CancelIoEx)(HANDLE, LPOVERLAPPED);
 	private:
 		HANDLE							m_hIOCP;
 		DWORD							m_dwConcurrent;

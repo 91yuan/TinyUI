@@ -67,12 +67,6 @@
     <Filter Include="源文件\Network">
       <UniqueIdentifier>{ac6f29a6-0362-47eb-941b-f7084c021f6a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\Network\Json">
-      <UniqueIdentifier>{3ab3401a-7e19-4b82-935c-a891646185dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="头文件\Network\Json">
-      <UniqueIdentifier>{af55b7ea-13f8-44d0-9fe6-19929445f012}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -294,11 +288,14 @@
     <ClInclude Include="Windowless\TinyVisualFactory.h">
       <Filter>头文件\Windowless</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyCaptionUI.h">
-      <Filter>头文件\Windowless</Filter>
+    <ClInclude Include="Common\TinyError.h">
+      <Filter>头文件\Common</Filter>
     </ClInclude>
-    <ClInclude Include="Windowless\TinyVisualRoot.h">
-      <Filter>头文件\Windowless</Filter>
+    <ClInclude Include="Network\TinyNetwork.h">
+      <Filter>头文件\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\TinyThreadPool.h">
+      <Filter>头文件\IO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -521,11 +518,14 @@
     <ClCompile Include="Windowless\TinyVisualFactory.cpp">
       <Filter>源文件\Windowless</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyCaptionUI.cpp">
-      <Filter>源文件\Windowless</Filter>
+    <ClCompile Include="Common\TinyError.cpp">
+      <Filter>源文件\Common</Filter>
     </ClCompile>
-    <ClCompile Include="Windowless\TinyVisualRoot.cpp">
-      <Filter>源文件\Windowless</Filter>
+    <ClCompile Include="Network\TinyNetwork.cpp">
+      <Filter>源文件\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TinyThreadPool.cpp">
+      <Filter>源文件\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

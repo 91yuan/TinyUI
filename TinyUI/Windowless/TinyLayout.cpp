@@ -3,5 +3,8 @@
 
 namespace TinyUI
 {
+	namespace Windowless
+	{
 
+	}
 }

@@ -1,13 +1,5 @@
 #pragma once
-#include "../Common//TinyCollection.h"
-#include "../IO/TinyIO.h"
-#include "../Common/TinyCallback.h"
-#include "../IO/TinyIOCP.h"
-#include "TinyConnector.h"
-#include <WinSock2.h>
-#include <mswsock.h>
-#pragma comment(lib,"mswsock.lib")
-#pragma comment(lib,"Ws2_32.lib")
+#include "TinyNetwork.h"
 
 namespace TinyUI
 {
@@ -21,14 +13,15 @@ namespace TinyUI
 	{
 		friend class TinyConnector;
 	public:
-		TinyAcceptor(TinyIOCP& iocp);
+		TinyAcceptor(TinyIOCP& iocp, SOCKET socket);
 		BOOL	Open(SOCKADDR_IN address);
 		void	Close();
 		BOOL	Shutdown(INT how);
-		BOOL	BeginAccept(TinyConnector* connect);
+		BOOL	BeginAccept();
+		static  PVOID GetExtensionPtr(SOCKET socket,GUID guid);
 	protected:
-		SOCKET		m_socket;
-		TinyIOCP&	m_iocp;
+		SOCKET			m_socket;
+		TinyIOCP&		m_iocp;
 	};
 }
 

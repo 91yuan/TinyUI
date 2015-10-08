@@ -88,6 +88,7 @@
     <ClInclude Include="Common\TinyCommon.h" />
     <ClInclude Include="Common\TinyDelegate.h" />
     <ClInclude Include="Common\TinyDialog.h" />
+    <ClInclude Include="Common\TinyError.h" />
     <ClInclude Include="Common\TinyEvent.h" />
     <ClInclude Include="Common\TinyHandleMap.h" />
     <ClInclude Include="Common\TinyLogging.h" />
@@ -134,9 +135,11 @@
     <ClInclude Include="IO\TinyIO.h" />
     <ClInclude Include="IO\TinyIOCP.h" />
     <ClInclude Include="IO\TinyTask.h" />
+    <ClInclude Include="IO\TinyThreadPool.h" />
     <ClInclude Include="Media\TinyWave.h" />
     <ClInclude Include="Network\TinyConnector.h" />
     <ClInclude Include="Network\TinyAcceptor.h" />
+    <ClInclude Include="Network\TinyNetwork.h" />
     <ClInclude Include="Render\TinyGraphics.h" />
     <ClInclude Include="Render\TinyImage.h" />
     <ClInclude Include="Render\TinyRichUI.h" />
@@ -146,8 +149,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Render\TinyCanvas.h" />
-    <ClInclude Include="Windowless\TinyCaptionUI.h" />
-    <ClInclude Include="Windowless\TinyVisualRoot.h" />
     <ClInclude Include="Windowless\TinyVisualFactory.h" />
     <ClInclude Include="Windowless\TinyLayout.h" />
     <ClInclude Include="Windowless\TinyVisual.h" />
@@ -164,6 +165,7 @@
     <ClCompile Include="Common\TinyCommon.cpp" />
     <ClCompile Include="Common\TinyDelegate.cpp" />
     <ClCompile Include="Common\TinyDialog.cpp" />
+    <ClCompile Include="Common\TinyError.cpp" />
     <ClCompile Include="Common\TinyEvent.cpp" />
     <ClCompile Include="Common\TinyHandleMap.cpp" />
     <ClCompile Include="Common\TinyLogging.cpp" />
@@ -210,9 +212,11 @@
     <ClCompile Include="IO\TinyIO.cpp" />
     <ClCompile Include="IO\TinyIOCP.cpp" />
     <ClCompile Include="IO\TinyTask.cpp" />
+    <ClCompile Include="IO\TinyThreadPool.cpp" />
     <ClCompile Include="Media\TinyWave.cpp" />
     <ClCompile Include="Network\TinyConnector.cpp" />
     <ClCompile Include="Network\TinyAcceptor.cpp" />
+    <ClCompile Include="Network\TinyNetwork.cpp" />
     <ClCompile Include="Render\stb_image.c" />
     <ClCompile Include="Render\TinyGraphics.cpp" />
     <ClCompile Include="Render\TinyImage.cpp" />
@@ -224,8 +228,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Render\TinyCanvas.cpp" />
-    <ClCompile Include="Windowless\TinyCaptionUI.cpp" />
-    <ClCompile Include="Windowless\TinyVisualRoot.cpp" />
     <ClCompile Include="Windowless\TinyVisualFactory.cpp" />
     <ClCompile Include="Windowless\TinyLayout.cpp" />
     <ClCompile Include="Windowless\TinyVisual.cpp" />

@@ -5,8 +5,8 @@
 
 namespace TinyUI
 {
-	TinyAcceptor::TinyAcceptor(TinyIOCP& iocp)
-		:m_socket(WSASocket(AF_INET, SOCK_STREAM, 0, NULL, NULL, WSA_FLAG_OVERLAPPED)),
+	TinyAcceptor::TinyAcceptor(TinyIOCP& iocp, SOCKET socket)
+		:m_socket(socket),
 		m_iocp(iocp)
 	{
 
@@ -27,11 +27,33 @@ namespace TinyUI
 		}
 		return TRUE;
 	}
-	BOOL TinyAcceptor::BeginAccept(TinyConnector* connect)
+	BOOL TinyAcceptor::BeginAccept()
 	{
 		if (m_socket == INVALID_SOCKET)
 		{
 			return FALSE;
+		}
+		SOCKET socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+		if (socket == INVALID_SOCKET)
+		{
+			return FALSE;
+		}
+		AcceptTask* op = new AcceptTask(socket);
+		LPFN_ACCEPTEX lpfnAcceptEx = static_cast<LPFN_ACCEPTEX>(GetExtensionPtr(m_socket, WSAID_ACCEPTEX));
+		if (!lpfnAcceptEx(m_socket,
+			op->socket(),
+			op->data(),
+			0,
+			sizeof(SOCKADDR_IN) + 16,
+			sizeof(SOCKADDR_IN) + 16,
+			0,
+			op))
+		{
+			if (WSAGetLastError() != WSA_FLAG_OVERLAPPED)
+			{
+				SAFE_DELETE(op);
+				return FALSE;
+			}
 		}
 		return TRUE;
 	}

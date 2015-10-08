@@ -3,5 +3,11 @@
 
 namespace TinyUI
 {
-	
+	namespace Windowless
+	{
+		class TinyVisualEvent
+		{
+
+		};
+	}
 }

@@ -5,17 +5,10 @@
 
 namespace TinyUI
 {
-	class TinyVisual;
-	/// <summary>
-	/// ÔªËØÊÂ¼þ
-	/// </summary>
-	class TinyVisualEvent
+	namespace Windowless
 	{
-	public:
-		TinyVisual*	sender;
-		TinyMsg*	msg;
-		DWORD		dwTime;
-	};
+
+	}
 }
 
 

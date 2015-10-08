@@ -3,65 +3,61 @@
 
 namespace TinyUI
 {
-	TinyVisual::TinyVisual()
-		:parent_(NULL)
+	namespace Windowless
 	{
-		memset(&client_bounds_, 0, sizeof(RECT));
-	}
-	TinyVisual::~TinyVisual()
-	{
-
-	}
-	void TinyVisual::SetVisible(BOOL vis)
-	{
-		if (vis != visible_)
+		TinyVisual::TinyVisual()
+			:m_parent(NULL)
 		{
-			vis = visible_;
-			Layout();
+			memset(&m_bounds, 0, sizeof(RECT));
+			memset(&m_client_bounds, 0, sizeof(RECT));
 		}
-	}
-	void TinyVisual::SetEnable(BOOL enable)
-	{
-		if (enable_ != enable)
+		TinyVisual::~TinyVisual()
 		{
-			enable_ = enable;
-			Layout();
-		}
-	}
-	BOOL TinyVisual::Add(TinyVisual* ps)
-	{
-		if (!ps) return FALSE;
-		ps->parent_ = this;
-		return this->visuals_.InsertLast(ps) != NULL;
-	}
-	BOOL TinyVisual::Remove(TinyVisual* ps)
-	{
-		if (!ps) return FALSE;
-		ps->parent_ = NULL;
-		return this->visuals_.RemoveAt((ITERATOR)ps);
-	}
-	void TinyVisual::RemoveAll()
-	{
-		this->visuals_.RemoveAll();
-	}
-	DWORD	TinyVisual::GetSize() const
-	{
-		return this->visuals_.GetSize();
-	}
-	BOOL TinyVisual::IsVisible() const
-	{
-		return this->visible_;
-	}
-	BOOL TinyVisual::IsEnable() const
-	{
-		return this->enable_;
-	}
-	void TinyVisual::Layout()
-	{
 
-	}
-	RECT TinyVisual::GetBounds() const
-	{
-		return bounds_;
+		}
+		void TinyVisual::SetVisible(BOOL vis)
+		{
+			if (vis != m_visible)
+			{
+				vis = m_visible;
+				Layout();
+			}
+		}
+		void TinyVisual::SetEnable(BOOL enable)
+		{
+			if (m_enable != enable)
+			{
+				m_enable = enable;
+				Layout();
+			}
+		}
+		BOOL TinyVisual::IsFocusable() const
+		{
+			return m_focusable && m_enable;
+		}
+		void TinyVisual::SetFocusable(BOOL focusable)
+		{
+			if (m_focusable != focusable)
+			{
+				m_focusable = focusable;
+			}
+		}
+		
+		BOOL TinyVisual::IsVisible() const
+		{
+			return this->m_visible;
+		}
+		BOOL TinyVisual::IsEnable() const
+		{
+			return this->m_enable;
+		}
+		void TinyVisual::Layout()
+		{
+
+		}
+		RECT TinyVisual::GetBounds() const
+		{
+			return m_bounds;
+		}
 	}
 }

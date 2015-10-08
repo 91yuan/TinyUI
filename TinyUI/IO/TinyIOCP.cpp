@@ -13,7 +13,7 @@ namespace TinyUI
 		m_hIOCP = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, m_dwConcurrent);
 		if (m_hIOCP == NULL)
 		{
-			throw("´´½¨IOCPÊ§°Ü!");
+			throw error_code(GetLastError(), system_category());
 		}
 	}
 	BOOL TinyIOCP::Cancel()
@@ -23,7 +23,6 @@ namespace TinyUI
 			if (FARPROC CancelIoExPtr = ::GetProcAddress(
 				::GetModuleHandleA("KERNEL32"), "CancelIoEx"))
 			{
-				typedef BOOL(WINAPI* CancelIoEx)(HANDLE, LPOVERLAPPED);
 				CancelIoEx cancelIoEx = (CancelIoEx)CancelIoExPtr;
 				return cancelIoEx(m_hIOCP, NULL);
 			}

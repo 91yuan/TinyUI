@@ -31,7 +31,7 @@ namespace TinyUI
 		TinyMatrix operator*(const TinyMatrix &) const;
 		TinyMatrix &operator=(const TinyMatrix &);
 	};
-	/// <summary>
+	/*/// <summary>
 	/// 3Dæÿ’Û±‰ªª
 	/// </summary>
 	class TinyMatrix44
@@ -95,7 +95,7 @@ namespace TinyUI
 	private:
 		FLOAT  fMat[4][4];
 		mutable unsigned    fTypeMask;
-	};
+	};*/
 };
 
 
