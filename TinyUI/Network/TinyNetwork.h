@@ -11,23 +11,26 @@
 
 namespace TinyUI
 {
-	PVOID GetExtensionPtr(SOCKET socket, GUID guid);
-	/*LPFN_GETACCEPTEXSOCKADDRS   lpfnGetAcceptExSockaddrs = NULL;
-	GUID guidGetAcceptExSockaddrs = WSAID_GETACCEPTEXSOCKADDRS;
-	DWORD dwBytes = 0;
-	if (WSAIoctl(
-	m_socket,
-	SIO_GET_EXTENSION_FUNCTION_POINTER,
-	&guidGetAcceptExSockaddrs,
-	sizeof(guidGetAcceptExSockaddrs),
-	&lpfnGetAcceptExSockaddrs,
-	sizeof(lpfnGetAcceptExSockaddrs),
-	&dwBytes,
-	NULL,
-	NULL) == SOCKET_ERROR)
+	namespace Network
 	{
-	return FALSE;
-	}*/
+		PVOID GetExtensionPtr(SOCKET socket, GUID guid);
+		/*LPFN_GETACCEPTEXSOCKADDRS   lpfnGetAcceptExSockaddrs = NULL;
+		GUID guidGetAcceptExSockaddrs = WSAID_GETACCEPTEXSOCKADDRS;
+		DWORD dwBytes = 0;
+		if (WSAIoctl(
+		m_socket,
+		SIO_GET_EXTENSION_FUNCTION_POINTER,
+		&guidGetAcceptExSockaddrs,
+		sizeof(guidGetAcceptExSockaddrs),
+		&lpfnGetAcceptExSockaddrs,
+		sizeof(lpfnGetAcceptExSockaddrs),
+		&dwBytes,
+		NULL,
+		NULL) == SOCKET_ERROR)
+		{
+		return FALSE;
+		}*/
+	}
 
 }
 

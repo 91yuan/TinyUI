@@ -5,6 +5,8 @@
 
 namespace TinyUI
 {
+	using namespace IO;
+
 	class TinyFolderView;
 	enum
 	{

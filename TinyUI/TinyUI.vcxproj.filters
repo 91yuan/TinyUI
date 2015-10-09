@@ -525,7 +525,7 @@
       <Filter>源文件\Network</Filter>
     </ClCompile>
     <ClCompile Include="IO\TinyThreadPool.cpp">
-      <Filter>源文件\Network</Filter>
+      <Filter>源文件\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

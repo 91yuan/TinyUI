@@ -10,28 +10,31 @@ using namespace std;
 
 namespace TinyUI
 {
-	/// <summary>
-	/// IOCP模型
-	/// </summary>
-	class TinyIOCP : public TinyReference < TinyIOCP >
+	namespace IO
 	{
-	public:
-		TinyIOCP(DWORD dwConcurrent = 1);
-		~TinyIOCP();
-		operator HANDLE() const;
-		HANDLE		Handle() const;
-		BOOL		Register(HANDLE hFileHandle, ULONG_PTR completionKey);
-		BOOL		Cancel();
-		void		Close();
-		HANDLE		GetFileHandle() const;
-		ULONG_PTR	GetCompletionKey() const;
-	public:
-		typedef BOOL(WINAPI* CancelIoEx)(HANDLE, LPOVERLAPPED);
-	private:
-		HANDLE							m_hIOCP;
-		DWORD							m_dwConcurrent;
-		ULONG_PTR						m_completionKey;
-		HANDLE							m_hFileHandle;
+		/// <summary>
+		/// IOCP模型
+		/// </summary>
+		class TinyIOCP : public TinyReference < TinyIOCP >
+		{
+		public:
+			TinyIOCP(DWORD dwConcurrent = 1);
+			~TinyIOCP();
+			operator HANDLE() const;
+			HANDLE		Handle() const;
+			BOOL		Register(HANDLE hFileHandle, ULONG_PTR completionKey);
+			BOOL		Cancel();
+			void		Close();
+			HANDLE		GetFileHandle() const;
+			ULONG_PTR	GetCompletionKey() const;
+		public:
+			typedef BOOL(WINAPI* CancelIoEx)(HANDLE, LPOVERLAPPED);
+		private:
+			HANDLE							m_hIOCP;
+			DWORD							m_dwConcurrent;
+			ULONG_PTR						m_completionKey;
+			HANDLE							m_hFileHandle;
+		};
 	};
 }
 

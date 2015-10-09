@@ -5,23 +5,26 @@
 
 namespace TinyUI
 {
-	PVOID GetExtensionPtr(SOCKET socket, GUID guid)
+	namespace Network
 	{
-		LPVOID ps = NULL;
-		DWORD dwBytes = 0;
-		if (WSAIoctl(
-			socket,
-			SIO_GET_EXTENSION_FUNCTION_POINTER,
-			&guid,
-			sizeof(guid),
-			&ps,
-			sizeof(ps),
-			&dwBytes,
-			NULL,
-			NULL) == SOCKET_ERROR)
+		PVOID GetExtensionPtr(SOCKET socket, GUID guid)
 		{
-			return NULL;
+			LPVOID ps = NULL;
+			DWORD dwBytes = 0;
+			if (WSAIoctl(
+				socket,
+				SIO_GET_EXTENSION_FUNCTION_POINTER,
+				&guid,
+				sizeof(guid),
+				&ps,
+				sizeof(ps),
+				&dwBytes,
+				NULL,
+				NULL) == SOCKET_ERROR)
+			{
+				return NULL;
+			}
+			return ps;
 		}
-		return ps;
 	}
 }

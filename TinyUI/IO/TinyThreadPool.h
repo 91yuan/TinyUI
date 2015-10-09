@@ -10,37 +10,27 @@ using namespace std;
 
 namespace TinyUI
 {
-	class Environment
+	namespace IO
 	{
-	public:
-		Environment();
-		~Environment();
-	private:
-		TP_CALLBACK_ENVIRON m_em;
-	};
-	/// <summary>
-	/// 工作线程回调
-	/// </summary>
-	template<class Function>
-	class WorkCallback
-	{
-	public:
-		WorkCallback(const Function fs, PVOID state, PTP_CALLBACK_ENVIRON pEnv);
-		static void CALLBACK Callback(PTP_CALLBACK_INSTANCE Instance, PVOID Param, PTP_WORK work);
-	private:
-		Function	m_fs;
-		PVOID		m_state;
-		PTP_WORK	m_work;
-	};
-	/// <summary>
-	/// 线程池
-	/// </summary>
-	class TinyThreadPool : public TinyReference < TinyThreadPool >
-	{
-	public:
-		TinyThreadPool();
-	private:
-		HANDLE	m_hPOOL;
-	};
+		/// <summary>
+		/// 线程池
+		/// </summary>
+		class TinyThreadPool : public TinyReference < TinyThreadPool >
+		{
+		public:
+			TinyThreadPool();
+			~TinyThreadPool();
+			BOOL		Initialize(DWORD dwMin, DWORD dwMax);
+			PTP_WORK	SubmitTask(PVOID ps, PTP_WORK_CALLBACK cb);
+			void		WaitTask(PTP_WORK ps, BOOL fCancelPendingCallbacks);
+			void		CloseTask(PTP_WORK ps);
+			void		CancelPending();
+			void		Close();
+		private:
+			PTP_POOL			m_pPool;
+			PTP_CLEANUP_GROUP   m_pCleanup;
+			TP_CALLBACK_ENVIRON m_cbe;
+		};
+	}
 }
 

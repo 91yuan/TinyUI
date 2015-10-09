@@ -5,39 +5,64 @@
 
 namespace TinyUI
 {
-	Environment::Environment()
+	namespace IO
 	{
-		InitializeThreadpoolEnvironment(&m_em);
-	}
-	Environment::~Environment()
-	{
-
-	}
-	//////////////////////////////////////////////////////////////////////////
-	template<class Function>
-	WorkCallback::WorkCallback(const Function fs, PVOID state, PTP_CALLBACK_ENVIRON pEv)
-		:m_fs(fs),
-		m_state(state)
-	{
-		m_work = CreateThreadpoolWork(Callback, this, pEv);
-		if (m_work != NULL)
+		TinyThreadPool::TinyThreadPool()
+			:m_pPool(NULL),
+			m_pCleanup(NULL)
 		{
-			SubmitThreadpoolWork(m_work);
+			memset(&m_cbe, 0, sizeof(m_cbe));
 		}
-	}
-	template<class Function>
-	void CALLBACK WorkCallback::Callback(PTP_CALLBACK_INSTANCE instance, PVOID param, PTP_WORK work)
-	{
-		UNREFERENCED_PARAMETER(instance);
-		UNREFERENCED_PARAMETER(work);
-		TaskCallback<Function> *cb = reinterpret_cast<TaskCallback<Function>*>(param);
-		cb->m_fs(cb->m_state);
-		SAFE_DELETE(cb);
-	}
-	//////////////////////////////////////////////////////////////////////////
-	TinyThreadPool::TinyThreadPool()
-		:m_hPOOL(NULL)
-	{
-
+		BOOL TinyThreadPool::Initialize(DWORD dwMin, DWORD dwMax)
+		{
+			InitializeThreadpoolEnvironment(&m_cbe);
+			if ((m_pPool = CreateThreadpool(NULL)) != NULL)
+			{
+				SetThreadpoolThreadMinimum(m_pPool, dwMin);
+				SetThreadpoolThreadMaximum(m_pPool, dwMax);
+				SetThreadpoolCallbackPool(&m_cbe, m_pPool);
+				if ((m_pCleanup = CreateThreadpoolCleanupGroup()) != NULL)
+				{
+					SetThreadpoolCallbackCleanupGroup(&m_cbe, m_pCleanup, NULL);
+					return TRUE;
+				}
+				DestroyThreadpoolEnvironment(&m_cbe);
+				CloseThreadpool(m_pPool);
+			}
+			return FALSE;
+		}
+		PTP_WORK TinyThreadPool::SubmitTask(PVOID pv, PTP_WORK_CALLBACK cb)
+		{
+			PTP_WORK ps = NULL;
+			if ((ps = CreateThreadpoolWork(cb, pv, &m_cbe)) != NULL)
+			{
+				SubmitThreadpoolWork(ps);
+			}
+			return ps;
+		}
+		void TinyThreadPool::WaitTask(PTP_WORK ps, BOOL fCancelPendingCallbacks)
+		{
+			WaitForThreadpoolWorkCallbacks(ps, fCancelPendingCallbacks);
+		}
+		void TinyThreadPool::CloseTask(PTP_WORK ps)
+		{
+			CloseThreadpoolWork(ps);
+		}
+		void TinyThreadPool::CancelPending()
+		{
+			CloseThreadpoolCleanupGroupMembers(m_pCleanup, TRUE, NULL);
+		}
+		void TinyThreadPool::Close()
+		{
+			DestroyThreadpoolEnvironment(&m_cbe);
+			CloseThreadpoolCleanupGroup(m_pCleanup);
+			CloseThreadpool(m_pPool);
+			m_pCleanup = NULL;
+			m_pPool = NULL;
+		}
+		TinyThreadPool::~TinyThreadPool()
+		{
+			Close();
+		}
 	}
 }
