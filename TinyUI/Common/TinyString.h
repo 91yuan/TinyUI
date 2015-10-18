@@ -1,5 +1,6 @@
 #pragma once
 #include "TinyObject.h"
+#include "TinyCollection.h"
 #include <string>
 #include <vector>
 
@@ -57,6 +58,7 @@ namespace TinyUI
 	{
 		return (c >= 'A' && c <= 'Z') ? (c + ('a' - 'A')) : c;
 	}
+
 	/// <summary>
 	/// 字符串操作类
 	/// </summary>
@@ -66,6 +68,7 @@ namespace TinyUI
 	public:
 		TinyString();
 		explicit TinyString(size_t size);
+		TinyString(TinyString&& s);
 		TinyString(const CHAR* s);
 		TinyString(const TinyString& s);
 		TinyString(const TinyString& s, size_t pos, size_t size);
@@ -83,21 +86,29 @@ namespace TinyUI
 		TinyString& operator= (const TinyString& str);
 		TinyString& operator= (const CHAR* s);
 		TinyString& operator= (CHAR s);
+		INT			operator==(const TinyString& str);
+		INT			operator==(const CHAR* s);
+		INT			operator==(TinyString& str);
+		INT			operator==(CHAR* s);
 		TinyString& Erase(size_t pos);
 		TinyString& Erase(size_t pos, size_t size);
 		TinyString& Insert(size_t pos, const CHAR* s);
 		TinyString& Insert(size_t pos, const CHAR* s, size_t subsize);
 		TinyString& Insert(size_t pos, const TinyString& str);
 		TinyString& Insert(size_t pos, const TinyString& str, size_t subpos, size_t subsize);
-		INT			Find(const CHAR* s, size_t pos = 0) const;
-		INT			Find(const TinyString& str, size_t pos = 0) const;
-		INT			Find(const CHAR* s, size_t pos, size_t size) const;
-		INT			Find(CHAR s, size_t pos = 0) const;
-		BOOL		Compare(const TinyString& str) const throw();
-		BOOL		Compare(size_t pos, size_t size, const TinyString& str) const throw();
-		BOOL		Compare(const CHAR* s) const  throw();
-		BOOL		Compare(size_t pos, size_t size, const CHAR* s) const  throw();
-		BOOL		Compare(size_t pos, size_t size, const CHAR* s, size_t count) const  throw();
+		INT			IndexOf(const CHAR* s, size_t pos = 0) const;
+		INT			IndexOf(const TinyString& str, size_t pos = 0) const;
+		INT			IndexOf(const CHAR* s, size_t pos, size_t size) const;
+		INT			IndexOf(CHAR s, size_t pos = 0) const;
+		INT			LastIndexOf(const CHAR* s, size_t pos = -1) const;
+		INT			LastIndexOf(const TinyString& str, size_t pos = -1) const;
+		INT			LastIndexOf(const CHAR* s, size_t pos, size_t size) const;
+		INT			LastIndexOf(CHAR s, size_t pos = -1) const;
+		INT			Compare(const TinyString& str) const throw();
+		INT			Compare(size_t pos, size_t size, const TinyString& str) const throw();
+		INT			Compare(const CHAR* s) const  throw();
+		INT			Compare(size_t pos, size_t size, const CHAR* s) const  throw();
+		INT			Compare(size_t pos, size_t size, const CHAR* s, size_t count) const  throw();
 		size_t		Copy(CHAR* s, size_t pos, size_t size) const;
 		TinyString&	Replace(size_t pos, size_t size, const TinyString& str);
 		TinyString& Replace(size_t pos, size_t size, const TinyString& str, size_t subpos, size_t subsize);
@@ -105,6 +116,10 @@ namespace TinyUI
 		TinyString&	Replace(size_t pos, size_t size, const CHAR* s, size_t subsize);
 		TinyString	Substring(size_t pos, size_t size) const;//RVO优化
 		const CHAR& GetAt(size_t pos) const;
+		void		Split(char sep, TinyArray<TinyString>& strs);
+		TinyString	Trim(const TinyString& str) const;
+		TinyString	Trim(const CHAR* s, size_t size) const;
+		TinyString	Trim(CHAR s) const;
 		BOOL		IsEmpty() const throw();
 		const CHAR& operator[](size_t pos)const;
 		CHAR&		operator[] (size_t pos);
@@ -122,6 +137,16 @@ namespace TinyUI
 		CHAR*	_Mystr;
 		size_t	_Mysize;
 		size_t	_Myres;
+	};
+
+	template<>
+	class DefaultTraits < TinyString >
+	{
+	public:
+		static INT  Compare(const TinyString& value1, const TinyString& value2)
+		{
+			return value1.Compare(value2);
+		}
 	};
 	//////////////////////////////////////////////////////////////////////////
 	enum TrimPositions

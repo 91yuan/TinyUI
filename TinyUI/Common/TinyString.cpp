@@ -77,45 +77,55 @@ namespace TinyUI
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		//TRACE("调用构造函数TinyString()\n");
+		TRACE("调用构造函数TinyString(): %d\n", this);
 	}
 	TinyString::TinyString(size_t size)
 		:_Myres(size),
 		_Mysize(size),
 		_Mystr(NULL)
 	{
-
 		_Mystr = new CHAR[_Mysize];
-		//TRACE("调用构造函数TinyString(INT size)\n");
+		TRACE("调用构造函数TinyString(INT size): %d\n", this);
 	}
 	TinyString::TinyString(const CHAR* s)
 		: _Myres(0),
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		//TRACE("调用构造函数TinyString(const CHAR* s)\n");
+		TRACE("调用构造函数TinyString(const CHAR* s): %d\n", this);
 		ASSERT(s);
 		Assign(s, strlen(s));
-	}
-	TinyString::TinyString(const TinyString& s)
-		:_Myres(0),
-		_Mysize(0),
-		_Mystr(NULL)
-	{
-		//TRACE("调用拷贝构造函数TinyString(const TinyString& s)\n");
-		size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
-		Assign(s, 0, _Maxsize);
 	}
 	TinyString::TinyString(const TinyString& s, size_t pos, size_t size)
 		:_Myres(0),
 		_Mysize(0),
 		_Mystr(NULL)
 	{
-		//TRACE("调用拷贝构造函数TinyString(const TinyString& s, size_t pos, size_t size)\n");
+		TRACE("调用构造函数TinyString(const TinyString& s, size_t pos, size_t size): %d\n", this);
 		Assign(s, pos, size);
+	}
+	TinyString::TinyString(const TinyString& s)
+		:_Myres(0),
+		_Mysize(0),
+		_Mystr(NULL)
+	{
+		TRACE("调用拷贝构造函数TinyString(const TinyString& s): %d\n", this);
+		size_t _Maxsize = (size_t)((size_t)-1 / sizeof(CHAR));
+		Assign(s, 0, _Maxsize);
+	}
+	TinyString::TinyString(TinyString&& s)
+	{
+		TRACE("调用移动构造函数TinyString(TinyString&& s): %d\n", this);
+		this->_Mystr = s._Mystr;
+		this->_Mysize = s._Mysize;
+		this->_Myres = s._Myres;
+		s._Myres = 0;
+		s._Mysize = 0;
+		s._Mystr = NULL;
 	}
 	TinyString::~TinyString()
 	{
+		TRACE("调用析构函数~TinyString: %d\n", this);
 		SAFE_DELETE_ARRAY(this->_Mystr);
 		this->_Myres = this->_Mysize = 0;
 	}
@@ -231,6 +241,27 @@ namespace TinyUI
 		TRACE("调用赋值构造函数TinyString::operator = (CHAR s)\n");
 		return Assign(&s);
 	}
+
+	INT TinyString::operator == (const TinyString& str)
+	{
+		return this->Compare(str);
+	}
+
+	INT TinyString::operator == (const CHAR* s)
+	{
+		return strcmp(this->_Mystr, s);
+	}
+
+	INT TinyString::operator == (TinyString& str)
+	{
+		return this->Compare(str);
+	}
+
+	INT TinyString::operator == (CHAR* s)
+	{
+		return strcmp(this->_Mystr, s);
+	}
+
 	TinyString& TinyString::Assign(const CHAR* s)
 	{
 		ASSERT(s);
@@ -468,17 +499,17 @@ namespace TinyUI
 		size = _vsntprintf_s(szBuffer, 512, s, args);
 		ASSERT(size >= 0);
 		va_end(args);
-		return TinyString(szBuffer, 0, size);//一个构造函数代价
+		return TinyString(szBuffer, 0, size);
 	}
-	INT	TinyString::Find(const CHAR* s, size_t pos) const
+	INT	TinyString::IndexOf(const CHAR* s, size_t pos) const
 	{
-		return Find(s, pos, strlen(s));
+		return IndexOf(s, pos, strlen(s));
 	}
-	INT	TinyString::Find(const TinyString& str, size_t pos) const
+	INT	TinyString::IndexOf(const TinyString& str, size_t pos) const
 	{
-		return Find(str.STR(), pos, str.GetSize());
+		return IndexOf(str.STR(), pos, str.GetSize());
 	}
-	INT	TinyString::Find(const CHAR* s, size_t pos, size_t size) const
+	INT	TinyString::IndexOf(const CHAR* s, size_t pos, size_t size) const
 	{
 		ASSERT(s);
 		if (size == 0 && pos <= this->_Mysize)
@@ -486,7 +517,9 @@ namespace TinyUI
 		size_t _Nm = 0;
 		if (pos < this->_Mysize && size <= (_Nm = this->_Mysize - pos))
 		{
-			const CHAR *_Uptr, *_Vptr;
+			const CHAR *_Uptr = NULL;
+			const CHAR *_Vptr = NULL;
+
 			for (_Nm -= size - 1, _Vptr = this->_Mystr + pos;
 				(_Uptr = (CHAR*)memchr(_Vptr, *s, _Nm)) != 0;
 				_Nm -= _Uptr - _Vptr + 1, _Vptr = _Uptr + 1)
@@ -499,33 +532,63 @@ namespace TinyUI
 		}
 		return -1;
 	}
-	INT	TinyString::Find(CHAR s, size_t pos) const
+	INT	TinyString::IndexOf(CHAR s, size_t pos) const
 	{
-		return Find(&s, 0, 1);
+		return IndexOf(&s, pos, 1);
 	}
-	BOOL TinyString::Compare(const TinyString& str) const throw()
+	INT	TinyString::LastIndexOf(const CHAR* s, size_t pos) const
+	{
+		return LastIndexOf(s, pos, strlen(s));
+	}
+	INT	TinyString::LastIndexOf(const TinyString& str, size_t pos) const
+	{
+		return LastIndexOf(str.STR(), pos, str.GetSize());
+	}
+	INT	TinyString::LastIndexOf(const CHAR* s, size_t pos, size_t size) const
+	{
+		ASSERT(s);
+		if (size == 0)
+			return (pos < this->_Mysize ? pos : this->_Mysize);
+		if (size <= this->_Mysize)
+		{
+			const CHAR *_Uptr = this->_Mystr + (pos < this->_Mysize - size ? pos : this->_Mysize - size);
+			for (;; --_Uptr)
+			{
+				if ((*_Uptr == *s) && memcmp(_Uptr, s, size) == 0)
+					return (_Uptr - this->_Mystr);
+				else if (_Uptr == this->_Mystr)
+					break;
+			}
+		}
+		return -1;
+	}
+	INT	TinyString::LastIndexOf(CHAR s, size_t pos) const
+	{
+		return LastIndexOf(&s, pos, 1);
+	}
+	INT TinyString::Compare(const TinyString& str) const throw()
 	{
 		return Compare(0, str.GetSize(), str.STR());
 	}
-	BOOL TinyString::Compare(size_t pos, size_t size, const TinyString& str) const throw()
+	INT TinyString::Compare(size_t pos, size_t size, const TinyString& str) const throw()
 	{
 		return Compare(pos, size, str.STR());
 	}
-	BOOL TinyString::Compare(const CHAR* s) const  throw()
+	INT TinyString::Compare(const CHAR* s) const  throw()
 	{
 		ASSERT(s);
 		return Compare(0, strlen(s), s);
 	}
-	BOOL TinyString::Compare(size_t pos, size_t size, const CHAR* s) const  throw()
+	INT TinyString::Compare(size_t pos, size_t size, const CHAR* s) const  throw()
 	{
 		return Compare(pos, size, s, strlen(s));
 	}
-	BOOL TinyString::Compare(size_t pos, size_t size, const CHAR* s, size_t subsize) const  throw()
+	INT TinyString::Compare(size_t pos, size_t size, const CHAR* s, size_t subsize) const  throw()
 	{
 		ASSERT(s);
 		if (this->_Mysize - pos < size)
 			size = this->_Mysize - pos;
-		return memcmp(this->_Mystr + pos, s, size < subsize ? size : subsize) == 0 ? TRUE : FALSE;
+		return strncmp(this->_Mystr + pos, s, size < subsize ? size : subsize);
 	}
 	size_t	TinyString::Copy(CHAR* s, size_t pos, size_t size) const
 	{
@@ -541,6 +604,23 @@ namespace TinyUI
 		ASSERT(this->_Mysize >= pos);
 		return this->_Mystr[pos];
 	}
+	void TinyString::Split(char sep, TinyArray<TinyString>& strs)
+	{
+		size_t last = 0;
+		size_t size = this->GetSize();
+		for (size_t i = 0; i <= size; ++i)
+		{
+			if (i == size || this->_Mystr[i] == sep)
+			{
+				size_t s = i - last;
+				if (s > 0)
+				{
+					strs.Add(Substring(last, s).Trim(' '));
+					last = i + 1;
+				}
+			}
+		}
+	}
 	const CHAR& TinyString::operator[](size_t pos)const
 	{
 		ASSERT(this->_Mysize >= pos);
@@ -550,6 +630,44 @@ namespace TinyUI
 	{
 		ASSERT(this->_Mysize >= pos);
 		return this->_Mystr[pos];
+	}
+	TinyString	TinyString::Trim(const TinyString& str) const
+	{
+		return Trim(str.STR(), str.GetSize());
+	}
+	TinyString	TinyString::Trim(const CHAR* s, size_t size) const
+	{
+		INT _Firstnot = -1;
+		INT _Lastnot = -1;
+		if (0 < this->_Mysize)
+		{
+			const CHAR *_Uptr = NULL;
+			const CHAR *const _Vptr = this->_Mystr + this->_Mysize;
+			for (_Uptr = this->_Mystr; _Uptr < _Vptr; ++_Uptr)
+			{
+				if (memchr(s, *_Uptr, size) == 0)
+				{
+					_Firstnot = (_Uptr - this->_Mystr);
+					break;
+				}
+			}
+			_Uptr = this->_Mystr + this->_Mysize - 1;
+			for (;; --_Uptr)
+			{
+				if (memchr(s, *_Uptr, size) == 0)
+				{
+					_Lastnot = (_Uptr - this->_Mystr);
+					break;
+				}
+				else if (_Uptr == this->_Mystr)
+					break;
+			}
+		}
+		return TinyString(*this, _Firstnot, _Lastnot - _Firstnot + 1);
+	}
+	TinyString	TinyString::Trim(CHAR s) const
+	{
+		return Trim(&s, 1);
 	}
 	TinyString&	TinyString::Replace(size_t pos, size_t size, const CHAR* s, size_t subsize)
 	{

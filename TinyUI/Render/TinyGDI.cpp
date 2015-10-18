@@ -1,5 +1,5 @@
 #include "../stdafx.h"
-#include "TinyGraphics.h"
+#include "TinyGDI.h"
 
 namespace TinyUI
 {

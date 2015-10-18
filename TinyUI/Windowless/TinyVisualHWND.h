@@ -8,7 +8,7 @@ namespace TinyUI
 	namespace Windowless
 	{
 		class TinyVisual;
-		class TinyVisualHWND : public TinyControl, public TinyVisual
+		class TinyVisualHWND : public TinyControl
 		{
 			DECLARE_DYNAMIC(TinyVisualHWND)
 		public:

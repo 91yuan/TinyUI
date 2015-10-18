@@ -12,14 +12,14 @@ public: \
 	/// <summary>
 	/// 对象基类,不允许拷贝和赋值
 	/// </summary>
-	class TinyObject
+	class TinyObject 
 	{
+		DISALLOW_COPY_AND_ASSIGN(TinyObject);
 	public:
 		TinyObject();
 	public:
 		virtual ~TinyObject();
 		virtual LPCTSTR GetClassName() const = 0;
-		DISALLOW_COPY_AND_ASSIGN(TinyObject);
 	};
 };
 

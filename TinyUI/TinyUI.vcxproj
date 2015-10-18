@@ -47,7 +47,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
-      <AdditionalIncludeDirectories>..\ThirdParty\sqlite;..\ThirdParty\vld;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ThirdParty\sqlite;ThirdParty\vld;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,7 +140,7 @@
     <ClInclude Include="Network\TinyConnector.h" />
     <ClInclude Include="Network\TinyAcceptor.h" />
     <ClInclude Include="Network\TinyNetwork.h" />
-    <ClInclude Include="Render\TinyGraphics.h" />
+    <ClInclude Include="Render\TinyGDI.h" />
     <ClInclude Include="Render\TinyImage.h" />
     <ClInclude Include="Render\TinyRichUI.h" />
     <ClInclude Include="Render\TinyTheme.h" />
@@ -149,11 +149,14 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Render\TinyCanvas.h" />
+    <ClInclude Include="Windowless\TinyUtility.h" />
     <ClInclude Include="Windowless\TinyVisualFactory.h" />
     <ClInclude Include="Windowless\TinyLayout.h" />
     <ClInclude Include="Windowless\TinyVisual.h" />
     <ClInclude Include="Windowless\TinyVisualEvent.h" />
     <ClInclude Include="Windowless\TinyVisualHWND.h" />
+    <ClInclude Include="Windowless\TinyVisualManager.h" />
+    <ClInclude Include="Windowless\TinyVisualScroll.h" />
     <ClInclude Include="XML\tinystr.h" />
     <ClInclude Include="XML\tinyxml.h" />
     <ClInclude Include="XML\TinyXMLParse.h" />
@@ -218,7 +221,7 @@
     <ClCompile Include="Network\TinyAcceptor.cpp" />
     <ClCompile Include="Network\TinyNetwork.cpp" />
     <ClCompile Include="Render\stb_image.c" />
-    <ClCompile Include="Render\TinyGraphics.cpp" />
+    <ClCompile Include="Render\TinyGDI.cpp" />
     <ClCompile Include="Render\TinyImage.cpp" />
     <ClCompile Include="Render\TinyRichUI.cpp" />
     <ClCompile Include="Render\TinyTheme.cpp" />
@@ -228,11 +231,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Render\TinyCanvas.cpp" />
+    <ClCompile Include="Windowless\TinyUtility.cpp" />
     <ClCompile Include="Windowless\TinyVisualFactory.cpp" />
     <ClCompile Include="Windowless\TinyLayout.cpp" />
     <ClCompile Include="Windowless\TinyVisual.cpp" />
     <ClCompile Include="Windowless\TinyVisualEvent.cpp" />
     <ClCompile Include="Windowless\TinyVisualHWND.cpp" />
+    <ClCompile Include="Windowless\TinyVisualManager.cpp" />
+    <ClCompile Include="Windowless\TinyVisualScroll.cpp" />
     <ClCompile Include="XML\tinystr.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>

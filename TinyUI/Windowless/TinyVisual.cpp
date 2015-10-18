@@ -5,11 +5,10 @@ namespace TinyUI
 {
 	namespace Windowless
 	{
-		TinyVisual::TinyVisual()
-			:m_parent(NULL)
+		TinyVisual::TinyVisual(TinyVisual* pOwner)
+			:m_pOwner(pOwner)
 		{
-			memset(&m_bounds, 0, sizeof(RECT));
-			memset(&m_client_bounds, 0, sizeof(RECT));
+			m_style = "font-family:arial;color:red;font-size:20px;";
 		}
 		TinyVisual::~TinyVisual()
 		{
@@ -31,18 +30,6 @@ namespace TinyUI
 				Layout();
 			}
 		}
-		BOOL TinyVisual::IsFocusable() const
-		{
-			return m_focusable && m_enable;
-		}
-		void TinyVisual::SetFocusable(BOOL focusable)
-		{
-			if (m_focusable != focusable)
-			{
-				m_focusable = focusable;
-			}
-		}
-		
 		BOOL TinyVisual::IsVisible() const
 		{
 			return this->m_visible;
@@ -51,13 +38,39 @@ namespace TinyUI
 		{
 			return this->m_enable;
 		}
-		void TinyVisual::Layout()
+
+		TinyString*  TinyVisual::GetAttribute(const TinyString& key)
+		{
+			return m_attrMap.GetValue(key);
+		}
+
+		void TinyVisual::SetAttribute(const TinyString& key, const TinyString& value)
 		{
 
 		}
-		RECT TinyVisual::GetBounds() const
+		BOOL TinyVisual::ParserAttributes()
 		{
-			return m_bounds;
+			if (!m_style.IsEmpty())
+			{
+				TinyArray<TinyString> _Array;
+				m_style.Split(';', _Array);
+				for (INT i = 0; i < _Array.GetSize(); i++)
+				{
+					TinyString str = _Array[i];
+					TinyArray < TinyString > _Arrays;
+					str.Split(':', _Arrays);
+					if (_Arrays.GetSize() > 0)
+					{
+						m_attrMap.Add(_Arrays[0], _Arrays[1]);
+					}
+				}
+				return TRUE;
+			}
+			return FALSE;
+		}
+		void TinyVisual::Layout()
+		{
+
 		}
 	}
 }

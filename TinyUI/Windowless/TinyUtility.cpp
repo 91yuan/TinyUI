@@ -1,10 +1,10 @@
 #include "../stdafx.h"
-#include "TinyVisualFactory.h"
+#include "TinyUtility.h"
 
 namespace TinyUI
 {
 	namespace Windowless
 	{
 
-	};
+	}
 }

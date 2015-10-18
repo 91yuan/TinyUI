@@ -1,6 +1,6 @@
 #pragma once
 #include "../IO/TinyIO.h"
-#include "TinyGraphics.h"
+#include "TinyGDI.h"
 
 namespace TinyUI
 {

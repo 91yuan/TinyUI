@@ -13,7 +13,7 @@ namespace TinyUI
 	namespace IO
 	{
 		/// <summary>
-		/// 线程池
+		/// �̳߳�
 		/// </summary>
 		class TinyThreadPool : public TinyReference < TinyThreadPool >
 		{

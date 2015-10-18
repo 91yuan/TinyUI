@@ -138,9 +138,6 @@
     <ClInclude Include="IO\TinyIO.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
-    <ClInclude Include="Render\TinyGraphics.h">
-      <Filter>头文件\Render</Filter>
-    </ClInclude>
     <ClInclude Include="Render\TinyRichUI.h">
       <Filter>头文件\Render</Filter>
     </ClInclude>
@@ -297,6 +294,18 @@
     <ClInclude Include="IO\TinyThreadPool.h">
       <Filter>头文件\IO</Filter>
     </ClInclude>
+    <ClInclude Include="Render\TinyGDI.h">
+      <Filter>头文件\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualScroll.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyUtility.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
+    <ClInclude Include="Windowless\TinyVisualManager.h">
+      <Filter>头文件\Windowless</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -425,9 +434,6 @@
     <ClCompile Include="Media\TinyWave.cpp">
       <Filter>源文件\Media</Filter>
     </ClCompile>
-    <ClCompile Include="Render\TinyGraphics.cpp">
-      <Filter>源文件\Render</Filter>
-    </ClCompile>
     <ClCompile Include="Render\TinyRichUI.cpp">
       <Filter>源文件\Render</Filter>
     </ClCompile>
@@ -526,6 +532,18 @@
     </ClCompile>
     <ClCompile Include="IO\TinyThreadPool.cpp">
       <Filter>源文件\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\TinyGDI.cpp">
+      <Filter>源文件\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualScroll.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyVisualManager.cpp">
+      <Filter>源文件\Windowless</Filter>
+    </ClCompile>
+    <ClCompile Include="Windowless\TinyUtility.cpp">
+      <Filter>源文件\Windowless</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

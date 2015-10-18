@@ -1,5 +1,5 @@
 #pragma once
-#include "../Render/TinyGraphics.h"
+#include "../Render/TinyGDI.h"
 #include "../Common/TinyApplication.h"
 
 namespace TinyUI

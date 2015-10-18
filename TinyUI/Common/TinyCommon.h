@@ -18,6 +18,7 @@
 #include <tchar.h>
 #include <strsafe.h>
 #include <crtdbg.h>
+#include <utility>
 
 #pragma comment(lib, "gdi32.lib")
 #pragma comment(lib, "shlwapi.lib")
@@ -28,6 +29,7 @@
 #pragma comment(lib, "Comctl32.lib")
 
 using namespace Gdiplus;
+using namespace std;
 
 namespace TinyUI
 {
@@ -42,7 +44,6 @@ namespace TinyUI
 #ifndef TRACE
 #define TRACE Trace
 #endif
-
 #ifndef ASSUME
 #define ASSUME(expr) do { ASSERT(expr); __analysis_assume(!!(expr)); } while(0)
 #endif // ASSUME

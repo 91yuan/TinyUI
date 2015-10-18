@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "TinyApp.h"
 #include "Control/TinyFrameUI.h"
+#include "Windowless/TinyVisual.h"
 #include "Windowless/TinyVisualHWND.h"
 #include "Database/TinyAdo.h"
 #include "Network/TinyConnector.h"
@@ -144,27 +145,31 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 
+	Windowless::TinyVisual visual;
+	visual.ParserAttributes();
+	TinyString* str = visual.GetAttribute("font-size");
+	//TinyString m_style("font-family:arial;color:red;font-size:20px;");
+	//TinyArray<TinyString> _Array;
+	//m_style.Split(';', _Array);
+	//TinyMap<TinyString, TinyString> m_attrMap;// Ù–‘”≥…‰
+	//for (INT i = 0; i < _Array.GetSize(); i++)
+	//{
+	//	m_attrMap.Add(_Array[i], m_style);
+	//}
+
 	HRESULT hRes = OleInitialize(NULL);
-	 
 	::DefWindowProc(NULL, 0, 0, 0L);
-
 	TinyApplication::GetInstance()->Initialize(hInstance, lpCmdLine, nCmdShow, MAKEINTRESOURCE(IDC_TINYAPP));
-
 	TinyMessageLoop theLoop;
 	TinyApplication::GetInstance()->AddMessageLoop(&theLoop);
 	Windowless::TinyVisualHWND uiImpl;
 	uiImpl.Create(NULL, 50, 50, 400, 500);
 	uiImpl.ShowWindow(nCmdShow);
 	uiImpl.UpdateWindow();
-
 	INT loopRes = theLoop.MessageLoop();
-
 	TinyApplication::GetInstance()->RemoveMessageLoop();
 	TinyApplication::GetInstance()->Uninitialize();
-
 	OleUninitialize();
-
 	WSACleanup();
-
 	return loopRes;
 };
