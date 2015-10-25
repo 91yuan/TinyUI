@@ -19,15 +19,18 @@ namespace TinyUI
 		public:
 			TinyVisual(TinyVisual* pOwner = NULL);
 			virtual	~TinyVisual();
+			const TinyString& name() const;
+			void		SetName(const TinyString& name);
 			BOOL		IsVisible() const;
 			BOOL		IsEnable() const;
 			void		SetVisible(BOOL	vis);
 			void		SetEnable(BOOL enable);
 		public:
 			TinyString* GetAttribute(const TinyString& key);
-			void		SetAttribute(const TinyString& key, const TinyString& value);
+			void		SetAttribute(const TinyString& key, TinyString& value);
 			BOOL		ParserAttributes();
 			TinyString	ToStyle();
+			BOOL		BuildUI();
 		public:
 			virtual void Layout();
 		protected:

@@ -145,17 +145,18 @@ INT APIENTRY _tWinMain(HINSTANCE hInstance,
 	WSADATA   wsd;
 	WSAStartup(MAKEWORD(2, 2), &wsd);
 
-	Windowless::TinyVisual visual;
-	visual.ParserAttributes();
-	TinyString* str = visual.GetAttribute("font-size");
-	//TinyString m_style("font-family:arial;color:red;font-size:20px;");
-	//TinyArray<TinyString> _Array;
-	//m_style.Split(';', _Array);
-	//TinyMap<TinyString, TinyString> m_attrMap;// Ù–‘”≥…‰
-	//for (INT i = 0; i < _Array.GetSize(); i++)
-	//{
-	//	m_attrMap.Add(_Array[i], m_style);
-	//}
+	//Windowless::TinyVisual visual;
+	//visual.ParserAttributes();
+	//TinyString str = visual.ToStyle();
+	////TinyString* str = visual.GetAttribute("font-size");
+	////TinyString m_style("font-family:arial;color:red;font-size:20px;");
+	////TinyArray<TinyString> _Array;
+	////m_style.Split(';', _Array);
+	////TinyMap<TinyString, TinyString> m_attrMap;// Ù–‘”≥…‰
+	////for (INT i = 0; i < _Array.GetSize(); i++)
+	////{
+	////	m_attrMap.Add(_Array[i], m_style);
+	////}
 
 	HRESULT hRes = OleInitialize(NULL);
 	::DefWindowProc(NULL, 0, 0, 0L);

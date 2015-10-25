@@ -766,6 +766,7 @@ namespace TinyUI
 		~TinyMap();
 		ITERATOR operator[](const K& key) const;
 		DWORD GetSize() const;
+		BOOL Contain(const K& key) const;
 		BOOL IsEmpty() const;
 		ITERATOR Add(const K& key, V& value);
 		BOOL Remove(const K& key);
@@ -823,6 +824,11 @@ namespace TinyUI
 	BOOL TinyMap<K, V, KTraits, VTraits>::IsEmpty() const
 	{
 		return m_dwCount == 0;
+	}
+	template<class K, class V, class KTraits, class VTraits>
+	BOOL TinyMap<K, V, KTraits, VTraits>::Contain(const K& key) const
+	{
+		return Lookup(m_pRoot, key) != NULL;
 	}
 	template<class K, class V, class KTraits, class VTraits>
 	typename TinyMap<K, V, KTraits, VTraits>::TinyEntry* TinyMap<K, V, KTraits, VTraits>::New(const K& key, V& value)

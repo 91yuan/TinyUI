@@ -214,6 +214,10 @@ namespace TinyUI
 		}
 		return (*this);
 	}
+	TinyString& TinyString::Append(const TinyString& str)
+	{
+		return Append(str, 0, str.GetSize());
+	}
 	TinyString& TinyString::operator += (const TinyString& str)
 	{
 		return Append(str, 0, str.GetSize());

@@ -80,6 +80,7 @@ namespace TinyUI
 		TinyString&	Append(const CHAR* s);
 		TinyString&	Append(const CHAR* s, size_t size);
 		TinyString& Append(const TinyString& str, size_t pos, size_t size);
+		TinyString& Append(const TinyString& str);
 		TinyString& operator+= (const TinyString& str);
 		TinyString& operator+= (const CHAR* s);
 		TinyString& operator+= (CHAR s);
